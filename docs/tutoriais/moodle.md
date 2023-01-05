@@ -9,6 +9,8 @@ nav_order: 2
 ---
 
 
+Feito por Talita: 
+
 
 ## Isto é um Título 1
 
@@ -20,13 +22,8 @@ o "Ítalico" é assim
 
 o **negrito** é assim
 
-Exemplo de bloco de código
-Pacotes mínimos em sistema operacional *Debian 11*
-
-```bash
-apt-get install php php-intl php-cli php-gd php-curl php-xml php-mbstring php-zip mariadb-server php-mysql
-```
 
 ## Arquivos mínimos
 
 
+![logo do Moodle](/assets/images/moodle.png)
