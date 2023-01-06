@@ -22,4 +22,6 @@ exemplo de bloco de código:
 ```
 PHP -s 0.0.0.0
 ```
-![logo do samba](/assets/images/samba.png)
+![logo do samba](/assets/images/sambaimages/samba.png)
+
+(esse aqui é um link)[https://getlabsdone.com/how-to-enable-tpm-and-secure-boot-on-kvm/]
