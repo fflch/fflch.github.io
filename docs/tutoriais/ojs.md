@@ -131,15 +131,15 @@ Ao inicializar o OJS pela primeira vez, iremos configura-lo para nos atender.
 
 - Na primeira parte devemos escolher um nome de usuario e uma senha, além de fornecer um email para cadastro. Como estamos em um ambiente de programação e não de editorial de revista, podemos colocar usuario e senha como "admin" e o email como "admin@usp.br" como podemos observar na imagem.
 
-![Primeira parte](/assets/images/OJS/Primera_Parte.png)
+![Primeira parte](/assets/images/OJS/Instalacao_OJS/Primera_Parte.png)
 
 - Na segunda parte devemos escolher a lingua primaria do OJS e as linguas adicionais do mesmo.
 
-![Segunda parte](/assets/images/OJS/Segunda_Parte.png)
+![Segunda parte](/assets/images/OJS/Instalacao_OJS/Segunda_Parte.png)
 
 - Na terceira parte devemos verificar se o local onde o diretorio será criado é o qual desejamos.
 
-![Terceira parte](/assets/images/OJS/Terceira_Parte.png)
+![Terceira parte](/assets/images/OJS/Instalacao_OJS/Terceira_Parte.png)
 
 - Na quarta parte devemos:
 
@@ -148,7 +148,7 @@ Ao inicializar o OJS pela primeira vez, iremos configura-lo para nos atender.
 1. Adicionar a senha que criamos no mariadb (no caso admin)
 1. Adicionar o nome da database que criamos no mariadb (no caso ojs3)
 
-![Quarta parte](/assets/images/OJS/Quarta_Parte.png)
+![Quarta parte](/assets/images/OJS/Instalacao_OJS/Quarta_Parte.png)
 
 - Com isso, só precisaremos confirmar as configurações e o seu OJS estará configurado.
 
@@ -168,7 +168,7 @@ Ao inicializar o OJS pela primeira vez, iremos configura-lo para nos atender.
 
 ## 2.1 - Arquivos basicos para a criação do plugin
 
-- Devemos estar localizados na pasta blocks, a qual fica dentro da pasta plugins, que por sua vez fica dentro da pagina do OJS.
+- Devemos estar localizados na pasta blocks, a qual fica dentro da pasta plugins, que por sua vez fica dentro da pasta do OJS.
 
 - Estando nesta pasta, devemos criar uma pasta com o nome de nosso novo plugin. Façamos isso pelo seguinte código:
 
@@ -176,7 +176,7 @@ Ao inicializar o OJS pela primeira vez, iremos configura-lo para nos atender.
 mkdir Nome_Plugin
 ```
 
-- Com isso, devemos criar uma pasta chamada templates. Façamos isso pelo seguinte código:
+- Com isso, devemos adentrar a pasta que acabamos de criae e criar uma  outra pasta chamada templates. Façamos isso pelo seguinte código:
 
 ```
 mkdir templates
@@ -274,11 +274,11 @@ class Nome_PluginBlockPlugin extends BlockPlugin {
 	}
 
 	public function getDisplayName() {
-		return __('plugins.block.get.displayName');
+		return 'Plugin Exemplo';
 	}
 
 	public function getDescription() {
-		return __('plugins.block.get.description');
+		return 'Esse é um plugin de exemplo';
 	}
 
 
@@ -304,5 +304,37 @@ class Nome_PluginBlockPlugin extends BlockPlugin {
     Texto: {$ola} 
 </div>
 ```
+
+## 2.3 - Como instalar o plugin na sua revistas
+
+- Com o plugin terminado, devemos adentrar na área de administrador do OJS.
+
+![Primeira parte](/assets/images/OJS/Instalacao_Plugin/Install1.png)
+
+- Devemos nos clicar no lado superior esquerdo e selecionar a revista que desejamos inserir o  plugin.
+
+![Segunda parte](/assets/images/OJS/Instalacao_Plugin/Install2.png)
+
+- Após isso, devemos observar o lado esquerdo da tela e selecionar a opção Website, depois devemos entrar na subpartição plugins.
+
+![Terceira parte](/assets/images/OJS/Instalacao_Plugin/Install3.png)
+
+- Dentro da subpartição plugins, devemos encontrar o nosso plugin e ativa-lo.
+
+![Quarta parte](/assets/images/OJS/Instalacao_Plugin/Install4.png)
+
+- Após isso, devemos voltar a subpartição aparencia e depois devemos escolher a opção configurar.
+
+![Quinta parte](/assets/images/OJS/Instalacao_Plugin/Install5.png)
+
+- Em configurar, devemos descer a tela e ativar o nosso plugin, após isso precisaremos apertar no nome de nossa revista no canto superior esquerdo.
+
+![Sexta parte](/assets/images/OJS/Instalacao_Plugin/Install6.png)
+
+- Pronto, seu plugin está visivel em seu site.
+
+![Setima parte](/assets/images/OJS/Instalacao_Plugin/Install7.png)
+
+Foto do OJS clicavel.
 
 [![Logo do OJS](/assets/images/OJS/ojs.png)](https://pkp.sfu.ca/)
