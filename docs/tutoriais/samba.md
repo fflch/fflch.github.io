@@ -98,7 +98,7 @@ ls -l
 
 - Uma vez executados todos os comandos no terminal, precisamos criar uma GPO usando a interface de uma maquina windows.
 
-- A versão do windows utilizada para esse tutorial foi o windows 10 versão 22h2.
+- A versão do windows utilizada para esse tutorial foi o windows 11 versão 22h2.
 
 - Você deve abrir o windows e instalar um programa chamado RSAT (Remote Server Administration Tools) Ferramentas de administração de servidor remoto. Tal como na imagem abaixo:
 
@@ -127,9 +127,9 @@ secpol.msc
 
 - Após ter clicado em em OK você pode fechar a aba com as politicas de segurança da sua maquina.
 
-- Em seguida você vai precisar adicionar o as ferramentas de gerenciamento de politica de grupo baixadas junto com o RSAT. E para isso você vai precisar ir até **Configurações**, depois em **Aplicativos e recursos**, logo em seguida **Recursos Opcionais** e por fim clicar em **Adicionar recurso**.
+- Em seguida você vai precisar adicionar o as ferramentas de gerenciamento de politica de grupo baixadas junto com o RSAT. E para isso você vai precisar ir até **Configurações**, depois em **Aplicativos**, logo em seguida **Recursos Opcionais** e em **Adicionar recurso opcional** você deve clicar eR exibir recursos.
 
-- Você deve procurar por **RSAT: Ferramentas de Gerenciamento de Política de Grupo** e clicar em **instalar**.
+- Você deve procurar por **RSAT: Ferramentas de Gerenciamento de Política de Grupo** e clicar em **Avançar** e depois instalar.
 
 ![imagem6](/assets/images/sambaimages/f6.png)
 
