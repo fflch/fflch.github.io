@@ -9,14 +9,13 @@ nav_order: 5
 ---
 
 
-
 # 0 - Preparação da infraestrutura de desenvolvimento do OJS
 
-Instalação dos componentes basicos para desenvolvermos o OJS usando Debian e derivadios. Verifique o procedimento correspondente para o seu sistema operacional.
+Instalação dos componentes básicos para desenvolvermos o OJS usando Debian e derivados. Verifique o procedimento correspondente para o seu sistema operacional.
 
 ## 0.0 - Instalar o Terminator
 
-- Opcionalmente você pode instalar o Terminator, um terminal mais dinamico. 
+- Opcionalmente você pode instalar o Terminator, um terminal mais dinâmico. 
 
 ```
 sudo apt install terminator
@@ -24,7 +23,7 @@ sudo apt install terminator
 
 ## 0.1 - Instalando o PHP para uso do OJS
 
-- O PHP é essencial para o funcionamento do OJS, sendo ele tambem a linguagem a ser utilizada para a programação dos plugins
+- O PHP é essencial para o funcionamento do OJS, sendo ele também a linguagem a ser utilizada para a programação dos plugins
 
 ```
 sudo apt install php php-intl php-mysql php-gd php-xml php-mbstring php-zip php-curl
@@ -48,7 +47,7 @@ cat ~/.ssh/id_rsa.pub
 
 ## 0.3 - Instalar e configurar o banco de dados MariaDB
 
-- O OJS requere do usuario um banco de dados, o MariaDB é um dos melhores do mercado e de facil compreenção e utilização pelo usuario.
+- O OJS requere do usuário um banco de dados, o MariaDB é um dos melhores do mercado e de fácil compreensão e utilização pelo usuário.
 
 ```
 sudo apt install mariadb-server
@@ -93,13 +92,13 @@ sudo mv composer.phar /usr/local/bin/composer
 wget https://pkp.sfu.ca/ojs/download/ojs-3.3.0-13.tar.gz
 ```
 
-- Após isso, devemos descompactar o OJS pro meio do código:
+- Após isso, devemos descompactar o OJS por meio do código:
 
 ```
 tar -vzxf ojs-3.3.0-13.tar.gz
 ```
 
-- Com isso, o OJS estará funcionando perfeitamente em sua maquina.
+- Com isso, o OJS estará funcionando perfeitamente em sua máquina.
 
 ## 0.7 - Configurando o MariaDB para o OJS
 
@@ -121,25 +120,25 @@ php -S 0.0.0.0:8888
 
 # 1 - Como configurar o OJS
 
-A configuração do OJS é bem intutiva, porem ainda sim se complica em certos momentos. Assim, se faz necessario que tenhamos um passo a passo de como configura-lo em nossa maquina.
+A configuração do OJS é bem intutiva, porém, ainda assim se complica em certos momentos. Assim, se faz necessário que tenhamos um passo a passo de como configurá-lo em nossa máquina.
 
 ## 1.1 - Configuração
 
 Para melhor entendimento, trabalharemos essa parte de forma visual.
 
-Ao inicializar o OJS pela primeira vez, iremos configura-lo para nos atender.
+Ao inicializar o OJS pela primeira vez, iremos configurá-lo para nos atender.
 
-- Na primeira parte devemos escolher um nome de usuario e uma senha, além de fornecer um email para cadastro. Como estamos em um ambiente de programação e não de editorial de revista, podemos colocar usuario e senha como "admin" e o email como "admin@usp.br" como podemos observar na imagem.
+- Na primeira parte devemos escolher um nome de usuário e uma senha, além de fornecer um email para cadastro. Como estamos em um ambiente de programação e não de editorial de revista, podemos colocar usuário e senha como "admin" e o email como "admin@usp.br" como podemos observar na imagem.
 
-![Primeira parte](/assets/images/OJS/Primera_Parte.png)
+![Primeira parte](/assets/images/OJS/Instalacao_OJS/Primera_Parte.png)
 
-- Na segunda parte devemos escolher a lingua primaria do OJS e as linguas adicionais do mesmo.
+- Na segunda parte devemos escolher a língua primária do OJS e as línguas adicionais do mesmo.
 
-![Segunda parte](/assets/images/OJS/Segunda_Parte.png)
+![Segunda parte](/assets/images/OJS/Instalacao_OJS/Segunda_Parte.png)
 
-- Na terceira parte devemos verificar se o local onde o diretorio será criado é o qual desejamos.
+- Na terceira parte devemos verificar se o local onde o diretório será criado é o qual desejamos.
 
-![Terceira parte](/assets/images/OJS/Terceira_Parte.png)
+![Terceira parte](/assets/images/OJS/Instalacao_OJS/Terceira_Parte.png)
 
 - Na quarta parte devemos:
 
@@ -148,13 +147,13 @@ Ao inicializar o OJS pela primeira vez, iremos configura-lo para nos atender.
 1. Adicionar a senha que criamos no mariadb (no caso admin)
 1. Adicionar o nome da database que criamos no mariadb (no caso ojs3)
 
-![Quarta parte](/assets/images/OJS/Quarta_Parte.png)
+![Quarta parte](/assets/images/OJS/Instalacao_OJS/Quarta_Parte.png)
 
 - Com isso, só precisaremos confirmar as configurações e o seu OJS estará configurado.
 
 # 2 - Criar um plugin do tipo Block
 
-- O OJS, assim como outras plataformas, tem varios estilos de plugin. Na presente parte vamos explicar passo a passo a criar um plugin do estilo bloco.
+- O OJS, assim como outras plataformas, tem vários estilos de plugin. Na presente parte vamos explicar passo a passo a criar um plugin do estilo bloco.
 
 ## 2.0 - Identificando o estilo de Plugin
 
@@ -162,13 +161,13 @@ Ao inicializar o OJS pela primeira vez, iremos configura-lo para nos atender.
 
 1. Alguns plugins devem ser aplicado somente nas revistas, como por exemplo um plugin com a nuvem de palavras.
 
-1. Outros plugins devem ser aplicados de forma global, no site principal que cuida das revistas, como exemplo um plugin que exibe as estatisticas de revistas gerenciadas pelo site.
+1. Outros plugins devem ser aplicados de forma global, no site principal que cuida das revistas, como exemplo um plugin que exibe as estatísticas de revistas gerenciadas pelo site.
 
 - Identificando qual o estilo de plugin você deve fazer, fica mais simples a sua criação.
 
-## 2.1 - Arquivos basicos para a criação do plugin
+## 2.1 - Arquivos básicos para a criação do plugin
 
-- Devemos estar localizados na pasta blocks, a qual fica dentro da pasta plugins, que por sua vez fica dentro da pagina do OJS.
+- Devemos estar localizados na pasta blocks, a qual fica dentro da pasta plugins, que por sua vez fica dentro da pasta do OJS.
 
 - Estando nesta pasta, devemos criar uma pasta com o nome de nosso novo plugin. Façamos isso pelo seguinte código:
 
@@ -176,7 +175,7 @@ Ao inicializar o OJS pela primeira vez, iremos configura-lo para nos atender.
 mkdir Nome_Plugin
 ```
 
-- Com isso, devemos criar uma pasta chamada templates. Façamos isso pelo seguinte código:
+- Com isso, devemos adentrar a pasta que acabamos de criar e criar uma  outra pasta chamada templates. Façamos isso pelo seguinte código:
 
 ```
 mkdir templates
@@ -200,7 +199,7 @@ touch block.tpl
 
 ### 2.2.1 - Index.php
 
-- O arquivo index.php é um carregador simples. Nele deve conter o código que instancia a classe principal do seu plugin e retorna uma nova instancia do mesmo plugin. Podemos ver um exemplo abaixo:
+- O arquivo index.php é um carregador simples. Nele deve conter o código que instância a classe principal do seu plugin e retorna uma nova instância do mesmo plugin. Podemos ver um exemplo abaixo:
 
 ```
  <?php
@@ -252,7 +251,7 @@ return new Nome_PluginBlockPlugin();
 
 ### 2.2.3 - Nome_PluginBlockPlugin.php
 
-- Então agora que nos temos uma estrutura básica, precisaremos criar o arquivo que o index.php está carregando, no meu caso chamado Nome_PluginBlockPlugin.php. Isso precisa ser desenvolvido com algumas funções iniciais: register, getDisplayName, getDescription, isSitePlugin e getContents. Podemos ver um exemplo abaixo:
+- Então agora que nós temos uma estrutura básica, precisaremos criar o arquivo que o index.php está carregando, no meu caso chamado Nome_PluginBlockPlugin.php. Isso precisa ser desenvolvido com algumas funções iniciais: register, getDisplayName, getDescription, isSitePlugin e getContents. Podemos ver um exemplo abaixo:
 
 ```
 <?php
@@ -274,11 +273,11 @@ class Nome_PluginBlockPlugin extends BlockPlugin {
 	}
 
 	public function getDisplayName() {
-		return __('plugins.block.get.displayName');
+		return 'Plugin Exemplo';
 	}
 
 	public function getDescription() {
-		return __('plugins.block.get.description');
+		return 'Esse é um plugin de exemplo';
 	}
 
 
@@ -297,12 +296,44 @@ class Nome_PluginBlockPlugin extends BlockPlugin {
 
 ### 2.2.4 - block.tpl
 
-- Por fim, o block.tpl é responsavel pela exibição de nosso plugin. Assim, o que conter nele será exibido ao habilitarmos o plugin em nosso site.
+- Por fim, o block.tpl é responsável pela exibição de nosso plugin. Assim, o que conter nele será exibido ao habilitarmos o plugin em nosso site.
 
 ```
 <div class="pkp_block">
     Texto: {$ola} 
 </div>
 ```
+
+## 2.3 - Como instalar o plugin na sua revistas
+
+- Com o plugin terminado, devemos adentrar na área de administrador do OJS.
+
+![Primeira parte](/assets/images/OJS/Instalacao_Plugin/Install1.png)
+
+- Devemos clicar no lado superior esquerdo e selecionar a revista que em desejamos inserir o plugin.
+
+![Segunda parte](/assets/images/OJS/Instalacao_Plugin/Install2.png)
+
+- Após isso, devemos observar o lado esquerdo da tela e selecionar a opção Website, depois devemos entrar na subpartição plugins.
+
+![Terceira parte](/assets/images/OJS/Instalacao_Plugin/Install3.png)
+
+- Dentro da subpartição plugins, devemos encontrar o nosso plugin e ativá-lo.
+
+![Quarta parte](/assets/images/OJS/Instalacao_Plugin/Install4.png)
+
+- Após isso, devemos voltar a subpartição aparência e depois devemos escolher a opção configurar.
+
+![Quinta parte](/assets/images/OJS/Instalacao_Plugin/Install5.png)
+
+- Em configurar, devemos descer a tela e ativar o nosso plugin, após isso precisaremos apertar no nome de nossa revista no canto superior esquerdo.
+
+![Sexta parte](/assets/images/OJS/Instalacao_Plugin/Install6.png)
+
+- Pronto, seu plugin está visível em seu site.
+
+![Setima parte](/assets/images/OJS/Instalacao_Plugin/Install7.png)
+
+Foto do OJS clicavel.
 
 [![Logo do OJS](/assets/images/OJS/ojs.png)](https://pkp.sfu.ca/)
