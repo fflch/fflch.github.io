@@ -24,7 +24,7 @@ O Linux é um Sistema Operacional, assim como o Windows e o Mac OS, que possibil
 
 Este comando informa qual em qual diretório o usuário está localizado 
 
-```
+```bash
 ~ pwd
 ~ /home/yas
 ```
@@ -33,7 +33,7 @@ Este comando informa qual em qual diretório o usuário está localizado
 
 Este comando direciona o usuário a algum diretorio. É necessário utilizar *cd* + o nome do direório que deseja entrar
 
-```
+```bash
 ~ cd Documentos
 -> Documentos
 ```
@@ -41,7 +41,7 @@ Este comando direciona o usuário a algum diretorio. É necessário utilizar *cd
 
 Este comando direciona o usuário para o diretório anterior (*voltar*)
 
-```
+```bash
 -> Documentos cd ..
 ~ 
 ```
@@ -50,7 +50,7 @@ Este comando direciona o usuário para o diretório anterior (*voltar*)
 
 Este comando cria um novo diretório. O usuario deve usar *mkdir* + o nome do diretório desejado
 
-```
+```bash
 ~ mkdir Imagens
 ```
 
@@ -58,13 +58,13 @@ Este comando cria um novo diretório. O usuario deve usar *mkdir* + o nome do di
 
 Este comando copia arquivos e diretórios. Para copiar **arquivos** é necessário utilizar *cp* + arquivo de origem + arquivo de destino:
 
-```
+```bash
 ~ cp arq_origem.txt arq_destino.txt
 ```
 
 Para copiar **diretórios inteiros**:
 
-```
+```bash
 ~ cp -r dir_origem/ dir_destino/
 ```
 
@@ -72,19 +72,19 @@ Para copiar **diretórios inteiros**:
 
 Este comando é utilizado para excluir arquivos e diretórios. Para excluir um **arquivo**:
 
-```
+```bash
 ~ rm arquivo.txt
 ```
 
 Para excluir um **diretório vazio**:
 
-```
+```bash
 rm -r dir_vazio
 ```
 
 Para excluir um **diretório com conteúdo**:
 
-```
+```bash
 ~ rm -rf dir_conteudo
 ```
 
@@ -92,7 +92,7 @@ Para excluir um **diretório com conteúdo**:
 
 Este comando termina uma sessão e sai do terminal
 
-```
+```bash
 ~ exit
 ```
 
@@ -100,7 +100,7 @@ Este comando termina uma sessão e sai do terminal
 
 Este comando mostra os arquivos e diretórios presentes no diretório em que o usuário está localizado.
 
-```
+```bash
 ~ ls 
 'Área de trabalho' Documentos   Imagens   Música   Downloads
 ```
@@ -109,7 +109,7 @@ Este comando mostra os arquivos e diretórios presentes no diretório em que o u
 
 Este comando move arquivos
 
-```
+```bash
 ~ mv linux.jpg Imagens
 ```
 
@@ -117,7 +117,7 @@ Este comando move arquivos
 
 Este comando altera a senha do usuário
 
-```
+```bash
 ~ passwd 
 Mudando senha para usuário.
 Atual senha:
@@ -130,7 +130,7 @@ passwd: senha atualizada com sucesso
 
 Este comando mostra o histórico de comandos utilizados 
 
-```
+```bash
 ~ history
 1 php -- version
 2 cd github
@@ -141,7 +141,7 @@ Este comando mostra o histórico de comandos utilizados
 
 Este comando printa no terminal a palavra ou sentença desejada
 
-```
+```bash
 ~ echo Bom dia!
 Bom dia!
 ```
@@ -150,7 +150,7 @@ Bom dia!
 
 Este comando permite que o usuário execute comandos como um superusuário.
 
-```
+```bash
 ~ sudo apt install debian
 ```
 
@@ -158,7 +158,7 @@ Este comando permite que o usuário execute comandos como um superusuário.
 
 Este comando desliga a sua máquina
 
-``` 
+```bash
 shutdown
 ```
 
@@ -166,7 +166,7 @@ shutdown
 
 Este comando testa a conectividade de rede
 
-``` 
+```bash
 ping 127.0.0.0.1
 ```
 
@@ -174,7 +174,7 @@ ping 127.0.0.0.1
 
 Este comando exibe um manual do comando desejado. Pode ser utilizado quando o usuário deseja saber o que determinado comando realiza 
 
-```
+```bash
 ~ man mkdir 
 ```
 
@@ -182,7 +182,7 @@ Este comando exibe um manual do comando desejado. Pode ser utilizado quando o us
 
 Este comando imprime linhas que combinam padrões, filtra palavras de um documenro de texto, por exemplo
 
-```
+```bash
 ~ grep "história" relatório.txt
 ```
 
@@ -190,7 +190,7 @@ Este comando imprime linhas que combinam padrões, filtra palavras de um documen
 
 Este comando exibe o nome de usuário em uso
 
-```
+```bash
 ~ whoami
 yas
 ```
@@ -199,7 +199,7 @@ yas
 
 Este comando exibe uma descrição de uma única linha de qualquer outro comando 
 
-```
+```bash
 ~ whatis php
 php (1)              - PHP Command Line Interface 'CLI'
 ```
@@ -208,7 +208,7 @@ php (1)              - PHP Command Line Interface 'CLI'
 
 Este comando retorna o número de palavras de algum arquivo de texto
 
-```
+```bash
 ~ wc linux.txt
   1893  10921 524322 linux.txt
 ```
@@ -217,7 +217,7 @@ Este comando retorna o número de palavras de algum arquivo de texto
 
 Este comando imprime o conteúdo de um arquivo
 
-```
+```bash
 cat arquivo.pdf
 ```
 
@@ -225,7 +225,7 @@ cat arquivo.pdf
 
 Este comando é um editor de textos no terminal
 
-``` 
+```bash
 ~ vi exemplo.txt
 ```
 
