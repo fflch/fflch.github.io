@@ -186,11 +186,11 @@ mkdir Nome_Plugin
 mkdir templates
 ```
 
-- Após isso devemos criar os arquivos Index, Nome_PluginBlockPlugin.inc.php, o settings.xml e o version.xml. Façamos isso a partir dos seguintes códigos:
+- Após isso devemos criar os arquivos Index, NomePluginBlockPlugin.inc.php, o settings.xml e o version.xml. Façamos isso a partir dos seguintes códigos:
 
 ```bash
 touch index.php
-touch Nome_PluginBlockPlugin.php
+touch NomePluginBlockPlugin.php
 touch version.xml
 ```
 
@@ -209,9 +209,9 @@ touch block.tpl
 ```php
  <?php
 
-require_once('Nome_PluginBlockPlugin.php');
+require_once('NomePluginBlockPlugin.php');
 
-return new Nome_PluginBlockPlugin();
+return new NomePluginBlockPlugin();
 
 ?>
 ```
@@ -227,27 +227,27 @@ return new Nome_PluginBlockPlugin();
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE version SYSTEM "../../../lib/pkp/dtd/pluginVersion.dtd">
 <version>
-   <application>Nome_Plugin</application>
+   <application>NomePlugin</application>
    <type>plugins.blocks</type>
    <release>1.0.0.0</release>
    <date>2023-01-06</date>
    <lazy-load>1</lazy-load>
-   <class>Nome_PluginBlockPlugin</class>
+   <class>NomePluginBlockPlugin</class>
 </version>
 ```
 
-### 2.2.3 - Nome_PluginBlockPlugin.php
+### 2.2.3 - NomePluginBlockPlugin.php
 
-- Então agora que nós temos uma estrutura básica, precisaremos criar o arquivo que o index.php está carregando, no meu caso chamado Nome_PluginBlockPlugin.php. Isso precisa ser desenvolvido com algumas funções iniciais: register, getDisplayName, getDescription, isSitePlugin e getContents. Podemos ver um exemplo abaixo:
+- Então agora que nós temos uma estrutura básica, precisaremos criar o arquivo que o index.php está carregando, no meu caso chamado NomePluginBlockPlugin.php. Isso precisa ser desenvolvido com algumas funções iniciais: register, getDisplayName, getDescription, isSitePlugin e getContents. Podemos ver um exemplo abaixo:
 
 ```php
 <?php
 import('lib.pkp.classes.plugins.BlockPlugin');
 
-class Nome_PluginBlockPlugin extends BlockPlugin {
+class NomePluginBlockPlugin extends BlockPlugin {
 
 	function getContextSpecificPluginSettingsFile() {
-		return $this->getPluginPath() . '/settings.xml';
+		return $this->getPluginPath();
 	}
 
 	public function register($category, $path, $mainContextId = NULL) {
@@ -276,7 +276,8 @@ class Nome_PluginBlockPlugin extends BlockPlugin {
     $ola = 'Olá Mundo!'
 
     //Exibição
-    $templateMgr->assign($ola);
+    $templateMgr->assign('ola', $ola);
+    return parent::getContents($templateMgr, $request);
   }
 }
 ```
