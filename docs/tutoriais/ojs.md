@@ -156,11 +156,46 @@ Ao inicializar o OJS pela primeira vez, iremos configurá-lo para nos atender.
 
 - Com isso, só precisaremos confirmar as configurações e o seu OJS estará configurado.
 
-# 2 - Criar um plugin do tipo Block
+# 2 - Criando a primeira revista
+
+- Assim que terminarmos a configuração do OJS, devemos criar a nossa primeira revista.
+
+- Para isso, devemos adentrar na área de administrador do OJS.
+
+![Primeira parte](/assets/images/OJS/Instalacao_Plugin/Install1.png)
+
+- Após isso devemos clicar em "Revistas hospedadas".
+
+![Segunda parte](/assets/images/OJS/Cria_Revista/Parte1.png)
+
+- Agora devemos clicar em "criar revista".
+
+![Terceira parte](/assets/images/OJS/Cria_Revista/Parte2.png)
+
+- Agora devemos:
+
+1. Escolher o nome de nossa revista;
+1. Escolher a sigla de nossa revista;
+1. Escolher a abreviatura de nossa revista (recomendada ser a mesma da sigla);
+1. Escrever uma descrição para nossa revista;
+1. Adicionar o final do caminho da revista (recomendado ser a mesma da sigla);
+1. Escolher os idiomas que a revista terá e o idioma principal da mesma;
+1. Permitir Acesso Livre a esta revista no portal;
+1. Por fim, somente falta salvar a nossa revista e pronto.
+
+![Quarta parte](/assets/images/OJS/Cria_Revista/Parte3.png)
+
+![Quinta parte](/assets/images/OJS/Cria_Revista/Parte4.png)
+
+- Agora podemos observar que nossa revista foi criada.
+
+![Sexta parte](/assets/images/OJS/Cria_Revista/Parte5.png)
+
+# 3 - Criar um plugin do tipo Block
 
 - O OJS, assim como outras plataformas, tem vários estilos de plugin. Na presente parte vamos explicar passo a passo a criar um plugin do estilo bloco.
 
-## 2.0 - Identificando o estilo de Plugin
+## 3.0 - Identificando o estilo de Plugin
 
 - Para começarmos a pensar sobre o plugin, devemos identificar o contexto que ele será aplicado. Como podemos ver abaixo:
 
@@ -170,14 +205,14 @@ Ao inicializar o OJS pela primeira vez, iremos configurá-lo para nos atender.
 
 - Identificando qual o estilo de plugin você deve fazer, fica mais simples a sua criação.
 
-## 2.1 - Arquivos básicos para a criação do plugin
+## 3.1 - Arquivos básicos para a criação do plugin
 
 - Devemos estar localizados na pasta blocks, a qual fica dentro da pasta plugins, que por sua vez fica dentro da pasta do OJS.
 
 - Estando nesta pasta, devemos criar uma pasta com o nome de nosso novo plugin. Façamos isso pelo seguinte código:
 
 ```bash
-mkdir Nome_Plugin
+mkdir NomePlugin
 ```
 
 - Com isso, devemos adentrar a pasta que acabamos de criar e criar uma  outra pasta chamada templates. Façamos isso pelo seguinte código:
@@ -200,9 +235,9 @@ touch version.xml
 touch block.tpl
 ```
 
-## 2.2 - Programando o Plugin
+## 3.2 - Programando o Plugin
 
-### 2.2.1 - Index.php
+### 3.2.1 - Index.php
 
 - O arquivo index.php é um carregador simples. Nele deve conter o código que instância a classe principal do seu plugin e retorna uma nova instância do mesmo plugin. Podemos ver um exemplo abaixo:
 
@@ -216,7 +251,7 @@ return new NomePluginBlockPlugin();
 ?>
 ```
 
-### 2.2.2 - version.xml
+### 3.2.2 - version.xml
 
 - O version.xml somente é visto pelo instalador de plugins do OJS. Ele indica a versão do plugin e reconhece caso precise atualizar o plugin. O arquivo version.xml é importante porque, se você apenas colocar seus arquivos no diretório OJS, em vez de passar pelo instalador adequado, não haverá uma linha correspondente na tabela de plugins do banco de dados e você não poderá habilitar/desabilitar seu plugin.
 
@@ -236,7 +271,7 @@ return new NomePluginBlockPlugin();
 </version>
 ```
 
-### 2.2.3 - NomePluginBlockPlugin.php
+### 3.2.3 - NomePluginBlockPlugin.php
 
 - Então agora que nós temos uma estrutura básica, precisaremos criar o arquivo que o index.php está carregando, no meu caso chamado NomePluginBlockPlugin.php. Isso precisa ser desenvolvido com algumas funções iniciais: register, getDisplayName, getDescription, isSitePlugin e getContents. Podemos ver um exemplo abaixo:
 
@@ -282,7 +317,7 @@ class NomePluginBlockPlugin extends BlockPlugin {
 }
 ```
 
-### 2.2.4 - block.tpl
+### 3.2.4 - block.tpl
 
 - Por fim, o block.tpl é responsável pela exibição de nosso plugin. Assim, o que conter nele será exibido ao habilitarmos o plugin em nosso site.
 
@@ -292,7 +327,7 @@ class NomePluginBlockPlugin extends BlockPlugin {
 </div>
 ```
 
-## 2.3 - Como instalar o plugin na sua revistas
+## 3.3 - Como instalar o plugin na sua revistas
 
 - Com o plugin terminado, devemos adentrar na área de administrador do OJS.
 
