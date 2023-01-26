@@ -17,31 +17,42 @@ nav_order: 1
 ## 1. Instalação
 - O pacote é instalado via Composer. Para o obter é necessário executar este comando dentro da pasta do seu projeto:
 
-```bash
+```
 composer require owen-it/laravel-auditing
 ```
 
 ## 2. Configuração 
+- Edite o arquivo **config/app.php**, acrescentando a seguinte linha:
+
+```
+'providers' => [
+    // ...
+
+    OwenIt\Auditing\AuditingServiceProvider::class,
+
+    // ...
+],
+```
 - Após isso, use o comando a seguir para publicar as configurações feitas e criar o arquivo **config/audit.php**:
 
-```bash
+```
 php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" --tag="config"
 ```
 
 ## 3. Migration
 - A seguir, crie a tabela audits com o seguinte comando: 
 
-```bash
+```
 php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" --tag="migrations"
 ```
-```bash
+```
 php artisan migrate
 ```
 
 ## 4. Model
 - Para implementar o audit no model desejado, é necessário adicionar as linhas:
 
-```php
+```
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Instance extends Model implements Auditable
@@ -59,7 +70,7 @@ class Instance extends Model implements Auditable
 
 - Primeiro, para facilitar a leitura dos usuários, é necessário mapear os campos da migration do Model em que o audit será utilizado. Então, em **app/Utils** vamos criar **Mapeamento.php** para o Model Livro, como no exemplo abaixo:
 
-```php
+```
 <?php
 
 namespace App\Utils;
@@ -73,7 +84,10 @@ class Mapeamento
             'id' => 'ID',
             'autores' => 'Autores',
             'titulo' => 'Título',
+            'desc_fisica' => 'Descrição física',
             'editora' => 'Editora',
+            'local_publicacao' => 'Local de publicação',
+            'edicao' => 'Edição',
             'ano' => 'Ano',
             'isbn' => 'ISBN',
         ];
@@ -86,7 +100,7 @@ class Mapeamento
 - Agora vamos chamar este mapeamento dentro do Model correspondente:
 
 **app/Models/Livro.php**
-```php
+```
 use App\Utils\Mapeamento;
 
 class Livro extends Model implements Auditable
@@ -101,7 +115,7 @@ class Livro extends Model implements Auditable
 - Após isso, é preciso adicionar a exibição do módulo audit nas views, criando uma tabela com as alterações que foram feitas, a data da alteração e o usuário que a realizou. Dentro da pasta **resources/views/livros/partials** vamos criar **audit.blade.php**, já adicionando o mapeamento feito anteriormente na tabela:
 **partials/audit.blade.php**
 
-```php
+```
 <table class="table table-striped">
   <thead>
     <tr>
@@ -139,13 +153,13 @@ class Livro extends Model implements Auditable
 
 - Agora vamos incluir a tabela na view **show.blade.php** de livros:
 
-```php
+```
 @include('livros.partials.audit', ['model'=>$livro])
 ```
 
 - Para que a página não fique muito poluída, optamos por inserir a tabela dentro de uma tag details usando um alerta bootstrap, desta forma:
 
-```php
+```
 <div class="alert alert-info" role="alert">
     <details>
         <summary>Visualizar histórico de alterações</summary>
@@ -156,5 +170,5 @@ class Livro extends Model implements Auditable
 ```
 ### Para mais informações visite: <a href="https://laravel-auditing.com/">Laravel Auditing</a>
 ---
-Escrito por Isabela
+
 ![Logo do Laravel](/assets/images/laravel.png)
