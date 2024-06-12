@@ -79,17 +79,6 @@ Instalação do Drupal com sqlite e perfil padrão:
     --account-mail="fflch@localhost" --yes
 ```
 
-Instalação com perfil da fflch, **fflchprofile** e banco de dados mysql:
-```bash
-./vendor/bin/drush site-install fflchprofile \
-    --db-url="mysql://admin:admin@localhost/drupal" \
-    --site-name="fflch" \
-    --site-mail="fflch@localhost" \
-    --account-name="fflch" \
-    --account-pass="fflch" \
-    --account-mail="fflch@localhost" --yes
-```
-
 Subindo um server local:
 ```bash
 cd drupal
@@ -143,6 +132,23 @@ Limpando cache:
 ./vendor/bin/drupal cc
 ```
 
+### Exercício 1
+
+Mostrar no seu controller quantidade de linhas do seguinte arquivo csv do tipo **rest**, **walking** e **running**. Também mostar a média da coluna **pulse** nos três casos **rest**, **walking** e **running**:
+
+[https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv)
+
+Exemplo de saída:
+
+|  exercise.csv| rest  | walking   | running |
+|--------------|-------|-----------|---------|
+|  Qtde linhas |  XX   |     XX    |   XXX   | 
+|  Média Pulse |  XX   |     XX    |   XXX   |
+
+rest
+
+## Dia 2
+
 Rota com parâmetro:
 
 ```bash
@@ -153,13 +159,19 @@ treinamento.index:
   requirements:
     _permission: 'access content'
 ```
-### Exercício 1
 
-Mostrar no seu controller quantas linhas do seguinte arquivo csv tem o tipo **rest** e quantas linhas tem o tipo **walking**, para ambos mostrar a média da coluna **pulse**:
 
-[https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv)
+Instalação com perfil da fflch, **fflchprofile** e banco de dados mysql:
+```bash
+./vendor/bin/drush site-install fflchprofile \
+    --db-url="mysql://admin:admin@localhost/drupal" \
+    --site-name="fflch" \
+    --site-mail="fflch@localhost" \
+    --account-name="fflch" \
+    --account-pass="fflch" \
+    --account-mail="fflch@localhost" --yes
+```
 
-## Dia 2
 No controller, retornar um template twig:
 
 ```bash
