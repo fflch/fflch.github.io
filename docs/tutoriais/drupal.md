@@ -127,19 +127,7 @@ Habilitando módulo treinamento:
 ```bash
 ./vendor/bin/drupal module:install treinamento
 ```
-
-As entradas de rotas são definidas em **treinamento.routing.yml**, no caso o controller será TreinamentoController com um método chamado **index**:
-
-```bash
-treinamento.index:
-  path: '/treinamento'
-  defaults:
-    _controller: '\Drupal\treinamento\Controller\TreinamentoController::index'
-  requirements:
-    _permission: 'access content'
-```
-
-O comando a seguir vai gerar o controller TreinamentoController com um método chamado index(), assim como uma rota /treinamento apontando para esse método:
+O comando a seguir vai gerar o controller TreinamentoController e a respectiva rota, no controller terá um método chamado index(), assim como uma rota /treinamento apontando para esse método:
 
 ```bash
 ./vendor/bin/drupal generate:controller  \
@@ -147,6 +135,12 @@ O comando a seguir vai gerar o controller TreinamentoController com um método c
   --class="TreinamentoController"  \
   --routes='"title":"index", "name":"treinamento.index", "method":"index", "path":"/treinamento"'  \
   --no-interaction
+```
+
+Limpando cache:
+
+```bash
+./vendor/bin/drupal cc
 ```
 
 Rota com parâmetro:
