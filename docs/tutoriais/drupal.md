@@ -77,7 +77,6 @@ Instalação do Drupal com sqlite e perfil padrão:
     --account-name="fflch" \
     --account-pass="fflch" \
     --account-mail="fflch@localhost" --yes
-composer install
 ```
 
 Instalação com perfil da fflch, **fflchprofile** e banco de dados mysql:
@@ -89,7 +88,6 @@ Instalação com perfil da fflch, **fflchprofile** e banco de dados mysql:
     --account-name="fflch" \
     --account-pass="fflch" \
     --account-mail="fflch@localhost" --yes
-composer install
 ```
 
 Subindo um server local:
@@ -98,19 +96,6 @@ cd drupal
 ./vendor/bin/drupal serve -vvv
 # ou
 ./vendor/bin/drupal serve 0.0.0.0:8000 -vvv
-```
-
-Criando e deletando nodes de todos tipos para ambiente de desenvolvimento:
-
-```bash
-./vendor/bin/drupal create:nodes
-./vendor/bin/drupal entity:delete node --all
-```
-
-Criando e deletando nodes do tipo **agendamento** (deve ser criado na interface):
-
-```bash
-FALTA
 ```
 
 Zerando banco de dados:
@@ -206,6 +191,19 @@ FALTA
 ```
 
 Submissão de webform sistematicamente:
+
+```bash
+FALTA
+```
+
+Criando e deletando nodes de todos tipos para ambiente de desenvolvimento:
+
+```bash
+./vendor/bin/drupal create:nodes
+./vendor/bin/drupal entity:delete node --all
+```
+
+Criando e deletando nodes do tipo **agendamento** (deve ser criado na interface):
 
 ```bash
 FALTA
