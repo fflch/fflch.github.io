@@ -21,6 +21,27 @@ apt-get install php php-common php-cli php-gd php-curl php-xml php-mbstring php-
 apt-get install mariadb-server php-mysql sqlite3 php-sqlite3
 ```
 
+Instalação do php 7.4 para subir drupal da FFLCH (temporário):
+
+```bash
+sudo apt install apt-transport-https lsb-release ca-certificates curl -y
+sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
+sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+sudo apt update
+```
+
+```bash
+apt-get install php7.4 php7.4-common php7.4-cli php7.4-gd php7.4-curl php7.4-xml php7.4-mbstring php7.4-zip php7.4-sybase php7.4-sqlite3 php7.4-mysql
+```
+
+Trocar versão do php para 7.4:
+
+```bash
+sudo update-alternatives --set php /usr/bin/php7.4
+sudo update-alternatives --set phar /usr/bin/phar7.4 
+sudo update-alternatives --set phar.phar /usr/bin/phar.phar7.4 
+```
+
 Instalação do composer:
 
 ```bash
