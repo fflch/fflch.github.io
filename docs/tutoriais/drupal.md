@@ -122,10 +122,10 @@ Criação de um módulo chamado treinamento:
   --no-interaction
 ```
 
-Habilitando módulo
+Habilitando módulo treinamento:
 
 ```bash
-Falta
+./vendor/bin/drupal module:install treinamento
 ```
 
 As entradas de rotas são definidas em **treinamento.routing.yml**, no caso o controller será TreinamentoController com um método chamado **index**:
