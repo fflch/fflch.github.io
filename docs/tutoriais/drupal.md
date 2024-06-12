@@ -18,7 +18,7 @@ Biblioteca mínimas para instalação no debian 12:
 
 ```bash
 sudo apt-get install php php-common php-cli php-gd php-curl php-xml php-mbstring php-zip php-sybase php-mysql php-sqlite3
-sudo apt-get install mariadb-server sqlite3 
+sudo apt-get install mariadb-server sqlite3 git
 ```
 
 Instalação do php 7.4 para subir drupal da FFLCH (temporário):
@@ -51,14 +51,12 @@ curl -s https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 ```
 
-Instalação do mariadb e criação de usuário admin com senha admin e criação de uma banco chamado drupal:
+Criação de usuário admin com senha admin e criação de uma banco chamado drupal:
 ```bash
-sudo apt install mariadb-server
 sudo mariadb
 GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
 create database drupal;
 quit
-exit
 ```
 
 Instalação da distribuição Drupal da FFLCH: 
