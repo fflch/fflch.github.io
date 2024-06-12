@@ -17,8 +17,8 @@ nav_order: 4
 Biblioteca mínimas para instalação no debian 12:
 
 ```bash
-apt-get install php php-common php-cli php-gd php-curl php-xml php-mbstring php-zip php-sybase
-apt-get install mariadb-server php-mysql sqlite3 php-sqlite3
+sudo apt-get install php php-common php-cli php-gd php-curl php-xml php-mbstring php-zip php-sybase php-mysql php-sqlite3
+sudo apt-get install mariadb-server sqlite3 
 ```
 
 Instalação do php 7.4 para subir drupal da FFLCH (temporário):
@@ -30,8 +30,10 @@ sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > 
 sudo apt update
 ```
 
+Instalação das dependências em php7.4:
+
 ```bash
-apt-get install php7.4 php7.4-common php7.4-cli php7.4-gd php7.4-curl php7.4-xml php7.4-mbstring php7.4-zip php7.4-sybase php7.4-sqlite3 php7.4-mysql
+sudo apt-get install php7.4 php7.4-common php7.4-cli php7.4-gd php7.4-curl php7.4-xml php7.4-mbstring php7.4-zip php7.4-sybase php7.4-sqlite3 php7.4-mysql
 ```
 
 Trocar versão do php para 7.4:
