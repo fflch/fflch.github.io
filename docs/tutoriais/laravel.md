@@ -87,11 +87,106 @@ use App\Http\Controllers\ExerciseController;
 Route::get('/exercises', [ExerciseController::class,'index']);
 ```
 
+Criando um arquivo para a view:
+
+```php
+mkdir resources/views/exercises
+touch resources/views/exercises/index.blade.php
+echo "Ola" >  resources/views/exercises/index.blade.php
+```
+
+Como retornar uma view no controller:
+
+```php
+return view('exercises/index.blade.php');
+#ou 
+return view('exercises.index');
+```
+
+Conteúdo mínimo de index.blade.php:
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>treinamento</title>
+    </head>
+    <body>
+        Uma view melhor...
+    </body>
+</html>
+```
+
+Retornando uma view passando variáveis para o template:
+
+```php
+return view('exercises.index', [
+    'variavel1' => 'qualquer'
+]);
+```
+
+Configuração do .env para conexão com banco de dados:
+
+```bash
+DB_DATABASE=treinamento                                                                                                                     
+DB_USERNAME=admin                                                                                                                 
+DB_PASSWORD=admin
+```
+
+Instalação do template USP conforme:
+
+[https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md](https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md)
+
+Criando model e tabela no banco de dados:
+
+```bash
+php artisan make:model Exercise -m
+```
+
+Colocar duas colunas: 
+
+```php
+$table->string('diet');
+$table->integer('pulse');
+```
+
+Criando um registro:
+
+```php
+php artisan tinker
+$exercise = new App\Models\Exercise;
+$exercise->diet = "low fat";
+$exercise->pulse = 95;
+$exercise->save();
+quit
+```
+
+Listando registro no index:
+
+```php
+public function index(){
+    $exercises = App\Models\Exercise:all();
+    return view('exercises.index',[
+        'exercises' => $exercises
+    ]);
+}
+```
+
+No blade (use o bootstrap para deixar bonito):
+
+```php
+@forelse ($exercises as $exercise)
+    <li>{{ $exercise->diet }}</li>
+    <li>{{ $exercise->pulse }}</li>
+@empty
+    Não há livros cadastrados
+@endforelse
+```
 
 
 ### Exercício 1
 
-Mostrar no seu controller quantidade de linhas do seguinte arquivo csv do tipo **rest**, **walking** e **running**. Também mostar a média da coluna **pulse** nos três casos **rest**, **walking** e **running**:
+1) Criar uma rota e um método novo no controler chamado stats e mostrar a quantidade de linhas do tipo **rest**, **walking** e **running**. Também mostar a média da coluna **pulse** nos três casos **rest**, **walking** e **running**, tudo referente ao arquivo:
 
 [https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv)
 
@@ -102,31 +197,29 @@ Exemplo de saída:
 |  Qtde linhas |  XX   |     XX    |   XXX   | 
 |  Média Pulse |  XX   |     XX    |   XXX   |
 
-rest
+2) Criar uma rota e um método novo no controler que importa cada linha do csv no banco de dados, assim como fizemos com o tinker.
 
 
 # Dia 2
 # Dia 3
-# Dia 4
-# Dia 5
 
-### O módulo Audit é uma forma de verificar e manter registros das modificações feitas por usuários no sistema.
 
-## 1. Instalação
+O módulo Audit é uma forma de verificar e manter registros das modificações feitas por usuários no sistema.
+
+1. Instalação
 - O pacote é instalado via Composer. Para o obter é necessário executar este comando dentro da pasta do seu projeto:
 
 ```bash
 composer require owen-it/laravel-auditing
 ```
 
-## 2. Configuração 
+ 2. Configuração 
 - Após isso, use o comando a seguir para publicar as configurações feitas e criar o arquivo **config/audit.php**:
 
 ```bash
 php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" --tag="config"
 ```
-
-## 3. Migration
+3. Migration
 - A seguir, crie a tabela audits com o seguinte comando: 
 
 ```bash
@@ -136,7 +229,7 @@ php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" 
 php artisan migrate
 ```
 
-## 4. Model
+ 4. Model
 - Para implementar o audit no model desejado, é necessário adicionar as linhas:
 
 ```php
@@ -151,9 +244,9 @@ class Instance extends Model implements Auditable
 }    
 ```
 
-## 5. Implementação
+ 5. Implementação
 
-### Agora vamos implementar o módulo para ser exibido nas views. 
+ Agora vamos implementar o módulo para ser exibido nas views. 
 
 - Primeiro, para facilitar a leitura dos usuários, é necessário mapear os campos da migration do Model em que o audit será utilizado. Então, em **app/Utils** vamos criar **Mapeamento.php** para o Model Livro, como no exemplo abaixo:
 
@@ -252,7 +345,7 @@ class Livro extends Model implements Auditable
     </details>
 </div>
 ```
-### Para mais informações visite: <a href="https://laravel-auditing.com/">Laravel Auditing</a>
+ Para mais informações visite: <a href="https://laravel-auditing.com/">Laravel Auditing</a>
 ---
 Escrito por Isabela
 ![Logo do Laravel](/assets/images/laravel.png)
