@@ -149,7 +149,7 @@ rest
 
 ## Dia 2
 
-Rota com parâmetro:
+Rota com parâmetro, será injetada no método index do controller:
 
 ```bash
 treinamento.index:
@@ -160,6 +160,111 @@ treinamento.index:
     _permission: 'access content'
 ```
 
+Criação de um twig template, para tal, criar um arquivo treinamento.module com a definição do template:
+
+```php
+/**
+ * Implements hook_theme().
+ */
+function treinamento_theme($existing, $type, $theme, $path) {
+  return [
+    'treinamento' => [
+      'variables' => ['parametro' => NULL],
+    ],
+  ];
+}
+```
+
+Criação de um twig template em templates/treinamento.html.twig:
+
+```html
+<p>Nosso primeiro twig template!</p>
+ 
+<p>Olha só o que você digitou na rota: {{ parametro }}</p>
+```
+
+Retornando o template no controller:
+```php
+    return [
+      '#theme' => 'treinamento',
+      '#parametro' => $parametro,
+    ];
+```
+
+Na interface vamos criar alguns tipos de conteúdos.
+Criando e deletando nodes de todos tipos para ambiente de desenvolvimento:
+
+```bash
+./vendor/bin/drupal create:nodes
+./vendor/bin/drupal entity:delete node --all
+```
+
+Carregando id's dos nodes:
+
+```bash
+$nids = \Drupal::entityQuery('node')->condition('type','page')->execute();
+```
+
+**Desafio: Mostrar a quantidade de nodes do tipo selecionado**
+
+Dica: pode-se desligar o cache de variáveis:
+```php
+return [
+  '#theme' => 'treinamento',
+    ...
+  '#cache' => [
+    'max-age' => 0,
+  ],  
+];
+```
+
+A partir dos **nids** pode-se carregar os objetos nodes:
+
+```php
+$nodes =  \Drupal\node\Entity\Node::loadMultiple($nids);
+```
+
+**Desafio: mostrar os títulos dos nodes no twig**
+
+Criando um node do tipo page:
+```php
+use \Drupal\node\Entity\Node;
+
+$node = Node::create([
+    'type' => 'page',
+    'title' => 'Teste com estagiários',
+    'field_qualquer' => 123,
+]);
+$node->save();
+```
+
+Pode-se só manipular um node já existente:
+
+```php
+$nid = 1;
+$node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
+$node->save();
+```
+
+### Exercício 2
+
+Neste exercício vamos continuar trabalhando com o seguinte arquivo:
+
+[https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv)
+
+- Criar um tipo de conteúdo com as colunas desse arquivo
+- Criar uma rota e um controller que leia o arquivo csv e para cada linha crie um node correspondente no tipo de conteúdo criado anteriormente (se essa rota for clicada duas vezes, não duplicar registros, e sim atualizá-los)
+- Criar uma rota, controller e template mostrando a tabela (a partir dos nodes e não do csv)
+- Remontar a tabela do exercício 1, mas lendo os nodes: Mostrar no seu controller quantidade de linhas do seguinte arquivo csv do tipo **rest**, **walking** e **running**. Também mostar a média da coluna **pulse** nos três casos **rest**, **walking** e **running**:
+
+Exemplo de saída:
+
+|  exercise.csv| rest  | walking   | running |
+|--------------|-------|-----------|---------|
+|  Qtde linhas |  XX   |     XX    |   XXX   | 
+|  Média Pulse |  XX   |     XX    |   XXX   |
+
+## Dia 3
 
 Instalação com perfil da fflch, **fflchprofile** e banco de dados mysql:
 ```bash
@@ -202,12 +307,7 @@ Submissão de webform sistematicamente:
 FALTA
 ```
 
-Criando e deletando nodes de todos tipos para ambiente de desenvolvimento:
 
-```bash
-./vendor/bin/drupal create:nodes
-./vendor/bin/drupal entity:delete node --all
-```
 
 Criando e deletando nodes do tipo **agendamento** (deve ser criado na interface):
 
