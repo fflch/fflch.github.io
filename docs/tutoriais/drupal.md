@@ -224,6 +224,15 @@ A partir dos **nids** pode-se carregar os objetos nodes:
 $nodes =  \Drupal\node\Entity\Node::loadMultiple($nids);
 ```
 
+Iterando sob a os objetos nodes no twig:
+```php
+<ul>
+    {% for node in p %}
+        <li>{{ node.title.value }} - {{ node.field_autor.value }}</li>
+    {% endfor %}
+</ul>
+```
+
 **Desafio: mostrar os títulos dos nodes no twig**
 
 Criando um node do tipo page:
@@ -238,7 +247,7 @@ $node = Node::create([
 $node->save();
 ```
 
-Pode-se só manipular um node já existente:
+Pode-se manipular somente um node já existente:
 
 ```php
 $nid = 1;
