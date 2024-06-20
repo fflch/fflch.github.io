@@ -125,24 +125,9 @@ return view('exercises.index', [
 ]);
 ```
 
-Configuração do .env para conexão com banco de dados:
-
-```bash
-DB_DATABASE=treinamento                                                                                                                     
-DB_USERNAME=admin                                                                                                                 
-DB_PASSWORD=admin
-```
-
-Instalação do template USP conforme:
-
-[https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md](https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md)
-
-Criando model e tabela no banco de dados:
-
 ```bash
 php artisan make:model Exercise -m
 ```
-
 Colocar duas colunas: 
 
 ```php
@@ -183,6 +168,20 @@ No blade (use o bootstrap para deixar bonito):
 @endforelse
 ```
 
+Criando um comando no laravel:
+
+```php
+php artisan make:command ImportaExerciseCsv
+```
+
+Que gera o arquivo:  **app/Console/Commands/ImportaExerciseCsv.php**, no qual devemos definir o comando em si:
+
+```php
+protected $signature = 'ImportaExerciseCsv';
+```
+
+No método *handle()* definimos nossa lógica.
+
 
 ### Exercício 1
 
@@ -201,8 +200,185 @@ Exemplo de saída:
 
 
 # Dia 2
-# Dia 3
 
+## CRUD
+
+Operações básicas sob o Model: Create (Criação), Read (Consulta), Update (Atualização) e Delete (Destruição)
+
+No dia 1 criamos o Model Exercise e dois campos: diet e pulse.
+Nesta parte vamos criar um novo model Chamado Livro e correspondente migration, com os campos:
+
+```php
+$table->string('titulo');
+$table->string('autor')->nullable();
+$table->string('isbn');
+```
+
+### Create
+
+Rotas para mostrar o formulário de cadastro de Livro:
+
+```php
+use App\Http\Controllers\LivroController;
+Route::get('/exercises/create', [LivroController::class,'create']);
+Route::post('/exercises', [LivroController::class,'store']);
+```
+
+Método *create* para mostrar o formulário html:
+
+```php
+public function create()
+{
+    return view('livros.create');
+}
+```
+
+Formulário html:
+```php
+<form method="POST" action="/livros">
+    @csrf
+    Título: <input type="text" name="titulo">
+    Autor: <input type="text" name="autor">
+    ISBN: <input type="text" name="isbn">
+    <button type="submit">Enviar</button>
+</form>
+```
+
+### Read
+
+Temos dois acessos aos dados. O acesso a um livro específico e uma listagem.
+
+```php
+use App\Http\Controllers\LivroController;
+Route::get('/exercises', [LivroController::class,'index']);
+Route::get('/exercises/{livro}', [LivroController::class,'show']);
+```
+
+Controllers:
+```php
+public function index()
+{
+    $livros =  Livro::all();
+    return view('livros.index',[
+        'livros' => $livros
+    ]);
+}
+
+public function show(Livro $livro)
+{
+    return view('livros.show',[
+        'livro' => $livro
+    ]);
+}
+```
+
+html para index:
+```php
+@forelse ($livros as $livro)
+    <ul>
+        <li><a href="/livros/{{$livro->id}}">{{ $livro->titulo }}</a></li>
+        <li>{{ $livro->autor }}</li>
+        <li>{{ $livro->isbn }}</li>
+    </ul>
+@empty
+    Não há livros cadastrados
+@endforelse
+```
+
+### Update
+
+Novamente temos que mostrar o fomulário de edição e um método para salvar:
+```php
+use App\Http\Controllers\LivroController;
+Route::get('/exercises/{livro}', [LivroController::class,'edit']);
+Route::post('/exercises/{livro}', [LivroController::class,'update']);
+```
+
+Implementação no controller:
+```php
+public function edit(Livro $livro)
+{
+    return view('livros.edit',[
+        'livro' => $livro
+    ]);
+}
+
+public function update(Request $request, Livro $livro)
+{
+    $livro->titulo = $request->titulo;
+    $livro->autor = $request->autor;
+    $livro->isbn = $request->isbn;
+    $livro->save();
+    return redirect("/livros/{$livro->id}");
+}
+```
+
+Html para edição:
+```php
+<form method="POST" action="/livros">
+    @csrf
+    Título: <input type="text" name="titulo" value="{{ $livro->titulo }}">
+    Autor: <input type="text" name="autor" value="{{ $livro->autor }}">
+    ISBN: <input type="text" name="isbn" value="{{ $livro->isbn }}">
+    <button type="submit">Enviar</button>
+</form>
+```
+
+### Delete
+
+Rota para delete:
+```php
+Route::delete('/exercises/{livro}', [LivroController::class,'update']);
+```
+
+Controller para delete:
+```php
+public function destroy(Livro $livro)
+{
+    $livro->delete();
+    return redirect('/livros');
+}
+```
+
+Botão html para delete:
+```php
+<li>
+    <form action="/livros/{{ $livro->id }} " method="post">
+    @csrf
+    @method('delete')
+    <button type="submit" onclick="return confirm('Tem certeza?');">Apagar</button> 
+    </form>
+</li> 
+```
+### Exercício 2
+
+1. Criar um model Book com migration e um controller BookController
+2. Na migration criar os campos https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv
+3. Criar uma rotina de importação com **php artisan make:command ImportBookCsv** e importa o csv https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv (esse é o completo!)
+4. Implementar todos médodos do CRUD, de forma que pela inteface poderemos criar, editar, ver e apagar books
+5. Criar rota, controler e view que vai mostrar: 
+
+    - uma tabela com a quantidade de livros por ano
+    - uma tabela com a quantidade de livros por autor
+    - uma tabela com a quantidade de livros por idioma
+
+# Extra
+
+Configuração do .env para conexão com banco de dados:
+
+```bash
+DB_DATABASE=treinamento                                                                                                           
+DB_USERNAME=admin                                                                                                                 
+DB_PASSWORD=admin
+```
+
+Instalação do template USP conforme:
+
+[https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md](https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md)
+
+Criando model e tabela no banco de dados:
+
+## biblioteca Audit
 
 O módulo Audit é uma forma de verificar e manter registros das modificações feitas por usuários no sistema.
 
