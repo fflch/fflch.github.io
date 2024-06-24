@@ -17,84 +17,7 @@ Esse tutorial é baseado nas seguintes documentações:
 - <https://wiki.samba.org/index.php/Setting_up_Automatic_Printer_Driver_Downloads_for_Windows_Clients>
 - <https://wiki.samba.org/index.php/Configuring_Winbindd_on_a_Samba_AD_DC>
 
-## 1. INSERÇÃO DE LINHAS DE COMANDO DENTRO DA MAQUINA VIRTUAL FIRSTDC
-
-- Primeiro você deve ir até o arquivo smb.conf através do seguinte caminho /etc/samba e editar esse arquivo inserindo as seguintes linhas de código na seção [global] do arquivo:
-```
-spoolss: architecture = Windows x64
-```
-```
-idmap config * : backend = tdb
-idmap config * : range = 10000-999999
-idmap config DOMAIN: backend = ad
-idmap config DOMAIN: intervalo = 2000000-2999999
-idmap config DOMAIN: schema_mode = rfc2307
-idmap config DOMAIN: unix_nss_info = yes
-idmap config DOMAIN: unix_primary_group = yes
-#talvez as linhas não sejam necessárias
-template shell = /bin/bash
-template homedir = /home/%U
-```
-- No terminal é necessário que esses códigos que respectivamente, estabelecem o compartilhamento de apenas drivers de 64 bits e configuram o mapeamento de usuários,  sejam colocados na seção [global] do arquivo smb.conf tal como na imagem abaixo:
-
-![imagem1](/assets/images/sambaimages/f1.png)
-
-- Agora você precisa configurar o compartilhamento dos drives adicionando uma nova seção [print$] ainda dentro do arquivo smb.conf com o seguinte código:
-```
-[print$]
-   	path = /srv/samba/printer_drivers/
-   	read only = no
-```
-- O terminal ficará exatamente como na imagem abaixo:
-
-![imagem2](/assets/images/sambaimages/f2.png)
-
-- Após isso você vai precisar executar o seguinte comando no terminal para recarregar o samba:
-```
-smbcontrol all reload-config
-```
-- Vocẽ deve agora ir até o arquivo /etc/nsswitch.conf e adicionar as seguintes linhas no documento, para que fiquem tal como na imagem abaixo:
-```
-passwd:     	compat winbind
-group:      	compat winbind
-```
-![imagem3](/assets/images/sambaimages/f3.png)
-
-- Então você irá criar o diretória printer_drivers onde ficarão os drives que serão compartilhados na configuração da gpo ao longo desse tutorial. Você deve executar o seguinte comando no terminal
-```
-mkdir -p /srv/samba/printer_drivers/
-```
-- Após isso vamos conceder o prilégio de SePrintOperatorPrivilege para o grupo Domain Admins através do seguinte código:
-```
-net rpc rights grant "smbdomain.local.br\Domain Admins" SePrintOperatorPrivilege -U "smbdomainlocal.br\administrator"
-```
-- Após inserir o código o sistema pedirá a senha do administrator do domínio (nesse caso é SuperSenh@1).
-
-- Vocẽ também pode verificar se os usuários ou grupos do domínio possuem o privilégio de SePrintOperatorPrivilege através do seguinte comando:
-```
-net rpc rights list privileges SePrintOperatorPrivilege -U "smbdomain.local.br\administrator"
-```
-- Poderemos assim verificar a lista de grupos e usuarios que possuem o privilegio SePrintOperatorPrivilege tal como na imagem abaixo:
-
-![imagem4](/assets/images/sambaimages/f4.png)
-
-- Agora você precisa mudar as permissões e grupo do diretório printer_drivers criado anteriormente. E para isso você deve executar as seguintes linhas de comando no terminal:
-
-```
-chgrp -R "smbdomain.local.br\Domain Admins" /srv/samba/printer_drivers/
-```
-```
-chmod -R 2775 /srv/samba/printer_drivers/
-```
-Você poderá verificar as permissões de gravação e os grupos que podem gravar no diretório indo até a pasta samba e digitando o comando para mostrar todas as informações do diretório:
-```
-ls -l
-```
-- Você poderá visualizar como ficaram as permições de gravação nesse diretório e elas devem ficar como na imagem ibaixo:
-
-![imagem5](/assets/images/sambaimages/f5.png)
-
-## 2. CRIAÇÃO DA GPO PARA CONFIAR NO SERVIDOR DE IMPRESSÃO
+## 1. CRIAÇÃO DA GPO PARA CONFIAR NO SERVIDOR DE IMPRESSÃO
 
 - Uma vez executados todos os comandos no terminal, precisamos criar uma GPO usando a interface de uma maquina windows.
 
@@ -173,13 +96,27 @@ secpol.msc
 
 - Após inserir o indereço do servidor, basta clicar em OK e depois em OK novamente.
 
-- Você deve esperar até que os membros do domínio do Windows apliquem a politica de grupo automáticamente.
+- Você deverá habilitar um novo template administrativo chamado **Limita a instalação do driver de impressão aos administradores**. E após isso selecionar a opção de **Desabilitado** tal como na imagem abaixo. E clicar em **Aplicar** e finalmente em **OK**.
+
+![imagem13.1](/assets/images/sambaimages/f13.1.png)
+
+- Após isso você deve esperar até que os membros do domínio do Windows apliquem a politica de grupo automáticamente.
 
 - Caso você precise aplicar essa politica manualmente basta reiniciar o membro do domínio e executar o seguinte comando com as permissões de administrador local:
 ```
 gpupdate /force /target:computer
 ```
-## 3. CONECTAR AO SERVIDOR DE IMPRESSÃO USANDO O CONSOLE DE GERENCIAMENTO DE IMPRESSÃO
+## 1.1 CRIAÇÃO DE OUTRA GPO GPO PARA CONSEGUIR FAZER VIZUALIZAR AS IMPRESSORAS DO SERVIDOR
+
+- Agora será necessário criar uma nova gpo e habilitar apenas uma politica.
+
+- Então repita o mesmo processo dos passos anteriores para a criação da GPO **IMPRESSORAS**. Contudo ao invés de **IMPRESSORAS** adicione o nome **FIXRPX** como no exemplo.
+
+![imagem13.2](/assets/images/sambaimages/f13.2.png)
+
+- Após isso você deve Editar a politica habilitando o template de **Definir configurações de conexão RPC** e selecionando a opção de **RPC sobre pipes nomeados** em **Protocolo a ser usado para conexões RPC de saída:** e a opção **Padrão** em **Use a autenticação para conexões RPC de saída**. E após isso clique em **Aplicar** e depois em **OK**.
+
+## 2. CONECTAR AO SERVIDOR DE IMPRESSÃO USANDO O CONSOLE DE GERENCIAMENTO DE IMPRESSÃO
 
 - Vocẽ precisa agora abrir a ferramenta **gerenciamento de impressão** e para fazer isso basta pesquisar o nome da ferramenta na barra de pesquisa do windows.
 
@@ -197,7 +134,7 @@ gpupdate /force /target:computer
 
 - Após isso basta clicar em OK.
 
-## 4. CARREGAR UM DRIVER DE IMPRESSORA PARA UM SERVIDOR DE IMPRESSÃO SAMBA
+## 3. CARREGAR UM DRIVER DE IMPRESSORA PARA UM SERVIDOR DE IMPRESSÃO SAMBA
 
 - Agora você deve expandir a aba de **gerenciamento de impressão**, **Servidores de impressão**, **vagrantfirstdc.smbdomain.local.br** e depois clicar com o botão direito em **Driver** e selecionar a opção **Adicionar Driver...** tal como na imagem abaixo:
 
@@ -209,7 +146,7 @@ gpupdate /force /target:computer
 
 - E finalmente selecionar o modelo e clicar em avançar e em concluir.
 
-## 5. ATRIBUIR UM DRIVER A UMA IMPRESSORA
+## 4. ATRIBUIR UM DRIVER A UMA IMPRESSORA
 
 - Ainda em **Gerenciamento de Impressão**, expandindo **Servidores**, **vagrantfirstdc.smbdomain.local.br**. Clique em **Impressoras** e com o botão direito clique novamente na impressora a qual será atribuído o driver previamente carregado selecionando a opção **propriedades**:
 
@@ -235,7 +172,7 @@ gpupdate /force /target:computer
 
 ![imagem22](/assets/images/sambaimages/f22.png)
 
-## 6. IMPLANTAÇÃO AUTOMÁTICA DE IMPRESSORAS:
+## 5. IMPLANTAÇÃO AUTOMÁTICA DE IMPRESSORAS:
 
 - No **editor de Gerenciamento de Política de grupo** você precisa clicar em **configurações do Windows** como na imagem abaixo:
 
@@ -252,3 +189,5 @@ gpupdate /force /target:computer
 - Após isso basta clicar em **adicionar** e depois clicar em **OK**. E Após isso a tela vai ficar dessa maneira:
 
 ![imagem26](/assets/images/sambaimages/f26.png)
+
+- Agora, basta reiniciar o computador e após isso quando pesquisadas na aba de impressoras do windows por **Impressoras e Scanners** irão aparecer todas as impressoras que você implantou.
