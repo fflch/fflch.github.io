@@ -382,7 +382,7 @@ Neste exercício vamos trabalhar com o seguinte arquivo:
 [https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv](https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv)
 
 - Criar um webform com as colunas desse arquivo
-- Criar um arquivo php que leia o arquivo csv e para cada linha crie um submissão correspondente no webform criado anteriormente (rodar seu script com drush)
+- Criar um arquivo php que leia o arquivo csv completo ([https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv](https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv)) e para cada linha crie um submissão correspondente no webform criado anteriormente (rodar seu script com drush)
 
 ## Dia 4 (em construção)
 
