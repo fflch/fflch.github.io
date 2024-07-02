@@ -51,14 +51,6 @@ curl -s https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 ```
 
-Criação de usuário admin com senha admin e criação de uma banco chamado drupal:
-```bash
-sudo mariadb
-GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
-create database drupal;
-quit
-```
-
 Instalação da distribuição Drupal da FFLCH: 
 
 ```bash
@@ -288,6 +280,25 @@ Exemplo de saída:
 
 ## Dia 3
 
+Criação de usuário admin com senha admin e criação de uma banco chamado drupal:
+```bash
+sudo mariadb
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
+create database drupal;
+quit
+```
+
+Instalação com perfil da fflch, **fflchprofile** e banco de dados mysql:
+```bash
+./vendor/bin/drush site-install fflchprofile \
+    --db-url="mysql://admin:admin@localhost/drupal" \
+    --site-name="fflch" \
+    --site-mail="fflch@localhost" \
+    --account-name="fflch" \
+    --account-pass="fflch" \
+    --account-mail="fflch@localhost" --yes
+```
+
 Como chamar um script php usando linha de comando, útil, por exemplo,  para criar nodes sistematicamente:
 
 ```bash
@@ -315,17 +326,6 @@ $node = Node::create([
 ]);
 
 $node->save();
-```
-
-Instalação com perfil da fflch, **fflchprofile** e banco de dados mysql:
-```bash
-./vendor/bin/drush site-install fflchprofile \
-    --db-url="mysql://admin:admin@localhost/drupal" \
-    --site-name="fflch" \
-    --site-mail="fflch@localhost" \
-    --account-name="fflch" \
-    --account-pass="fflch" \
-    --account-mail="fflch@localhost" --yes
 ```
 
 Criação de uma submissão de um webform:
