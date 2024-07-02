@@ -334,7 +334,7 @@ use \Drupal\file\Entity\File;
 $filepath = '/home/thiago/arquivo.pdf';
 $file = File::create([
   'filename' => basename($filepath),
-  'uri' => 'public://my-dir/' . basename($filepath),
+  'uri' => 'public://' . basename($filepath),
   'status' => 1,
   'uid' => 1,
 ]);
@@ -352,6 +352,7 @@ $node = Node::create([
 
 $node->save();
 ```
+Se quiser especificar uma pasta em files, troque 'public://' por 'public://MINHA-PASTA/'
 
 Criação de uma submissão de um webform:
 
