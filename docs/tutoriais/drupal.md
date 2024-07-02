@@ -236,6 +236,7 @@ Iterando sob a os objetos nodes no twig:
 **Desafio: mostrar os títulos dos nodes no twig**
 
 Criando um node do tipo page:
+
 ```php
 use \Drupal\node\Entity\Node;
 
@@ -247,11 +248,23 @@ $node = Node::create([
 $node->save();
 ```
 
+Ou se preferir:
+
+```php
+use \Drupal\node\Entity\Node;
+
+$node = Node::create(['type' => 'page']);
+$node->title = 'mais um node';
+$node->field_qualquer= 'Teste com estagiários';
+$node->save();
+```
+
 Pode-se manipular somente um node já existente:
 
 ```php
 $nid = 1;
-$node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
+$node = Node::load($nid);
+$node->body->format = 'full_html';
 $node->save();
 ```
 
@@ -275,6 +288,35 @@ Exemplo de saída:
 
 ## Dia 3
 
+Como chamar um script php usando linha de comando, útil, por exemplo,  para criar nodes sistematicamente:
+
+```bash
+./vendor/bin/drush php-script ~/cria_nodes.php
+```
+
+Carregando arquivo ao criar um node:
+
+```bash
+
+use \Drupal\node\Entity\Node;
+use \Drupal\file\Entity\File;
+
+$data = file_get_contents('/home/thiago/arquivo.pdf');
+$file = file_save_data($data, 'public://arquivo.pdf', FILE_EXISTS_REPLACE);
+
+$node = Node::create([
+    'type' => 'page',
+    'title' => 'Teste com arquivo',
+    'field_arquivo' => [
+        'target_id' => $file->id(),
+        'alt' => 'Pdf exemplo',
+        'title' => 'Pdf exemplo'
+    ],
+]);
+
+$node->save();
+```
+
 Instalação com perfil da fflch, **fflchprofile** e banco de dados mysql:
 ```bash
 ./vendor/bin/drush site-install fflchprofile \
@@ -286,42 +328,66 @@ Instalação com perfil da fflch, **fflchprofile** e banco de dados mysql:
     --account-mail="fflch@localhost" --yes
 ```
 
-No controller, retornar um template twig:
+Criação de uma submissão de um webform:
 
 ```bash
-FALTA
-```
+use Drupal\webform\Entity\Webform;
+use Drupal\webform\Entity\WebformSubmission;
 
-Criação de node sistematicamente:
+$webform_id = 'meu_webform';
+$webform = Webform::load($webform_id);
 
-```bash
-FALTA
-```
+$values = [
+  'webform_id' => $webform->id(),
+  'data' => [
+    'nome' => 'Thiago Gomes Verissimo',
+    'email' => 'thiago.verissimo@usp.br',
+  ],
+];
 
-Criação de node sistematicamente com arquivo pdf em anexo:
-
-```bash
-FALTA
-```
-
-Criação de node sistematicamente com múltiplos arquivo pdfs em anexo:
-
-```bash
-FALTA
-```
-
-Submissão de webform sistematicamente:
-
-```bash
-FALTA
+$webform_submission = WebformSubmission::create($values);
+$webform_submission->save();
 ```
 
 
+### Exercício 3
 
-Criando e deletando nodes do tipo **agendamento** (deve ser criado na interface):
+Neste exercício vamos trabalhar com o seguinte arquivo:
+
+[https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv](https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv)
+
+- Criar um webform com as colunas desse arquivo
+- Criar um arquivo php que leia o arquivo csv e para cada linha crie um submissão correspondente no webform criado anteriormente (rodar seu script com drush)
+
+## Dia 4 (em construção)
+
+Carregando todas submissões de um webform:
 
 ```bash
-FALTA
+use Drupal\webform\Entity\Webform;
+use Drupal\webform\Entity\WebformSubmission;
+
+$webform_id = 'meu_webform';
+$webform = Webform::load($webform_id);
+
+if ($webform->hasSubmissions()) {
+  $query = \Drupal::entityQuery('webform_submission')->condition('webform_id', $webform_id );
+  $result = $query->execute();
+  $submission_data = [];
+  foreach ($result as $item) {
+    $submission = \Drupal\webform\Entity\WebformSubmission::load($item);
+    $data = $submission->getData();
+    ...
+}
+```
+
+## Extras
+
+trocar a url alternativa:
+
+```bash
+$node->path->alias = '/novo-caminho-do-node'
+$node->path->pathauto = Drupal\pathauto\PathautoState::SKIP;
 ```
 
 
