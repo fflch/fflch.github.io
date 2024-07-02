@@ -307,13 +307,38 @@ Como chamar um script php usando linha de comando, útil, por exemplo,  para cri
 
 Carregando arquivo ao criar um node:
 
-```bash
-
+```php
 use \Drupal\node\Entity\Node;
-use \Drupal\file\Entity\File;
 
 $data = file_get_contents('/home/thiago/arquivo.pdf');
 $file = file_save_data($data, 'public://arquivo.pdf', FILE_EXISTS_REPLACE);
+
+$node = Node::create([
+    'type' => 'page',
+    'title' => 'Teste com arquivo',
+    'field_arquivo' => [
+        'target_id' => $file->id(),
+        'alt' => 'Pdf exemplo',
+        'title' => 'Pdf exemplo'
+    ],
+]);
+
+$node->save();
+```
+
+Outra forma de carregar um arquivo:
+```php
+use \Drupal\node\Entity\Node;
+use \Drupal\file\Entity\File;
+
+$filepath = '/home/thiago/arquivo.pdf';
+$file = File::create([
+  'filename' => basename($filepath),
+  'uri' => 'public://my-dir/' . basename($filepath),
+  'status' => 1,
+  'uid' => 1,
+]);
+$file->save();
 
 $node = Node::create([
     'type' => 'page',
@@ -348,7 +373,6 @@ $values = [
 $webform_submission = WebformSubmission::create($values);
 $webform_submission->save();
 ```
-
 
 ### Exercício 3
 
