@@ -395,14 +395,14 @@ $request->validate([
 ]);
 {% endhighlight %}
 
-Podemos usar a função `old('titulo',$livro->titulo)` nos formulários, que 
+Podemos usar a função `old('titulo')` nos formulários, que 
 verifica se há inputs na sessão e em caso negativo usa o segundo parâmetro:
 
 {% highlight html %}
 {% raw %}
-Título: <input type="text" name="titulo" value="{{old('titulo', $livro->titulo)}}">
-Autor: <input type="text" name="autor" value="{{old('autor', $livro->autor)}}">
-ISBN: <input type="text" name="isbn" value="{{old('isbn', $livro->isbn)}}">
+Título: <input type="text" name="titulo" value="{{old('titulo')}}">
+Autor: <input type="text" name="autor" value="{{old('autor')}}">
+ISBN: <input type="text" name="isbn" value="{{old('isbn')}}">
 {% endraw %}
 {% endhighlight %}
 
