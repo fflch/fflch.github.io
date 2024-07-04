@@ -465,7 +465,7 @@ public function rules(){
 protected function prepareForValidation()
 {
     $this->merge([
-        'isbn' => preg_replace('/[^0-9]/', '', $this->isbn),
+        'isbn' => str_replace('-','',$this->isbn)
     ]);
 }
 public function messages()
