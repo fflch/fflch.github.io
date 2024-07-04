@@ -223,8 +223,8 @@ Rotas para mostrar o formulário de cadastro de Livro:
 
 ```php
 use App\Http\Controllers\LivroController;
-Route::get('/exercises/create', [LivroController::class,'create']);
-Route::post('/exercises', [LivroController::class,'store']);
+Route::get('/livros/create', [LivroController::class,'create']);
+Route::post('/livros', [LivroController::class,'store']);
 ```
 
 Método *create* para mostrar o formulário html:
