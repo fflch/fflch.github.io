@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Laravel
+title: Treinamento Laravel
 parent: Tutoriais
 nav_order: 1
 ---
@@ -8,11 +8,9 @@ nav_order: 1
 {:toc}
 ---
 
-# Treinamento Laravel
+# Dia 1
 
-## Dia 1
-
-### Instalação 
+## Instalação 
 
 Biblioteca mínimas para instalação no debian 12:
 
@@ -66,6 +64,7 @@ composer create-project laravel/laravel treinamento
 cd treinamento
 php artisan serve
 ```
+## MVC 
 
 Criando a primeira rota:
 
@@ -135,6 +134,8 @@ $table->string('diet');
 $table->integer('pulse');
 ```
 
+## Tinker
+
 Criando um registro:
 
 ```php
@@ -157,16 +158,20 @@ public function index(){
 }
 ```
 
-No blade (use o bootstrap para deixar bonito):
+No blade:
 
 ```php
+{% raw %}
 @forelse ($exercises as $exercise)
     <li>{{ $exercise->diet }}</li>
     <li>{{ $exercise->pulse }}</li>
 @empty
     Não há livros cadastrados
 @endforelse
+{% endraw %}
 ```
+
+## Command 
 
 Criando um comando no laravel:
 
@@ -179,11 +184,9 @@ Que gera o arquivo:  **app/Console/Commands/ImportaExerciseCsv.php**, no qual de
 ```php
 protected $signature = 'ImportaExerciseCsv';
 ```
-
 No método *handle()* definimos nossa lógica.
 
-
-### Exercício 1
+## Exercício 1
 
 1) Criar uma rota e um método novo no controler chamado stats e mostrar a quantidade de linhas do tipo **rest**, **walking** e **running**. Também mostar a média da coluna **pulse** nos três casos **rest**, **walking** e **running**, tudo referente ao arquivo:
 
@@ -274,6 +277,7 @@ public function show(Livro $livro)
 
 html para index:
 ```php
+{% raw %}
 @forelse ($livros as $livro)
     <ul>
         <li><a href="/livros/{{$livro->id}}">{{ $livro->titulo }}</a></li>
@@ -283,6 +287,7 @@ html para index:
 @empty
     Não há livros cadastrados
 @endforelse
+{% endraw %}
 ```
 
 ### Update
@@ -315,6 +320,7 @@ public function update(Request $request, Livro $livro)
 
 Html para edição:
 ```php
+{% raw %}
 <form method="POST" action="/livros">
     @csrf
     Título: <input type="text" name="titulo" value="{{ $livro->titulo }}">
@@ -322,6 +328,7 @@ Html para edição:
     ISBN: <input type="text" name="isbn" value="{{ $livro->isbn }}">
     <button type="submit">Enviar</button>
 </form>
+{% endraw %}
 ```
 
 ### Delete
@@ -342,15 +349,17 @@ public function destroy(Livro $livro)
 
 Botão html para delete:
 ```php
+{% raw %}
 <li>
     <form action="/livros/{{ $livro->id }} " method="post">
     @csrf
     @method('delete')
     <button type="submit" onclick="return confirm('Tem certeza?');">Apagar</button> 
     </form>
-</li> 
+</li>
+{% endraw %}
 ```
-### Exercício 2
+## Exercício 2
 
 1. Criar um model Book com migration e um controller BookController
 2. Na migration criar os campos https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv
@@ -362,6 +371,298 @@ Botão html para delete:
     - uma tabela com a quantidade de livros por autor
     - uma tabela com a quantidade de livros por idioma
 
+# Dia 3
+
+Instalação do template USP conforme:
+
+[https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md](https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md)
+
+## Validação
+
+### Validação no Controller
+
+Quando estamos dentro de um método do controller, a forma mais rápida de validação é
+usando `$request->validate`, que validará os campos com as condições que 
+passarmos e caso falhe a validação, automaticamente o usuário é retornado 
+para página de origem com todos inputs que foram enviados na requisição, além da
+mensagens de erro:
+
+{% highlight php %}
+$request->validate([
+  'titulo' => 'required',
+  'autor' => 'required',
+  'isbn' => 'required|integer',
+]);
+{% endhighlight %}
+
+Podemos usar a função `old('titulo',$livro->titulo)` nos formulários, que 
+verifica se há inputs na sessão e em caso negativo usa o segundo parâmetro:
+
+{% highlight html %}
+{% raw %}
+Título: <input type="text" name="titulo" value="{{old('titulo', $livro->titulo)}}">
+Autor: <input type="text" name="autor" value="{{old('autor', $livro->autor)}}">
+ISBN: <input type="text" name="isbn" value="{{old('isbn', $livro->isbn)}}">
+{% endraw %}
+{% endhighlight %}
+
+### FormRequest
+
+A validação, que muitas vezes será idêntica no store e no update, pode ser
+delegada para um FormRequest. Crie um FormRequest com o artisan:
+
+{% highlight bash %}
+php artisan make:request LivroRequest
+{% endhighlight %}
+
+Esse comando gerou o arquivo `app/Http/Requests/LivroRequest.php`. Como
+ainda não falamos de autenticação e autorização, retorne `true` no método
+`authorize()`. As validações podem ser implementada em `rules()`.
+Perceba que o isbn pode ser digitado com traços ou ponto, mas eu
+só quero validar a parte numérica do campo e ignorar o resto, 
+para isso usei o método `prepareForValidation`:
+
+{% highlight php %}
+public function rules(){
+    $rules = [
+        'titulo' => 'required',
+        'autor'  => 'required',
+        'isbn' => 'required|integer',
+    ];
+    return $rules;
+}
+protected function prepareForValidation()
+{
+    $this->merge([
+        'isbn' => preg_replace('/[^0-9]/', '', $this->isbn),
+    ]);
+}
+{% endhighlight %}
+
+Não queremos livros cadastrados com o mesmo isbn. Há uma validação
+chamada `unique` que pode ser invocada na criação de um livro como 
+`unique:TABELA:CAMPO`, mas na edição, temos que ignorar o próprio livro
+assim `unique:TABELA:CAMPO:ID_IGNORADO`. Dependendo do
+seu projeto, talvez seja melhor fazer um formRequest para criação e 
+outro para edição. Aqui usaremos o mesmo FormRequest para ambos. 
+As mensagens de erros podem ser customizadas com o método `messages()`:
+
+{% highlight php %}
+public function rules(){
+    $rules = [
+        'titulo' => 'required',
+        'autor'  => 'required',
+        'isbn' => ['required','integer'],
+    ];
+    if ($this->method() == 'PATCH' || $this->method() == 'PUT'){
+        array_push($rules['isbn'], 'unique:livros,isbn,' .$this->livro->id);
+    }
+    else{
+        array_push($rules['isbn'], 'unique:livros');
+    }
+    return $rules;
+}
+protected function prepareForValidation()
+{
+    $this->merge([
+        'isbn' => preg_replace('/[^0-9]/', '', $this->isbn),
+    ]);
+}
+public function messages()
+{
+    return [
+        'isbn.unique' => 'Este isbn está cadastrado para outro livro',
+    ];
+}
+{% endhighlight %}
+
+## Migration de alteração
+Quando o sistema está produção, você nunca deve alterar uma migration que já foi
+para o ar, mas sim criar uma migration que altera uma anterior. Por exemplo, 
+se quisermos que o campo isbn guarde apenas números, faremos:
+
+{% highlight bash %}
+composer require doctrine/dbal
+php artisan make:migration change_isbn_column_in_livros  --table=livros
+{% endhighlight %}
+
+Para usar migration de alteração devemos incluir o pacote `doctrine/dbal` e
+na sequência criar a migration que alterará a tabela existente.
+
+Alterando a coluna `isbn` de string para integer na migration acima:
+{% highlight php %}
+$table->integer('isbn')->change();
+{% endhighlight %}
+
+Aplique a mudança no banco de dados:
+{% highlight bash %}
+php artisan migrate
+{% endhighlight %}
+
+## Campos do tipo select 
+
+Vamos supor que queremos um campo adicional na tabela de livros
+chamado `tipo`. Já sabemos como criar uma migration de alteração
+para alterar a tabela livros:
+
+{% highlight bash %}
+php artisan make:migration add_tipo_column_in_livros --table=livros
+{% endhighlight %}
+
+E adicionamos na nova coluna:
+{% highlight php %}
+$table->string('tipo');
+{% endhighlight %}
+
+Vamos trabalhar com apenas dois tipos: nacional e internacional.
+A lista de tipos poderia vir de qualquer fonte: outro model, api,
+csv etc. No nosso caso vamos fixar esse dois tipos em um array e
+usar em todo o sistema. No model do livro vamos adicionar um método
+estático que retorna os tipos, pois assim, fica fácil mudar caso 
+a fonte seja alterada no futuro:
+
+{% highlight php %}
+public static function tipos(){
+    return [
+        'Nacional',
+        'Internacional'
+    ];
+}
+{% endhighlight %}
+
+No `form.blade.php` podemos inserir o tipo com um campo select desta forma:
+{% highlight html %}
+{% raw %}
+<select name="tipo">
+    <option value="" selected=""> - Selecione  -</option>
+    @foreach ($livro::tipos() as $tipo)
+        <option value="{{$tipo}}" {{ ( $livro->tipo == $tipo) ? 'selected' : ''}}>
+            {{$tipo}}
+        </option>
+    @endforeach
+</select>
+{% endraw %}
+{% endhighlight %}
+
+Se quisermos contemplar o `old` para casos de erros de validação:
+{% highlight html %}
+{% raw %}
+<select name="tipo">
+    <option value="" selected=""> - Selecione  -</option>
+    @foreach ($livro::tipos() as $tipo)
+        {{-- 1. Situação em que não houve tentativa de submissão --}}
+        @if (old('tipo') == '')
+        <option value="{{$tipo}}" {{ ( $livro->tipo == $tipo) ? 'selected' : ''}}>
+            {{$tipo}}
+        </option>
+        {{-- 2. Situação em que houve tentativa de submissão, o valor de old prevalece --}}
+        @else
+            <option value="{{$tipo}}" {{ ( old('tipo') == $tipo) ? 'selected' : ''}}>
+                {{$tipo}}
+            </option>
+        @endif
+    @endforeach
+</select>
+{% endraw %}
+{% endhighlight %}
+
+Por fim, temos que validar o campo tipo para que só entrem os valores do nosso array.
+No LivroRequest.php:
+
+{% highlight php %}
+use Illuminate\Validation\Rule;
+...
+'tipo'   => ['required', Rule::in(\App\Models\Livro::tipos())],
+{% endhighlight %}
+
+## Mutators
+
+Há situações em que queremos fazer um leve processamento antes de salvar
+um valor no banco de dados e logo após recuperarmos um valor. Vamos 
+adicionar um campo para preço. Já sabemos como criar uma migration 
+de alteração para alterar a tabela livros:
+
+{% highlight bash %}
+php artisan make:migration add_preco_column_in_livros --table=livros
+{% endhighlight %}
+
+E adicionamos na nova coluna:
+{% highlight php %}
+$table->float('preco')->nullable();
+{% endhighlight %}
+
+No LivroRequest também deixaremos esse campo como 
+opcional: `'preco'  => 'nullable'`. 
+
+Queremos que o usuário digite, por exemplo, `12,50`, mas guardaremos
+`12.5`. Quando quisermos mostrar o valor, vamos fazer a operação
+inversa. Poderíamos fazer esse tratamento diretamente no controller,
+mas também podemos usar `mutators` diretamente no model do livro:
+
+{% highlight php %}
+public function setPrecoAttribute($value){
+    $this->attributes['preco'] = str_replace(',','.',$value);
+}
+
+public function getPrecoAttribute($value){
+    return number_format($value, 2, ',', '');
+}
+{% endhighlight %}
+
+## Exercício 3
+
+Esse exercíco é referente ao arquivo: https://github.com/owid/covid-19-data/blob/master/public/data/vaccinations/country_data/Brazil.csv
+
+1. Criar model, migration, CRUD, command de importação do csv. Na migration defina os campos total_vaccinations e	people_vaccinated como string. Importe o csv.
+2. Faça uma migration de alteração para alterar total_vaccinations e people_vaccinated para inteiro
+3. Faça um mutator para mostrar o campo date com o formato brasileiro dd/mm/yyyy e outro mutator para salvá-lo commo yyyy-mm-dd (lembre-se que o formulário deve receber dd/mm/yyyy)
+4. Implemente o FormRequest garantindo que seja digitado dd/mm/yyyy, além implementar as outras validações
+5. Corriga seus formulários para sempre conterem a função old()
+
+# Dia 4 (Em construção)
+
+## Relações
+
+One (User) To Many (Livros)
+
+Primeiramente vamos implementar esse relação no nível do banco de dados.
+Na migration dos livros insira:
+
+{% highlight php %}
+$table->unsignedBigInteger('user_id')->nullable();
+$table->foreign('user_id')->references('id')->on('users')->onDelete('set null');;
+{% endhighlight %}
+
+No model Livro podemos criar um método que carregará o objeto
+`user` automaticamente ou no model `User` podemos carregar todos
+livros do usuário:
+
+{% highlight php %}
+class Livro extends Model
+{
+    public function user(){
+        return $this->belongsTo(\App\Models\User::class);
+    }
+}
+
+class User extends Model
+{
+    public function livros()
+    {
+        return $this->hasMany(App\Models\Livro::class);
+    }
+}
+{% endhighlight %}
+
+Assim no `fields.blade.php` faremos referência direta  a esse usuário:
+
+{% highlight html %}
+{% raw %}
+<li>Cadastrado por {{ $livro->user->name ?? '' }}</li>
+{% endraw %}
+{% endhighlight %}
+
+
 # Extra
 
 Configuração do .env para conexão com banco de dados:
@@ -372,9 +673,6 @@ DB_USERNAME=admin
 DB_PASSWORD=admin
 ```
 
-Instalação do template USP conforme:
-
-[https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md](https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md)
 
 Criando model e tabela no banco de dados:
 
@@ -469,6 +767,7 @@ class Livro extends Model implements Auditable
 **partials/audit.blade.php**
 
 ```php
+{% raw %}
 <table class="table table-striped">
   <thead>
     <tr>
@@ -501,7 +800,7 @@ class Livro extends Model implements Auditable
     @endforeach
   </tbody>
 </table>
-
+{% endraw %}
 ```
 
 - Agora vamos incluir a tabela na view **show.blade.php** de livros:
