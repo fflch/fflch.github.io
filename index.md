@@ -6,14 +6,12 @@ description: "Documentações de projetos da Seção Técnica de Informática da
 permalink: /
 ---
 
-# colocar algo
+# FFLCH 
 {: .fs-9 }
 
-Documentações de projetos da Seção Técnica de Informática da FFLCH
+
 {: .fs-6 .fw-300 }
 
-Escrever algo
+Tutoriais, textos e documentações de projetos da Seção Técnica de Informática da FFLCH
 
-{: .warning }
-> não oficial
 

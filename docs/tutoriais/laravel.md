@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Treinamento Laravel
+title: Laravel
 parent: Tutoriais
 nav_order: 1
 ---
@@ -619,7 +619,112 @@ Esse exercíco é referente ao arquivo: https://github.com/owid/covid-19-data/bl
 4. Implemente o FormRequest garantindo que seja digitado dd/mm/yyyy, além implementar as outras validações
 5. Corriga seus formulários para sempre conterem a função old()
 
-# Dia 4 (Em construção)
+# Dia 4
+
+## Testes automatizados com Dusk
+
+Dusk é uma ferramenta de teste automatizado que permite escrever testes de navegador.
+
+Execute o seguinte comando para adicionar o Laravel Dusk como uma dependência de desenvolvimento:
+
+{% highlight php %}
+composer require laravel/dusk --dev
+php artisan dusk:install
+{% endhighlight %}
+
+O diretório tests/Browser será criado automaticamente e um arquivo de configuração para o Dusk.
+
+Você terá um arquivo .env.dusk.local com as configurações específicas para o ambiente de teste Dusk. Copie o arquivo .env para .env.dusk.local e ajuste conforme necessário.
+
+Você pode criar um novo teste de navegador usando o Artisan:
+
+{% highlight php %}
+php artisan dusk:make LivroCrudTest
+{% endhighlight %}
+
+Isso criará um novo arquivo de teste em tests/Browser/LivroCrudTest.php
+
+Visita a página de criação de livros, preenche o formulário e verifica se o livro foi criado corretamente:
+{% highlight php %}
+public function testCreateLivro()
+{
+    $this->browse(function (Browser $browser) {
+        $browser->visit('/livros/create')
+                ->type('title', 'Meu Novo Post')
+                ->type('content', 'Este é o conteúdo do meu novo post.')
+                ->press('Salvar')
+                ->assertPathIs('/posts')
+                ->assertSee('Meu Novo Post')
+                ->assertSee('Este é o conteúdo do meu novo post.');
+    });
+}
+{% endhighlight %}
+
+
+Para executar seus testes, use o seguinte comando:
+{% highlight php %}
+php artisan dusk
+{% endhighlight %}
+
+Cria um livro diretamente no banco de dados, visita a página de detalhes do livro e verifica se as informações estão corretas:
+{% highlight php %}
+public function testReadPost()
+{
+    $post = Post::create([
+        'title' => 'Post Existente',
+        'content' => 'Este é um post existente.',
+    ]);
+
+    $this->browse(function (Browser $browser) use ($post) {
+        $browser->visit('/posts/' . $post->id)
+                ->assertSee('Post Existente')
+                ->assertSee('Este é um post existente.');
+    });
+}
+{% endhighlight %}
+
+Cria um livro, visita a página de edição, atualiza os dados e verifica se as mudanças foram salvas:
+{% highlight php %}
+public function testUpdatePost()
+{
+    $post = Post::create([
+        'title' => 'Post Atualizável',
+        'content' => 'Este é um post que será atualizado.',
+    ]);
+
+    $this->browse(function (Browser $browser) use ($post) {
+        $browser->visit('/posts/' . $post->id . '/edit')
+                ->type('title', 'Post Atualizado')
+                ->type('content', 'Este é o conteúdo atualizado do post.')
+                ->press('Salvar')
+                ->assertPathIs('/posts/' . $post->id)
+                ->assertSee('Post Atualizado')
+                ->assertSee('Este é o conteúdo atualizado do post.');
+    });
+}
+{% endhighlight %}
+
+Cria um livro, executa a ação de deleção e verifica se o livro foi removido da lista.
+{% highlight php %}
+public function testDeletePost()
+{
+    $post = Post::create([
+        'title' => 'Post Deletável',
+        'content' => 'Este é um post que será deletado.',
+    ]);
+
+    $this->browse(function (Browser $browser) use ($post) {
+        $browser->visit('/posts')
+                ->assertSee('Post Deletável')
+                ->press('#delete-post-' . $post->id) // Supondo que existe um botão de deleção com este ID
+                ->assertPathIs('/posts')
+                ->assertDontSee('Post Deletável');
+    });
+}
+{% endhighlight %}
+
+
+# Dia 5 (Em construção)
 
 ## Relações
 
@@ -661,6 +766,9 @@ Assim no `fields.blade.php` faremos referência direta  a esse usuário:
 <li>Cadastrado por {{ $livro->user->name ?? '' }}</li>
 {% endraw %}
 {% endhighlight %}
+
+
+
 
 
 # Extra
