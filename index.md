@@ -23,6 +23,7 @@ Letícia:
  - fflch/equipamentos (11)
  - fflch/sisfac (11)
  - fflch/alertas (11)
+ - fflch/concursos (11) - Não está em produção
 
 Raphael:
 
@@ -35,6 +36,8 @@ Raphael:
  - uspdev/copaco (11)
  - fflch/bibfiles (11)
  - fflch/gembib (11)
+ - fflch/etiquetas (11)
+ - fflch/fcbib (11) - externo
 
 Dados:
 
