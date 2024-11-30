@@ -19,7 +19,7 @@ Para instalar o moodle é necessário que o seu computador possua a versão 7.4 
  
 ```
 sudo apt-get update && sudo apt-get upgrade
-sudo apt install php7.4 php-intl php-mysql php-gd pho-xml php-mbstring php-zip php-curl
+sudo apt install php7.4 php-intl php-mysql php-gd php-xml php-mbstring php-zip php-curl
 sudo apt install php-curl
 ```
  
@@ -48,6 +48,7 @@ Para fazer download do Moodle é necessário antes possuir o GitHub configurado.
 sudo apt install git
 git config --global user.name "Seu nome de usuário"
 git config --global user.email "Seu e-mail do GitHub"
+ssh-keygen
 ```
 **Na configuração do GitHub é necessário adicionar uma chave pública para validar o acesso**
  
@@ -59,10 +60,18 @@ Para a criação de um diretório onde o arquivo vai ficar, você deve informar 
 mkdir caminho\caminho
 ```
  
-Com o GitHub podemos clonar um projeto da plataforma para o nosso computador, para fazer a clonagem do moodle 4, informar:
+Com o GitHub podemos clonar um projeto da plataforma para o nosso computador, para fazer a clonagem do moodle 4, entre em: <a href="https://github.com/fflch/moodle4_composer">https://github.com/fflch/moodle4_composer</a> e faça o fork do repositório, localizado no lado superior direito da página.
+
+Após isso, clone o repositório, informando o código SSH do seu fork no terminal:
  
 ```
-git clone https://github.com/fflch/moodle4_composer
+git clone https://github.com/seu_user/moodle4_composer
+```
+
+Também é importante conectar o repositório original com o projeto local:
+
+```
+git remote add upstream https://github.com/fflch/moodle4_composer
 ```
  
 ## 2.Instalação e Configuração do Moodle
