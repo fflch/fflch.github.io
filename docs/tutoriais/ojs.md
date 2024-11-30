@@ -8,6 +8,7 @@ nav_order: 5
 {:toc}
 ---
 
+Escrito por Pedro Cesar Antunes de Amigo
 
 # 0 - Preparação da infraestrutura de desenvolvimento do OJS
 
@@ -17,7 +18,7 @@ Instalação dos componentes básicos para desenvolvermos o OJS usando Debian e 
 
 - Opcionalmente você pode instalar o Terminator, um terminal mais dinâmico. 
 
-```
+```bash
 sudo apt install terminator
 ```
 
@@ -25,7 +26,7 @@ sudo apt install terminator
 
 - O PHP é essencial para o funcionamento do OJS, sendo ele também a linguagem a ser utilizada para a programação dos plugins
 
-```
+```bash
 sudo apt install php php-intl php-mysql php-gd php-xml php-mbstring php-zip php-curl
 ```
 
@@ -33,14 +34,14 @@ sudo apt install php php-intl php-mysql php-gd php-xml php-mbstring php-zip php-
 
 - O git é de extrema necessidade para o meio de trabalho cooperativo, nele você poderá compartilhar o seus projetos.
 
-```
+```bash
 sudo apt install git
 git config --global user.name "Seu user cadastrado no GitHub"
 git config --global user.email "Seu email cadastrado no GitHub"
 ```
 Criar conta no GitHub e adicionar a chave pública gerada desta forma:
 
-```
+```bash
 ssh-keygen
 cat ~/.ssh/id_rsa.pub
 ```
@@ -49,9 +50,11 @@ cat ~/.ssh/id_rsa.pub
 
 - O OJS requere do usuário um banco de dados, o MariaDB é um dos melhores do mercado e de fácil compreensão e utilização pelo usuário.
 
-```
+```bash
 sudo apt install mariadb-server
 sudo mariadb
+```
+```sql
 GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
 quit
 ```
@@ -68,7 +71,7 @@ quit
 
 - Logo após baixarmos o arquivo, devemos executar o código abaixo e pronto, o Visual Studio Code estará funcionando perfeitamente.
 
-```
+```bash
 sudo apt install ./ARQUIVO_BAIXADO.deb
 ```
 
@@ -76,7 +79,7 @@ sudo apt install ./ARQUIVO_BAIXADO.deb
 
 - O Composer é uma ferramenta para gerenciamento de dependências em PHP. 
 
-```
+```bash
 sudo apt install curl
 curl -s https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
@@ -88,13 +91,13 @@ sudo mv composer.phar /usr/local/bin/composer
 
 - Primeiramente devemos baixar o OJS por meio do seguinte código: 
 
-```
+```bash
 wget https://pkp.sfu.ca/ojs/download/ojs-3.3.0-13.tar.gz
 ```
 
 - Após isso, devemos descompactar o OJS por meio do código:
 
-```
+```bash
 tar -vzxf ojs-3.3.0-13.tar.gz
 ```
 
@@ -104,8 +107,10 @@ tar -vzxf ojs-3.3.0-13.tar.gz
 
 - O MariaDB vem com alguns bancos de dados definidos, para utilizarmos o OJS devemos criar um banco de dados dedicado somente à ele.
 
-```
+```bash
 mariadb -uadmin -padmin
+```
+```sql
 Create database ojs3;
 quit
 ```
@@ -114,7 +119,7 @@ quit
 
 - Para a inicialização do OJS é preciso que estejamos na pasta em que ele esta instalado. Já na pasta, devemos inicializar o OJS pelo seguinte código:
 
-```
+```bash
 php -S 0.0.0.0:8888
 ```
 
@@ -151,11 +156,46 @@ Ao inicializar o OJS pela primeira vez, iremos configurá-lo para nos atender.
 
 - Com isso, só precisaremos confirmar as configurações e o seu OJS estará configurado.
 
-# 2 - Criar um plugin do tipo Block
+# 2 - Criando a primeira revista
+
+- Assim que terminarmos a configuração do OJS, devemos criar a nossa primeira revista.
+
+- Para isso, devemos adentrar na área de administrador do OJS.
+
+![Primeira parte](/assets/images/OJS/Instalacao_Plugin/Install1.png)
+
+- Após isso devemos clicar em "Revistas hospedadas".
+
+![Segunda parte](/assets/images/OJS/Cria_Revista/Parte1.png)
+
+- Agora devemos clicar em "criar revista".
+
+![Terceira parte](/assets/images/OJS/Cria_Revista/Parte2.png)
+
+- Agora devemos:
+
+1. Escolher o nome de nossa revista;
+1. Escolher a sigla de nossa revista;
+1. Escolher a abreviatura de nossa revista (recomendada ser a mesma da sigla);
+1. Escrever uma descrição para nossa revista;
+1. Adicionar o final do caminho da revista (recomendado ser a mesma da sigla);
+1. Escolher os idiomas que a revista terá e o idioma principal da mesma;
+1. Permitir Acesso Livre a esta revista no portal;
+1. Por fim, somente falta salvar a nossa revista e pronto.
+
+![Quarta parte](/assets/images/OJS/Cria_Revista/Parte3.png)
+
+![Quinta parte](/assets/images/OJS/Cria_Revista/Parte4.png)
+
+- Agora podemos observar que nossa revista foi criada.
+
+![Sexta parte](/assets/images/OJS/Cria_Revista/Parte5.png)
+
+# 3 - Criar um plugin do tipo Block
 
 - O OJS, assim como outras plataformas, tem vários estilos de plugin. Na presente parte vamos explicar passo a passo a criar um plugin do estilo bloco.
 
-## 2.0 - Identificando o estilo de Plugin
+## 3.0 - Identificando o estilo de Plugin
 
 - Para começarmos a pensar sobre o plugin, devemos identificar o contexto que ele será aplicado. Como podemos ver abaixo:
 
@@ -165,102 +205,84 @@ Ao inicializar o OJS pela primeira vez, iremos configurá-lo para nos atender.
 
 - Identificando qual o estilo de plugin você deve fazer, fica mais simples a sua criação.
 
-## 2.1 - Arquivos básicos para a criação do plugin
+## 3.1 - Arquivos básicos para a criação do plugin
 
 - Devemos estar localizados na pasta blocks, a qual fica dentro da pasta plugins, que por sua vez fica dentro da pasta do OJS.
 
 - Estando nesta pasta, devemos criar uma pasta com o nome de nosso novo plugin. Façamos isso pelo seguinte código:
 
-```
-mkdir Nome_Plugin
+```bash
+mkdir NomePlugin
 ```
 
 - Com isso, devemos adentrar a pasta que acabamos de criar e criar uma  outra pasta chamada templates. Façamos isso pelo seguinte código:
 
-```
+```bash
 mkdir templates
 ```
 
-- Após isso devemos criar os arquivos Index, Nome_PluginBlockPlugin.inc.php, o settings.xml e o version.xml. Façamos isso a partir dos seguintes códigos:
+- Após isso devemos criar os arquivos Index, NomePluginBlockPlugin.inc.php, o settings.xml e o version.xml. Façamos isso a partir dos seguintes códigos:
 
-```
+```bash
 touch index.php
-touch Nome_PluginBlockPlugin.php
+touch NomePluginBlockPlugin.php
 touch version.xml
 ```
 
 - Após a criação dos arquivos, devemos entrar na pagina templates e criar o arquivo block.tpl. Façamos isso atraves do código:
 
-```
+```bash
 touch block.tpl
 ```
 
-## 2.2 - Programando o Plugin
+## 3.2 - Programando o Plugin
 
-### 2.2.1 - Index.php
+### 3.2.1 - Index.php
 
 - O arquivo index.php é um carregador simples. Nele deve conter o código que instância a classe principal do seu plugin e retorna uma nova instância do mesmo plugin. Podemos ver um exemplo abaixo:
 
-```
+```php
  <?php
 
-/**
- * @defgroup plugins_block_Nome_Plugin
- */
- 
-/**
- * @file plugins/block/Nome_Plugin/index.php
- *
- * Copyright (c) 2023 Universidade de São Paulo
- * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
- *
- * @ingroup plugins_block_Nome_Plugin
- * @brief Wrapper for Nome_Plugin
- *
- */
+require_once('NomePluginBlockPlugin.php');
 
-// $Id$
-
-
-require_once('Nome_PluginBlockPlugin.php');
-
-return new Nome_PluginBlockPlugin();
+return new NomePluginBlockPlugin();
 
 ?>
 ```
 
-### 2.2.2 - version.xml
+### 3.2.2 - version.xml
 
 - O version.xml somente é visto pelo instalador de plugins do OJS. Ele indica a versão do plugin e reconhece caso precise atualizar o plugin. O arquivo version.xml é importante porque, se você apenas colocar seus arquivos no diretório OJS, em vez de passar pelo instalador adequado, não haverá uma linha correspondente na tabela de plugins do banco de dados e você não poderá habilitar/desabilitar seu plugin.
 
 - O "application" é o nome do plugin e "class" é a classe principal do plugin, conforme especificado no arquivo index.php. Podemos ver um exemplo abaixo:
 
 
-```
+```php
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE version SYSTEM "../../../lib/pkp/dtd/pluginVersion.dtd">
 <version>
-   <application>Nome_Plugin</application>
+   <application>NomePlugin</application>
    <type>plugins.blocks</type>
    <release>1.0.0.0</release>
    <date>2023-01-06</date>
    <lazy-load>1</lazy-load>
-   <class>Nome_PluginBlockPlugin</class>
+   <class>NomePluginBlockPlugin</class>
 </version>
 ```
 
-### 2.2.3 - Nome_PluginBlockPlugin.php
+### 3.2.3 - NomePluginBlockPlugin.php
 
-- Então agora que nós temos uma estrutura básica, precisaremos criar o arquivo que o index.php está carregando, no meu caso chamado Nome_PluginBlockPlugin.php. Isso precisa ser desenvolvido com algumas funções iniciais: register, getDisplayName, getDescription, isSitePlugin e getContents. Podemos ver um exemplo abaixo:
+- Então agora que nós temos uma estrutura básica, precisaremos criar o arquivo que o index.php está carregando, no meu caso chamado NomePluginBlockPlugin.php. Isso precisa ser desenvolvido com algumas funções iniciais: register, getDisplayName, getDescription, isSitePlugin e getContents. Podemos ver um exemplo abaixo:
 
-```
+```php
 <?php
 import('lib.pkp.classes.plugins.BlockPlugin');
 
-class Nome_PluginBlockPlugin extends BlockPlugin {
+class NomePluginBlockPlugin extends BlockPlugin {
 
 	function getContextSpecificPluginSettingsFile() {
-		return $this->getPluginPath() . '/settings.xml';
+		return $this->getPluginPath();
 	}
 
 	public function register($category, $path, $mainContextId = NULL) {
@@ -289,22 +311,23 @@ class Nome_PluginBlockPlugin extends BlockPlugin {
     $ola = 'Olá Mundo!'
 
     //Exibição
-    $templateMgr->assign($ola);
+    $templateMgr->assign('ola', $ola);
+    return parent::getContents($templateMgr, $request);
   }
 }
 ```
 
-### 2.2.4 - block.tpl
+### 3.2.4 - block.tpl
 
 - Por fim, o block.tpl é responsável pela exibição de nosso plugin. Assim, o que conter nele será exibido ao habilitarmos o plugin em nosso site.
 
-```
+```php
 <div class="pkp_block">
     Texto: {$ola} 
 </div>
 ```
 
-## 2.3 - Como instalar o plugin na sua revistas
+## 3.3 - Como instalar o plugin na sua revistas
 
 - Com o plugin terminado, devemos adentrar na área de administrador do OJS.
 
@@ -334,6 +357,8 @@ class Nome_PluginBlockPlugin extends BlockPlugin {
 
 ![Setima parte](/assets/images/OJS/Instalacao_Plugin/Install7.png)
 
-Foto do OJS clicavel.
+Escrito por Pedro Cesar Antunes de Amigo
+
+- Foto do OJS clicavel.
 
 [![Logo do OJS](/assets/images/OJS/ojs.png)](https://pkp.sfu.ca/)
