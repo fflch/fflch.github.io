@@ -58,8 +58,10 @@ Demais sistemas:
 
 Sistema desativados na FFLCH:
 
-- uspdev/ponto (11)
-- fflch/alertas (11)
+- uspdev/ponto
+- fflch/alertas
+- fflch/acesso
+- fflch/analytics
  
 
     
