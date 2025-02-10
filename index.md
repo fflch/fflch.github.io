@@ -47,6 +47,10 @@ permalink: /
 </table>
 
 
+
+- [Distribuição das Issues](https://github.com/orgs/fflch/projects/15/)
+- [Issues abertas na FFLCH](https://github.com/search?q=org%3Afflch+is%3Aissue+is%3Aopen&type=issues)
+
 Raphael:
 
 - fflch/minibib (11)
