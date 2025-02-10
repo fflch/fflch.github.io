@@ -6,26 +6,46 @@ description: "Documentações de projetos da Seção Técnica de Informática da
 permalink: /
 ---
 
-# FFLCH 
 {: .fs-9 }
-
-
 {: .fs-6 .fw-300 }
 
-Tutoriais, textos e documentações de projetos da Seção Técnica de Informática da FFLCH
+<table><thead>
+  <tr>
+    <th></th>
+    <th>Seg</th>
+    <th>Ter</th>
+    <th>Qua</th>
+    <th>Qui</th>
+    <th>Sex</th>
+  </tr></thead>
+<tbody>
+  <tr>
+    <td><b>9:00-10:00</b></td>
+    <td></td>
+    <td><s>Reunião OJS</s></td>
+    <td><s>Reunião pró-aluno</s></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><b>10:00-11:30</b></td>
+    <td></td>
+    <td>Reunião Laravel</td>
+    <td>Reunião Analistas</td>
+    <td><s>Reunião Dados</s></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><b>14:30-16:00</b></td>
+    <td></td>
+    <td>Reunião Moodle</td>
+    <td></td>
+    <td></td>
+    <td>Reunião Drupal</td>
+  </tr>
+</tbody>
+</table>
 
-<b>Letícia:</b>
-
-- fflch/orcamento (11)
-- fflch/intercambio (11)
-- fflch/grafica (11)
-- uspdev/salas (11)
-- fflch/equipamentos (11)
-- fflch/sisfac (11)
-- fflch/concursos (11) - Não está em produção - talvez não continuemos
-- fflch/monitoring (11)
-- uspdev/chamados (8)
-- fflch/cortec (8) 
 
 Raphael:
 
@@ -55,6 +75,17 @@ Demais sistemas:
 - fflch/switches (8) -  Ricardo vai atualizar para 11
 - uspdev/impressoras (8) - Thiago vai atualizar para 11
 - uspdev/web-ldap-admin (8) - Ricardo vai atualizar para 11
+
+- fflch/orcamento (11)
+- fflch/intercambio (11)
+- fflch/grafica (11)
+- uspdev/salas (11)
+- fflch/equipamentos (11)
+- fflch/sisfac (11)
+- fflch/concursos (11) - Não está em produção - talvez não continuemos
+- fflch/monitoring (11)
+- uspdev/chamados (8)
+- fflch/cortec (8) 
 
 Sistema desativados na FFLCH:
 

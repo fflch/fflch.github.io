@@ -362,3 +362,162 @@ Escrito por Pedro Cesar Antunes de Amigo
 - Foto do OJS clicavel.
 
 [![Logo do OJS](/assets/images/OJS/ojs.png)](https://pkp.sfu.ca/)
+
+
+## 4 - sql
+
+## 4.1 - sql puro
+
+```php
+import('lib.pkp.classes.db.DAO');
+
+$dao = new DAO(); // Generic DAO
+$result = $dao->retrieve(
+    'SELECT s.submission_id, j.path AS journal_path, s.status 
+     FROM submissions s 
+     JOIN journals j ON s.context_id = j.journal_id
+     WHERE s.status = ?',
+    [STATUS_PUBLISHED]
+);
+
+// Process results
+while (!$result->EOF) {
+    $row = $result->GetRowAssoc(false);
+    error_log(print_r($row, true));
+    $result->MoveNext();
+}
+$result->Close();
+```
+
+## 4.2 - Registrando um DAO Data Access Object
+
+Importante para reusabilidade plugins/generic/myPlugin/MyCustomDAO.inc.php:
+
+```php
+import('lib.pkp.classes.db.DAO');
+
+class MyCustomDAO extends DAO {
+    public function getSubmissionsWithAuthors() {
+        $result = $this->retrieve(
+            'SELECT s.submission_id, s.status, u.first_name, u.last_name 
+             FROM submissions s 
+             JOIN authors a ON s.submission_id = a.submission_id
+             JOIN users u ON a.user_id = u.user_id'
+        );
+
+        $data = [];
+        while (!$result->EOF) {
+            $data[] = $result->GetRowAssoc(false);
+            $result->MoveNext();
+        }
+        $result->Close();
+        return $data;
+    }
+}
+```
+
+Usando o DAO acima em outras partes do plugin:
+
+```php
+$myDao = new MyCustomDAO();
+$data = $myDao->getSubmissionsWithAuthors();
+var_dump($data);
+```
+
+Listando todos DAOs disponíveis:
+
+```php
+$daoRegistry = DAORegistry::getAllDAOs(); // Get all registered DAOs
+
+foreach ($daoRegistry as $daoName => $daoInstance) {
+    echo("DAO Name: " . $daoName); // Log to PHP error log
+}
+```
+
+Ou vendo as queries:
+
+```bash
+grep -r "class .*DAO" lib/classes
+```
+
+Por fim, alguns DAOs úteis:
+
+<table>
+    <tr>
+        <th>DAO Name</th>
+        <th>Purpose</th>
+        <th>How to Access</th>
+    </tr>
+    <tr>
+        <td>SubmissionDAO</td>
+        <td>Handles submissions (articles)</td>
+        <td><code>DAORegistry::getDAO('SubmissionDAO')</code></td>
+    </tr>
+    <tr>
+        <td>UserDAO</td>
+        <td>Manages user accounts</td>
+        <td><code>DAORegistry::getDAO('UserDAO')</code></td>
+    </tr>
+    <tr>
+        <td>JournalDAO</td>
+        <td>Manages journals</td>
+        <td><code>DAORegistry::getDAO('JournalDAO')</code></td>
+    </tr>
+    <tr>
+        <td>IssueDAO</td>
+        <td>Handles issues (journal editions)</td>
+        <td><code>DAORegistry::getDAO('IssueDAO')</code></td>
+    </tr>
+    <tr>
+        <td>SectionDAO</td>
+        <td>Handles journal sections</td>
+        <td><code>DAORegistry::getDAO('SectionDAO')</code></td>
+    </tr>
+    <tr>
+        <td>ArticleGalleyDAO</td>
+        <td>Manages article galleys (PDF, HTML formats)</td>
+        <td><code>DAORegistry::getDAO('ArticleGalleyDAO')</code></td>
+    </tr>
+    <tr>
+        <td>ReviewAssignmentDAO</td>
+        <td>Handles review assignments</td>
+        <td><code>DAORegistry::getDAO('ReviewAssignmentDAO')</code></td>
+    </tr>
+</table>
+
+
+Exemplo usando o DAO UserDAO para listar todos usuários:
+
+
+```php
+$userDao = DAORegistry::getDAO('UserDAO'); 
+$users = $userDao->getAll();
+
+while ($user = $users->next()) {
+    echo "User: " . $user->getFullName() . "<br>";
+}
+```
+
+Para saber os métodos de um objeto:
+
+```php
+$userDao = DAORegistry::getDAO('UserDAO');
+$methods = get_class_methods($userDao);
+
+echo '<pre>';
+print_r($methods);
+echo '</pre>';
+```
+
+
+if you need detailed information (parameters, visibility, etc.), use ReflectionClass:
+
+```php
+$reflection = new ReflectionClass($user);
+$methods = $reflection->getMethods();
+
+echo '<pre>';
+print_r($methods);
+echo '</pre>';
+```
+
