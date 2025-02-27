@@ -20,33 +20,23 @@ permalink: /
   </tr></thead>
 <tbody>
   <tr>
-    <td><b>9:00-10:00</b></td>
-    <td></td>
-    <td><s>Reunião OJS</s></td>
-    <td><s>Reunião pró-aluno</s></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
     <td><b>10:00-11:30</b></td>
-    <td></td>
+    <td><small><u>Thiago Ativ. Ext</u></small></td>
     <td>Reunião Laravel</td>
     <td>Reunião Analistas</td>
-    <td><s>Reunião Dados</s></td>
-    <td></td>
+    <td><small><u>Thiago Ativ. Ext</u></small></td>
+    <td>Reunião pró-aluno</td>
   </tr>
   <tr>
     <td><b>14:30-16:00</b></td>
     <td></td>
+    <td><small><s>Reunião Dados</s></small></td>
     <td>Reunião Moodle</td>
-    <td></td>
     <td></td>
     <td>Reunião Drupal</td>
   </tr>
 </tbody>
 </table>
-
-
 
 - [Distribuição das Issues](https://github.com/orgs/fflch/projects/15/)
 - [Issues abertas na FFLCH](https://github.com/search?q=org%3Afflch+is%3Aissue+is%3Aopen&type=issues)
