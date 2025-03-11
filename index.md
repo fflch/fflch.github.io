@@ -20,7 +20,7 @@ permalink: /
   </tr></thead>
 <tbody>
   <tr>
-    <td><b>10:00-11:30</b></td>
+    <td><b>9:30-10:30</b></td>
     <td><small><u>Thiago Ativ. Ext</u></small></td>
     <td>Reunião Laravel</td>
     <td>Reunião Analistas</td>
