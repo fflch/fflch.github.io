@@ -25,12 +25,12 @@ permalink: /
     <td>Reunião Laravel</td>
     <td>Reunião Analistas</td>
     <td><small><u>Thiago Ativ. Ext</u></small></td>
-    <td>Reunião pró-aluno</td>
+    <td></td>
   </tr>
   <tr>
     <td><b>14:30-16:00</b></td>
     <td></td>
-    <td><small><s>Reunião Dados</s></small></td>
+    <td>Reunião Dados?</td>
     <td>Reunião Moodle</td>
     <td></td>
     <td>Reunião Drupal</td>
