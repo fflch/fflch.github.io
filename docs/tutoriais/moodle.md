@@ -8,7 +8,141 @@ nav_order: 2
 {:toc}
 ---
 
+# Dia 1
+
+## Instalação 
+
+O Moodle é uma plataforma de aprendizado online, conhecida como LMS (Learning Management System), que permite criar, gerenciar e oferecer cursos e treinamentos pela internet. Ele é uma ferramenta de código aberto, o que significa que é gratuito e pode ser personalizado de acordo com as necessidades de cada instituição ou projeto. 
+
+Antes de instalar o Moodle no Debian, é necessário garantir que todas as dependências estejam instaladas. O Moodle depende do PHP e de algumas extensões, além de um banco de dados como MariaDB. Aqui estão os principais pacotes que devem ser instalados no Debian:
+
+```bash
+sudo apt-get install php php-common php-cli php-gd php-curl php-xml php-mbstring php-zip php-sybase php-mysql php-intl
+sudo apt-get install mariadb-server git
+```
+O Composer é um gerenciador de dependências para PHP. Ele permite instalar, atualizar e gerenciar bibliotecas e pacotes de forma simples, garantindo que um projeto tenha todas as dependências necessárias. Usaremos o Composer para instalar o Moodle e seus plugins:
+
+```bash
+git clone https://github.com/fflch/moodle4_composer.git
+cd moodle4_composer
+composer install
+```
+
+Além disso, é importante configurar o banco de dados, pois ele será usado para instalar o Moodle. Vamos inicialmente criar um usuário admin com senha admin e criar um banco de dados chamado *moodle*:
+
+```bash
+sudo mariadb
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
+create database moodle;
+quit
+```
+
+O comando a seguir é uma maneira rápida e simples de subir um servidor web embutido no PHP, sem a necessidade de configurar servidores complexos como Apache ou Nginx. Ele é especialmente útil durante o desenvolvimento, pois permite testar aplicações diretamente no ambiente local de forma ágil. 
+
+```bash
+php -S 0.0.0.0:8888 -t moodle -c php.ini
+```
+## Criação do plugin
+
+Um plugin no Moodle é uma extensão que adiciona funcionalidades específicas à plataforma, permitindo personalizar e expandir suas capacidades. Ele pode ser usado para adicionar novos tipos de atividades, recursos, blocos, temas ou até mesmo integrações com ferramentas externas. Os plugins são desenvolvidos para se integrar ao Moodle de forma modular, sem alterar o núcleo do sistema, o que facilita a atualização e a manutenção.
+
+Vamos criar um plugin básico do tipo bloco no Moodle chamado `estagiarios`. Esse bloco vai simplesmente listar os nomes dos estagiários em forma de texto.  No Moodle, os plugins do tipo bloco seguem uma estrutura de pastas e arquivos específica. Vamos criar a estrutura inicial para o nosso bloco.
+
+```bash
+cd blocks
+mkdir estagiarios
+cd estagiarios
+```
+
+Criar o Arquivo `version.php`, que define a versão do plugin e suas dependências:
+
+```php
+<?php
+defined('MOODLE_INTERNAL') || die(
+
+$plugin->component = 'block_estagiarios';
+$plugin->requires  = 2020061500; // Versão mínima do Moodle necessária.
+$plugin->version = 2025011401;
+```
+
+O arquivo `block_estagiarios.php` contém a lógica principal do bloco:
+
+```php
+<?php
+defined('MOODLE_INTERNAL') || die();
+
+class block_estagiarios extends block_base {
+    public function init() {
+        $this->title = get_string('estagiarios', 'block_estagiarios'); 
+    }
+	
+    public function get_content()) {        
+        $estagiarios = [
+            'João Silva',
+            'Maria Souza',
+            'Carlos',
+            'Ana Costa',
+        ];	
+        $this->content = new stdClass;
+        $this->content->text = '<ul>';
+        foreach ($estagiarios as $nome) {
+            $this->content->text .= '<li>' . $nome . '</li>';
+        }
+        $this->content->text .= '</ul>'
+        return $this->content;
+    }
+}
+```
+
+Texto mínimos para internacionalização:
+
+```bash
+mkdir -p lang/en
+mkdir -p lang/pt_br
+```
+
+Versão em português em `lang/pt_br/block_estagiarios.php`:
+
+```php
+<?php
+defined('MOODLE_INTERNAL') || die();
+
+$string['pluginname'] = 'Estagiários'; // Nome do bloco.
+$string['estagiarios'] = 'Lista de Estagiários'; // Título do bloco.
+```
+
+Versão em inglês em `lang/en/block_estagiarios.php`:
+
+```php
+<?php
+defined('MOODLE_INTERNAL') || die();
+
+$string['pluginname'] = 'Interns'; // Nome do bloco.
+$string['estagiarios'] = 'List of Interns';
+```
+
+Por fim, podemos podemos ativar nosso plugin pela interface ou com o comando:
+
+```bash
+php admin/cli/upgrade.php
+```
  
+## Exercício 1 - Importação de Dados e Estatísticas no bloco do Moodle
+
+**Objetivo**: Criar um plugin no Moodle para ler dados de um arquivo CSV e exibir estatísticas desses dados em um bloco.
+
+[https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv)
+
+- Ler o arquivo `exercise.csv` dentro do método `get_content()` do bloco.
+- Calcular a média da coluna pulse para cada tipo de atividade (rest, walking, running).
+- Exibir a tabela abaixo no bloco com as informações lidas e processadas do csv.
+
+|  exercise.csv| rest  | walking   | running |
+|--------------|-------|-----------|---------|
+|  Qtde linhas |  XX   |     XX    |   XXX   | 
+|  Média Pulse |  XX   |     XX    |   XXX   |
+
+<!--
 # Tutorial Moodle
  
 ## 0.Pré-requisitos para a instalação
@@ -159,12 +293,12 @@ class block_atv extends block_base {
 A primeira parte do código é padrão para a criação de plug-ins:
  
 ```
-<?php       ---> a linguagem de programação utilizada.
+<?php       a linguagem de programação utilizada.
  
-class block_atv extends block_base {        ---> Atribuição do nome e tipo de classe.
+class block_atv extends block_base {         Atribuição do nome e tipo de classe.
  
-   public function init(){         --->  Estrutura para iniciar a função.
-       $this->title = 'bloco que apresenta as atividades entregues';           --->  Título do plug-in.  
+   public function init(){          Estrutura para iniciar a função.
+       $this->title = 'bloco que apresenta as atividades entregues';            Título do plug-in.  
    }
 ```
  
@@ -173,18 +307,18 @@ A estrutura abaixo corresponde a da criação de uma função, que é a base do 
 *Posteriormente será descrito no tutorial os passos para obter informações do banco de dados MariaDB.*
  
 ```   
-   public function get_content() {       ---> Estrutura para iniciar a função.
-       global $DB;       ---> Discrição do banco de dados utilizado.
+   public function get_content() {       Estrutura para iniciar a função.
+       global $DB;       Discrição do banco de dados utilizado.
  
-       $atividades = 'select count(submission) AS total from from mdl_assignsubmission_file';       ---> Seleção das informações da base de dados
+       $atividades = 'select count(submission) AS total from from mdl_assignsubmission_file';       Seleção das informações da base de dados
        $alunos = 'select firstname from mdl_user';
  
-       $resultados = $DB->get_record_sql($atividades);        ---> função para obter os dados do banco de dados.
-       $estudantes = $DB->get_record_sql($alunos);        ---> função para obter os dados do banco de dados.
+       $resultados = $DB->get_record_sql($atividades);         função para obter os dados do banco de dados.
+       $estudantes = $DB->get_record_sql($alunos);        função para obter os dados do banco de dados.
  
        $this->content =  new stdClass;
-       $this->content->text = 'Este tarefa possui '. $resultados->total .  ' entregues pelos alunos ' . $estudantes;        ---> Texto que será exibido no código.
-       return $this->content;        ---> Para retornar as informações e imprimir o resultado.
+       $this->content->text = 'Este tarefa possui '. $resultados->total .  ' entregues pelos alunos ' . $estudantes;         Texto que será exibido no código.
+       return $this->content;        Para retornar as informações e imprimir o resultado.
    }
 }
 ```
@@ -206,8 +340,8 @@ O código padrão para informar a versão atualizada com o novo plug-in. Atenç�
  
 defined('MOODLE_INTERNAL') || die();
  
-$plugin->component = 'block_atv';         ---> Atribuição do nome do plug-in, deve ser idêntico ao arquivo com o código.
-$plugin->version = 2022198999999;         ---> A versão da atualização, é necessário alterar o número a cada mudança.
+$plugin->component = 'block_atv';         Atribuição do nome do plug-in, deve ser idêntico ao arquivo com o código.
+$plugin->version = 2022198999999;         A versão da atualização, é necessário alterar o número a cada mudança.
 ```
 ## 4. Versões em português e inglês para a exibição do plug-in
  
@@ -241,7 +375,7 @@ Dentro do arquivo é necessário escrever o código de forma igual a descrita ab
  
 defined('MOODLE_INTERNAL') || die();
  
-$string['pluginname'] = 'Nome do plug-in em inglês';         ---> Você pode alterar a descrição apenas desta linha após o sinal de igual.   
+$string['pluginname'] = 'Nome do plug-in em inglês';         Você pode alterar a descrição apenas desta linha após o sinal de igual.   
 $string['block_title'] = 'Mineração dados Itarefas';
 $string['blockname'] = 'Mineração dados Itarefas';
 ```
@@ -271,7 +405,7 @@ Dentro da pasta digite o código abaixo:
  
 defined('MOODLE_INTERNAL') || die();
  
-$string['pluginname'] = 'Nome do plug-in em português';         ---> Você pode alterar a descrição apenas desta linha após o sinal de igual.
+$string['pluginname'] = 'Nome do plug-in em português';         Você pode alterar a descrição apenas desta linha após o sinal de igual.
 ```
 *Você pode alterar a descrição do pluginname, as demais informações devem ficar de modo exatamente igual.*
  
@@ -337,3 +471,5 @@ Exit;
 ```
 
 # Pronto! Você chegou ao final do tutorial. 
+
+-->
