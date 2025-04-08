@@ -125,13 +125,13 @@ No método `create` do `EstagiarioController`, insira os estagiários:
 public function create(){
     $estagiario1 = new App\Models\Estagiario;
     $estagiario1->nome = "João";
-    $estagiario1->nome = "joao@usp.br";
+    $estagiario1->email = "joao@usp.br";
     $estagiario1->idade = 26;
     $estagiario1->save();
 
     $estagiario2 = new App\Models\Estagiario;
     $estagiario2->nome = "Maria";
-    $estagiario2->nome = "maria@usp.br";
+    $estagiario2->email = "maria@usp.br";
     $estagiario2->idade = 27;
     $estagiario2->save();
     return redirect("/estagiarios");
@@ -200,16 +200,13 @@ Exemplo de saída:
 |  Qtde linhas |  XX   |     XX    |   XXX   | 
 |  Média Pulse |  XX   |     XX    |   XXX   |
 
-
-<!---
 # Dia 2
 
 ## CRUD
 
-Operações básicas sob o Model: Create (Criação), Read (Consulta), Update (Atualização) e Delete (Destruição)
+CRUD é um acrônimo para as quatro operações básicas utilizadas na manipulação de dados em sistemas web: Create (Criar), Read (Ler), Update (Atualizar) e Delete (Excluir). Essas operações interagem com bancos de dados, permitindo, por exemplo, que usuários possam cadastrar novas informações, visualizar registros existentes, modificar dados já salvos e remover registros.
 
-No dia 1 criamos o Model Exercise e dois campos: diet e pulse.
-Nesta parte vamos criar um novo model Chamado Livro e correspondente migration, com os campos:
+Vamos criar um novo model Chamado Livro e a correspondente migration com os seguintes campos:
 
 ```php
 $table->string('titulo');
@@ -219,15 +216,16 @@ $table->string('isbn');
 
 ### Create
 
-Rotas para mostrar o formulário de cadastro de Livro:
+São geralmente necessárias duas rotas para salvar um registro em uma operação CRUD porque o processo é dividido em duas etapas: exibir o formulário e processar os dados enviados. A rota GET serve para exibir o formulário de criação e a rota POST serve para processar os dados enviados pelo formulário no controller:
 
 ```php
 use App\Http\Controllers\LivroController;
+
 Route::get('/livros/create', [LivroController::class,'create']);
 Route::post('/livros', [LivroController::class,'store']);
 ```
 
-Método *create* para mostrar o formulário html:
+Para mostrar o formulário html usamos o método *create* :
 
 ```php
 public function create()
@@ -237,6 +235,7 @@ public function create()
 ```
 
 Formulário html:
+
 ```php
 <form method="POST" action="/livros">
     @csrf
@@ -249,15 +248,14 @@ Formulário html:
 
 ### Read
 
-Temos dois acessos aos dados. O acesso a um livro específico e uma listagem.
+Vamos implementar duas formas de acesso aos registros de livros. O acesso ao registro de um livro específico e uma listagem de todos livros.
 
 ```php
-use App\Http\Controllers\LivroController;
-Route::get('/exercises', [LivroController::class,'index']);
-Route::get('/exercises/{livro}', [LivroController::class,'show']);
+Route::get('/livros', [LivroController::class,'index']);
+Route::get('/livros/{livro}', [LivroController::class,'show']);
 ```
 
-Controllers:
+Respectivos controllers:
 ```php
 public function index()
 {
@@ -275,10 +273,10 @@ public function show(Livro $livro)
 }
 ```
 
-html para index:
+Html para index:
 ```php
 {% raw %}
-@forelse ($livros as $livro)
+@forelse($livros as $livro)
     <ul>
         <li><a href="/livros/{{$livro->id}}">{{ $livro->titulo }}</a></li>
         <li>{{ $livro->autor }}</li>
@@ -292,11 +290,11 @@ html para index:
 
 ### Update
 
-Novamente temos que mostrar o fomulário de edição e um método para salvar:
+Novamente precisamos de duas rotas para atualizar um registro, uma para exibir o formulário e outra para processar os dados enviados.
+
 ```php
-use App\Http\Controllers\LivroController;
-Route::get('/exercises/{livro}', [LivroController::class,'edit']);
-Route::post('/exercises/{livro}', [LivroController::class,'update']);
+Route::get('/livros/{livro}', [LivroController::class,'edit']);
+Route::post('/livros/{livro}', [LivroController::class,'update']);
 ```
 
 Implementação no controller:
@@ -335,7 +333,7 @@ Html para edição:
 
 Rota para delete:
 ```php
-Route::delete('/exercises/{livro}', [LivroController::class,'update']);
+Route::delete('/livros/{livro}', [LivroController::class,'update']);
 ```
 
 Controller para delete:
@@ -359,18 +357,18 @@ Botão html para delete:
 </li>
 {% endraw %}
 ```
+
 ## Exercício 2
 
-1. Criar um model Book com migration e um controller BookController
-2. Na migration criar os campos https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv
-3. Criar uma rotina de importação com **php artisan make:command ImportBookCsv** e importa o csv https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv (esse é o completo!)
-4. Implementar todos médodos do CRUD, de forma que pela inteface poderemos criar, editar, ver e apagar books
-5. Criar rota, controler e view que vai mostrar: 
+1. Criar um CRUD completo para cadastro de livros: [https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv]()
+2. Criar uma rotina de importação, conforme feito no exercício 1, para importação do csv: [https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv]() (esse é o completo!)
+3. Criar rota, controller e view que vai mostrar: 
 
     - uma tabela com a quantidade de livros por ano
     - uma tabela com a quantidade de livros por autor
     - uma tabela com a quantidade de livros por idioma
 
+<!---
 # Dia 3
 
 Instalação do template USP conforme:
