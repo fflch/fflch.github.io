@@ -360,8 +360,8 @@ Botão html para delete:
 
 ## Exercício 2
 
-1. Criar um CRUD completo para cadastro de livros: [https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv]()
-2. Criar uma rotina de importação, conforme feito no exercício 1, para importação do csv: [https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv]() (esse é o completo!)
+1. Criar um CRUD completo para cadastro de livros: [https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv](https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv)
+2. Criar uma rotina de importação, conforme feito no exercício 1, para importação do csv: [https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv](https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv) (esse é o completo!)
 3. Criar rota, controller e view que vai mostrar: 
 
     - uma tabela com a quantidade de livros por ano
