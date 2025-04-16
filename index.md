@@ -32,8 +32,8 @@ permalink: /
     <td></td>
     <td>Reunião Dados?</td>
     <td>Reunião Moodle</td>
-    <td></td>
     <td>Reunião Drupal</td>
+    <td></td>
   </tr>
 </tbody>
 </table>
@@ -41,7 +41,7 @@ permalink: /
 - [Distribuição das Issues](https://github.com/orgs/fflch/projects/15/)
 - [Issues abertas na FFLCH](https://github.com/search?q=org%3Afflch+is%3Aissue+is%3Aopen&type=issues)
 
-Raphael:
+Sistemas:
 
 - fflch/minibib (11)
 - uspdev/defesas (11)
@@ -55,21 +55,6 @@ Raphael:
 - fflch/etiquetas (11)
 - fflch/fcbib (11) - externo
 - fflch/ranqueamento (11)
-
-Dados:
-
-- fflch/api - Migrar para php 8 e laravel 11
-- fflch/dados - Migrar para php 8 e laravel 11
-
-Demais sistemas:
-
-- uspdev/pessoas (11)
-- fflch/listas (8) -  Ricardo vai atualizar para 11
-- fflch/sites (8) -  Ricardo vai atualizar para 11
-- fflch/switches (8) -  Ricardo vai atualizar para 11
-- uspdev/impressoras (8) - Thiago vai atualizar para 11
-- uspdev/web-ldap-admin (8) - Ricardo vai atualizar para 11
-
 - fflch/orcamento (11)
 - fflch/intercambio (11)
 - fflch/grafica (11)
@@ -80,6 +65,20 @@ Demais sistemas:
 - fflch/monitoring (11)
 - uspdev/chamados (8)
 - fflch/cortec (8) 
+
+Dados:
+
+- fflch/api - DROPAR?
+- fflch/dados - Migrar para php 8 e laravel 11
+
+Demais sistemas:
+
+- uspdev/pessoas (11)
+- fflch/listas (8) -  Ricardo vai atualizar para 11
+- fflch/sites (8) -  Ricardo vai atualizar para 11
+- fflch/switches (8) -  Ricardo vai atualizar para 11
+- uspdev/impressoras (8) - Thiago vai atualizar para 11
+- uspdev/web-ldap-admin (8) - Ricardo vai atualizar para 11
 
 Sistema desativados na FFLCH:
 
