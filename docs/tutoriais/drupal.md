@@ -14,34 +14,11 @@ nav_order: 4
 
 ### Instalação 
 
-Biblioteca mínimas para instalação no debian 12:
+Biblioteca mínimas para instalação no Debian 12:
 
 ```bash
 sudo apt-get install php php-common php-cli php-gd php-curl php-xml php-mbstring php-zip php-sybase php-mysql php-sqlite3
 sudo apt-get install mariadb-server sqlite3 git
-```
-
-Instalação do php 7.4 para subir drupal da FFLCH (temporário):
-
-```bash
-sudo apt install apt-transport-https lsb-release ca-certificates curl -y
-sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
-sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
-sudo apt update
-```
-
-Instalação das dependências em php7.4:
-
-```bash
-sudo apt-get install php7.4 php7.4-common php7.4-cli php7.4-gd php7.4-curl php7.4-xml php7.4-mbstring php7.4-zip php7.4-sybase php7.4-sqlite3 php7.4-mysql
-```
-
-Trocar versão do php para 7.4:
-
-```bash
-sudo update-alternatives --set php /usr/bin/php7.4
-sudo update-alternatives --set phar /usr/bin/phar7.4 
-sudo update-alternatives --set phar.phar /usr/bin/phar.phar7.4 
 ```
 
 Instalação do composer:
@@ -51,84 +28,147 @@ curl -s https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 ```
 
-Instalação da distribuição Drupal da FFLCH: 
-
+Configuração do banco de dados
 ```bash
-git clone git@github.com:SEU-USERNAME/drupal.git
-cd drupal
-composer install
+sudo mariadb
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
+create database drupal;
+quit
 ```
 
-Instalação do Drupal com sqlite e perfil padrão:
+Instalação do Drupal
+```bash
+composer create-project drupal/recommended-project site-treinamento
+cd site-treinamento
+composer require drush/drush
+./vendor/bin/drush --version
+```
+
+Criação de um site Drupal:
 
 ```bash
-./vendor/bin/drush site-install standard \
-    --db-url=sqlite://sites/default/files/.ht.sqlite \
-    --site-name="fflch" \
-    --site-mail="fflch@localhost" \
-    --account-name="fflch" \
-    --account-pass="fflch" \
-    --account-mail="fflch@localhost" --yes
+./vendor/bin/drush site:install standard \
+  --db-url="mysql://admin:admin@localhost/drupal" \
+  --site-name="Site Treinamento" \
+  --account-name="admin" \
+  --account-pass="admin" --yes
 ```
 
 Subindo um server local:
 ```bash
-cd drupal
-./vendor/bin/drupal serve -vvv
-# ou
-./vendor/bin/drupal serve 0.0.0.0:8000 -vvv
-```
-
-Zerando banco de dados:
-```bash
-# sqlite
-# mysql
-./vendor/bin/drupal database:drop
-
-# sqlite
-rm web/sites/default/files/.ht.sqlite*
+./vendor/bin/drush rs 0.0.0.0:8000
 ```
 
 ### Criação de módulo:
 
-Criação de um módulo chamado treinamento:
+Criação de um módulo chamado `treinamento`:
 
 ```bash
-./vendor/bin/drupal generate:module  \
-  --module="treinamento"  \
-  --machine-name="treinamento"  \
-  --module-path="modules"  \
-  --description="Módulo Treinamento"  \
-  --core="8.x"  \
-  --no-interaction
+./vendor/bin/drush generate module
 ```
 
-Habilitando módulo treinamento:
+Habilitando módulo treinamento
 
 ```bash
-./vendor/bin/drupal module:install treinamento
+./vendor/bin/drush pm-install treinamento
 ```
+
 O comando a seguir vai gerar o controller TreinamentoController e a respectiva rota, no controller terá um método chamado index(), assim como uma rota /treinamento apontando para esse método:
 
 ```bash
-./vendor/bin/drupal generate:controller  \
-  --module="treinamento"  \
-  --class="TreinamentoController"  \
-  --routes='"title":"index", "name":"treinamento.index", "method":"index", "path":"/treinamento"'  \
-  --no-interaction
+./vendor/bin/drush generate controller
+​
+Module machine name:
+➤ treinamento
+
+Class [TreinamentoController]
+➤ TreinamentoController
+​
+Route name [treinamento.example]:
+➤ treinamento.index
+​
+Route path [/treinamento/index]:
+➤ /treinamento 
 ```
 
 Limpando cache:
-
 ```bash
-./vendor/bin/drupal cc
+./vendor/bin/drush cr
+```
+
+### twig
+
+Crie o arquivo treinamento.html.twig e coloque um html qualquer nele:
+```bash
+mkdir web/modules/treinamento/templates
+touch web/modules/treinamento/templates/index.html.twig
+```
+
+```php
+public function index() {
+  $variavel1 = 'bom dia';
+  $variavel2 = 'boa noite';
+
+  return [
+    '#theme' => 'index',
+    '#variavel1' => $variavel1,
+    '#variavel2' => $variavel2,
+  ];
+}
+```
+
+Por fim, criar um arquivo treinamento.module com a definição do template:
+
+```php
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function treinamento_theme($existing, $type, $theme, $path) {
+  return [
+    'index' => [
+      'variables' => [
+        'variavel1' => NULL,
+        'variavel2' => NULL
+        ],
+    ],
+  ];
+}
+```
+
+Twig é um motor de templates moderno para PHP que o Drupal utiliza, exemplo:
+
+```php
+{% raw %}
+{% if date("H") < 12  %}
+    {{ variavel1 }}
+{% else %}
+    {{ variavel2 }}
+{% endif %}
+{% endraw %}
 ```
 
 ### Exercício 1
 
-Mostrar no seu controller quantidade de linhas do seguinte arquivo csv do tipo **rest**, **walking** e **running**. Também mostar a média da coluna **pulse** nos três casos **rest**, **walking** e **running**:
+## Exercício 1 - Importação de Dados e Estatísticas com Laravel
+
+**Objetivo**: Importar dados de um arquivo CSV e exibir estatísticas desses dados no Drupal.
 
 [https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv)
+
+1) Criar o Controller e a Rota para Importação
+
+- Crie um controller chamado ExerciseController com o método importCsv.
+- Defina uma rota `exercises/importcsv` que aponte para o método importCsv do controller.
+- No método importCsv, implemente a lógica para ler o arquivo `exercise.csv`.
+
+Dica: Você pode usar a classe `League\Csv\Reader` (disponível via Composer) para facilitar a leitura do CSV.
+
+2) Após ler o arquivo, apresente as seguintes estatísticas:
+
+- quantidades de linhas da coluna pulse para os casos rests, walking e running
+- calcule as média da coluna pulse para os casos rests, walking e running, conforme tabela abaixo
 
 Exemplo de saída:
 
@@ -137,8 +177,7 @@ Exemplo de saída:
 |  Qtde linhas |  XX   |     XX    |   XXX   | 
 |  Média Pulse |  XX   |     XX    |   XXX   |
 
-rest
-
+<!--
 ## Dia 2
 
 Rota com parâmetro, será injetada no método index do controller:
@@ -413,6 +452,34 @@ trocar a url alternativa:
 ```bash
 $node->path->alias = '/novo-caminho-do-node'
 $node->path->pathauto = Drupal\pathauto\PathautoState::SKIP;
+```
+
+-->
+
+
+# Workaround PHP 7.4
+
+Instalação do php 7.4 para subir drupal da FFLCH (temporário):
+
+```bash
+sudo apt install apt-transport-https lsb-release ca-certificates curl -y
+sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
+sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+sudo apt update
+```
+
+Instalação das dependências em php7.4:
+
+```bash
+sudo apt-get install php7.4 php7.4-common php7.4-cli php7.4-gd php7.4-curl php7.4-xml php7.4-mbstring php7.4-zip php7.4-sybase php7.4-sqlite3 php7.4-mysql
+```
+
+Trocar versão do php para 7.4:
+
+```bash
+sudo update-alternatives --set php /usr/bin/php7.4
+sudo update-alternatives --set phar /usr/bin/phar7.4 
+sudo update-alternatives --set phar.phar /usr/bin/phar.phar7.4 
 ```
 
 
