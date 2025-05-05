@@ -368,7 +368,6 @@ Botão html para delete:
     - uma tabela com a quantidade de livros por autor
     - uma tabela com a quantidade de livros por idioma
 
-<!---
 # Dia 3
 
 Instalação do template USP conforme:
@@ -393,8 +392,8 @@ $request->validate([
 ]);
 {% endhighlight %}
 
-Podemos usar a função `old('titulo')` nos formulários, que 
-verifica se há inputs na sessão e em caso negativo usa o segundo parâmetro:
+Podemos usar a função `old('titulo')` nos formulários, que nesse caso
+verifica se há input na sessão para o campo `titulo`:
 
 {% highlight html %}
 {% raw %}
@@ -480,12 +479,8 @@ para o ar, mas sim criar uma migration que altera uma anterior. Por exemplo,
 se quisermos que o campo isbn guarde apenas números, faremos:
 
 {% highlight bash %}
-composer require doctrine/dbal
 php artisan make:migration change_isbn_column_in_livros  --table=livros
 {% endhighlight %}
-
-Para usar migration de alteração devemos incluir o pacote `doctrine/dbal` e
-na sequência criar a migration que alterará a tabela existente.
 
 Alterando a coluna `isbn` de string para integer na migration acima:
 {% highlight php %}
@@ -497,6 +492,54 @@ Aplique a mudança no banco de dados:
 php artisan migrate
 {% endhighlight %}
 
+## Mutators
+
+Há situações em que queremos fazer um leve processamento antes de salvar
+um valor no banco de dados e logo após recuperarmos um valor. Vamos 
+adicionar um campo para preço. Já sabemos como criar uma migration 
+de alteração para alterar a tabela livros:
+
+{% highlight bash %}
+php artisan make:migration add_preco_column_in_livros --table=livros
+{% endhighlight %}
+
+E adicionamos na nova coluna:
+{% highlight php %}
+$table->float('preco')->nullable();
+{% endhighlight %}
+
+No LivroRequest também deixaremos esse campo como opcional: `'preco'  => 'nullable'`. 
+
+Queremos que o usuário digite, por exemplo, `12,50`, mas guardaremos
+`12.5`. Quando quisermos mostrar o valor, vamos fazer a operação
+inversa. Poderíamos fazer esse tratamento diretamente no controller,
+mas também podemos usar `mutators` através no model do livro:
+
+{% highlight php %}
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
+protected function preco(): Attribute
+{
+    return Attribute::make(
+        get: fn($value) => number_format($value, 2, ',', ''),
+        set: fn($value) => str_replace(',','.',$value)
+    );
+}
+{% endhighlight %}
+
+
+## Exercício 3
+
+Esse exercíco é referente ao arquivo: [https://github.com/owid/covid-19-data/blob/master/public/data/vaccinations/country_data/Brazil.csv](https://github.com/owid/covid-19-data/blob/master/public/data/vaccinations/country_data/Brazil.csv)
+
+1. Criar model, migration, CRUD, command de importação do csv. Na migration defina os campos total_vaccinations e	people_vaccinated como string. Importe o csv.
+2. Faça uma migration de alteração para alterar total_vaccinations e people_vaccinated para inteiro
+3. Faça um mutator para mostrar o campo date com o formato brasileiro dd/mm/yyyy e outro mutator para salvá-lo commo yyyy-mm-dd (lembre-se que o formulário deve receber dd/mm/yyyy)
+4. Implemente o FormRequest garantindo que seja digitado dd/mm/yyyy, além implementar as outras validações
+5. Corriga seus formulários para sempre conterem a função old()
+
+
+<!--
 ## Campos do tipo select 
 
 Vamos supor que queremos um campo adicional na tabela de livros
@@ -573,49 +616,7 @@ use Illuminate\Validation\Rule;
 'tipo'   => ['required', Rule::in(\App\Models\Livro::tipos())],
 {% endhighlight %}
 
-## Mutators
 
-Há situações em que queremos fazer um leve processamento antes de salvar
-um valor no banco de dados e logo após recuperarmos um valor. Vamos 
-adicionar um campo para preço. Já sabemos como criar uma migration 
-de alteração para alterar a tabela livros:
-
-{% highlight bash %}
-php artisan make:migration add_preco_column_in_livros --table=livros
-{% endhighlight %}
-
-E adicionamos na nova coluna:
-{% highlight php %}
-$table->float('preco')->nullable();
-{% endhighlight %}
-
-No LivroRequest também deixaremos esse campo como 
-opcional: `'preco'  => 'nullable'`. 
-
-Queremos que o usuário digite, por exemplo, `12,50`, mas guardaremos
-`12.5`. Quando quisermos mostrar o valor, vamos fazer a operação
-inversa. Poderíamos fazer esse tratamento diretamente no controller,
-mas também podemos usar `mutators` diretamente no model do livro:
-
-{% highlight php %}
-public function setPrecoAttribute($value){
-    $this->attributes['preco'] = str_replace(',','.',$value);
-}
-
-public function getPrecoAttribute($value){
-    return number_format($value, 2, ',', '');
-}
-{% endhighlight %}
-
-## Exercício 3
-
-Esse exercíco é referente ao arquivo: https://github.com/owid/covid-19-data/blob/master/public/data/vaccinations/country_data/Brazil.csv
-
-1. Criar model, migration, CRUD, command de importação do csv. Na migration defina os campos total_vaccinations e	people_vaccinated como string. Importe o csv.
-2. Faça uma migration de alteração para alterar total_vaccinations e people_vaccinated para inteiro
-3. Faça um mutator para mostrar o campo date com o formato brasileiro dd/mm/yyyy e outro mutator para salvá-lo commo yyyy-mm-dd (lembre-se que o formulário deve receber dd/mm/yyyy)
-4. Implemente o FormRequest garantindo que seja digitado dd/mm/yyyy, além implementar as outras validações
-5. Corriga seus formulários para sempre conterem a função old()
 
 # Dia 4
 
