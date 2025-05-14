@@ -8,171 +8,78 @@ nav_order: 5
 {:toc}
 ---
 
-Escrito por Pedro Cesar Antunes de Amigo
+# Dia 1
 
-# 0 - Preparação da infraestrutura de desenvolvimento do OJS
+O Open Journal Systems (OJS) é uma plataforma de código aberto desenvolvida pelo Public Knowledge Project (PKP) que permite a gestão e publicação de periódicos científicos online. Ele oferece ferramentas para todo o fluxo editorial, desde a submissão de artigos, avaliação por pares, edição e publicação, até a indexação e visibilidade dos conteúdos.
 
-Instalação dos componentes básicos para desenvolvermos o OJS usando Debian e derivados. Verifique o procedimento correspondente para o seu sistema operacional.
-
-## 0.0 - Instalar o Terminator
-
-- Opcionalmente você pode instalar o Terminator, um terminal mais dinâmico. 
+Biblioteca mínimas para instalação no Debian 12:
 
 ```bash
-sudo apt install terminator
+sudo apt-get install php php-common php-cli php-gd php-curl php-xml php-mbstring php-zip php-sybase php-mysql php-sqlite3
+sudo apt-get install mariadb-server sqlite3 git
 ```
 
-## 0.1 - Instalando o PHP para uso do OJS
-
-- O PHP é essencial para o funcionamento do OJS, sendo ele também a linguagem a ser utilizada para a programação dos plugins
+Instalação do composer:
 
 ```bash
-sudo apt install php php-intl php-mysql php-gd php-xml php-mbstring php-zip php-curl
-```
-
-## 0.2 - Instalando e configurando o git
-
-- O git é de extrema necessidade para o meio de trabalho cooperativo, nele você poderá compartilhar o seus projetos.
-
-```bash
-sudo apt install git
-git config --global user.name "Seu user cadastrado no GitHub"
-git config --global user.email "Seu email cadastrado no GitHub"
-```
-Criar conta no GitHub e adicionar a chave pública gerada desta forma:
-
-```bash
-ssh-keygen
-cat ~/.ssh/id_rsa.pub
-```
-
-## 0.3 - Instalar e configurar o banco de dados MariaDB
-
-- O OJS requere do usuário um banco de dados, o MariaDB é um dos melhores do mercado e de fácil compreensão e utilização pelo usuário.
-
-```bash
-sudo apt install mariadb-server
-sudo mariadb
-```
-```sql
-GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
-quit
-```
-
-## 0.4 - Instalando o Visual Studio Code
-
-- O Visual Studio Code é uma das ferramentas mais utilizadas para se criar e editar códigos. Sua instalação é opcional, mas é de extrema ajuda ao programar.
-
-- Para baixarmos o Visual Studio Code deveremos clicar na imagem abaixo:
-
-<div align="center">
-<a href="https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"><img src="/assets/images/OJS/VsCode.png" width="180" height="80"></a>
-</div>
-
-- Logo após baixarmos o arquivo, devemos executar o código abaixo e pronto, o Visual Studio Code estará funcionando perfeitamente.
-
-```bash
-sudo apt install ./ARQUIVO_BAIXADO.deb
-```
-
-## 0.5 - Baixando e instalando o Composer
-
-- O Composer é uma ferramenta para gerenciamento de dependências em PHP. 
-
-```bash
-sudo apt install curl
 curl -s https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 ```
 
-## 0.6 - Baixando e instalando o OJS
-
-- O OJS é a ferramenta de gerenciamento de revistas utilizado na USP. A versão que devemos utilizar é a versão 3.3.0-13.
-
-- Primeiramente devemos baixar o OJS por meio do seguinte código: 
-
+Configuração do banco de dados
 ```bash
-wget https://pkp.sfu.ca/ojs/download/ojs-3.3.0-13.tar.gz
-```
-
-- Após isso, devemos descompactar o OJS por meio do código:
-
-```bash
-tar -vzxf ojs-3.3.0-13.tar.gz
-```
-
-- Com isso, o OJS estará funcionando perfeitamente em sua máquina.
-
-## 0.7 - Configurando o MariaDB para o OJS
-
-- O MariaDB vem com alguns bancos de dados definidos, para utilizarmos o OJS devemos criar um banco de dados dedicado somente à ele.
-
-```bash
-mariadb -uadmin -padmin
-```
-```sql
-Create database ojs3;
+sudo mariadb
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
+create database ojs3;
 quit
 ```
 
-## 0.8 - Iniciando o OJS
-
-- Para a inicialização do OJS é preciso que estejamos na pasta em que ele esta instalado. Já na pasta, devemos inicializar o OJS pelo seguinte código:
-
+Instalação do OJS. Escolher uma versão em (https://pkp.sfu.ca/software/ojs/download/)[https://pkp.sfu.ca/software/ojs/download/] e baixá-la.
 ```bash
+wget https://pkp.sfu.ca/ojs/download/ojs-3.4.0-8.tar.gz
+tar -vzxf ojs-3.4.0-8.tar.gz
+cd ojs-3.4.0-8
 php -S 0.0.0.0:8888
 ```
 
-# 1 - Como configurar o OJS
-
-A configuração do OJS é bem intutiva, porém, ainda assim se complica em certos momentos. Assim, se faz necessário que tenhamos um passo a passo de como configurá-lo em nossa máquina.
-
-## 1.1 - Configuração
-
-Para melhor entendimento, trabalharemos essa parte de forma visual.
-
-Ao inicializar o OJS pela primeira vez, iremos configurá-lo para nos atender.
-
-- Na primeira parte devemos escolher um nome de usuário e uma senha, além de fornecer um email para cadastro. Como estamos em um ambiente de programação e não de editorial de revista, podemos colocar usuário e senha como "admin" e o email como "admin@usp.br" como podemos observar na imagem.
+A configuração do OJS é bem intutiva, porém, ainda assim se complica em certos momentos. Assim, se faz necessário que tenhamos um passo a passo de como configurá-lo. Na primeira parte devemos escolher um nome de usuário e uma senha, além de fornecer um email para cadastro. Como estamos em um ambiente de programação e não de editorial de revista, podemos colocar usuário e senha como "admin" e o email como "admin@usp.br" como podemos observar na imagem.
 
 ![Primeira parte](/assets/images/OJS/Instalacao_OJS/Primera_Parte.png)
 
-- Na segunda parte devemos escolher a língua primária do OJS e as línguas adicionais do mesmo.
+Na segunda parte devemos escolher a língua primária do OJS e as línguas adicionais do mesmo.
 
 ![Segunda parte](/assets/images/OJS/Instalacao_OJS/Segunda_Parte.png)
 
-- Na terceira parte devemos verificar se o local onde o diretório será criado é o qual desejamos.
+Na terceira parte devemos verificar se o local onde o diretório será criado é o qual desejamos.
 
 ![Terceira parte](/assets/images/OJS/Instalacao_OJS/Terceira_Parte.png)
 
-- Na quarta parte devemos:
+Na quarta parte devemos:
 
-1. Trocar o banco de dados para MySQLi
-1. Adicionar o username que criamos no mariadb (no caso admin)
-1. Adicionar a senha que criamos no mariadb (no caso admin)
-1. Adicionar o nome da database que criamos no mariadb (no caso ojs3)
+- Trocar o banco de dados para MySQLi
+- Adicionar o username que criamos no mariadb (no caso admin)
+- Adicionar a senha que criamos no mariadb (no caso admin)
+- Adicionar o nome da database que criamos no mariadb (no caso ojs3)
 
 ![Quarta parte](/assets/images/OJS/Instalacao_OJS/Quarta_Parte.png)
 
-- Com isso, só precisaremos confirmar as configurações e o seu OJS estará configurado.
+Com isso, só precisaremos confirmar as configurações e o seu OJS estará configurado.
 
 # 2 - Criando a primeira revista
 
-- Assim que terminarmos a configuração do OJS, devemos criar a nossa primeira revista.
-
-- Para isso, devemos adentrar na área de administrador do OJS.
+Assim que terminarmos a configuração do OJS, devemos criar a nossa primeira revista. Para isso, devemos entrar na área de administrador do OJS.
 
 ![Primeira parte](/assets/images/OJS/Instalacao_Plugin/Install1.png)
 
-- Após isso devemos clicar em "Revistas hospedadas".
+Após isso devemos clicar em `Revistas hospedadas`.
 
 ![Segunda parte](/assets/images/OJS/Cria_Revista/Parte1.png)
 
-- Agora devemos clicar em "criar revista".
+Agora devemos clicar em `criar revista`.
 
 ![Terceira parte](/assets/images/OJS/Cria_Revista/Parte2.png)
 
-- Agora devemos:
+Agora devemos:
 
 1. Escolher o nome de nossa revista;
 1. Escolher a sigla de nossa revista;
@@ -187,32 +94,26 @@ Ao inicializar o OJS pela primeira vez, iremos configurá-lo para nos atender.
 
 ![Quinta parte](/assets/images/OJS/Cria_Revista/Parte4.png)
 
-- Agora podemos observar que nossa revista foi criada.
+Agora podemos observar que nossa revista foi criada.
 
 ![Sexta parte](/assets/images/OJS/Cria_Revista/Parte5.png)
 
-# 3 - Criar um plugin do tipo Block
+## Exercício 1
 
-- O OJS, assim como outras plataformas, tem vários estilos de plugin. Na presente parte vamos explicar passo a passo a criar um plugin do estilo bloco.
+Como administrador, crie 10 revistas fictícias no OJS, preenchendo as informações mínimas (nome, descrição, idioma). Em seguida, acesse cada revista como autor e submeta 2 artigos utilizando o fluxo editorial completo, passando por todas as etapas: submissão, designação de avaliadores, decisão editorial, edição, produção e publicação. Após isso, utilize a opção de submissão rápida e submeta 1 artigo por revista, publicando-o diretamente. Ao final, cada revista deverá conter 3 artigos publicados: 2 pelo fluxo completo e 1 pela submissão rápida.
 
-## 3.0 - Identificando o estilo de Plugin
+<!---
 
-- Para começarmos a pensar sobre o plugin, devemos identificar o contexto que ele será aplicado. Como podemos ver abaixo:
+## Criação de um plugin do tipo Block
 
-1. Alguns plugins devem ser aplicado somente nas revistas, como por exemplo um plugin com a nuvem de palavras.
+O OJS, assim como outras plataformas, tem vários estilos de plugin. Na presente parte vamos explicar passo a passo a criar um plugin do estilo bloco.
 
-1. Outros plugins devem ser aplicados de forma global, no site principal que cuida das revistas, como exemplo um plugin que exibe as estatísticas de revistas gerenciadas pelo site.
+Alguns plugins devem ser aplicado somente nas revistas, como por exemplo um plugin com a nuvem de palavras. Outros plugins devem ser aplicados de forma global, no site principal que cuida das revistas, como exemplo um plugin que exibe as estatísticas de revistas gerenciadas pelo site.
 
-- Identificando qual o estilo de plugin você deve fazer, fica mais simples a sua criação.
-
-## 3.1 - Arquivos básicos para a criação do plugin
-
-- Devemos estar localizados na pasta blocks, a qual fica dentro da pasta plugins, que por sua vez fica dentro da pasta do OJS.
-
-- Estando nesta pasta, devemos criar uma pasta com o nome de nosso novo plugin. Façamos isso pelo seguinte código:
+Na pasta plugins/blocks devemos criar uma pasta com o nome de nosso novo plugin. Façamos isso pelo seguinte código:
 
 ```bash
-mkdir NomePlugin
+mkdir estatis
 ```
 
 - Com isso, devemos adentrar a pasta que acabamos de criar e criar uma  outra pasta chamada templates. Façamos isso pelo seguinte código:
@@ -520,4 +421,6 @@ echo '<pre>';
 print_r($methods);
 echo '</pre>';
 ```
+
+--->
 
