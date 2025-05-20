@@ -532,7 +532,7 @@ protected function preco(): Attribute
 
 Esse exercíco é referente ao arquivo: [https://github.com/owid/covid-19-data/blob/master/public/data/vaccinations/country_data/Brazil.csv](https://github.com/owid/covid-19-data/blob/master/public/data/vaccinations/country_data/Brazil.csv)
 
-1. Criar model, migration, CRUD, command de importação do csv. Na migration defina os campos total_vaccinations e	people_vaccinated como string. Importe o csv.
+1. Criar model, migration, CRUD, e uma lógica de importação do csv (pode ser uma rota e controller). Na migration defina os campos total_vaccinations e	people_vaccinated como string. Importe o csv.
 2. Faça uma migration de alteração para alterar total_vaccinations e people_vaccinated para inteiro
 3. Faça um mutator para mostrar o campo date com o formato brasileiro dd/mm/yyyy e outro mutator para salvá-lo commo yyyy-mm-dd (lembre-se que o formulário deve receber dd/mm/yyyy)
 4. Implemente o FormRequest garantindo que seja digitado dd/mm/yyyy, além implementar as outras validações
