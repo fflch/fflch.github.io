@@ -21,19 +21,19 @@ permalink: /
 <tbody>
   <tr>
     <td><b>9:30-10:30</b></td>
-    <td><small><u>Thiago Ativ. Ext</u></small></td>
+    <td></td>
     <td>Reunião Laravel</td>
     <td>Reunião Analistas</td>
-    <td><small><u>Thiago Ativ. Ext</u></small></td>
+    <td></td>
     <td></td>
   </tr>
   <tr>
     <td><b>14:30-16:00</b></td>
     <td></td>
-    <td>Reunião Dados?</td>
-    <td>Reunião Moodle</td>
-    <td>Reunião Drupal</td>
+    <td>Reunião Dados</td>
     <td></td>
+    <td>Reunião Drupal</td>
+    <td>Reunião Moodle/OJS</td>
   </tr>
 </tbody>
 </table>
@@ -44,7 +44,6 @@ permalink: /
 Sistemas:
 
 - fflch/minibib (11)
-- uspdev/defesas (11)
 - uspdev/estagios (11)
 - fflch/cdd (11)
 - fflch/gembib (11)
@@ -53,7 +52,6 @@ Sistemas:
 - uspdev/copaco (11)
 - fflch/bibfiles (11)
 - fflch/etiquetas (11)
-- fflch/fcbib (11) - externo
 - fflch/ranqueamento (11)
 - fflch/orcamento (11)
 - fflch/intercambio (11)
@@ -61,24 +59,20 @@ Sistemas:
 - uspdev/salas (11)
 - fflch/equipamentos (11)
 - fflch/sisfac (11)
-- fflch/concursos (11) - Não está em produção - talvez não continuemos
-- fflch/monitoring (11)
-- uspdev/chamados (8)
-- fflch/cortec (8) 
-
-Dados:
-
-- fflch/api - DROPAR?
-- fflch/dados - Migrar para php 8 e laravel 11
+- fflch/switches (8)
+- uspdev/defesas (11)
+- uspdev/pessoas (11)
+- fflch/fcbib (11) - externo: fc.zelda.net.br
 
 Demais sistemas:
 
-- uspdev/pessoas (11)
 - fflch/listas (8) -  Ricardo vai atualizar para 11
 - fflch/sites (8) -  Ricardo vai atualizar para 11
-- fflch/switches (8) -  Ricardo vai atualizar para 11
 - uspdev/impressoras (8) - Thiago vai atualizar para 11
 - uspdev/web-ldap-admin (8) - Ricardo vai atualizar para 11
+- uspdev/chamados (8)
+- fflch/cortec (8) 
+- fflch/dados (12)
 
 Sistema desativados na FFLCH:
 
@@ -86,9 +80,5 @@ Sistema desativados na FFLCH:
 - fflch/alertas
 - fflch/acesso
 - fflch/analytics
- 
-
-    
-
-
-
+- fflch/api
+- fflch/monitoring (11)
