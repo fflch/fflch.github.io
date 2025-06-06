@@ -10,6 +10,8 @@ nav_order: 5
 
 # Dia 1
 
+## Instalação
+
 O Open Journal Systems (OJS) é uma plataforma de código aberto desenvolvida pelo Public Knowledge Project (PKP) que permite a gestão e publicação de periódicos científicos online. Ele oferece ferramentas para todo o fluxo editorial, desde a submissão de artigos, avaliação por pares, edição e publicação, até a indexação e visibilidade dos conteúdos.
 
 Biblioteca mínimas para instalação no Debian 12:
@@ -65,7 +67,7 @@ Na quarta parte devemos:
 
 Com isso, só precisaremos confirmar as configurações e o seu OJS estará configurado.
 
-# 2 - Criando a primeira revista
+## Criando a primeira revista
 
 Assim que terminarmos a configuração do OJS, devemos criar a nossa primeira revista. Para isso, devemos entrar na área de administrador do OJS.
 
@@ -102,169 +104,140 @@ Agora podemos observar que nossa revista foi criada.
 
 Como administrador, crie 10 revistas fictícias no OJS, preenchendo as informações mínimas (nome, descrição, idioma). Em seguida, acesse cada revista como autor e submeta 2 artigos utilizando o fluxo editorial completo, passando por todas as etapas: submissão, designação de avaliadores, decisão editorial, edição, produção e publicação. Após isso, utilize a opção de submissão rápida e submeta 1 artigo por revista, publicando-o diretamente. Ao final, cada revista deverá conter 3 artigos publicados: 2 pelo fluxo completo e 1 pela submissão rápida.
 
-<!---
+# Dia 2
 
 ## Criação de um plugin do tipo Block
 
-O OJS, assim como outras plataformas, tem vários estilos de plugin. Na presente parte vamos explicar passo a passo a criar um plugin do estilo bloco.
+No OJS, assim como em outras plataformas, há vários tipos de plugins. Na presente parte vamos explicar o passo a passo para criarmos um plugin do tipo bloco. Na pasta plugins/blocks devemos criar uma pasta com o nome de nosso novo plugin: `mkdir estagiarios`. Dentro da pasta do nosso plugin, vamos criar alguns arquivos:
 
-Alguns plugins devem ser aplicado somente nas revistas, como por exemplo um plugin com a nuvem de palavras. Outros plugins devem ser aplicados de forma global, no site principal que cuida das revistas, como exemplo um plugin que exibe as estatísticas de revistas gerenciadas pelo site.
-
-Na pasta plugins/blocks devemos criar uma pasta com o nome de nosso novo plugin. Façamos isso pelo seguinte código:
-
-```bash
-mkdir estatis
-```
-
-- Com isso, devemos adentrar a pasta que acabamos de criar e criar uma  outra pasta chamada templates. Façamos isso pelo seguinte código:
-
-```bash
-mkdir templates
-```
-
-- Após isso devemos criar os arquivos Index, NomePluginBlockPlugin.inc.php, o settings.xml e o version.xml. Façamos isso a partir dos seguintes códigos:
 
 ```bash
 touch index.php
-touch NomePluginBlockPlugin.php
+touch EstagiariosBlockPlugin.php
 touch version.xml
+mkdir templates
+touch templates/block.tpl
 ```
 
-- Após a criação dos arquivos, devemos entrar na pagina templates e criar o arquivo block.tpl. Façamos isso atraves do código:
-
-```bash
-touch block.tpl
-```
-
-## 3.2 - Programando o Plugin
-
-### 3.2.1 - Index.php
-
-- O arquivo index.php é um carregador simples. Nele deve conter o código que instância a classe principal do seu plugin e retorna uma nova instância do mesmo plugin. Podemos ver um exemplo abaixo:
-
+O conteúdo do arquivo index.php deve retornar a instância da classe principal do plugin:
 ```php
- <?php
-
-require_once('NomePluginBlockPlugin.php');
-
-return new NomePluginBlockPlugin();
-
-?>
+<?php
+return new \APP\plugins\blocks\estagiarios\EstagiariosBlockPlugin();
 ```
 
-### 3.2.2 - version.xml
+Já no arquivo xml há metadados do plugin:
 
-- O version.xml somente é visto pelo instalador de plugins do OJS. Ele indica a versão do plugin e reconhece caso precise atualizar o plugin. O arquivo version.xml é importante porque, se você apenas colocar seus arquivos no diretório OJS, em vez de passar pelo instalador adequado, não haverá uma linha correspondente na tabela de plugins do banco de dados e você não poderá habilitar/desabilitar seu plugin.
-
-- O "application" é o nome do plugin e "class" é a classe principal do plugin, conforme especificado no arquivo index.php. Podemos ver um exemplo abaixo:
-
-
-```php
+```xml
+{% raw %}
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE version SYSTEM "../../../lib/pkp/dtd/pluginVersion.dtd">
+
 <version>
-   <application>NomePlugin</application>
-   <type>plugins.blocks</type>
-   <release>1.0.0.0</release>
-   <date>2023-01-06</date>
-   <lazy-load>1</lazy-load>
-   <class>NomePluginBlockPlugin</class>
+        <application>estagiarios</application>
+        <type>plugins.blocks</type>
+        <release>1.0.0.0</release>
+        <date>2025-01-01</date>
+        <lazy-load>1</lazy-load>
+        <class>EstagiariosBlockPlugin</class>
 </version>
+{% endraw %}
 ```
 
-### 3.2.3 - NomePluginBlockPlugin.php
+O arquivo `block.tpl` será o arquivo renderizado com o conteúdo que vamos apresentar, no nosso plugin as lista de estagiários de TI da FFLCH-USP:
+```html
+{% raw %}
+<h2>Estagiários(as) de TI da FFLCH-USP</h2>
+<ul>
+  <li>Maria</li>
+  <li>João</li>
+</ul>
+{% endraw %}
+```
 
-- Então agora que nós temos uma estrutura básica, precisaremos criar o arquivo que o index.php está carregando, no meu caso chamado NomePluginBlockPlugin.php. Isso precisa ser desenvolvido com algumas funções iniciais: register, getDisplayName, getDescription, isSitePlugin e getContents. Podemos ver um exemplo abaixo:
+Por fim, vamos definir nossa class `EstagiariosBlockPlugin.php` que deve conter no mínimos os métodos: getDisplayName, getDescription e getContents:
 
 ```php
 <?php
-import('lib.pkp.classes.plugins.BlockPlugin');
 
-class NomePluginBlockPlugin extends BlockPlugin {
+namespace APP\plugins\blocks\estagiarios;
 
-	function getContextSpecificPluginSettingsFile() {
-		return $this->getPluginPath();
-	}
+use PKP\plugins\BlockPlugin;
 
-	public function register($category, $path, $mainContextId = NULL) {
-
-    $success = parent::register($category, $path);
-
-		if ($success && $this->getEnabled()) {
-    }
-		return $success;
-	}
+class EstagiariosBlockPlugin extends BlockPlugin {
 
 	public function getDisplayName() {
-		return 'Plugin Exemplo';
+		return 'Plugin dos Estagiários';
 	}
 
-	public function getDescription() {
-		return 'Esse é um plugin de exemplo';
+    public function getDescription() {
+		return 'Lista de estagiários de TI da FFLCH-USP';
 	}
 
+    public function getContents($templateMgr, $request = null) {
+        return parent::getContents($templateMgr, $request);
+    }
 
-  public function isSitePlugin() {
-    return true;
-  }
-
-  public function getContents($templateMgr, $request = null) {
-    $ola = 'Olá Mundo!'
-
-    //Exibição
-    $templateMgr->assign('ola', $ola);
-    return parent::getContents($templateMgr, $request);
-  }
+    public function isSitePlugin() {
+        return true;
+    }
 }
 ```
 
-### 3.2.4 - block.tpl
+Alguns plugins devem ser aplicado somente nas revistas, outros plugins devem ser aplicados de forma global, no site principal que cuida das revistas, como implementamos o método `isSitePlugin`, nosso bloco estará disponível em todo portal e não apenas em uma revista específica.
 
-- Por fim, o block.tpl é responsável pela exibição de nosso plugin. Assim, o que conter nele será exibido ao habilitarmos o plugin em nosso site.
 
-```php
-<div class="pkp_block">
-    Texto: {$ola} 
-</div>
-```
+## Instalando o plugin
 
-## 3.3 - Como instalar o plugin na sua revistas
-
-- Com o plugin terminado, devemos adentrar na área de administrador do OJS.
-
-![Primeira parte](/assets/images/OJS/Instalacao_Plugin/Install1.png)
-
-- Devemos clicar no lado superior esquerdo e selecionar a revista que em desejamos inserir o plugin.
-
-![Segunda parte](/assets/images/OJS/Instalacao_Plugin/Install2.png)
-
-- Após isso, devemos observar o lado esquerdo da tela e selecionar a opção Website, depois devemos entrar na subpartição plugins.
+Na área de `Configurações do Portal` do OJS, acesse a aba plugins e habilite o plugin:
 
 ![Terceira parte](/assets/images/OJS/Instalacao_Plugin/Install3.png)
 
-- Dentro da subpartição plugins, devemos encontrar o nosso plugin e ativá-lo.
-
-![Quarta parte](/assets/images/OJS/Instalacao_Plugin/Install4.png)
-
-- Após isso, devemos voltar a subpartição aparência e depois devemos escolher a opção configurar.
+Após isso, limpe o cache e vá em aparência na opção configurar:
 
 ![Quinta parte](/assets/images/OJS/Instalacao_Plugin/Install5.png)
 
-- Em configurar, devemos descer a tela e ativar o nosso plugin, após isso precisaremos apertar no nome de nossa revista no canto superior esquerdo.
+Em seguida, selecionar o plugin para aparecer na barra lateral:
 
 ![Sexta parte](/assets/images/OJS/Instalacao_Plugin/Install6.png)
 
-- Pronto, seu plugin está visível em seu site.
+Pronto, seu plugin está visível em seu site.
 
-![Setima parte](/assets/images/OJS/Instalacao_Plugin/Install7.png)
+E se quisermos passarmos um array com a lista de estagiários da classe php para o template?
 
-Escrito por Pedro Cesar Antunes de Amigo
+```php
+<?php
+    $estagiarios = ['maria','pedro', 'joão'];
+    $templateMgr->assign('estagiarios', $estagiarios);
+```
+E no template block.tpl:
 
-- Foto do OJS clicavel.
+```html
+{% raw %}
+<ul>
+    {foreach from=$estagiarios item=estagiario}
+        <li>{$estagiario}</li>
+    {/foreach}
+</ul>
+{% endraw %}
+```
 
-[![Logo do OJS](/assets/images/OJS/ojs.png)](https://pkp.sfu.ca/)
+## Exercício 1 - Importação de Dados e Estatísticas no bloco do OJS
+
+**Objetivo**: Criar um novo plugin no OJS para ler dados de um arquivo CSV e exibir estatísticas desses dados em um bloco.
+
+[https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv)
+
+- Ler o arquivo `exercise.csv` dentro do método `getContents()` do bloco.
+- Calcular a média da coluna pulse para cada tipo de atividade (rest, walking, running).
+- Exibir a tabela abaixo no bloco com as informações lidas e processadas do csv.
+
+|  exercise.csv| rest  | walking   | running |
+|--------------|-------|-----------|---------|
+|  Qtde linhas |  XX   |     XX    |   XXX   | 
+|  Média Pulse |  XX   |     XX    |   XXX   |
 
 
+<!--
 ## 4 - sql
 
 ## 4.1 - sql puro
