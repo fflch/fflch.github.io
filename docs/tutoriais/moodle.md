@@ -52,12 +52,12 @@ php -S 0.0.0.0:8888 -t moodle -c php.ini
 
 Um plugin no Moodle é uma extensão que adiciona funcionalidades específicas à plataforma, permitindo personalizar e expandir suas capacidades. Ele pode ser usado para adicionar novos tipos de atividades, recursos, blocos, temas ou até mesmo integrações com ferramentas externas. Os plugins são desenvolvidos para se integrar ao Moodle de forma modular, sem alterar o núcleo do sistema, o que facilita a atualização e a manutenção.
 
-Vamos criar um plugin básico do tipo bloco no Moodle chamado `estagiarios`. Esse bloco vai simplesmente listar os nomes dos estagiários em forma de texto.  No Moodle, os plugins do tipo bloco seguem uma estrutura de pastas e arquivos específica. Vamos criar a estrutura inicial para o nosso bloco.
+Vamos criar um plugin básico do tipo bloco no Moodle chamado `livros`. Esse bloco vai simplesmente listar alguns livros.  No Moodle, os plugins do tipo bloco seguem uma estrutura de pastas e arquivos específica. Vamos criar a estrutura inicial para o nosso bloco.
 
 ```bash
 cd blocks
-mkdir estagiarios
-cd estagiarios
+mkdir livros
+cd livros
 ```
 
 Criar o Arquivo `version.php`, que define a versão do plugin e suas dependências:
@@ -66,33 +66,32 @@ Criar o Arquivo `version.php`, que define a versão do plugin e suas dependênci
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'block_estagiarios';
-$plugin->requires  = 2020061500; // Versão mínima do Moodle necessária.
-$plugin->version = 2025011401;
+$plugin->component = 'block_livros';
+$plugin->version = 2025010101;
 ```
 
-O arquivo `block_estagiarios.php` contém a lógica principal do bloco:
+O arquivo `block_livros.php` contém a lógica principal do bloco:
 
 ```php
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-class block_estagiarios extends block_base {
+class block_livros extends block_base {
     public function init() {
-        $this->title = get_string('estagiarios', 'block_estagiarios'); 
+        $this->title = 'Livros'; 
     }
 	
     public function get_content() {        
-        $estagiarios = [
-            'João Silva',
-            'Maria Souza',
-            'Carlos',
-            'Ana Costa',
+        $livros = [
+            'Memórias de um Sargento de Milícias',
+            'O Primo Basílio',
+            'Memórias Póstumas de Brás Cubas',
+            'A Hora da Estrela',
         ];	
         $this->content = new stdClass;
         $this->content->text = '<ul>';
-        foreach ($estagiarios as $nome) {
-            $this->content->text .= '<li>' . $nome . '</li>';
+        foreach ($livros as $livro) {
+            $this->content->text .= '<li>' . $livro . '</li>';
         }
         $this->content->text .= '</ul>';
         return $this->content;
@@ -100,31 +99,29 @@ class block_estagiarios extends block_base {
 }
 ```
 
-Texto mínimos para internacionalização:
+A pasta lang de um plugin no Moodle é responsável por armazenar os arquivos de idioma do plugin. Esses arquivos contêm todas as strings de texto que o plugin utiliza, permitindo que ele seja traduzido para diferentes idiomas. O arquivo  `pluginname.php`retorna um array associativo com as chaves e valores das mensagens/textos.
 
 ```bash
 mkdir -p lang/en
 mkdir -p lang/pt_br
 ```
 
-Versão em português em `lang/pt_br/block_estagiarios.php`:
+Versão em português `lang/pt_br/block_livros.php`:
 
 ```php
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Estagiários'; 
-$string['estagiarios'] = 'Lista de Estagiários';
+$string['pluginname'] = 'Livros'; 
 ```
 
-Versão em inglês em `lang/en/block_estagiarios.php`:
+Versão em inglês `lang/en/block_livros.php`:
 
 ```php
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Interns';
-$string['estagiarios'] = 'List of Interns';
+$string['pluginname'] = 'Books';
 ```
 
 Por fim, podemos podemos ativar nosso plugin pela interface ou com o comando:
@@ -132,6 +129,43 @@ Por fim, podemos podemos ativar nosso plugin pela interface ou com o comando:
 ```bash
 php admin/cli/upgrade.php
 ```
+
+Com o intuito de deixar nosso plugin em multi-idiomas, ainda na pasta lang, no array `$string` podemos criar novas chaves, por exemplo, `$string['title']='Título';` em ambas as pastas, `en` e `pt-br` e usar na nossa classe a chamada `get_string('title', 'block_livros');` ao invés de usar strings de texto diretamente no código php.
+
+## Templates
+
+Os arquivos Mustaches são um template de interface HTML que separa o conteúdo (dados) da apresentação (visual). São usados para gerar a interface do usuário de forma limpa e organizada, com suporte a variáveis, condicionais e laços de repetição, sem conter lógica PHP diretamente.
+
+```bash
+mkdir templates
+```
+A nova implementação do método `get_content` usando templates será:
+```php
+public function get_content() {        
+    $livros = [
+        'Memórias de um Sargento de Milícias',
+        'O Primo Basílio',
+        'Memórias Póstumas de Brás Cubas',
+        'A Hora da Estrela',
+    ];	
+    $this->content = new stdClass;
+    $this->content->text = $this->render_from_template('block_livros/livros', $livros);
+    return $this->content;
+}
+```
+
+E por fim, o arquivo mustache `templates/livros.mustache`:
+```html
+<ul>
+  {{#livros}}
+    <li>{{titulo}}</li>
+  {{/livros}}
+</ul>
+```
+
+
+{{#str}} nome_da_string, nome_do_plugin {{/str}}
+
  
 ## Exercício 1 - Importação de Dados e Estatísticas no bloco do Moodle
 
