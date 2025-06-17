@@ -53,31 +53,31 @@ Route::get('/exemplo-de-rota', function () {
 ```
 
 O controller é uma classe responsável por organizar a lógica da aplicação, separando as regras de negócio das rotas. Em vez de definir toda a lógica diretamente nas rotas, os controllers agrupam funcionalidades relacionadas, tornando o código mais limpo e modular. 
-A convenção de nomenclatura para controllers segue o padrão PascalCase, onde o nome deve ser descritivo, no singular e sempre terminar com "Controller", como `ProdutoController` ou `UsuarioController`. Vamos criar o EstagiarioController com o seguinte comando que gera automaticamente o arquivo correspondente dentro de `app/Http/Controllers`:
+A convenção de nomenclatura para controllers segue o padrão PascalCase, onde o nome deve ser descritivo, no singular e sempre terminar com "Controller", como `ProdutoController` ou `UsuarioController`. Vamos criar o LivroController com o seguinte comando que gera automaticamente o arquivo correspondente dentro de `app/Http/Controllers`:
 
 ```php
-php artisan make:controller EstagiarioController
+php artisan make:controller LivroController
 ```
 
-A seguir criamos a rota `estagiarios` e a apontamos para o controller `EstagiarioController`, importando anteriormente o namespace `App\Http\Controllers\EstagiarioController`. O namespace é uma forma de organizar classes, funções e constantes para evitar conflitos de nomes em projetos grandes. Ele permite agrupar elementos relacionados dentro de um mesmo escopo, facilitando a reutilização e manutenção do código.
+A seguir criamos a rota `livros` e a apontamos para o controller `LivroController`, importando anteriormente o namespace `App\Http\Controllers\LivroController`. O namespace é uma forma de organizar classes, funções e constantes para evitar conflitos de nomes em projetos grandes. Ele permite agrupar elementos relacionados dentro de um mesmo escopo, facilitando a reutilização e manutenção do código.
 
 ```php
-use App\Http\Controllers\EstagiarioController;
-Route::get('/estagiarios', [EstagiarioController::class,'index']);
+use App\Http\Controllers\LivroController;
+Route::get('/livros', [LivroController::class,'index']);
 ```
 
 A camada View é responsável por exibir a interface da aplicação, separando a lógica de apresentação da lógica de negócio (controller). Ela utiliza o Blade, uma linguagem de templates que permite criar páginas dinâmicas de forma eficiente. As views ficam armazenadas na pasta `resources/views` e podem ser retornadas a partir de um controller usando return `view('nome_da_view')`.
 
 ```php
-mkdir resources/views/estagiarios
-touch resources/views/estagiarios/index.blade.php
+mkdir resources/views/livros
+touch resources/views/livros/index.blade.php
 ```
 
 No controller:
 
 ```php
 public function index(){
-  return view('estagiarios.index');
+  return view('livros.index');
 }
 ```
 
@@ -87,84 +87,112 @@ Conteúdo mínimo de index.blade.php:
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Estagiários</title>
+        <title>Livros</title>
     </head>
     <body>
-        João<br>
-        Maria
+        Memórias de um Sargento de Milícias<br>
+        O Primo Basílio<br>
+        Memórias Póstumas de Brás Cubas<br>
+        A Hora da Estrela<br>
     </body>
 </html>
 ```
 
 O Model é uma representação de uma tabela no banco de dados e é responsável pela interação com os dados dessa tabela. Ele encapsula a lógica de acesso e manipulação dos dados, permitindo realizar operações como inserção, atualização, exclusão e leitura de registros de forma simples e intuitiva. O Laravel usa o Eloquent ORM (Object-Relational Mapping) para mapear os dados do banco de dados para objetos PHP, o que permite que você trabalhe com as tabelas como se fosse uma classe de objetos.
 
-Criando o model chamado Estagiario:
+Criando o model chamado Livro:
 
 ```bash
-php artisan make:model Estagiario -m
+php artisan make:model Livro -m
 ```
 
 As migrations são uma forma de versionar e gerenciar o esquema do banco de dados, permitindo criar, alterar e remover tabelas de forma controlada e rastreável. Elas funcionam como um histórico de mudanças no banco de dados, ajudando a manter o controle de versões entre diferentes ambientes de desenvolvimento e produção.
 
-Cada migration é uma classe PHP que define as operações a serem realizadas no banco de dados. As migrations são armazenadas na pasta `database/migrations`. As migrations tornam o processo de gerenciamento do banco de dados mais organizado e flexível, principalmente em projetos com múltiplos desenvolvedores. Vamos colocar três colunas para o model `Estagiario`: nome, idade e email.
+Cada migration é uma classe PHP que define as operações a serem realizadas no banco de dados. As migrations são armazenadas na pasta `database/migrations`. As migrations tornam o processo de gerenciamento do banco de dados mais organizado e flexível, principalmente em projetos com múltiplos desenvolvedores. Vamos colocar três colunas para o model `Livro`: titulo, autor e ano.
 
 ```php
-$table->string('nome');
-$table->string('email');
-$table->integer('idade');
+$table->string('titulo');
+$table->string('autor');
+$table->integer('ano');
 ```
 
+Depois da modificação na migration, aplicá-la no banco de dados: `php artisan migrate`.
+
 {: .note-title }
->Desafio
+>tinker
 >
->Crie uma rota chamada `estagiarios/create` apontando para o método `create` em `EstagiarioController`, que também deve ser criado.
+>O comando `php artisan tinker` nos permite digitar comandos PHP e ver imediatamente o resultado, como se estivesse dentro da sua aplicação Laravel, ou seja, executamos comandos PHP diretamente dentro do contexto da aplicação, de forma prática e rápida.
 
-No método `create` do `EstagiarioController`, insira os estagiários:
-
+Usando o tinker, vamos cadastrar dois livros:
 ```php
-public function create(){
-    $estagiario1 = new App\Models\Estagiario;
-    $estagiario1->nome = "João";
-    $estagiario1->email = "joao@usp.br";
-    $estagiario1->idade = 26;
-    $estagiario1->save();
+$livro = new \App\Models\Livro;
+$livro->titulo = "Memórias de um Sargento de Milícias";
+$livro->autor = "Manuel Antônio de Almeida";
+$livro->ano = 1853;
+$livro->save();
 
-    $estagiario2 = new App\Models\Estagiario;
-    $estagiario2->nome = "Maria";
-    $estagiario2->email = "maria@usp.br";
-    $estagiario2->idade = 27;
-    $estagiario2->save();
-    return redirect("/estagiarios");
-}
+$livro = new \App\Models\Livro;
+$livro->titulo = "O Primo Basílio";
+$livro->autor = "Eça de Queiroz";
+$livro->ano = 1878;
+$livro->save();
 ```
 
-{: .note-title }
->Dica
->
->Toda vez que a rota `estagiarios/create` for acessada os cadastros serão realizados, pode-se deletar tudo antes das inserções com a função: `App\Models\Estagiario::truncate()`
+Se quisermos conferir diretamente no banco de dados os livros cadastrados, saímos do tinker com Ctrl+C e acessamos o banco com sqlite:
 
+```sql
+sqlite3 database/database.sqlite
+.tables
+SELECT * FROM livros;
+.quit
+```
 
-Por fim, na view da index podemos buscar os estagiários cadastrados e passar como uma variável para o template:
+Conferido que os livros foram cadastrados no banco de dados, na view da index podemos listar os livros cadastrados:
 
 ```php
+use App\Models\Livro;
+
 public function index(){
-  return view('estagiarios.index'[
-    'estagiarios' => App\Models\Estagiario::all()
+  return view('livros.index',[
+    'livros' => Livro::all()
   ]);
 }
 ```
 
-No blade, listamos os estagiários:
-
-```php
+No blade index.blade.php, listamos os livros:
 {% raw %}
+```php
 <ul>
-    @foreach($estagiarios as $estagiario)
-        <li>{{ $estagiario->nome }} - {{ $estagiario->email }} - {{ $estagiario->idade }} anos</li>
+    @foreach($livros as $livro)
+        <li>{{ $livro->titulo }}, por <i>{{ $livro->autor }}</i> em {{ $livro->ano }}</li>
     @endforeach
 </ul>
-{% endraw %}
 ```
+{% endraw %}
+
+Por fim, podemos criar um comando no artisan que automatiza o cadastro de livros a partir de alguma lógica que podemos desenvolver. 
+
+```php
+php artisan make:command ImportaLivros
+```
+
+O comando acima criará o arquivo `app/Console/Commands/ImportaLivros.php`, o qual temos que mudar o `$signature` e implementar a lógica do comando:
+
+```php
+protected $signature = 'livros:importar';
+
+public function handle()
+{
+    $livro = new \App\Models\Livro;
+    $livro->titulo = "A Hora da Estrela";
+    $livro->autor = "Clarice Lispector";
+    $livro->ano = 1977;
+    $livro->save();
+}
+```
+
+Ao rodarmos no terminal o comando `php artisan livros:importar` o livro da Clarice será cadastrado. Essa é um implementação simples (e inútil, pois o mesmo livro é sempre cadastrado repetidamente), mas a ideia é que qualquer lógica pode ser implementada no `handle()` para cadastro de muitos livros a partir de uma fonte externa, como, por exemplo, uma lista de livros oriunda de um arquivo csv. 
+
 
 ## Exercício 1 - Importação de Dados e Estatísticas com Laravel
 
@@ -178,19 +206,18 @@ No blade, listamos os estagiários:
 - Na migration, defina os campos necessários com base nas colunas do arquivo `exercise.csv`
 - Execute a migration para criar a tabela no banco de dados.
 
-2) Criar o Controller e a Rota para Importação
+2) Criar um `Command` para Importação
 
-- Crie um controller chamado ExerciseController com o método importCsv.
-- Defina uma rota `exercises/importcsv` que aponte para o método importCsv do controller.
-- No método importCsv, implemente a lógica para ler o arquivo `exercise.csv` e salvar os dados no banco de dados usando o model `Exercise`.
+- Crie um comando `exercise:importar`.
+- No método `handle()`, implemente a lógica para ler o arquivo `exercise.csv` e salvar os dados no banco de dados usando o model `Exercise`.
+- Dica 1: Para zerar os registros a cada importação, pode-se usar o comando `\App\Models\Livros::truncate()` no começo do método `handle()`.
+- Dica 2: Você pode usar a classe `League\Csv\Reader` (disponível via Composer) para facilitar a leitura do CSV.
 
-Dica: Você pode usar a classe `League\Csv\Reader` (disponível via Composer) para facilitar a leitura do CSV.
+3) Criar estatísticas básicas sobre os dados
 
-3) Criar a Rota e Método para Estatísticas
-
-- No mesmo `ExerciseController`, crie um método chamado `stats`.
+- Criar o controller `ExerciseController` com um método chamado `stats`.
 - Defina uma rota `exercises/stats` que aponte para o método `stats`.
-- No método `stats`, calcule as média da coluna pulse para os casos rests, walking e running, conforme tabela abaixo.
+- No método `stats`, calcule as média aritmética da coluna pulse para os casos rests, walking e running, conforme tabela abaixo.
 - Passe esses dados para uma view chamada `resources/views/exercises/stats.blade.php` e monte finalmente a tabela com html.
 
 Exemplo de saída:
@@ -206,21 +233,11 @@ Exemplo de saída:
 
 CRUD é um acrônimo para as quatro operações básicas utilizadas na manipulação de dados em sistemas web: Create (Criar), Read (Ler), Update (Atualizar) e Delete (Excluir). Essas operações interagem com bancos de dados, permitindo, por exemplo, que usuários possam cadastrar novas informações, visualizar registros existentes, modificar dados já salvos e remover registros.
 
-Vamos criar um novo model Chamado Livro e a correspondente migration com os seguintes campos:
-
-```php
-$table->string('titulo');
-$table->string('autor')->nullable();
-$table->string('isbn');
-```
-
 ### Create
 
 São geralmente necessárias duas rotas para salvar um registro em uma operação CRUD porque o processo é dividido em duas etapas: exibir o formulário e processar os dados enviados. A rota GET serve para exibir o formulário de criação e a rota POST serve para processar os dados enviados pelo formulário no controller:
 
 ```php
-use App\Http\Controllers\LivroController;
-
 Route::get('/livros/create', [LivroController::class,'create']);
 Route::post('/livros', [LivroController::class,'store']);
 ```
@@ -228,112 +245,134 @@ Route::post('/livros', [LivroController::class,'store']);
 Para mostrar o formulário html usamos o método *create* :
 
 ```php
-public function create()
-{
+public function create(){
     return view('livros.create');
 }
 ```
 
-Formulário html:
+Formulário html será `touch resources/views/livros/create.blade.php` com o seguinte conteúdo:
 
 ```php
 <form method="POST" action="/livros">
     @csrf
     Título: <input type="text" name="titulo">
     Autor: <input type="text" name="autor">
-    ISBN: <input type="text" name="isbn">
+    Ano: <input type="text" name="ano">
     <button type="submit">Enviar</button>
 </form>
 ```
 
-### Read
-
-Vamos implementar duas formas de acesso aos registros de livros. O acesso ao registro de um livro específico e uma listagem de todos livros.
+Por fim o método store, que salva no banco de dados o cadastro do livro:
 
 ```php
-Route::get('/livros', [LivroController::class,'index']);
+public function store(Request $request){
+    $livro = new Livro;
+    $livro->titulo = $request->titulo;
+    $livro->autor = $request->autor;
+    $livro->ano = $request->ano;
+    $livro->save();
+    return redirect('/livros');
+}
+```
+
+### Read
+
+Já implementamos uma forma de acessar os livros em forma de listagem com o método index, podemos implementar outra forma de acesso individual para cada livro. Rota para acesso ao registro de um livro específico:
+
+```php
 Route::get('/livros/{livro}', [LivroController::class,'show']);
 ```
 
-Respectivos controllers:
+Respectivo controller:
 ```php
-public function index()
-{
-    $livros =  Livro::all();
-    return view('livros.index',[
-        'livros' => $livros
-    ]);
-}
-
-public function show(Livro $livro)
-{
+public function show(Livro $livro){
     return view('livros.show',[
         'livro' => $livro
     ]);
 }
 ```
 
-Html para index:
-```php
+Criamos um blade para a rota show `touch resources/views/livros/show.blade.php` com o seguinte conteúdo:
+
 {% raw %}
-@forelse($livros as $livro)
-    <ul>
-        <li><a href="/livros/{{$livro->id}}">{{ $livro->titulo }}</a></li>
-        <li>{{ $livro->autor }}</li>
-        <li>{{ $livro->isbn }}</li>
-    </ul>
-@empty
-    Não há livros cadastrados
-@endforelse
-{% endraw %}
+```php
+Título: {{ $livro->titulo }} <br>
+Autor: <i>{{ $livro->autor }}</i> <br>
+Ano de publicação: {{ $livro->ano }} <br>
+<a href="/livros">Voltar</a>
 ```
+{% endraw %}
+
+No index.blade.php podemos criar um link para o `show` de cada livro:
+
+{% raw %}
+```php
+<a href="/livros/{{ $livro->id}}">{{ $livro->titulo }}</a>
+```
+{% endraw %}
 
 ### Update
 
 Novamente precisamos de duas rotas para atualizar um registro, uma para exibir o formulário e outra para processar os dados enviados.
 
 ```php
-Route::get('/livros/{livro}', [LivroController::class,'edit']);
+Route::get('/livros/{livro}/edit', [LivroController::class,'edit']);
 Route::post('/livros/{livro}', [LivroController::class,'update']);
 ```
 
 Implementação no controller:
 ```php
-public function edit(Livro $livro)
-{
+public function edit(Livro $livro){
     return view('livros.edit',[
         'livro' => $livro
     ]);
 }
 
-public function update(Request $request, Livro $livro)
-{
+public function update(Request $request, Livro $livro){
     $livro->titulo = $request->titulo;
     $livro->autor = $request->autor;
-    $livro->isbn = $request->isbn;
+    $livro->ano = $request->ano;
     $livro->save();
     return redirect("/livros/{$livro->id}");
 }
 ```
 
-Html para edição:
+Criando o blade para edição:
+
 ```php
+touch resources/views/livros/edit.blade.php
+```
+
+Html para edição no `edit.blade.php`:
 {% raw %}
+```php
 <form method="POST" action="/livros">
     @csrf
     Título: <input type="text" name="titulo" value="{{ $livro->titulo }}">
     Autor: <input type="text" name="autor" value="{{ $livro->autor }}">
-    ISBN: <input type="text" name="isbn" value="{{ $livro->isbn }}">
+    Ano: <input type="text" name="ano" value="{{ $livro->ano }}">
     <button type="submit">Enviar</button>
 </form>
-{% endraw %}
 ```
+{% endraw %}
+
+Vamos colocar o botão para edição no blade `show.blade.php`:
+
+{% raw %}
+```php
+Título: {{ $livro->titulo }} <br>
+Autor: <i>{{ $livro->autor }}</i> <br>
+Ano de publicação: {{ $livro->ano }} <br>
+<a href="/livros/{{ $livro->id }}/edit">Editar</a> <br>
+<a href="/livros">Voltar</a>
+```
+{% endraw %}
 
 ### Delete
 
 Rota para delete:
 ```php
-Route::delete('/livros/{livro}', [LivroController::class,'update']);
+Route::delete('/livros/{livro}', [LivroController::class,'destroy']);
 ```
 
 Controller para delete:
@@ -345,22 +384,21 @@ public function destroy(Livro $livro)
 }
 ```
 
-Botão html para delete:
-```php
+Botão html para delete que podemos colocar no blade do `show.blade.php`:
 {% raw %}
-<li>
-    <form action="/livros/{{ $livro->id }} " method="post">
+```php
+<form action="/livros/{{ $livro->id }} " method="post">
     @csrf
     @method('delete')
     <button type="submit" onclick="return confirm('Tem certeza?');">Apagar</button> 
-    </form>
-</li>
-{% endraw %}
+</form>
 ```
+{% endraw %}
+
 
 ## Exercício 2
 
-1. Criar um CRUD completo para cadastro de livros: [https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv](https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv)
+1. Criar um CRUD completo para cadastro de livros: [https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv](https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv). Dica: use outra instância de Laravel para não confundir com o `Model` livro que já estamos usando ao longo do texto. 
 2. Criar uma rotina de importação, conforme feito no exercício 1, para importação do csv: [https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv](https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv) (esse é o completo!)
 3. Criar rota, controller e view que vai mostrar: 
 
