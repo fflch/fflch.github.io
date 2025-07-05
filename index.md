@@ -41,10 +41,46 @@ permalink: /
 - [Distribuição das Issues](https://github.com/orgs/fflch/projects/15/)
 - [Issues abertas na FFLCH](https://github.com/search?q=org%3Afflch+is%3Aissue+is%3Aopen&type=issues)
 
-Sistemas:
+Sistemas em Laravel:
 
-- fflch/minibib (11)
-- uspdev/estagios (11)
+<table>
+  <thead>
+    <tr>
+      <th>Repositório</th>
+      <th>Versão Laravel</th>
+      <th>URL</th>
+    </tr>
+  </thead>
+<tbody>
+  <tr>
+    <td><a target="_blank" href="https://github.com/fflch/minibib">fflch/minibib</a></td>
+    <td>12</td>
+    <td>
+        <b>Produção:</b><br>
+        <a target="_blank" href="https://bibliotecacejap.fflch.usp.br">https://bibliotecacejap.fflch.usp.br</a><br>
+        <a target="_blank" href="https://bibliotecacelp.fflch.usp.br">https://bibliotecacelp.fflch.usp.br</a><br>
+        <a target="_blank" href="https://bibliotecageomorfo.fflch.usp.br">https://bibliotecageomorfo.fflch.usp.br</a><br>
+        <a target="_blank" href="https://bibliotecalaboplan.fflch.usp.br">https://bibliotecalaboplan.fflch.usp.br</a><br>
+        <a target="_blank" href="https://bibliotecalemadigeo.fflch.usp.br">https://bibliotecalemadigeo.fflch.usp.br</a><br>
+        <b>Homologação:</b><br>
+        <a target="_blank" href="http://bibliotecacejap.homolog.fflch.usp.br">http://bibliotecacejap.homolog.fflch.usp.br</a><br>
+    </td>
+  </tr>
+
+  <tr>
+    <td><a target="_blank" href="https://github.com/uspdev/estagios">uspdev/estagios</a></td>
+    <td>12</td>
+    <td>
+        <b>Produção:</b><br>
+        <a target="_blank" href="https://estagios.fflch.usp.br">https://estagios.fflch.usp.br</a><br>
+        <b>Homologação:</b><br>
+        <a target="_blank" href="http://estagios.homolog.fflch.usp.br">http://estagios.homolog.fflch.usp.br</a><br>
+    </td>
+  </tr>
+
+</tbody>
+</table>
+
 - fflch/cdd (11)
 - fflch/gembib (11)
 - uspdev/empresta (11)
