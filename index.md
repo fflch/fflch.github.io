@@ -22,7 +22,7 @@ permalink: /
   <tr>
     <td><b>9:30-10:30</b></td>
     <td></td>
-    <td>Reunião Laravel</td>
+    <td></td>
     <td>Reunião Analistas</td>
     <td></td>
     <td></td>
@@ -30,10 +30,10 @@ permalink: /
   <tr>
     <td><b>14:30-16:00</b></td>
     <td></td>
-    <td>Reunião Dados</td>
-    <td></td>
     <td>Reunião Drupal</td>
-    <td>Reunião Moodle/OJS</td>
+    <td></td>
+    <td>Reunião Laravel</td>
+    <td></td>
   </tr>
 </tbody>
 </table>
@@ -46,38 +46,41 @@ Sistemas em Laravel:
 <table>
   <thead>
     <tr>
+      <th>Responsável</th>
       <th>Repositório</th>
-      <th>Versão Laravel</th>
-      <th>URL</th>
     </tr>
   </thead>
 <tbody>
   <tr>
-    <td><a target="_blank" href="https://github.com/fflch/minibib">fflch/minibib</a></td>
-    <td>12</td>
+    <td>Raphael</td>
     <td>
-        <b>Produção:</b><br>
-        <a target="_blank" href="https://bibliotecacejap.fflch.usp.br">https://bibliotecacejap.fflch.usp.br</a><br>
-        <a target="_blank" href="https://bibliotecacelp.fflch.usp.br">https://bibliotecacelp.fflch.usp.br</a><br>
-        <a target="_blank" href="https://bibliotecageomorfo.fflch.usp.br">https://bibliotecageomorfo.fflch.usp.br</a><br>
-        <a target="_blank" href="https://bibliotecalaboplan.fflch.usp.br">https://bibliotecalaboplan.fflch.usp.br</a><br>
-        <a target="_blank" href="https://bibliotecalemadigeo.fflch.usp.br">https://bibliotecalemadigeo.fflch.usp.br</a><br>
-        <b>Homologação:</b><br>
-        <a target="_blank" href="http://bibliotecacejap.homolog.fflch.usp.br">http://bibliotecacejap.homolog.fflch.usp.br</a><br>
+      <ul>
+        <li><a target="_blank" href="https://github.com/fflch/minibib">fflch/minibib</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/estagios">fflch/estagios</a></li>
+      </ul>
     </td>
   </tr>
-
   <tr>
-    <td><a target="_blank" href="https://github.com/uspdev/estagios">uspdev/estagios</a></td>
-    <td>12</td>
+    <td>Kevin</td>
     <td>
-        <b>Produção:</b><br>
-        <a target="_blank" href="https://estagios.fflch.usp.br">https://estagios.fflch.usp.br</a><br>
-        <b>Homologação:</b><br>
-        <a target="_blank" href="http://estagios.homolog.fflch.usp.br">http://estagios.homolog.fflch.usp.br</a><br>
+      <ul>
+      </ul>
     </td>
   </tr>
-
+  <tr>
+    <td>Alan</td>
+    <td>
+      <ul>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>Ricardo</td>
+    <td>
+      <ul>
+      </ul>
+    </td>
+  </tr>
 </tbody>
 </table>
 
