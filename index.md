@@ -55,8 +55,18 @@ Sistemas em Laravel:
     <td>Raphael</td>
     <td>
       <ul>
-        <li><a target="_blank" href="https://github.com/fflch/minibib">fflch/minibib</a></li>
-        <li><a target="_blank" href="https://github.com/fflch/estagios">fflch/estagios</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/minibib">fflch/minibib (12)</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/estagios">fflch/estagios (12)</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/orcamento">fflch/orcamento (12)</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/cdd">fflch/cdd (12)</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/gembib">fflch/gembib (12)</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/empresta">fflch/empresta (11)</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/bibfiles">fflch/bibfiles (12)</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/trabalhoacademico">fflch/trabalhoacademico (12)</a></li>
+        <li><a target="_blank" href="https://github.com/uspdev/salas">uspdev/salas (12)</a></li>
+        <li><a target="_blank" href="https://github.com/uspdev/copaco">uspdev/copaco (12)</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/etiquetas">fflch/etiquetas (12)</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/fcbib">fflch/fcbib (12)</a></li>
       </ul>
     </td>
   </tr>
@@ -64,6 +74,10 @@ Sistemas em Laravel:
     <td>Kevin</td>
     <td>
       <ul>
+        <li><a target="_blank" href="https://github.com/fflch/fechaduras">fflch/fechaduras</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/intercambio">fflch/intercambio</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/grafica">fflch/grafica</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/equipamentos">fflch/equipamentos</a></li>
       </ul>
     </td>
   </tr>
@@ -71,47 +85,31 @@ Sistemas em Laravel:
     <td>Alan</td>
     <td>
       <ul>
+        <li><a target="_blank" href="https://github.com/fflch/fechaduras">fflch/fechaduras</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/rede">fflch/rede</a></li>
+        <li><a target="_blank" href="https://github.com/uspdev/defesas">uspdev/defesas</a></li>
       </ul>
     </td>
   </tr>
   <tr>
-    <td>Ricardo</td>
+    <td>Ricardo/Thiago</td>
     <td>
       <ul>
+        <li><a target="_blank" href="https://github.com/fflch/ranqueamento">fflch/ranqueamento</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/sisfac">fflch/sisfac</a></li>
+        <li><a target="_blank" href="https://github.com/uspdev/pessoas">uspdev/pessoas</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/listas">fflch/listas</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/sites">fflch/sites</a></li>
+        <li><a target="_blank" href="https://github.com/uspdev/impressoras">uspdev/impressoras</a></li>
+        <li><a target="_blank" href="https://github.com/uspdev/web-ldap-admin">uspdev/web-ldap-admin (8)/a></li>
+        <li><a target="_blank" href="https://github.com/uspdev/chamados">uspdev/chamados (8)</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/dados">fflch/dados</a></li>
+        <li><a target="_blank" href="https://github.com/fflch/cortec">fflch/cortec</a></li>
       </ul>
     </td>
   </tr>
 </tbody>
 </table>
-
-- fflch/cdd (11)
-- fflch/gembib (11)
-- uspdev/empresta (11)
-- fflch/trabalhoacademico (11)
-- uspdev/copaco (11)
-- fflch/bibfiles (11)
-- fflch/etiquetas (11)
-- fflch/ranqueamento (11)
-- fflch/orcamento (11)
-- fflch/intercambio (11)
-- fflch/grafica (11)
-- uspdev/salas (11)
-- fflch/equipamentos (11)
-- fflch/sisfac (11)
-- fflch/switches (8)
-- uspdev/defesas (11)
-- uspdev/pessoas (11)
-- fflch/fcbib (11) - externo: fc.zelda.net.br
-
-Demais sistemas:
-
-- fflch/listas (8) -  Ricardo vai atualizar para 11
-- fflch/sites (8) -  Ricardo vai atualizar para 11
-- uspdev/impressoras (8) - Thiago vai atualizar para 11
-- uspdev/web-ldap-admin (8) - Ricardo vai atualizar para 11
-- uspdev/chamados (8)
-- fflch/cortec (8) 
-- fflch/dados (12)
 
 Sistema desativados na FFLCH:
 
