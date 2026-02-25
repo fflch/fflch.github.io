@@ -315,3 +315,20 @@ Siga o que a imagem a baixo indica para criar um usuário.
 ![user_create_img](/assets/images/pixelfed/user_create.png)
 
 Para criar um usuário sem as autorizações de admin basta responder não na criação do mesmo.
+
+## Corrigindo tabela no banco
+
+Existe uma tabela no banco que criamos para o pixelfed. A tabela em questão é a `statuses` que tem um campo nomeado `visibility` que é um ENUM e por algum motivo alguns conflitos ocorrem quando implementamos a instância de banco MariaDB, impossibilitando a funcionalidade de posts da aplicação.
+
+```sql
+ALTER TABLE statuses 
+MODIFY COLUMN visibility ENUM(
+    'public', 
+    'unlisted', 
+    'private', 
+    'direct', 
+    'draft'
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'public';
+```
+
+Este comando âmplia as possibilidades de valores aceitas pelo Enum, solucionando esse pequeno problema.
