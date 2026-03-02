@@ -13,6 +13,12 @@ nav_order: 6
 ## Realizando a instalação do pixelfed.
 
 Antes de qualquer coisa lembre-se de ter na sua máquina o Redis instalado, além do php e todas as ferramentas atreladas ao contexto de desenvolvimento como um banco de dados, seja mysql, mariadb ou postgresql.
+
+Instale o Redis, como seguinte comando:
+```bash
+sudo apt install redis-server
+```
+
 Para verificar se ele está funcionando utilize o seguinte comando:
 
 ```bash
@@ -280,7 +286,7 @@ PF_REAL_TIME_UPDATES=true
 Agora vamos rodar as migrations via Artisan, lembre-se que o banco deve já ter sido criado previamente e deve estar corretamente especificado no .env, utilize o seguinte comando:
 
 ```bash
-php artisan migrations --force
+php artisan migrate --force
 ```
 Migrations realizadas. Tudo pronto para iniciar o seu serviço local com o Pixelfed.
 
@@ -315,20 +321,3 @@ Siga o que a imagem a baixo indica para criar um usuário.
 ![user_create_img](/assets/images/pixelfed/user_create.png)
 
 Para criar um usuário sem as autorizações de admin basta responder não na criação do mesmo.
-
-## Corrigindo tabela no banco
-
-Existe uma tabela no banco que criamos para o pixelfed. A tabela em questão é a `statuses` que tem um campo nomeado `visibility` que é um ENUM e por algum motivo alguns conflitos ocorrem quando implementamos a instância de banco MariaDB, impossibilitando a funcionalidade de posts da aplicação.
-
-```sql
-ALTER TABLE statuses 
-MODIFY COLUMN visibility ENUM(
-    'public', 
-    'unlisted', 
-    'private', 
-    'direct', 
-    'draft'
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'public';
-```
-
-Este comando âmplia as possibilidades de valores aceitas pelo Enum, solucionando esse pequeno problema.
