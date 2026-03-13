@@ -8,8 +8,6 @@ permalink: /
 
 {: .fs-9 }
 {: .fs-6 .fw-300 }
-
-<table><thead>
   <tr>
     <th></th>
     <th>Seg</th>

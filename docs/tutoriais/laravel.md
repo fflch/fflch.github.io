@@ -577,6 +577,157 @@ Esse exercíco é referente ao arquivo: [https://github.com/owid/covid-19-data/b
 5. Corriga seus formulários para sempre conterem a função old()
 
 
+# Dia 4
+
+Instalação do senhaunica-socialite conforme:
+
+[https://github.com/uspdev/senhaunica-socialite](https://github.com/uspdev/senhaunica-socialite)
+
+## Dusk
+
+Os testes com **Laravel Dusk** no nosso contexto tem dois propósitos:
+
+1. **Testar funcionalidades reais do sistema**, simulando a interação de um usuário no navegador.
+2. **Servir como documentação funcional**, demonstrando como as principais funcionalidades do sistema devem se comportar.
+
+Vamos configurar o **em modo assistido**, ou seja, diretamente na sua máquina, pois assim é possível **visualizar o navegador Chrome virtual executando os testes**. Por esse motivo, neste caso **não executamos os testes em container**.
+
+E vamos configurar o **`.github/workflows`** para os testes rodarem automaticamente no **GitHub Actions**, garantindo que falhas nos testes sejam detectadas durante novos commits ou pull requests.
+
+{% highlight bash %}
+composer require --dev laravel/dusk
+php artisan dusk:install
+php artisan dusk:chrome-driver
+{% endhighlight %}
+
+Colocar linha `php artisan dusk:chrome-driver --detect` no composer.json:
+
+{% highlight php %}
+"scripts": {
+    "post-install-cmd": [
+        "@php artisan dusk:chrome-driver --detect"
+    ]
+}
+{% endhighlight %}
+
+Criar uma Trait que comunica com o senhaunica-socialite:
+{% highlight bash %}
+mkdir app/Helpers;
+touch app/Helpers/UspdevDuskTrait.php
+{% endhighlight %}
+
+Conteúdo da Trait:
+{% highlight bash %}
+<?php
+
+namespace App\Helpers;
+
+use App\Models\User;
+use Spatie\Permission\Models\Permission;
+
+trait UspdevDuskTrait
+{
+    protected $adminUser;
+    protected $commonUser;
+
+    protected function setupAdminAndUser()
+    {
+        Permission::firstOrCreate(['name' => 'admin', 'guard_name' => 'senhaunica']);
+        Permission::firstOrCreate(['name' => 'user', 'guard_name' => 'senhaunica']);
+
+        $this->commonUser = User::firstOrCreate(
+            ['email' => 'user@test.com'],
+            ['name' => 'Dusk User', 'password' => bcrypt('password')]
+        );
+        $this->commonUser->givePermissionTo('user', 'senhaunica');
+
+        $this->adminUser = User::firstOrCreate(
+            ['email' => 'admin@test.com'],
+            ['name' => 'Dusk Admin', 'password' => bcrypt('password')]
+        );
+        $this->adminUser->givePermissionTo('admin', 'senhaunica');
+    }
+}
+{% endhighlight %}
+
+Criar um arquivo .env.testing.example:
+
+{% highlight bash %}
+APP_NAME="Exemplo Dusk"
+APP_ENV=testing
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:47800
+DUSK_DRIVER_URL=http://localhost:9515
+
+# DB
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=exemplo_dusk
+DB_USERNAME=admin
+DB_PASSWORD=admin
+
+# Filas
+QUEUE_CONNECTION=sync
+
+# Drivers de Performance para Testes
+# Usamos 'array' ou 'file' para garantir que os testes não poluam o cache real
+CACHE_DRIVER=array
+FILESYSTEM_DISK=local
+
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+# Configurações de Email (Não envia emails reais durante o teste)
+MAIL_MAILER=log
+
+# Dusk
+DUSK_START_MAXIMIZED=true
+DUSK_HEADLESS_DISABLED=true
+{% endhighlight %}
+
+
+### Rodando os testes
+
+Copie o arquivo de exemplo:
+
+{% highlight bash %}
+    cp .env.testing.example .env.testing
+{% endhighlight %}
+
+Preparar o ambiente de testes:
+
+{% highlight bash %}
+    composer install
+    php artisan key:generate --env=testing
+    php artisan migrate:fresh --env=testing
+    php artisan serve --port=47800 --env=testing
+{% endhighlight %}
+
+Durante a execução, o navegador Chrome controlado pelo Laravel Dusk abrirá automaticamente e realizará as interações definidas nos testes.
+
+
+{% highlight bash %}
+    php artisan dusk --env=testing
+{% endhighlight %}
+
+Usar a trait criada em app/Helpers:
+
+{% highlight php %}
+    use App\Helpers\UspdevDuskTrait;
+    class NovoTest  extends DuskTestCase{
+        use UspdevDuskTrait;
+
+        protected function setUp(): void
+        {
+            parent::setUp();
+            ...
+            $this->setupAdminAndUser(); // cria usuários $this->commonUser e $this->adminUser
+        }
+    ...
+{% endhighlight %}
+
 <!--
 ## Campos do tipo select 
 
