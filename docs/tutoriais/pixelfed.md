@@ -61,7 +61,7 @@ EXIT;
 Tudo pronto podemos dar início ao desenvolvimento com um fork do repositório oficial do pixelfed.
 
 ```bash 
-git clone git@github.com:pixelfed/pixelfed.git
+git clone --branch v0.12.7 --depth 1 https://github.com/pixelfed/pixelfed.git
 ```
 
 Após clonar o diretório diretamente do repositório oficial do pixelfed, siga para o diretorio salvo na sua máquina. Utilize o comando:
