@@ -79,181 +79,12 @@ Agora copie o `.env.example`, a fim de ter seu próprio arquivo .env, utilize o 
 ```bash 
 cp .env.example .env
 ```
-Após esse processo será necessário configurar o `.env` para o funcionamento adequado e correto. Esse deve ser o contéudo presente no `.env` inicialmente:
+Após esse processo será necessário configurar o `.env` para o funcionamento adequado e correto. As variáveis seguintes devem ser configuradas no `.env`:
 
-```bash
-APP_NAME="Pixelfed"
-APP_ENV="production"
-APP_KEY=
-APP_DEBUG="false"
-
-# Instance Configuration
-OPEN_REGISTRATION="false"
-ENFORCE_EMAIL_VERIFICATION="false"
-PF_MAX_USERS="1000"
-OAUTH_ENABLED="true"
-ENABLE_CONFIG_CACHE="true"
-INSTANCE_DISCOVER_PUBLIC="true"
-
-# Media Configuration
-PF_OPTIMIZE_IMAGES="true"
-IMAGE_QUALITY="80"
-MAX_PHOTO_SIZE="15000"
-MAX_CAPTION_LENGTH="500"
-MAX_ALBUM_LENGTH="4"
-
-# Instance URL Configuration
-APP_URL="http://localhost"
-APP_DOMAIN="localhost"
-ADMIN_DOMAIN="localhost"
-SESSION_DOMAIN="localhost"
-TRUST_PROXIES="*"
-
-# Database Configuration
-DB_CONNECTION="mysql"
-DB_HOST="127.0.0.1"
-DB_PORT="3306"
-DB_DATABASE="pixelfed"
-DB_USERNAME="pixelfed"
-DB_PASSWORD="pixelfed"
-
-# Redis Configuration
-REDIS_CLIENT="predis"
-REDIS_SCHEME="tcp"
-REDIS_HOST="127.0.0.1"
-REDIS_PASSWORD="null"
-REDIS_PORT="6379"
-
-# Laravel Configuration
-SESSION_DRIVER="database"
-CACHE_DRIVER="redis"
-QUEUE_DRIVER="redis"
-BROADCAST_DRIVER="log"
-LOG_CHANNEL="stack"
-HORIZON_PREFIX="horizon-"
-
-# ActivityPub Configuration
-ACTIVITY_PUB="false"
-AP_REMOTE_FOLLOW="false"
-AP_INBOX="false"
-AP_OUTBOX="false"
-AP_SHAREDINBOX="false"
-
-# Experimental Configuration
-EXP_EMC="true"
-
-## Mail Configuration (Post-Installer)
-MAIL_DRIVER=log
-MAIL_HOST=smtp.mailtrap.io
-MAIL_PORT=2525
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS="pixelfed@example.com"
-MAIL_FROM_NAME="Pixelfed"
-
-## S3 Configuration (Post-Installer)
-PF_ENABLE_CLOUD=false
-FILESYSTEM_CLOUD=s3
-#AWS_ACCESS_KEY_ID=
-#AWS_SECRET_ACCESS_KEY=
-#AWS_DEFAULT_REGION=
-#AWS_BUCKET=<BucketName>
-#AWS_URL=
-#AWS_ENDPOINT=
-#AWS_USE_PATH_STYLE_ENDPOINT=false
-```
-Note que no .env gerado existe um atributo chamado `APP_KEY`, logo é necessário gerar uma chave para que a aplicação funcione corretamente.
-
-```bash
-php artisan key:generate
-```
-
-Feito isto é necessário rodar as migrations para que todas as configurações do banco estejam presente também no nosso espaço de desenvolvimento, por isso devemos configurar o endereço corretamente dos serviços no arquivo .env, segue um exemplo funcional abaixo.
-
-```bash
-APP_NAME="Pixelfed"
-APP_ENV="local"
-APP_KEY=gere_a_chave_com_o_comando_indicado_anteriormente
-APP_DEBUG="true"
-
-# Instance Configuration
-OPEN_REGISTRATION="false"
-ENFORCE_EMAIL_VERIFICATION="false"
-PF_MAX_USERS="1000"
-OAUTH_ENABLED="true"
-ENABLE_CONFIG_CACHE="true"
-INSTANCE_DISCOVER_PUBLIC="true"
-
-# Media Configuration
-PF_OPTIMIZE_IMAGES="true"
-IMAGE_QUALITY="80"
-MAX_PHOTO_SIZE="15000"
-MAX_CAPTION_LENGTH="500"
-MAX_ALBUM_LENGTH="4"
-
-# Instance URL Configuration
-APP_URL="http://localhost:8000"
-APP_DOMAIN="localhost"
-ADMIN_DOMAIN="localhost"
-SESSION_DOMAIN="localhost"
-TRUST_PROXIES="*"
-FORCE_HTTPS_URLS=false
+```bashFORCE_HTTPS_URLS=false
 SESSION_SECURE_COOKIE=false
-
-# Database Configuration
-DB_CONNECTION="mariadb"
-DB_HOST="127.0.0.1"
-DB_PORT="3306"
-DB_DATABASE="pixelfed"
-DB_USERNAME="pixelfed"
-DB_PASSWORD="senha_criada_para_o_usuario_no_banco_de_dados"
-
-# Redis Configuration
-REDIS_CLIENT="predis"
-REDIS_SCHEME="tcp"
-REDIS_HOST="127.0.0.1"
-REDIS_PASSWORD="null"
-REDIS_PORT="6379"
-
-# Laravel Configuration
 SESSION_DRIVER="redis"
-CACHE_DRIVER="redis"
-QUEUE_DRIVER="redis"
 BROADCAST_DRIVER="redis"
-LOG_CHANNEL="stack"
-HORIZON_PREFIX="horizon-"
-
-# ActivityPub Configuration
-ACTIVITY_PUB="false"
-AP_REMOTE_FOLLOW="false"
-AP_INBOX="false"
-AP_OUTBOX="false"
-AP_SHAREDINBOX="false"
-
-# Experimental Configuration
-EXP_EMC="true"
-
-## Mail Configuration (Post-Installer)
-MAIL_DRIVER=log
-MAIL_HOST=smtp.mailtrap.io
-MAIL_PORT=2525
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS="pixelfed@example.com"
-MAIL_FROM_NAME="Pixelfed"
-
-## S3 Configuration (Post-Installer)
-PF_ENABLE_CLOUD=false
-FILESYSTEM_CLOUD=s3
-#AWS_ACCESS_KEY_ID=
-#AWS_SECRET_ACCESS_KEY=
-#AWS_DEFAULT_REGION=
-#AWS_BUCKET=<BucketName>
-#AWS_URL=
-#AWS_ENDPOINT=
-#AWS_USE_PATH_STYLE_ENDPOINT=false
 
 # Chat e Notificações
 PF_CHAT_ENABLED=true
@@ -263,9 +94,7 @@ PF_CHAT_MAX_LENGTH=1000
 PF_CHAT_RATE_LIMIT=10
 
 # Follow System
-PF_FOLLOW_AUTO_ACCEPT=true
-PF_FOLLOW_RATE_LIMIT=30
-PF_FOLLOW_DOMAIN_BLOCKLIST=
+PF_FOLLOW_AUTO_ACCEPT=false
 
 # Redis para broadcasting
 BROADCAST_DRIVER=redis
@@ -281,6 +110,13 @@ PF_API_RATE_LIMIT=300
 PF_EVENTS_ENABLED=true
 PF_REAL_TIME_UPDATES=true
 ```
+
+Gerando chave:
+
+```bash
+php artisan key:generate
+```
+
 É muito importante que a variável `FORCE_HTTPS_URLS` seja false. O pixelfed tem restrições de domínio para Https que são chatas e atrapalham no desenvolvimento local.
 
 Agora vamos rodar as migrations via Artisan, lembre-se que o banco deve já ter sido criado previamente e deve estar corretamente especificado no .env, utilize o seguinte comando:
