@@ -81,7 +81,8 @@ cp .env.example .env
 ```
 Após esse processo será necessário configurar o `.env` para o funcionamento adequado e correto. As variáveis seguintes devem ser configuradas no `.env`:
 
-```bashFORCE_HTTPS_URLS=false
+```bash
+FORCE_HTTPS_URLS=false
 SESSION_SECURE_COOKIE=false
 SESSION_DRIVER="redis"
 BROADCAST_DRIVER="redis"
