@@ -12,143 +12,206 @@ nav_order: 4
 
 ## Dia 1
 
-### Instalação 
+### Preparação do Ambiente
 
-Biblioteca mínimas para instalação no Debian 12:
+O primeiro passo é criar um diretório isolado.
 
 ```bash
-sudo apt-get install php php-common php-cli php-gd php-curl php-xml php-mbstring php-zip php-sybase php-mysql php-sqlite3
-sudo apt-get install mariadb-server sqlite3 git
+mkdir cursodrupal
+cd cursodrupal
 ```
 
-Instalação do composer:
+O Drupal moderno é baseado em componentes PHP (Symfony) e gerenciado pelo Composer. O comando abaixo usa uma imagem oficial do Composer para baixar os arquivos do Drupal para sua máquina, sem que você precise instalar nada além do Docker.
 
 ```bash
-curl -s https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
+docker run --rm -it \
+  -v $(pwd):/app \
+  -u $(id -u):$(id -g) \
+  composer:latest \
+  composer create-project drupal/recommended-project . --ignore-platform-reqs
 ```
 
-Configuração do banco de dados
+Nosso Dockerfile está preparado para rodar no ambiente USP.
+
 ```bash
-sudo mariadb
-GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
-create database drupal;
-quit
+FROM php:8.5-apache
+
+# packages
+RUN sed -i 's|main|main non-free|' /etc/apt/sources.list.d/debian.sources && apt-get update && apt-get install -y \
+    unixodbc \
+    unixodbc-dev \
+    freetds-bin \
+    freetds-dev \
+    libicu-dev \
+    git \
+    unzip \
+    libzip-dev \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \ 
+    curl
+
+# cleanup
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# php libs
+RUN docker-php-ext-install \
+    intl \
+    pdo_mysql \
+    soap \
+    zip \
+    mbstring \
+    bcmath \
+    pdo_dblib
+
+# gd
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install gd
+
+# php memory
+ENV PHP_MEMORY_LIMIT=512M
+ENV PHP_UPLOAD_LIMIT=512M
+RUN { \
+        echo 'memory_limit=${PHP_MEMORY_LIMIT}'; \
+        echo 'upload_max_filesize=${PHP_UPLOAD_LIMIT}'; \
+        echo 'post_max_size=${PHP_UPLOAD_LIMIT}'; \
+    } > "${PHP_INI_DIR}/conf.d/upload.ini"
+
+# apache
+RUN a2enmod rewrite
+RUN sed -i 's|/var/www/html|/var/www/html/web|' /etc/apache2/sites-available/000-default.conf
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# composer
+WORKDIR /var/www/html
+
+CMD ["apache2-foreground"]
 ```
 
-Instalação do Drupal
+o docker-compose.yml nos entrega o banco de dados (MariaDB) na mesma rede do nosso container principal.
+
 ```bash
-composer create-project drupal/recommended-project site-treinamento
-cd site-treinamento
-composer require drush/drush
-./vendor/bin/drush --version
+services:
+  cursodrupal:
+    build: .
+    container_name: cursodrupal
+    ports:
+      - "8000:80"
+    depends_on:
+      - mariadb
+    networks:
+      - cursodrupal-network
+    volumes:
+      - ./:/var/www/html
+    environment:
+      HOME: /tmp
+    user: "${UID:-1000}:${GID:-1000}"
+
+  mariadb:
+    image: mariadb:11
+    container_name: cursodrupal_mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: cursodrupal
+      MYSQL_USER: cursodrupal
+      MYSQL_PASSWORD: cursodrupal
+      MYSQL_ROOT_PASSWORD: cursodrupal
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - cursodrupal-network
+
+networks:
+  cursodrupal-network:
+
+volumes:
+  mariadb_data:
 ```
 
-Criação de um site Drupal:
+Agora executamos o build da imagem e iniciamos o site.
+```bash
+docker build --no-cache -t cursodrupal .
+docker compose up 
+```
+
+Acesse http://localhost:8000/
+
+Instalação automática do Drupal
 
 ```bash
-./vendor/bin/drush site:install standard \
-  --db-url="mysql://admin:admin@localhost/drupal" \
+docker exec -it cursodrupal composer update
+
+docker exec -it cursodrupal composer require drush/drush
+
+docker exec -it cursodrupal ./vendor/bin/drush site:install standard \
+  --db-url="mysql://cursodrupal:cursodrupal@mariadb/cursodrupal" \
   --site-name="Site Treinamento" \
   --account-name="admin" \
-  --account-pass="admin" --yes
+  --account-pass="admin" \
+  --yes
 ```
 
-Subindo um server local:
+Criando o Módulo Customizado: Gerador de CPF:
 ```bash
-./vendor/bin/drush rs 0.0.0.0:8000
+docker exec -it cursodrupal ./vendor/bin/drush generate module
 ```
 
-### Criação de módulo:
-
-Criação de um módulo chamado `treinamento`:
-
+Uma rota para mostrar os CPFs gerados:
 ```bash
-./vendor/bin/drush generate module
+docker exec -it cursodrupal ./vendor/bin/drush generate controller
 ```
 
-Habilitando módulo treinamento
-
+Verificando os arquivos gerados:
 ```bash
-./vendor/bin/drush pm-install treinamento
+cat web/modules/geracpf/geracpf.routing.yml
+code web/modules/geracpf/src/Controller/GeracpfController.php
 ```
 
-O comando a seguir vai gerar o controller TreinamentoController e a respectiva rota, no controller terá um método chamado index(), assim como uma rota /treinamento apontando para esse método:
+Em vez de reinventar a roda, instalamos uma biblioteca que já sabe como gerar CPFs válidos (https://github.com/LacusSolutions/br-utils-php_cpf-gen):
 
 ```bash
-./vendor/bin/drush generate controller
-​
-Module machine name:
-➤ treinamento
-
-Class [TreinamentoController]
-➤ TreinamentoController
-​
-Route name [treinamento.example]:
-➤ treinamento.index
-​
-Route path [/treinamento/index]:
-➤ /treinamento 
+docker exec -u root -it cursodrupal composer require lacus/cpf-gen
 ```
 
-Limpando cache:
+No controller usar a biblioteca externa:
 ```bash
-./vendor/bin/drush cr
+use Lacus\CpfGen\CpfGenerator;
+
+$generator = new CpfGenerator();
+
+// With options
+$cpf = $generator->generate(
+    format: true
+); 
 ```
-
-### twig
-
-Crie o arquivo treinamento.html.twig e coloque um html qualquer nele:
+Sempre que você altera o código de rotas ou cria novos arquivos, o Drupal precisa ser avisado:
 ```bash
-mkdir web/modules/treinamento/templates
-touch web/modules/treinamento/templates/index.html.twig
+docker exec -it cursodrupal ./vendor/bin/drush cr
+```
+Mas podemos desligar o cache:
+
+```bash
+$build['content'] = [
+  '#type' => 'item',
+  '#markup' => $cpf,
+  '#cache' => [
+    'max-age' => 0,
+  ],
+];
 ```
 
-```php
-public function index() {
-  $variavel1 = 'bom dia';
-  $variavel2 = 'boa noite';
+### Exercício 1
 
-  return [
-    '#theme' => 'index',
-    '#variavel1' => $variavel1,
-    '#variavel2' => $variavel2,
-  ];
-}
-```
+Criar um módulo chamado geracnpj, que exiba um cnpj aleatório, assim como fizemos no geracpf. Criar um segundo módulo chamado gerafrases, que mostrará frases inspirados aleatórias em uma rota. Na próxima reunião, cada membro do grupo (estagiário e funcionário) vai apresentar os dois módulos na TV.
 
-Por fim, criar um arquivo treinamento.module com a definição do template:
 
-```php
-<?php
-
-/**
- * Implements hook_theme().
- */
-function treinamento_theme($existing, $type, $theme, $path) {
-  return [
-    'index' => [
-      'variables' => [
-        'variavel1' => NULL,
-        'variavel2' => NULL
-        ],
-    ],
-  ];
-}
-```
-
-Twig é um motor de templates moderno para PHP que o Drupal utiliza, exemplo:
-
-```php
-{% raw %}
-{% if date("H") < 12  %}
-    {{ variavel1 }}
-{% else %}
-    {{ variavel2 }}
-{% endif %}
-{% endraw %}
-```
-
+<!--
 ### Exercício 1
 
 ## Exercício 1 - Importação de Dados e Estatísticas com Laravel
@@ -177,7 +240,7 @@ Exemplo de saída:
 |  Qtde linhas |  XX   |     XX    |   XXX   | 
 |  Média Pulse |  XX   |     XX    |   XXX   |
 
-<!--
+
 ## Dia 2
 
 Rota com parâmetro, será injetada no método index do controller:
@@ -454,7 +517,7 @@ $node->path->alias = '/novo-caminho-do-node'
 $node->path->pathauto = Drupal\pathauto\PathautoState::SKIP;
 ```
 
--->
+
 
 
 # Workaround PHP 7.4
@@ -481,6 +544,8 @@ sudo update-alternatives --set php /usr/bin/php7.4
 sudo update-alternatives --set phar /usr/bin/phar7.4 
 sudo update-alternatives --set phar.phar /usr/bin/phar.phar7.4 
 ```
+
+-->
 
 
 
