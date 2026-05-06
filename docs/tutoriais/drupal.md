@@ -208,8 +208,9 @@ $build['content'] = [
 
 ### Exercício 1
 
-Criar um módulo chamado geracnpj, que exiba um cnpj aleatório, assim como fizemos no geracpf. Criar um segundo módulo chamado gerafrases, que mostrará frases inspirados aleatórias em uma rota. Na próxima reunião, cada membro do grupo (estagiário e funcionário) vai apresentar os dois módulos na TV.
+Criar um módulo chamado geracnpj, que exiba um cnpj aleatório, assim como fizemos no geracpf. 
 
+Criar um segundo módulo chamado gerafrases, que mostrará frases inspiradoras dependendo do dia da semana. As frases que deverão ser mostradas estão no arquivo csv ![frases](/assets/images/files/frases.csv). Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar os dois módulos na TV.
 
 <!--
 ### Exercício 1
