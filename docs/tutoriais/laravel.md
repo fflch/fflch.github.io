@@ -12,54 +12,201 @@ nav_order: 1
 
 ## Instalação 
 
-Antes de instalar o Laravel no Debian, é necessário garantir que todas as dependências estejam instaladas. O Laravel depende do PHP e de algumas extensões, além de um banco de dados como MariaDB ou Sqlite. Aqui estão os principais pacotes que devem ser instalados no Debian:
+Iremos usar o docker para fazer a instalação;
 
 ```bash
-sudo apt-get install php php-common php-cli php-gd php-curl php-xml php-mbstring php-zip php-sybase php-mysql php-sqlite3
-sudo apt-get install mariadb-server sqlite3 git
+mkdir cursolaravel
+cd cursolaravel
 ```
 
 O Composer é um gerenciador de dependências para PHP. Ele permite instalar, atualizar e gerenciar bibliotecas e pacotes de forma simples, garantindo que um projeto tenha todas as dependências necessárias. No Laravel, o Composer é usado para instalar o framework e suas bibliotecas.
 
 ```bash
-curl -s https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
+docker run --rm -it \
+  -v $(pwd):/app \
+  -u $(id -u):$(id -g) \
+  composer:latest \
+  composer create-project laravel/laravel .
 ```
 
-Além disso, é importante configurar o banco de dados, pois ele será usado para instalar o Laravel. Vamos inicialmente criar um usuário admin com senha admin e criar um banco de dados chamado *treinamento*:
+Dockerfile pronto para usar no contexto USP:
 
 ```bash
-sudo mariadb
-GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
-create database treinamento;
-quit
+FROM php:8.5-apache
+
+# packages
+RUN sed -i 's|main|main non-free|' /etc/apt/sources.list.d/debian.sources && apt-get update && apt-get install -y \
+    unixodbc \
+    unixodbc-dev \
+    freetds-bin \
+    freetds-dev \
+    libicu-dev \
+    git \
+    unzip \
+    libzip-dev \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \ 
+    curl
+
+# cleanup
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# php libs
+RUN docker-php-ext-install \
+    intl \
+    pdo_mysql \
+    soap \
+    zip \
+    mbstring \
+    bcmath \
+    pdo_dblib
+
+# gd
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install gd
+
+# php memory
+ENV PHP_MEMORY_LIMIT=512M
+ENV PHP_UPLOAD_LIMIT=512M
+RUN { \
+        echo 'memory_limit=${PHP_MEMORY_LIMIT}'; \
+        echo 'upload_max_filesize=${PHP_UPLOAD_LIMIT}'; \
+        echo 'post_max_size=${PHP_UPLOAD_LIMIT}'; \
+    } > "${PHP_INI_DIR}/conf.d/upload.ini"
+
+# apache
+RUN a2enmod rewrite
+RUN sed -i 's|/var/www/html|/var/www/html/public|' /etc/apache2/sites-available/000-default.conf
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# composer
+USER www-data
+COPY --chown=www-data . .
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+CMD ["apache2-foreground"]
 ```
 
-O comando a seguir cria um novo projeto Laravel na pasta treinamento, baixando a estrutura básica do framework e instalando todas as dependências necessárias via Composer, garantindo que o ambiente esteja pronto para o desenvolvimento:
+docker-compose.yml pronto para usar o dusk:
 
 ```bash
-composer create-project laravel/laravel treinamento
-cd treinamento
-php artisan serve
+services:
+  cursolaravel:
+    build: .
+    container_name: cursolaravel
+    ports:
+      - "8000:80"
+    depends_on:
+      - mariadb
+    networks:
+      - cursolaravel-network
+    volumes:
+      - ./:/var/www/html
+    environment:
+      HOME: /tmp
+    user: "${UID:-1000}:${GID:-1000}"
+
+  mariadb:
+    image: mariadb:11
+    container_name: cursolaravel_mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: cursolaravel
+      MYSQL_USER: cursolaravel
+      MYSQL_PASSWORD: cursolaravel
+      MYSQL_ROOT_PASSWORD: cursolaravel
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - cursolaravel-network
+
+  selenium:
+    image: selenium/standalone-chrome
+    container_name: cursolaravel_selenium
+    ports:
+      - "7900:7900" # VNC (pra ver o browser rodando)
+    networks:
+      - cursolaravel-network
+    shm_size: 2gb
+
+networks:
+  cursolaravel-network:
+
+volumes:
+  mariadb_data:
 ```
+
+Criando a imagem e subindo ambiente:
+
+```bash
+docker build --no-cache -t cursolaravel .
+docker compose up 
+```
+
+Acessar pelo navegador: http://127.0.0.1:8000/
+
+No arquivo .env vamos trocar para mariadb:
+
+```bash
+DB_CONNECTION=mariadb
+DB_HOST=mariadb
+DB_PORT=3306
+DB_DATABASE=cursolaravel
+DB_USERNAME=cursolaravel
+DB_PASSWORD=cursolaravel
+```
+
+Recriando tabelas no banco de dados:
+
+```bash
+docker exec -it cursolaravel php artisan migrate
+```
+
 ## MVC 
 
 Uma rota é a forma como o framework define e gerencia URLs para acessar diferentes partes da aplicação. As rotas são configuradas no arquivo routes/web.php (para páginas web) ou routes/api.php (para APIs) e determinam qual código será executado quando um usuário acessa uma URL específica. Exemplo:
 
 ```php
-Route::get('/exemplo-de-rota', function () {
+Route::get('/rota-sem-controller', function () {
     echo "Uma rota sem controller, not good!";
 });
 ```
 
 O controller é uma classe responsável por organizar a lógica da aplicação, separando as regras de negócio das rotas. Em vez de definir toda a lógica diretamente nas rotas, os controllers agrupam funcionalidades relacionadas, tornando o código mais limpo e modular. 
-A convenção de nomenclatura para controllers segue o padrão PascalCase, onde o nome deve ser descritivo, no singular e sempre terminar com "Controller", como `ProdutoController` ou `UsuarioController`. Vamos criar o LivroController com o seguinte comando que gera automaticamente o arquivo correspondente dentro de `app/Http/Controllers`:
+A convenção de nomenclatura para controllers segue o padrão PascalCase, onde o nome deve ser descritivo, no singular e sempre terminar com "Controller", como `ProdutoController` ou `UsuarioController`. 
 
-```php
-php artisan make:controller LivroController
+
+```bash
+docker exec -it cursolaravel php artisan make:controller MeuPrimeiroController
 ```
 
-A seguir criamos a rota `livros` e a apontamos para o controller `LivroController`, importando anteriormente o namespace `App\Http\Controllers\LivroController`. O namespace é uma forma de organizar classes, funções e constantes para evitar conflitos de nomes em projetos grandes. Ele permite agrupar elementos relacionados dentro de um mesmo escopo, facilitando a reutilização e manutenção do código.
+Método do controller:
+```bash
+public function index(){
+    return 'Uma rota com controller, Great!';
+}
+```
+
+Mesma ideia, mas com controller:
+```bash
+use App\Http\Controllers\MeuPrimeiroController;
+Route::get('/rota-com-controller', [MeuPrimeiroController::class,'index']);
+```
+
+Com essa ideia, vamos criar um sistema de cadastro de livros:
+
+```php
+docker exec -it cursolaravel php artisan make:controller LivroController
+```
+
+A seguir criamos a rota `livros` e a apontamos para o controller `LivroController`, importando anteriormente o namespace `App\Http\Controllers\LivroController`.
 
 ```php
 use App\Http\Controllers\LivroController;
@@ -98,17 +245,19 @@ Conteúdo mínimo de index.blade.php:
 </html>
 ```
 
-O Model é uma representação de uma tabela no banco de dados e é responsável pela interação com os dados dessa tabela. Ele encapsula a lógica de acesso e manipulação dos dados, permitindo realizar operações como inserção, atualização, exclusão e leitura de registros de forma simples e intuitiva. O Laravel usa o Eloquent ORM (Object-Relational Mapping) para mapear os dados do banco de dados para objetos PHP, o que permite que você trabalhe com as tabelas como se fosse uma classe de objetos.
+### Model
+
+O Model é uma representação de uma tabela no banco de dados e é responsável pela interação com os dados dessa tabela.
 
 Criando o model chamado Livro:
 
 ```bash
-php artisan make:model Livro -m
+docker exec -it cursolaravel php artisan make:model Livro -m
 ```
 
-As migrations são uma forma de versionar e gerenciar o esquema do banco de dados, permitindo criar, alterar e remover tabelas de forma controlada e rastreável. Elas funcionam como um histórico de mudanças no banco de dados, ajudando a manter o controle de versões entre diferentes ambientes de desenvolvimento e produção.
+As migrations são uma forma de versionar e gerenciar o esquema do banco de dados, permitindo criar, alterar e remover tabelas de forma controlada e rastreável. 
 
-Cada migration é uma classe PHP que define as operações a serem realizadas no banco de dados. As migrations são armazenadas na pasta `database/migrations`. As migrations tornam o processo de gerenciamento do banco de dados mais organizado e flexível, principalmente em projetos com múltiplos desenvolvedores. Vamos colocar três colunas para o model `Livro`: titulo, autor e ano.
+Cada migration é uma classe PHP que define as operações a serem realizadas no banco de dados. As migrations são armazenadas na pasta `database/migrations`. Vamos colocar três colunas para o model `Livro`: titulo, autor e ano.
 
 ```php
 $table->string('titulo');
@@ -116,12 +265,14 @@ $table->string('autor');
 $table->integer('ano');
 ```
 
-Depois da modificação na migration, aplicá-la no banco de dados: `php artisan migrate`.
+Depois da modificação na migration, aplicá-la no banco de dados: `docker exec -it cursolaravel php artisan migrate`.
+
+### Tinker
 
 {: .note-title }
 >tinker
 >
->O comando `php artisan tinker` nos permite digitar comandos PHP e ver imediatamente o resultado, como se estivesse dentro da sua aplicação Laravel, ou seja, executamos comandos PHP diretamente dentro do contexto da aplicação, de forma prática e rápida.
+>O comando `docker exec -it cursolaravel php artisan tinker` nos permite digitar comandos PHP e ver imediatamente o resultado, como se estivesse dentro da sua aplicação Laravel, ou seja, executamos comandos PHP diretamente dentro do contexto da aplicação, de forma prática e rápida.
 
 Usando o tinker, vamos cadastrar dois livros:
 ```php
@@ -138,16 +289,7 @@ $livro->ano = 1878;
 $livro->save();
 ```
 
-Se quisermos conferir diretamente no banco de dados os livros cadastrados, saímos do tinker com Ctrl+C e acessamos o banco com sqlite:
-
-```sql
-sqlite3 database/database.sqlite
-.tables
-SELECT * FROM livros;
-.quit
-```
-
-Conferido que os livros foram cadastrados no banco de dados, na view da index podemos listar os livros cadastrados:
+Na view da index podemos listar os livros cadastrados:
 
 ```php
 use App\Models\Livro;
@@ -162,6 +304,7 @@ public function index(){
 No blade index.blade.php, listamos os livros:
 {% raw %}
 ```php
+<h1>Listagem de Livros</h1>
 <ul>
     @foreach($livros as $livro)
         <li>{{ $livro->titulo }}, por <i>{{ $livro->autor }}</i> em {{ $livro->ano }}</li>
@@ -170,16 +313,46 @@ No blade index.blade.php, listamos os livros:
 ```
 {% endraw %}
 
+
+### Busca
+
+No blade, podemos inserir um campo para busca:
+
+```html
+<form>
+    <input type="text" name="search" value="{{ request('search') }}">
+    <button type="submit">Pesquisar</button>
+</form>
+```
+
+E no controller temos que tratar a busca:
+
+```php
+public function index(Request $request){
+    if($request->has('search')){
+        $livros = Livro::where('titulo','like','%'.$request->search.'%')->get();
+    } else {
+        $livros = Livro::all();
+    }
+
+    return view('livros.index',[
+        'livros' => $livros
+    ]);
+}
+```
+
+### Command
+
 Por fim, podemos criar um comando no artisan que automatiza o cadastro de livros a partir de alguma lógica que podemos desenvolver. 
 
 ```php
-php artisan make:command ImportaLivros
+docker exec -it cursolaravel php artisan make:command ImportaLivros
 ```
 
 O comando acima criará o arquivo `app/Console/Commands/ImportaLivros.php`, o qual temos que mudar o `$signature` e implementar a lógica do comando:
 
 ```php
-protected $signature = 'livros:importar';
+#[Signature('livros:importar')]
 
 public function handle()
 {
@@ -191,42 +364,84 @@ public function handle()
 }
 ```
 
-Ao rodarmos no terminal o comando `php artisan livros:importar` o livro da Clarice será cadastrado. Essa é um implementação simples (e inútil, pois o mesmo livro é sempre cadastrado repetidamente), mas a ideia é que qualquer lógica pode ser implementada no `handle()` para cadastro de muitos livros a partir de uma fonte externa, como, por exemplo, uma lista de livros oriunda de um arquivo csv. 
+Ao rodarmos no terminal o comando `docker exec -it cursolaravel php artisan livros:importar` o livro da Clarice será cadastrado. Essa é um implementação simples (e inútil, pois o mesmo livro é sempre cadastrado repetidamente), mas a ideia é que qualquer lógica pode ser implementada no `handle()` para cadastro de muitos livros a partir de uma fonte externa, como, por exemplo, uma lista de livros oriunda de um arquivo csv.
 
+### Dusk
 
-## Exercício 1 - Importação de Dados e Estatísticas com Laravel
+Os testes com **Laravel Dusk** no nosso contexto tem dois propósitos:
 
-**Objetivo**: Criar um sistema básico em Laravel para importar dados de um arquivo CSV e exibir estatísticas desses dados em uma view.
+1. **Testar funcionalidades reais do sistema**, simulando a interação de um usuário no navegador.
+2. **Servir como documentação funcional**, demonstrando como as principais funcionalidades do sistema devem se comportar.
 
-[https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv)
+```bash
+docker exec -it cursolaravel composer require --dev laravel/dusk
+docker exec -it cursolaravel php artisan dusk:install
+docker exec -it cursolaravel php artisan dusk:chrome-driver
+```
 
-1) Criar o Model e a Migration:
+Para rodar os testes, configure no .env:
 
-- Crie um model chamado `Exercise` com uma migration correspondente.
-- Na migration, defina os campos necessários com base nas colunas do arquivo `exercise.csv`
-- Execute a migration para criar a tabela no banco de dados.
+```php
+APP_URL=http://cursolaravel
+DUSK_DRIVER_URL='http://selenium:4444/wd/hub'
+DUSK_START_MAXIMIZED=true
+DUSK_HEADLESS_DISABLED=true
+```
 
-2) Criar um `Command` para Importação
+Criando uma classe do Dusk para inserirmos nosso teste:
 
-- Crie um comando `exercise:importar`.
-- No método `handle()`, implemente a lógica para ler o arquivo `exercise.csv` e salvar os dados no banco de dados usando o model `Exercise`.
+{% highlight bash %}
+docker exec -it cursolaravel php artisan dusk:make BuscaLivroTest
+{% endhighlight %}
+
+Criando um teste que verifica se na rota /livros existe a frase "Listagem de Livros":
+
+{% highlight php %}
+$browser->visit('/livros')
+    ->pause(2000)
+    ->typeSlowly('search', 'primo', 300)
+    ->pause(2000)
+    ->press('Pesquisar')
+    ->pause(2000)
+    ->assertSee('O Primo Basílio');
+{% endhighlight %}
+
+Acessar http://localhost:7900/ com senha secret e assitir.
+
+Rodar o teste:
+
+{% highlight bash %}
+docker exec -it cursolaravel php artisan dusk tests/Browser/BuscaLivroTest.php
+{% endhighlight %}
+
+## Exercício - Importação de Livros
+
+1 - Criar um comando para importar os livros do arquivo csv [livros](/assets/files/livros.csv) no model Livro. Importante:
+
+- No método `handle()`, implemente a lógica para ler o arquivo `livros.csv` e para cada livro, fazer a inserção;
 - Dica 1: Para zerar os registros a cada importação, pode-se usar o comando `\App\Models\Livros::truncate()` no começo do método `handle()`.
 - Dica 2: Você pode usar a classe `League\Csv\Reader` (disponível via Composer) para facilitar a leitura do CSV.
 
-3) Criar estatísticas básicas sobre os dados
+2 - Criar teste Dusk para buscar a string "processo" e deverá ter um assert para ver Franz Kafka e um assert not para José de Alencar;
 
-- Criar o controller `ExerciseController` com um método chamado `stats`.
-- Defina uma rota `exercises/stats` que aponte para o método `stats`.
-- No método `stats`, calcule as média aritmética da coluna pulse para os casos rests, walking e running, conforme tabela abaixo.
-- Passe esses dados para uma view chamada `resources/views/exercises/stats.blade.php` e monte finalmente a tabela com html.
+3 - Criar estatísticas básicas sobre os dados importados
 
-Exemplo de saída:
+- Criar o controller `EstatisticaController` com um método chamado `stats`.
+- Defina uma rota `livros/stats` que aponte para o método `stats`.
+- No método `stats` apresente uma tabela com a quantidade de livros por ano.
 
-|  exercise.csv| rest  | walking   | running |
-|--------------|-------|-----------|---------|
-|  Qtde linhas |  XX   |     XX    |   XXX   | 
-|  Média Pulse |  XX   |     XX    |   XXX   |
+Exemplo de saída (com dados fictícios):
 
+|  ano  | quantidade |
+|-------|------------|
+|  1998 |  5         | 
+|  2001 | 23         |
+
+4 -  No método `stats` apresente uma segunda tabela com a quantidade de livros por autor.
+
+Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar na TV rapidamente e solução do exercício.
+
+<!--
 # Dia 2
 
 ## CRUD
@@ -728,7 +943,7 @@ Usar a trait criada em app/Helpers:
     ...
 {% endhighlight %}
 
-<!--
+
 ## Campos do tipo select 
 
 Vamos supor que queremos um campo adicional na tabela de livros
