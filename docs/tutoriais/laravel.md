@@ -99,7 +99,6 @@ docker-compose.yml pronto para usar o dusk:
 ```bash
 services:
   cursolaravel:
-    build: .
     container_name: cursolaravel
     ports:
       - "8000:80"
@@ -419,7 +418,7 @@ docker exec -it cursolaravel php artisan dusk tests/Browser/BuscaLivroTest.php
 1 - Criar um comando para importar os livros do arquivo csv [livros](/assets/files/livros.csv) no model Livro. Importante:
 
 - No método `handle()`, implemente a lógica para ler o arquivo `livros.csv` e para cada livro, fazer a inserção;
-- Dica 1: Para zerar os registros a cada importação, pode-se usar o comando `\App\Models\Livros::truncate()` no começo do método `handle()`.
+- Dica 1: Para zerar os registros a cada importação, pode-se usar o comando `\App\Models\Livro::truncate()` no começo do método `handle()`.
 - Dica 2: Você pode usar a classe `League\Csv\Reader` (disponível via Composer) para facilitar a leitura do CSV.
 
 2 - Criar teste Dusk para buscar a string "processo" e deverá ter um assert para ver Franz Kafka e um assert not para José de Alencar;
