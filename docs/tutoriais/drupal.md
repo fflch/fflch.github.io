@@ -99,6 +99,7 @@ o docker-compose.yml nos entrega o banco de dados (MariaDB) na mesma rede do nos
 ```bash
 services:
   cursodrupal:
+    build: .
     container_name: cursodrupal
     ports:
       - "8000:80"
