@@ -34,7 +34,7 @@ docker run --rm -it \
 Nosso Dockerfile está preparado para rodar no ambiente USP.
 
 ```bash
-FROM php:8.5-apache
+FROM php:8.4-apache
 
 # packages
 RUN sed -i 's|main|main non-free|' /etc/apt/sources.list.d/debian.sources && apt-get update && apt-get install -y \
@@ -99,7 +99,7 @@ o docker-compose.yml nos entrega o banco de dados (MariaDB) na mesma rede do nos
 ```bash
 services:
   cursodrupal:
-    build: .
+    image: cursodrupal:latest
     container_name: cursodrupal
     ports:
       - "8000:80"
@@ -212,252 +212,249 @@ Criar um módulo chamado geracnpj, que exiba um cnpj aleatório, assim como fize
 
 Criar um segundo módulo chamado gerafrases, que mostrará frases inspiradoras dependendo do dia da semana. As frases que deverão ser mostradas estão no arquivo csv [frases](/assets/files/frases.csv). Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar os dois módulos na TV.
 
-<!--
-### Exercício 1
-
-## Exercício 1 - Importação de Dados e Estatísticas com Laravel
-
-**Objetivo**: Importar dados de um arquivo CSV e exibir estatísticas desses dados no Drupal.
-
-[https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv)
-
-1) Criar o Controller e a Rota para Importação
-
-- Crie um controller chamado ExerciseController com o método importCsv.
-- Defina uma rota `exercises/importcsv` que aponte para o método importCsv do controller.
-- No método importCsv, implemente a lógica para ler o arquivo `exercise.csv`.
-
-Dica: Você pode usar a classe `League\Csv\Reader` (disponível via Composer) para facilitar a leitura do CSV.
-
-2) Após ler o arquivo, apresente as seguintes estatísticas:
-
-- quantidades de linhas da coluna pulse para os casos rests, walking e running
-- calcule as média da coluna pulse para os casos rests, walking e running, conforme tabela abaixo
-
-Exemplo de saída:
-
-|  exercise.csv| rest  | walking   | running |
-|--------------|-------|-----------|---------|
-|  Qtde linhas |  XX   |     XX    |   XXX   | 
-|  Média Pulse |  XX   |     XX    |   XXX   |
-
-
 ## Dia 2
 
-Rota com parâmetro, será injetada no método index do controller:
+CRUD para cadastro de frases. Nosso módulo se chamará `muralmotivacional`:
 
 ```bash
-treinamento.index:
-  path: '/treinamento/{parametro}'
+docker exec -it cursodrupal ./vendor/bin/drush generate module
+```
+
+Criando tabela no banco de dados em ```muralmotivacional/muralmotivacional.install```:
+
+```php
+<?php
+function muralmotivacional_schema() {
+  $schema['muralmotivacional'] = [
+    'description' => 'Tabela de frases motivacionais',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+      ],
+      'frase' => [
+        'type' => 'text',
+        'not null' => TRUE,
+      ],
+      'dia' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+  return $schema;
+}
+```
+
+habilitar módulo:
+
+```bash
+docker exec -it cursodrupal ./vendor/bin/drush en muralmotivacional -y
+```
+
+Gerar formulário para cadastro de frases:
+
+```bash
+docker exec -it cursodrupal ./vendor/bin/drush generate form
+
+Module name: muralmotivacional
+Rota: /muralmotivacional/create
+Class name: CreateFraseForm
+Form ID: muralmotivacional_form
+```
+
+Método no `muralmotivacional/src/Form/CreateFraseForm.php`:
+
+```php
+<?php
+use Drupal\Core\Database\Database;
+
+public function buildForm(array $form, FormStateInterface $form_state) {
+  $form['frase'] = [
+    '#type' => 'textarea',
+    '#title' => 'Frase',
+    '#required' => TRUE,
+  ];
+  $form['dia'] = [
+    '#type' => 'select',
+    '#title' => 'Dia da semana',
+    '#options' => [
+      'Segunda-Feira' => 'Segunda-Feira',
+      'Terça-Feira'   => 'Terça-Feira',
+      'Quarta-Feira'  => 'Quarta-Feira',
+      'Quinta-Feira'  => 'Quinta-Feira',
+      'Sexta-Feira'   => 'Sexta-Feira',
+    ],
+  ];
+  $form['actions']['submit'] = [
+    '#type' => 'submit',
+    '#value' => 'Salvar',
+  ];
+  return $form;
+}
+
+public function submitForm(array &$form, FormStateInterface $form_state) {
+  $connection = Database::getConnection();
+  $connection->insert('muralmotivacional')
+    ->fields([
+      'frase' => $form_state->getValue('frase'),
+      'dia' => $form_state->getValue('dia'),
+    ])
+    ->execute();
+  \Drupal::messenger()->addMessage('Frase salva com sucesso!');
+}
+```
+
+Limpar cache e acessar formulário na rota `/muralmotivacional/create`:
+
+```bash
+docker exec -it cursodrupal ./vendor/bin/drush cr
+```
+
+Vamos criar um controler com as operações do CRUD `MuralMotivacionalController`,*sem rotas*:
+
+```bash
+docker exec -it cursodrupal ./vendor/bin/drush generate controller
+```
+
+Operações de CRUD no controller:
+
+```php
+use Drupal\Core\Database\Database;
+public function index() {
+    $connection = Database::getConnection();
+    $query = $connection->select('muralmotivacional', 'm')->fields('m');
+    $frases = $query->execute();
+    $items = [];
+    foreach ($frases as $frase) {
+      $items[] = [
+        '#markup' =>
+          '<hr>
+          <strong>Dia:</strong> ' . $frase->dia . '<br>
+          <strong>Frase:</strong> ' . $frase->frase . '<br>
+          <a href="/muralmotivacional/' . $frase->id . '/edit"> Editar </a> <br>
+          <a href="/muralmotivacional/' . $frase->id . '/delete"> Apagar </a> '
+      ];
+    }
+    return [
+      '#cache' => [
+        'max-age' => 0,
+      ],
+      'content' => $items,
+    ];
+}
+
+public function delete($id) {
+  $connection = Database::getConnection();
+  $connection->delete('muralmotivacional')
+    ->condition('id', $id)
+    ->execute();
+  \Drupal::messenger()->addMessage('Frase apagada com sucesso');
+  return $this->redirect('muralmotivacional.index');
+}
+```
+
+Rotas `muralmotivacional/muralmotivacional.routing.yml`:
+
+
+```yml
+muralmotivacional.index:
+  path: '/muralmotivacional'
   defaults:
-    _controller: '\Drupal\treinamento\Controller\TreinamentoController::index'
+    _controller: '\Drupal\muralmotivacional\Controller\MuralMotivacionalController::index'
+    _title: 'Lista de Frases'
+  requirements:
+    _permission: 'access content'
+
+muralmotivacional.delete:
+  path: '/muralmotivacional/{id}/delete'
+  defaults:
+    _controller: '\Drupal\muralmotivacional\Controller\MuralMotivacionalController::delete'
+    _title: 'Apagar Frase'
   requirements:
     _permission: 'access content'
 ```
 
-Criação de um twig template, para tal, criar um arquivo treinamento.module com a definição do template:
+Formulário de edição `muralmotivacional/src/Form/EditFraseForm.php`:
+
+```bash
+docker exec -it cursodrupal ./vendor/bin/drush generate form
+rota: /muralmotivacional/edit
+```
+
+Formulário de Edição
 
 ```php
-/**
- * Implements hook_theme().
- */
-function treinamento_theme($existing, $type, $theme, $path) {
-  return [
-    'treinamento' => [
-      'variables' => ['parametro' => NULL],
-    ],
+use Drupal\Core\Database\Database;
+public function buildForm(array $form, FormStateInterface $form_state, $id = NULL) {
+  $connection = Database::getConnection();
+  $query = $connection
+    ->select('muralmotivacional', 'm')
+    ->fields('m')
+    ->condition('id', $id);
+  $frase = $query->execute()->fetchObject();
+  $form['id'] = [
+    '#type' => 'hidden',
+    '#value' => $frase->id,
   ];
+  $form['frase'] = [
+    '#type' => 'textarea',
+    '#title' => 'Frase',
+    '#required' => TRUE,
+    '#default_value' => $frase->frase,
+  ];
+  $form['dia'] = [
+    '#type' => 'select',
+    '#title' => 'Dia da semana',
+    '#options' => [
+      'Segunda-Feira' => 'Segunda-Feira',
+      'Terça-Feira'   => 'Terça-Feira',
+      'Quarta-Feira'  => 'Quarta-Feira',
+      'Quinta-Feira'  => 'Quinta-Feira',
+      'Sexta-Feira'   => 'Sexta-Feira',
+    ],
+    '#default_value' => $frase->dia,
+  ];
+  $form['actions']['submit'] = [
+    '#type' => 'submit',
+    '#value' => 'Atualizar',
+  ];
+  return $form;
+}
+
+public function submitForm(array &$form, FormStateInterface $form_state) {
+  $connection = Database::getConnection();
+  $connection->update('muralmotivacional')
+    ->fields([
+      'frase' => $form_state->getValue('frase'),
+      'dia' => $form_state->getValue('dia'),
+    ])
+    ->condition('id', $form_state->getValue('id'))
+    ->execute();
+  \Drupal::messenger()->addMessage('Frase atualizada com sucesso!');
 }
 ```
 
-Criação de um twig template em templates/treinamento.html.twig:
-
-```html
-<p>Nosso primeiro twig template!</p>
- 
-<p>Olha só o que você digitou na rota: {{ parametro }}</p>
-```
-
-Retornando o template no controller:
-```php
-    return [
-      '#theme' => 'treinamento',
-      '#parametro' => $parametro,
-    ];
-```
-
-Na interface vamos criar alguns tipos de conteúdos.
-Criando e deletando nodes de todos tipos para ambiente de desenvolvimento:
+Rota com parâmetro:
 
 ```bash
-./vendor/bin/drupal create:nodes
-./vendor/bin/drupal entity:delete node --all
-```
-
-Carregando id's dos nodes:
-
-```bash
-$nids = \Drupal::entityQuery('node')->condition('type','page')->execute();
-```
-
-**Desafio: Mostrar a quantidade de nodes do tipo selecionado**
-
-Dica: pode-se desligar o cache de variáveis:
-```php
-return [
-  '#theme' => 'treinamento',
-    ...
-  '#cache' => [
-    'max-age' => 0,
-  ],  
-];
-```
-
-A partir dos **nids** pode-se carregar os objetos nodes:
-
-```php
-$nodes =  \Drupal\node\Entity\Node::loadMultiple($nids);
-```
-
-Iterando sob a os objetos nodes no twig:
-```php
-<ul>
-    {% for node in p %}
-        <li>{{ node.title.value }} - {{ node.field_autor.value }}</li>
-    {% endfor %}
-</ul>
-```
-
-**Desafio: mostrar os títulos dos nodes no twig**
-
-Criando um node do tipo page:
-
-```php
-use \Drupal\node\Entity\Node;
-
-$node = Node::create([
-    'type' => 'page',
-    'title' => 'Teste com estagiários',
-    'field_qualquer' => 123,
-]);
-$node->save();
-```
-
-Ou se preferir:
-
-```php
-use \Drupal\node\Entity\Node;
-
-$node = Node::create(['type' => 'page']);
-$node->title = 'mais um node';
-$node->field_qualquer= 'Teste com estagiários';
-$node->save();
-```
-
-Pode-se manipular somente um node já existente:
-
-```php
-$nid = 1;
-$node = Node::load($nid);
-$node->body->format = 'full_html';
-$node->save();
+muralmotivacional.edit:
+  path: '/muralmotivacional/{id}/edit'
+  defaults:
+    _form: '\Drupal\muralmotivacional\Form\EditFraseForm'
+    _title: 'Editar Frase'
+  requirements:
+    _permission: 'access content'
 ```
 
 ### Exercício 2
 
-Neste exercício vamos continuar trabalhando com o seguinte arquivo:
+Criar um módulo chamado livros e implementar as operações de CRUD para o livro com os campos título, autor e ano.
 
-[https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv](https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv)
+<!--
 
-- Criar um tipo de conteúdo com as colunas desse arquivo
-- Criar uma rota e um controller que leia o arquivo csv e para cada linha crie um node correspondente no tipo de conteúdo criado anteriormente (se essa rota for clicada duas vezes, não duplicar registros, e sim atualizá-los)
-- Criar uma rota, controller e template mostrando a tabela (a partir dos nodes e não do csv)
-- Remontar a tabela do exercício 1, mas lendo os nodes: Mostrar no seu controller quantidade de linhas do seguinte arquivo csv do tipo **rest**, **walking** e **running**. Também mostar a média da coluna **pulse** nos três casos **rest**, **walking** e **running**:
-
-Exemplo de saída:
-
-|  exercise.csv| rest  | walking   | running |
-|--------------|-------|-----------|---------|
-|  Qtde linhas |  XX   |     XX    |   XXX   | 
-|  Média Pulse |  XX   |     XX    |   XXX   |
-
-## Dia 3
-
-Criação de usuário admin com senha admin e criação de uma banco chamado drupal:
-```bash
-sudo mariadb
-GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
-create database drupal;
-quit
-```
-
-Instalação com perfil da fflch, **fflchprofile** e banco de dados mysql:
-```bash
-./vendor/bin/drush site-install fflchprofile \
-    --db-url="mysql://admin:admin@localhost/drupal" \
-    --site-name="fflch" \
-    --site-mail="fflch@localhost" \
-    --account-name="fflch" \
-    --account-pass="fflch" \
-    --account-mail="fflch@localhost" --yes
-```
-
-Como chamar um script php usando linha de comando, útil, por exemplo,  para criar nodes sistematicamente:
-
-```bash
-./vendor/bin/drush php-script ~/cria_nodes.php
-```
-
-Carregando arquivo ao criar um node:
-
-```php
-use \Drupal\node\Entity\Node;
-
-$data = file_get_contents('/home/thiago/arquivo.pdf');
-$file = file_save_data($data, 'public://arquivo.pdf', FILE_EXISTS_REPLACE);
-
-$node = Node::create([
-    'type' => 'page',
-    'title' => 'Teste com arquivo',
-    'field_arquivo' => [
-        'target_id' => $file->id(),
-        'alt' => 'Pdf exemplo',
-        'title' => 'Pdf exemplo'
-    ],
-]);
-
-$node->save();
-```
-
-Outra forma de carregar um arquivo:
-```php
-use \Drupal\node\Entity\Node;
-use \Drupal\file\Entity\File;
-
-$filepath = '/home/thiago/arquivo.pdf';
-$file = File::create([
-  'filename' => basename($filepath),
-  'uri' => 'public://' . basename($filepath),
-  'status' => 1,
-  'uid' => 1,
-]);
-$file->save();
-
-$node = Node::create([
-    'type' => 'page',
-    'title' => 'Teste com arquivo',
-    'field_arquivo' => [
-        'target_id' => $file->id(),
-        'alt' => 'Pdf exemplo',
-        'title' => 'Pdf exemplo'
-    ],
-]);
-
-$node->save();
-```
-Se quiser especificar uma pasta em files, troque 'public://' por 'public://MINHA-PASTA/'
-
-Criação de uma submissão de um webform:
 
 ```bash
 use Drupal\webform\Entity\Webform;

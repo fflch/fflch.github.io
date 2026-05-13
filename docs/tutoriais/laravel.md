@@ -99,7 +99,7 @@ docker-compose.yml pronto para usar o dusk:
 ```bash
 services:
   cursolaravel:
-    build: .
+    image: cursolaravel:latest
     container_name: cursolaravel
     ports:
       - "8000:80"
