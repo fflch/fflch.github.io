@@ -441,7 +441,7 @@ Exemplo de saída (com dados fictícios):
 
 Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar na TV rapidamente e solução do exercício.
 
-<!--
+
 # Dia 2
 
 ## CRUD
@@ -465,7 +465,7 @@ public function create(){
 }
 ```
 
-Formulário html será `touch resources/views/livros/create.blade.php` com o seguinte conteúdo:
+Formulário html `resources/views/livros/create.blade.php` com o seguinte conteúdo:
 
 ```php
 <form method="POST" action="/livros">
@@ -507,7 +507,7 @@ public function show(Livro $livro){
 }
 ```
 
-Criamos um blade para a rota show `touch resources/views/livros/show.blade.php` com o seguinte conteúdo:
+Criamos um blade para a rota show `resources/views/livros/show.blade.php` com o seguinte conteúdo:
 
 {% raw %}
 ```php
@@ -532,7 +532,7 @@ Novamente precisamos de duas rotas para atualizar um registro, uma para exibir o
 
 ```php
 Route::get('/livros/{livro}/edit', [LivroController::class,'edit']);
-Route::post('/livros/{livro}', [LivroController::class,'update']);
+Route::patch('/livros/{livro}', [LivroController::class,'update']);
 ```
 
 Implementação no controller:
@@ -561,8 +561,9 @@ touch resources/views/livros/edit.blade.php
 Html para edição no `edit.blade.php`:
 {% raw %}
 ```php
-<form method="POST" action="/livros">
+<form method="POST" action="/livros/{{ $livro->id }}">
     @csrf
+    @method('PATCH')
     Título: <input type="text" name="titulo" value="{{ $livro->titulo }}">
     Autor: <input type="text" name="autor" value="{{ $livro->autor }}">
     Ano: <input type="text" name="ano" value="{{ $livro->ano }}">
@@ -575,11 +576,7 @@ Vamos colocar o botão para edição no blade `show.blade.php`:
 
 {% raw %}
 ```php
-Título: {{ $livro->titulo }} <br>
-Autor: <i>{{ $livro->autor }}</i> <br>
-Ano de publicação: {{ $livro->ano }} <br>
 <a href="/livros/{{ $livro->id }}/edit">Editar</a> <br>
-<a href="/livros">Voltar</a>
 ```
 {% endraw %}
 
@@ -610,16 +607,61 @@ Botão html para delete que podemos colocar no blade do `show.blade.php`:
 ```
 {% endraw %}
 
+Implementação do dusk para testar as operações de CRUD:
+```bash
+php artisan dusk:make LivroCrudTest
+```
+Vamos testar sequencialmente as operações:
+```php
+use App\Models\Livro;
+public function test_crud_livros(): void
+{
+    $this->browse(function (Browser $browser) {
+        // Create
+        $browser->visit('/livros/create')
+            ->typeSlowly('titulo', '2001: Uma odisséia no espaço')
+            ->typeSlowly('autor', 'Arthur C. Clarke')
+            ->typeSlowly('ano', '1968')
+            ->press('Enviar')
+            ->assertPathIs('/livros')
+            ->assertSee('2001: Uma odisséia no espaço');
+
+        // Read
+        $browser->clickLink('2001: Uma odisséia no espaço')
+            ->assertSee('Arthur C. Clarke')
+            ->assertSee('1968');
+
+        // Update
+        $browser->clickLink('Editar')
+            ->typeSlowly('titulo', '2001: Uma odisséia no espaço - Edição Revisada')
+            ->press('Enviar')
+            ->assertSee('2001: Uma odisséia no espaço - Edição Revisada');
+
+        // Delete
+        $browser->press('Apagar')
+            ->acceptDialog()
+            ->assertPathIs('/livros')
+            ->assertDontSee('2001: Uma odisséia no espaço - Edição Revisada');
+    });
+}
+```
+
+Rodando o teste:
+
+```bash
+docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
+```
 
 ## Exercício 2
 
-1. Criar um CRUD completo para cadastro de livros: [https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv](https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv). Dica: use outra instância de Laravel para não confundir com o `Model` livro que já estamos usando ao longo do texto. 
-2. Criar uma rotina de importação, conforme feito no exercício 1, para importação do csv: [https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv](https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv) (esse é o completo!)
-3. Criar rota, controller e view que vai mostrar: 
+1. Criar um CRUD completo para o model frases. 
+2. Criar uma classe dusk que testa todas funcionalidades do CRUD frases
+3. Criar um comando, importarfrases, que importa o arquivo csv: [frases](/assets/files/frases.csv)
+4. Criar uma rota `/frasedodia` e o método correspondente que ao ser acessada mostra uma frase aleatória, porém correspondente ao dia da semana. 
 
-    - uma tabela com a quantidade de livros por ano
-    - uma tabela com a quantidade de livros por autor
-    - uma tabela com a quantidade de livros por idioma
+Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar a implementação na TV.
+
+<!--
 
 # Dia 3
 
