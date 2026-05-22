@@ -661,13 +661,67 @@ docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
 
 Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar a implementação na TV.
 
-<!--
-
 # Dia 3
 
-Instalação do template USP conforme:
+Adaptação do Dockerfile conforme: [https://github.com/uspdev/dockerfiles/blob/master/php-apache/readme.md](https://github.com/uspdev/dockerfiles/blob/master/php-apache/readme.md)
 
-[https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md](https://github.com/uspdev/laravel-usp-theme/blob/master/docs/configuracao.md)
+Instalação do template USP conforme: [https://github.com/uspdev/laravel-usp-theme/](https://github.com/uspdev/laravel-usp-theme/)
+
+No docker-compose.yml inserir imagem do serviço de senha única faker:
+
+{% highlight yml %}
+  senhaunica-faker:
+    image: uspdev/senhaunica-faker
+    container_name: cursolaravel_senhaunica-faker
+    ports:
+      - "3141:3141"
+    environment:
+          - APP_URL=http://auth.local:3141
+    networks:
+      cursolaravel-network:
+        aliases:
+          - auth.local
+{% endhighlight %}
+
+No /etc/hosts do seu computador colocar a linha `127.0.0.1 auth.local`.
+
+Instalação do senhaunica-socialite conforme: [https://github.com/uspdev/senhaunica-socialite](https://github.com/uspdev/senhaunica-socialite)
+
+Configurações para usar o faker:
+
+```
+APP_URL=http://localhost:8000
+SENHAUNICA_KEY=faker
+SENHAUNICA_SECRET=faker
+SENHAUNICA_CALLBACK_ID=1
+SENHAUNICA_ADMINS=111111
+SENHAUNICA_DEV="http://auth.local:3141/wsusuario/oauth"
+```
+
+## Migration de Alteração
+
+Quando o sistema está produção, você nunca deve alterar uma migration que já foi
+para o ar, mas sim criar uma migration que altera uma anterior. Por exemplo, 
+se quisermos que o campo isbn guarde apenas números, faremos:
+
+{% highlight bash %}
+php artisan make:migration add_user_id_to_livros_table --table=livros
+{% endhighlight %}
+
+Nova coluna user_id:
+
+{% highlight php %}
+$table->unsignedBigInteger('user_id')->nullable();
+
+$table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
+{% endhighlight %}
+
+Aplique a mudança no banco de dados:
+{% highlight bash %}
+php artisan migrate
+{% endhighlight %}
+
+No controller, é possível capturar o usuário logado assim: `auth()->user()->id`.
 
 ## Validação
 
@@ -683,7 +737,7 @@ mensagens de erro:
 $request->validate([
   'titulo' => 'required',
   'autor' => 'required',
-  'isbn' => 'required|integer',
+  'ano' => 'required|integer',
 ]);
 {% endhighlight %}
 
@@ -694,7 +748,7 @@ verifica se há input na sessão para o campo `titulo`:
 {% raw %}
 Título: <input type="text" name="titulo" value="{{old('titulo')}}">
 Autor: <input type="text" name="autor" value="{{old('autor')}}">
-ISBN: <input type="text" name="isbn" value="{{old('isbn')}}">
+Ano: <input type="text" name="ano" value="{{old('ano')}}">
 {% endraw %}
 {% endhighlight %}
 
@@ -708,11 +762,8 @@ php artisan make:request LivroRequest
 {% endhighlight %}
 
 Esse comando gerou o arquivo `app/Http/Requests/LivroRequest.php`. Como
-ainda não falamos de autenticação e autorização, retorne `true` no método
+ainda não falamos de permissões, retorne `true` no método
 `authorize()`. As validações podem ser implementada em `rules()`.
-Perceba que o isbn pode ser digitado com traços ou ponto, mas eu
-só quero validar a parte numérica do campo e ignorar o resto, 
-para isso usei o método `prepareForValidation`:
 
 {% highlight php %}
 public function rules(){
@@ -723,68 +774,6 @@ public function rules(){
     ];
     return $rules;
 }
-protected function prepareForValidation()
-{
-    $this->merge([
-        'isbn' => preg_replace('/[^0-9]/', '', $this->isbn),
-    ]);
-}
-{% endhighlight %}
-
-Não queremos livros cadastrados com o mesmo isbn. Há uma validação
-chamada `unique` que pode ser invocada na criação de um livro como 
-`unique:TABELA:CAMPO`, mas na edição, temos que ignorar o próprio livro
-assim `unique:TABELA:CAMPO:ID_IGNORADO`. Dependendo do
-seu projeto, talvez seja melhor fazer um formRequest para criação e 
-outro para edição. Aqui usaremos o mesmo FormRequest para ambos. 
-As mensagens de erros podem ser customizadas com o método `messages()`:
-
-{% highlight php %}
-public function rules(){
-    $rules = [
-        'titulo' => 'required',
-        'autor'  => 'required',
-        'isbn' => ['required','integer'],
-    ];
-    if ($this->method() == 'PATCH' || $this->method() == 'PUT'){
-        array_push($rules['isbn'], 'unique:livros,isbn,' .$this->livro->id);
-    }
-    else{
-        array_push($rules['isbn'], 'unique:livros');
-    }
-    return $rules;
-}
-protected function prepareForValidation()
-{
-    $this->merge([
-        'isbn' => str_replace('-','',$this->isbn)
-    ]);
-}
-public function messages()
-{
-    return [
-        'isbn.unique' => 'Este isbn está cadastrado para outro livro',
-    ];
-}
-{% endhighlight %}
-
-## Migration de alteração
-Quando o sistema está produção, você nunca deve alterar uma migration que já foi
-para o ar, mas sim criar uma migration que altera uma anterior. Por exemplo, 
-se quisermos que o campo isbn guarde apenas números, faremos:
-
-{% highlight bash %}
-php artisan make:migration change_isbn_column_in_livros  --table=livros
-{% endhighlight %}
-
-Alterando a coluna `isbn` de string para integer na migration acima:
-{% highlight php %}
-$table->integer('isbn')->change();
-{% endhighlight %}
-
-Aplique a mudança no banco de dados:
-{% highlight bash %}
-php artisan migrate
 {% endhighlight %}
 
 ## Mutators
@@ -822,23 +811,19 @@ protected function preco(): Attribute
 }
 {% endhighlight %}
 
-
 ## Exercício 3
 
-Esse exercíco é referente ao arquivo: [https://github.com/owid/covid-19-data/blob/master/public/data/vaccinations/country_data/Brazil.csv](https://github.com/owid/covid-19-data/blob/master/public/data/vaccinations/country_data/Brazil.csv)
-
-1. Criar model, migration, CRUD, e uma lógica de importação do csv (pode ser uma rota e controller). Na migration defina os campos total_vaccinations e	people_vaccinated como string. Importe o csv.
-2. Faça uma migration de alteração para alterar total_vaccinations e people_vaccinated para inteiro
-3. Faça um mutator para mostrar o campo date com o formato brasileiro dd/mm/yyyy e outro mutator para salvá-lo commo yyyy-mm-dd (lembre-se que o formulário deve receber dd/mm/yyyy)
-4. Implemente o FormRequest garantindo que seja digitado dd/mm/yyyy, além implementar as outras validações
+1. No exercício anterior, inserir o usuário no model de frases como nullable, e restringir o cadastro somente para usuários cadastrados, guardando o id do respectivo usuário que está realizando o cadastro;
+2. Alterar o Dusk do exercício anterior (frases) para realizar todos os testes com um usuário logado, para isso será necessário criar o usuário durante o teste;
+3. Faça uma migration de alteração para adicionar o campo pontuação para a frase (entre 0 e 10 - validação com FormRequest);
+4. Faça um mutator converter a virgula, quando existir, para ponto.
 5. Corriga seus formulários para sempre conterem a função old()
 
+<!--
 
 # Dia 4
 
-Instalação do senhaunica-socialite conforme:
 
-[https://github.com/uspdev/senhaunica-socialite](https://github.com/uspdev/senhaunica-socialite)
 
 ## Dusk
 
