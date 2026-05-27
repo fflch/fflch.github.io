@@ -702,7 +702,7 @@ SENHAUNICA_DEV="http://auth.local:3141/wsusuario/oauth"
 
 Quando o sistema está produção, você nunca deve alterar uma migration que já foi
 para o ar, mas sim criar uma migration que altera uma anterior. Por exemplo, 
-se quisermos que o campo isbn guarde apenas números, faremos:
+se quisermos que adicionar o campo user_id na tabela livros:
 
 {% highlight bash %}
 php artisan make:migration add_user_id_to_livros_table --table=livros
@@ -770,7 +770,7 @@ public function rules(){
     $rules = [
         'titulo' => 'required',
         'autor'  => 'required',
-        'isbn' => 'required|integer',
+        'ano' => 'required|integer',
     ];
     return $rules;
 }

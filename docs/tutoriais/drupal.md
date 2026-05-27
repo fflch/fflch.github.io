@@ -10,9 +10,9 @@ nav_order: 4
 
 # Treinamento Drupal
 
-## Dia 1
+# Dia 1
 
-### Preparação do Ambiente
+## Preparação do Ambiente
 
 O primeiro passo é criar um diretório isolado.
 
@@ -206,13 +206,13 @@ $build['content'] = [
 ];
 ```
 
-### Exercício 1
+## Exercício 1
 
 Criar um módulo chamado geracnpj, que exiba um cnpj aleatório, assim como fizemos no geracpf. 
 
 Criar um segundo módulo chamado gerafrases, que mostrará frases inspiradoras dependendo do dia da semana. As frases que deverão ser mostradas estão no arquivo csv [frases](/assets/files/frases.csv). Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar os dois módulos na TV.
 
-## Dia 2
+# Dia 2
 
 CRUD para cadastro de frases. Nosso módulo se chamará `muralmotivacional`:
 
@@ -449,102 +449,149 @@ muralmotivacional.edit:
     _permission: 'access content'
 ```
 
-### Exercício 2
+## Exercício 2
 
 Criar um módulo chamado livros e implementar as operações de CRUD para o livro com os campos título, autor e ano.
 
-<!--
 
+# Dia 3
+
+Adaptação do Dockerfile conforme: [https://github.com/uspdev/dockerfiles/blob/master/php-apache/readme.md](https://github.com/uspdev/dockerfiles/blob/master/php-apache/readme.md)
+
+
+O módulo Webform do Drupal serve para criar e gerenciar formulários no site sem precisar programar tudo manualmente. Ele é um dos módulos mais usados do na FFLCH.
 
 ```bash
-use Drupal\webform\Entity\Webform;
-use Drupal\webform\Entity\WebformSubmission;
-
-$webform_id = 'meu_webform';
-$webform = Webform::load($webform_id);
-
-$values = [
-  'webform_id' => $webform->id(),
-  'data' => [
-    'nome' => 'Thiago Gomes Verissimo',
-    'email' => 'thiago.verissimo@usp.br',
-  ],
-];
-
-$webform_submission = WebformSubmission::create($values);
-$webform_submission->save();
+docker exec -it cursodrupal composer require 'drupal/webform:^6.3@beta'
 ```
 
-### Exercício 3
-
-Neste exercício vamos trabalhar com o seguinte arquivo:
-
-[https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv](https://github.com/zygmuntz/goodbooks-10k/blob/master/samples/books.csv)
-
-- Criar um webform com as colunas desse arquivo
-- Criar um arquivo php que leia o arquivo csv completo ([https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv](https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv)) e para cada linha crie um submissão correspondente no webform criado anteriormente (rodar seu script com drush)
-
-## Dia 4 (em construção)
-
-Carregando todas submissões de um webform:
+Um plugin é um mecanismo de extensibilidade que permite definir comportamentos intercambiáveis e reutilizáveis dentro de um módulo. Vamos criar um campo no webform chamado email USP e o módulo chamaremos de USP:
 
 ```bash
-use Drupal\webform\Entity\Webform;
-use Drupal\webform\Entity\WebformSubmission;
+docker exec -it cursodrupal ./vendor/bin/drush generate module
 
-$webform_id = 'meu_webform';
-$webform = Webform::load($webform_id);
+usp/
+└── src/
+    ├── Element/
+    │   └── EmailUspElement.php        -> Form API (editor, validação)
+    └── Plugin/
+        └── WebformElement/
+            └── EmailUspElement.php    -> Webform Plugin - Configurações
+```
 
-if ($webform->hasSubmissions()) {
-  $query = \Drupal::entityQuery('webform_submission')->condition('webform_id', $webform_id );
-  $result = $query->execute();
-  $submission_data = [];
-  foreach ($result as $item) {
-    $submission = \Drupal\webform\Entity\WebformSubmission::load($item);
-    $data = $submission->getData();
-    ...
+`src/Element/EmailUspElement.php` teremos:
+
+```php
+<?php
+
+namespace Drupal\usp\Element;
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element\Textfield;
+
+/**
+ * Provides a USP email element.
+ *
+ * @FormElement("email_usp")
+ */
+class EmailUspElement extends Textfield {
+
+  public function getInfo(): array {
+    $class = get_class($this);
+    return parent::getInfo() + [
+      '#input' => TRUE,
+      '#element_validate' => [
+        [$class, 'validateEmailUsp'],
+      ],
+    ];
+  }
+
+  public static function validateEmailUsp(&$element, FormStateInterface $form_state, &$complete_form): void {
+    $value = trim($element['#value']);
+    if (!str_contains($value, '@usp.br')) {
+      $form_state->setError(
+        $element,
+        t('O valor informado deve conter @usp.br')
+      );
+    }
+  }
+
 }
 ```
 
-## Extras
+E a Implementação do Plugin em `src/Plugin/WebformElement/EmailUspElement.php`:
 
-trocar a url alternativa:
+```php
+<?php
 
-```bash
-$node->path->alias = '/novo-caminho-do-node'
-$node->path->pathauto = Drupal\pathauto\PathautoState::SKIP;
+namespace Drupal\usp\Plugin\WebformElement;
+
+use Drupal\webform\Plugin\WebformElement\TextField;
+
+/**
+ * Provides a 'email_usp' Webform element.
+ *
+ * @WebformElement(
+ *   id = "email_usp",
+ *   label = @Translation("E-mail USP"),
+ *   description = @Translation("Campo personalizado USP."),
+ *   category = @Translation("USP")
+ * )
+ */
+class EmailUspElement extends TextField {
+}
 ```
 
-
-
-
-# Workaround PHP 7.4
-
-Instalação do php 7.4 para subir drupal da FFLCH (temporário):
+Vamos criar uma área para configuração do módulo, que diferente do CRUD, a responsabilidade de salvar os dados será do Drupal:
 
 ```bash
-sudo apt install apt-transport-https lsb-release ca-certificates curl -y
-sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
-sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
-sudo apt update
+docker exec -it cursodrupal ./vendor/bin/drush  generate form:config
+
+rota: /admin/config/usp/settings
 ```
 
-Instalação das dependências em php7.4:
+Item no menu de configurações:
 
-```bash
-sudo apt-get install php7.4 php7.4-common php7.4-cli php7.4-gd php7.4-curl php7.4-xml php7.4-mbstring php7.4-zip php7.4-sybase php7.4-sqlite3 php7.4-mysql
+```php
+usp.settings:
+  title: 'USP'
+  description: 'Configurações do módulo USP'
+  parent: system.admin_config_system
+  route_name: usp.settings
+  weight: 10
 ```
 
-Trocar versão do php para 7.4:
+Campo no formulário:
 
-```bash
-sudo update-alternatives --set php /usr/bin/php7.4
-sudo update-alternatives --set phar /usr/bin/phar7.4 
-sudo update-alternatives --set phar.phar /usr/bin/phar.phar7.4 
+```php
+$form['emails_proibidos'] = [
+  '#type' => 'textarea',
+  '#title' => $this->t('Emails proibidos'),
+  '#description' => $this->t('Emails proibidos separados por virgula'),
+  '#default_value' => $this->config('usp.settings')->get('emails_proibidos'),
+];
+
+// salvando
+$this->config('usp.settings')
+    ->set('emails_proibidos', $form_state->getValue('emails_proibidos'))
+    ->save();
 ```
 
--->
+Voltando ao nosso plugin, podemos fazer uma segunda validação que verifica se o email não está proibido:
 
 
+```php
+$config = \Drupal::config('usp.settings');
+$emails_proibidos = $config->get('emails_proibidos');
+$emails_proibidos = explode(',', $emails_proibidos);
+if (in_array($value, $emails_proibidos)) {
+  $form_state->setError(
+    $element,
+    t('Email proibido. Por favor, informe um email diferente.')
+  );
+}
+```
 
+## Exercício 3
 
+Criar um módulo chamado meuscampos e implementar os campos: Telefone Fixo em de São Paulo, Telefone celular em São Paulo, cpf e cnpj.
