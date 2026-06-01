@@ -819,11 +819,164 @@ protected function preco(): Attribute
 4. Faça um mutator converter a virgula, quando existir, para ponto.
 5. Corriga seus formulários para sempre conterem a função old()
 
+
+
+# Instruções para produção
+
+
+## imagem do docker
+
+Construção da imagem baseada na tag (versão), ou seja, antes de ir para produção, é necessário fazer uma release:
+
+Criar o arquivo `.github/workflows/docker.yml`:
+
+```php
+name: Docker
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=tag
+
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.description=Container image for ${{ github.repository }}
+            org.opencontainers.image.licenses=MIT
+```
+
+
+## teste no dusk
+
+Prestar a atenção na versão do php que deve ser compatível com a do Dockerfile.
+
+Criar o arquivo `.github/workflows/dusk.yml`:
+
+```php
+name: Dusk Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  dusk:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_DATABASE: salas_dusk
+          MARIADB_ROOT_PASSWORD: admin
+          MARIADB_USER: admin
+          MARIADB_PASSWORD: admin
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: mbstring, dom, pdo, mysql
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      # 1. Copia o .env.example direto para .env
+      - name: Copy env from example
+        run: cp .env.example .env
+
+      # 2. Remove as variáveis visuais do Dusk caso existam no .env
+      - name: Remove Dusk visual variables
+        run: |
+          sed -i '/DUSK_START_MAXIMIZED/d' .env || true
+          sed -i '/DUSK_HEADLESS_DISABLED/d' .env || true
+
+      # 3. Injeta as configurações do Dusk e do Banco de Dados no .env gerado
+      - name: Configure .env file for testing
+        run: |
+          echo "APP_URL=http://127.0.0.1:47800" >> .env
+          echo "DUSK_DRIVER_URL=http://localhost:9515" >> .env
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=salas_dusk" >> .env
+          echo "DB_USERNAME=admin" >> .env
+          echo "DB_PASSWORD=admin" >> .env
+
+      - name: Generate APP_KEY
+        run: php artisan key:generate
+
+      - name: Wait for MariaDB
+        run: |
+          for i in {1..30}; do
+            mysqladmin ping -h127.0.0.1 -P3306 --silent && break
+            sleep 2
+          done
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install ChromeDriver
+        run: php artisan dusk:chrome-driver --detect
+
+      - name: Start Laravel server
+        run: php artisan serve --port=47800 &
+
+      - name: Run Dusk
+        run: php artisan dusk --without-tty
+```
+
+
+
 <!--
-
-# Dia 4
-
-
 
 ## Dusk
 
