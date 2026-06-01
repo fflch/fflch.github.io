@@ -899,7 +899,7 @@ jobs:
       mariadb:
         image: mariadb:10.11
         env:
-          MARIADB_DATABASE: salas_dusk
+          MARIADB_DATABASE: db
           MARIADB_ROOT_PASSWORD: admin
           MARIADB_USER: admin
           MARIADB_PASSWORD: admin
@@ -944,7 +944,7 @@ jobs:
           echo "DB_CONNECTION=mysql" >> .env
           echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=salas_dusk" >> .env
+          echo "DB_DATABASE=db" >> .env
           echo "DB_USERNAME=admin" >> .env
           echo "DB_PASSWORD=admin" >> .env
 
