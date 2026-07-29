@@ -6,3 +6,6 @@
   {% assign color_scheme = "light" %}
 {% endif %}
 {% include css/just-the-docs.scss.liquid color_scheme=color_scheme %}
+
+
+@import "custom";

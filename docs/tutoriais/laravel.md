@@ -29,128 +29,24 @@ docker run --rm -it \
   composer create-project laravel/laravel .
 ```
 
-Dockerfile pronto para usar no contexto USP:
-
-```bash
-FROM php:8.5-apache
-
-# packages
-RUN sed -i 's|main|main non-free|' /etc/apt/sources.list.d/debian.sources && apt-get update && apt-get install -y \
-    unixodbc \
-    unixodbc-dev \
-    freetds-bin \
-    freetds-dev \
-    libicu-dev \
-    git \
-    unzip \
-    libzip-dev \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libjpeg-dev \
-    libpng-dev \
-    libfreetype6-dev \ 
-    curl
-
-# cleanup
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# php libs
-RUN docker-php-ext-install \
-    intl \
-    pdo_mysql \
-    soap \
-    zip \
-    mbstring \
-    bcmath \
-    pdo_dblib
-
-# gd
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd
-
-# php memory
-ENV PHP_MEMORY_LIMIT=512M
-ENV PHP_UPLOAD_LIMIT=512M
-RUN { \
-        echo 'memory_limit=${PHP_MEMORY_LIMIT}'; \
-        echo 'upload_max_filesize=${PHP_UPLOAD_LIMIT}'; \
-        echo 'post_max_size=${PHP_UPLOAD_LIMIT}'; \
-    } > "${PHP_INI_DIR}/conf.d/upload.ini"
-
-# apache
-RUN a2enmod rewrite
-RUN sed -i 's|/var/www/html|/var/www/html/public|' /etc/apache2/sites-available/000-default.conf
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-# composer
-USER www-data
-COPY --chown=www-data . .
-RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-CMD ["apache2-foreground"]
+[Dockerfile](/assets/files/laravel/Dockerfile) pronto para usar no contexto USP:
+```yaml
+{% include files/laravel/Dockerfile %}
 ```
 
-docker-compose.yml pronto para usar o dusk:
+[docker-compose.yml](/assets/files/laravel/docker-compose.yml) pronto para usar no contexto USP:
 
-```bash
-services:
-  cursolaravel:
-    image: cursolaravel:latest
-    container_name: cursolaravel
-    ports:
-      - "8000:80"
-    depends_on:
-      - mariadb
-    networks:
-      - cursolaravel-network
-    volumes:
-      - ./:/var/www/html
-    environment:
-      HOME: /tmp
-    user: "${UID:-1000}:${GID:-1000}"
-
-  mariadb:
-    image: mariadb:11
-    container_name: cursolaravel_mariadb
-    restart: always
-    environment:
-      MYSQL_DATABASE: cursolaravel
-      MYSQL_USER: cursolaravel
-      MYSQL_PASSWORD: cursolaravel
-      MYSQL_ROOT_PASSWORD: cursolaravel
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    networks:
-      - cursolaravel-network
-
-  selenium:
-    image: selenium/standalone-chrome
-    container_name: cursolaravel_selenium
-    ports:
-      - "7900:7900" # VNC (pra ver o browser rodando)
-    networks:
-      - cursolaravel-network
-    shm_size: 2gb
-
-networks:
-  cursolaravel-network:
-
-volumes:
-  mariadb_data:
+```yaml
+{% include files/laravel/docker-compose.yml %}
 ```
+
 
 Criando a imagem e subindo ambiente:
-
 ```bash
-docker build --no-cache -t cursolaravel .
-docker compose up 
+docker compose up --build
 ```
 
-Acessar pelo navegador: http://127.0.0.1:8000/
+Acessar pelo navegador: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 No arquivo .env vamos trocar para mariadb:
 
@@ -663,27 +559,8 @@ Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve a
 
 # Dia 3
 
-Adaptação do Dockerfile conforme: [https://github.com/uspdev/dockerfiles/blob/master/php-apache/readme.md](https://github.com/uspdev/dockerfiles/blob/master/php-apache/readme.md)
-
 Instalação do template USP conforme: [https://github.com/uspdev/laravel-usp-theme/](https://github.com/uspdev/laravel-usp-theme/)
 
-No docker-compose.yml inserir imagem do serviço de senha única faker:
-
-{% highlight yml %}
-  senhaunica-faker:
-    image: uspdev/senhaunica-faker
-    container_name: cursolaravel_senhaunica-faker
-    ports:
-      - "3141:3141"
-    environment:
-          - APP_URL=http://auth.local:3141
-    networks:
-      cursolaravel-network:
-        aliases:
-          - auth.local
-{% endhighlight %}
-
-No /etc/hosts do seu computador colocar a linha `127.0.0.1 auth.local`.
 
 Instalação do senhaunica-socialite conforme: [https://github.com/uspdev/senhaunica-socialite](https://github.com/uspdev/senhaunica-socialite)
 
@@ -824,155 +701,27 @@ protected function preco(): Attribute
 # Instruções para produção
 
 
-## imagem do docker
+### Imagem do docker
 
 Construção da imagem baseada na tag (versão), ou seja, antes de ir para produção, é necessário fazer uma release:
 
 Criar o arquivo `.github/workflows/docker.yml`:
 
-```php
-name: Docker
+[Arquivo modelo docker.yml](/assets/files/laravel/docker.yml)
 
-on:
-  push:
-    tags:
-      - '*'
 
-jobs:
-  docker:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Login GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=ref,event=tag
-
-      - name: Build and Push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: |
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.description=Container image for ${{ github.repository }}
-            org.opencontainers.image.licenses=MIT
-```
 
 
 ## teste no dusk
 
-Prestar a atenção na versão do php que deve ser compatível com a do Dockerfile.
+Roda os teste no dusk baseado na configuração do docker-compose.yml
 
 Criar o arquivo `.github/workflows/dusk.yml`:
 
-```php
-name: Dusk Tests
+[Arquivo modelo docker.yml](/assets/files/laravel/dusk.yml)
 
-on:
-  push:
-  pull_request:
+É necessário alterar a variável `SERVICE_NAME` no `dusk.yml` colocando o nome do sistema. 
 
-jobs:
-  dusk:
-    runs-on: ubuntu-latest
-
-    services:
-      mariadb:
-        image: mariadb:10.11
-        env:
-          MARIADB_DATABASE: db
-          MARIADB_ROOT_PASSWORD: admin
-          MARIADB_USER: admin
-          MARIADB_PASSWORD: admin
-          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=5s
-          --health-timeout=5s
-          --health-retries=10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.4
-          extensions: mbstring, dom, pdo, mysql
-          coverage: none
-
-      - name: Install Composer dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
-
-      # 1. Copia o .env.example direto para .env
-      - name: Copy env from example
-        run: cp .env.example .env
-
-      # 2. Remove as variáveis visuais do Dusk caso existam no .env
-      - name: Remove Dusk visual variables
-        run: |
-          sed -i '/DUSK_START_MAXIMIZED/d' .env || true
-          sed -i '/DUSK_HEADLESS_DISABLED/d' .env || true
-
-      # 3. Injeta as configurações do Dusk e do Banco de Dados no .env gerado
-      - name: Configure .env file for testing
-        run: |
-          echo "APP_URL=http://127.0.0.1:47800" >> .env
-          echo "DUSK_DRIVER_URL=http://localhost:9515" >> .env
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=db" >> .env
-          echo "DB_USERNAME=admin" >> .env
-          echo "DB_PASSWORD=admin" >> .env
-
-      - name: Generate APP_KEY
-        run: php artisan key:generate
-
-      - name: Wait for MariaDB
-        run: |
-          for i in {1..30}; do
-            mysqladmin ping -h127.0.0.1 -P3306 --silent && break
-            sleep 2
-          done
-
-      - name: Run migrations
-        run: php artisan migrate --force
-
-      - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
-
-      - name: Install ChromeDriver
-        run: php artisan dusk:chrome-driver --detect
-
-      - name: Start Laravel server
-        run: php artisan serve --port=47800 &
-
-      - name: Run Dusk
-        run: php artisan dusk --without-tty
-```
 
 
 
