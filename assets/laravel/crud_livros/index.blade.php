@@ -1,7 +1,8 @@
 @extends('laravel-usp-theme::master')
 
 @section('content')
-<form>
+<a href="/livros/create" class="btn btn-success">Cadastrar novo livro</a><br><br>
+<form class="form">
     <input type="text" name="search" value="{{ request('search') }}">
     <button type="submit">Pesquisar</button>
 </form>

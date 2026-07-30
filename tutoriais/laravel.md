@@ -645,6 +645,13 @@ public function rules(){
 }
 ```
 
+No controler, trocamos as chamadas de `Request` para `LivroRequest`:
+
+```php
+use App\Http\Requests\LivroRequest;
+public function update(LivroRequest $request, Livro $livro){
+public function store(LivroRequest $request)
+```
 ## Mutators
 
 Há situações em que queremos fazer um leve processamento antes de salvar um valor no banco de dados e logo após recuperarmos um valor. Vamos adicionar um campo para preço. Já sabemos como criar uma migration de alteração para alterar a tabela livros:
@@ -763,6 +770,8 @@ curl -L https://fflch.github.io/assets/laravel/crud_livros/web.php \
 curl -L https://fflch.github.io/assets/laravel/crud_livros/LivroCrudTest.php \
     -o tests/Browser/LivroCrudTest.php
 
+docker exec -it cursolaravel php artisan vendor:publish --provider="Uspdev\SenhaunicaSocialite\SenhaunicaServiceProvider" --tag="migrations"
+docker exec -it cursolaravel php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
 docker exec -it cursolaravel php artisan migrate
 ```
 
