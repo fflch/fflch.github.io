@@ -66,8 +66,8 @@ DB_DATABASE=cursolaravel
 DB_USERNAME=cursolaravel
 DB_PASSWORD=cursolaravel
 
-#APP_URL=http://localhost:8000
-APP_URL=http://cursolaravel
+APP_URL=http://localhost:8000
+#APP_URL=http://cursolaravel
 DUSK_DRIVER_URL='http://selenium:4444/wd/hub'
 DUSK_START_MAXIMIZED=true
 DUSK_HEADLESS_DISABLED=true
