@@ -711,7 +711,7 @@ mkdir -p resources/views/livros
 mkdir -p tests/Browser
 
 # .env
-curl -L https://fflch.github.io/assets/laravel/crud_livros/.env -o .env
+curl -L https://fflch.github.io/assets/laravel/crud_livros/env -o .env
 
 # Migration
 curl -L https://fflch.github.io/assets/laravel/crud_livros/2026_07_30_131403_create_livros_table.php \
@@ -728,6 +728,9 @@ curl -L https://fflch.github.io/assets/laravel/crud_livros/User.php \
 curl -L https://fflch.github.io/assets/laravel/crud_livros/LivroController.php \
     -o app/Http/Controllers/LivroController.php
 
+curl -L https://fflch.github.io/assets/laravel/crud_livros/IndexController.php \
+    -o app/Http/Controllers/IndexController.php
+
 # Form Request
 curl -L https://fflch.github.io/assets/laravel/crud_livros/LivroRequest.php \
     -o app/Http/Requests/LivroRequest.php
@@ -737,6 +740,9 @@ curl -L https://fflch.github.io/assets/laravel/crud_livros/ImportaLivros.php \
     -o app/Console/Commands/ImportaLivros.php
 
 # Views
+curl -L https://fflch.github.io/assets/laravel/crud_livros/home.blade.php \
+    -o resources/views/home.blade.php
+
 curl -L https://fflch.github.io/assets/laravel/crud_livros/index.blade.php \
     -o resources/views/livros/index.blade.php
 
