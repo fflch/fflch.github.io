@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Prism CSS para realce de sintaxe colorido -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <title>Laravel</title>
+    <style>
+        body { padding: 40px; background: #f8f9fa; } 
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        pre { border-radius: 6px; }
+        /* Estilização elegante para o Sumário gerado automaticamente */
+        .toc { 
+            background: #f1f3f5; 
+            padding: 15px 20px; 
+            border-radius: 6px; 
+            border-left: 4px solid #0d6efd; 
+            margin-bottom: 30px; 
+        }
+        .toc ul { margin-bottom: 0; padding-left: 20px; }
+        .toc a { text-decoration: none; color: #0d6efd; font-weight: 500; }
+        .toc a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="btn btn-sm btn-outline-secondary mb-4">← Voltar à Página Inicial</a>
+        <h1>Laravel</h1>
+        <hr>
+        <div class="markdown-body">
+            <div class="toc">
+<ul>
+<li><a href="#dia-1">Dia 1</a><ul>
+<li><a href="#configurando-ambiente">Configurando ambiente</a></li>
+<li><a href="#mvc">MVC</a><ul>
+<li><a href="#model">Model</a></li>
+<li><a href="#tinker">Tinker</a></li>
+<li><a href="#busca">Busca</a></li>
+<li><a href="#command">Command</a></li>
+<li><a href="#dusk">Dusk</a></li>
+</ul>
+</li>
+<li><a href="#exercicio-importacao-de-livros">Exercício - Importação de Livros</a></li>
+</ul>
+</li>
+<li><a href="#dia-2">Dia 2</a><ul>
+<li><a href="#crud">CRUD</a><ul>
+<li><a href="#create">Create</a></li>
+<li><a href="#read">Read</a></li>
+<li><a href="#update">Update</a></li>
+<li><a href="#delete">Delete</a></li>
+</ul>
+</li>
+<li><a href="#exercicio-2">Exercício 2</a></li>
+</ul>
+</li>
+<li><a href="#dia-3">Dia 3</a><ul>
+<li><a href="#migration-de-alteracao">Migration de Alteração</a></li>
+<li><a href="#validacao">Validação</a><ul>
+<li><a href="#validacao-no-controller">Validação no Controller</a></li>
+<li><a href="#formrequest">FormRequest</a></li>
+</ul>
+</li>
+<li><a href="#mutators">Mutators</a></li>
+<li><a href="#exercicio-3">Exercício 3</a></li>
+</ul>
+</li>
+<li><a href="#instrucoes-para-producao">Instruções para produção</a></li>
+</ul>
+</div>
+<h1 id="dia-1">Dia 1</h1>
+<h2 id="configurando-ambiente">Configurando ambiente</h2>
+<p>Iremos usar o docker para fazer a instalação;</p>
+<pre class="codehilite"><code class="language-bash">mkdir cursolaravel
+cd cursolaravel
+</code></pre>
+
+<p>O Composer é um gerenciador de dependências para PHP. Ele permite instalar, atualizar e gerenciar bibliotecas e pacotes de forma simples, garantindo que um projeto tenha todas as dependências necessárias. No Laravel, o Composer é usado para instalar o framework e suas bibliotecas.</p>
+<pre class="codehilite"><code class="language-bash">docker run --rm -it \
+  -v $(pwd):/app \
+  -u $(id -u):$(id -g) \
+  composer:latest \
+  composer create-project laravel/laravel .
+</code></pre>
+
+<p><a href="../assets/laravel/Dockerfile">Dockerfile</a> pronto para usar no contexto USP:</p>
+<pre class="codehilite"><code class="language-dockerfile">FROM uspdev/uspdev-php-apache:8.4
+
+RUN sed -i 's|/var/www/html|/var/www/html/public|' \
+    /etc/apache2/sites-available/000-default.conf
+
+USER www-data
+
+COPY --chown=www-data . .
+
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction
+
+CMD [&quot;apache2-foreground&quot;]
+</code></pre>
+
+<p><a href="../assets/laravel/docker-compose.yml">docker-compose.yml</a> pronto para usar no contexto USP:</p>
+<pre class="codehilite"><code class="language-yaml">services:
+  cursolaravel:
+    build: .
+    image: cursolaravel:latest
+    container_name: cursolaravel
+    ports:
+      - &quot;8000:80&quot;
+    depends_on:
+      - mariadb
+    networks:
+      - cursolaravel-network
+    volumes:
+      - ./:/var/www/html
+    environment:
+      HOME: /tmp
+    user: &quot;${UID:-1000}:${GID:-1000}&quot;
+
+  mariadb:
+    image: mariadb:11
+    container_name: cursolaravel_mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: cursolaravel
+      MYSQL_USER: cursolaravel
+      MYSQL_PASSWORD: cursolaravel
+      MYSQL_ROOT_PASSWORD: cursolaravel
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - cursolaravel-network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: cursolaravel_phpmyadmin
+    restart: always
+    depends_on:
+      - mariadb
+    ports:
+      - &quot;8081:80&quot;
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: cursolaravel
+    networks:
+      - cursolaravel-network
+
+  selenium:
+    image: selenium/standalone-chrome
+    container_name: cursolaravel_selenium
+    ports:
+      - &quot;7900:7900&quot;
+    networks:
+      - cursolaravel-network
+    shm_size: 2gb
+
+  # No /etc/hosts do seu computador colocar a linha `127.0.0.1 auth.local` 
+  # particularidades do protocolo oAuth1 usado na USP
+  senhaunica-faker:
+    image: uspdev/senhaunica-faker
+    container_name: cursolaravel_senhaunica-faker
+    ports:
+      - &quot;3141:3141&quot;
+    environment:
+          - APP_URL=http://auth.local:3141
+    networks:
+      cursolaravel-network:
+        aliases:
+          - auth.local
+
+networks:
+  cursolaravel-network:
+
+volumes:
+  mariadb_data:
+</code></pre>
+
+<p>Criando a imagem e subindo ambiente:</p>
+<pre class="codehilite"><code class="language-bash">docker compose up --build
+</code></pre>
+
+<p>Acessar o laravel criado: <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a></p>
+<p>Acessar phpmyadmin criado: <a href="http://127.0.0.1:8081/">http://127.0.0.1:8081/</a></p>
+<p>Acessar servidor de autenticação USP: <a href="http://auth.local:3141">http://auth.local:3141</a></p>
+<p>No arquivo .env vamos trocar para mariadb:</p>
+<pre class="codehilite"><code class="language-bash">DB_CONNECTION=mariadb
+DB_HOST=mariadb
+DB_PORT=3306
+DB_DATABASE=cursolaravel
+DB_USERNAME=cursolaravel
+DB_PASSWORD=cursolaravel
+</code></pre>
+
+<p>Recriando tabelas no banco de dados:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan migrate
+</code></pre>
+
+<h2 id="mvc">MVC</h2>
+<p>Uma rota é a forma como o framework define e gerencia URLs para acessar diferentes partes da aplicação. As rotas são configuradas no arquivo routes/web.php (para páginas web) ou routes/api.php (para APIs) e determinam qual código será executado quando um usuário acessa uma URL específica. Exemplo:</p>
+<pre class="codehilite"><code class="language-php">Route::get('/rota-sem-controller', function () {
+    echo &quot;Uma rota sem controller, not good!&quot;;
+});
+</code></pre>
+
+<p>O controller é uma classe responsável por organizar a lógica da aplicação, separando as regras de negócio das rotas. Em vez de definir toda a lógica diretamente nas rotas, os controllers agrupam funcionalidades relacionadas, tornando o código mais limpo e modular. <br />
+A convenção de nomenclatura para controllers segue o padrão PascalCase, onde o nome deve ser descritivo, no singular e sempre terminar com "Controller", como <code>ProdutoController</code> ou <code>UsuarioController</code>. </p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan make:controller MeuPrimeiroController
+</code></pre>
+
+<p>Método do controller:</p>
+<pre class="codehilite"><code class="language-bash">public function index(){
+    return 'Uma rota com controller, Great!';
+}
+</code></pre>
+
+<p>Mesma ideia, mas com controller:</p>
+<pre class="codehilite"><code class="language-bash">use App\Http\Controllers\MeuPrimeiroController;
+Route::get('/rota-com-controller', [MeuPrimeiroController::class,'index']);
+</code></pre>
+
+<p>Com essa ideia, vamos criar um sistema de cadastro de livros:</p>
+<pre class="codehilite"><code class="language-php">docker exec -it cursolaravel php artisan make:controller LivroController
+</code></pre>
+
+<p>A seguir criamos a rota <code>livros</code> e a apontamos para o controller <code>LivroController</code>, importando anteriormente o namespace <code>App\Http\Controllers\LivroController</code>.</p>
+<pre class="codehilite"><code class="language-php">use App\Http\Controllers\LivroController;
+Route::get('/livros', [LivroController::class,'index']);
+</code></pre>
+
+<p>A camada View é responsável por exibir a interface da aplicação, separando a lógica de apresentação da lógica de negócio (controller). Ela utiliza o Blade, uma linguagem de templates que permite criar páginas dinâmicas de forma eficiente. As views ficam armazenadas na pasta <code>resources/views</code> e podem ser retornadas a partir de um controller usando return <code>view('nome_da_view')</code>.</p>
+<pre class="codehilite"><code class="language-php">mkdir resources/views/livros
+touch resources/views/livros/index.blade.php
+</code></pre>
+
+<p>No controller:</p>
+<pre class="codehilite"><code class="language-php">public function index(){
+  return view('livros.index');
+}
+</code></pre>
+
+<p>Conteúdo mínimo de index.blade.php:</p>
+<pre class="codehilite"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Livros&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        Memórias de um Sargento de Milícias&lt;br&gt;
+        O Primo Basílio&lt;br&gt;
+        Memórias Póstumas de Brás Cubas&lt;br&gt;
+        A Hora da Estrela&lt;br&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<h3 id="model">Model</h3>
+<p>O Model é uma representação de uma tabela no banco de dados e é responsável pela interação com os dados dessa tabela.</p>
+<p>Criando o model chamado Livro:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan make:model Livro -m
+</code></pre>
+
+<p>As migrations são uma forma de versionar e gerenciar o esquema do banco de dados, permitindo criar, alterar e remover tabelas de forma controlada e rastreável. </p>
+<p>Cada migration é uma classe PHP que define as operações a serem realizadas no banco de dados. As migrations são armazenadas na pasta <code>database/migrations</code>. Vamos colocar três colunas para o model <code>Livro</code>: titulo, autor e ano.</p>
+<pre class="codehilite"><code class="language-php">$table-&gt;string('titulo');
+$table-&gt;string('autor');
+$table-&gt;integer('ano');
+</code></pre>
+
+<p>Depois da modificação na migration, aplicá-la no banco de dados: <code>docker exec -it cursolaravel php artisan migrate</code>.</p>
+<h3 id="tinker">Tinker</h3>
+<p>O comando <code>docker exec -it cursolaravel php artisan tinker</code> nos permite digitar comandos PHP e ver imediatamente o resultado, como se estivesse dentro da sua aplicação Laravel, ou seja, executamos comandos PHP diretamente dentro do contexto da aplicação, de forma prática e rápida.</p>
+<p>Usando o tinker, vamos cadastrar dois livros:</p>
+<pre class="codehilite"><code class="language-php">$livro = new \App\Models\Livro;
+$livro-&gt;titulo = &quot;Memórias de um Sargento de Milícias&quot;;
+$livro-&gt;autor = &quot;Manuel Antônio de Almeida&quot;;
+$livro-&gt;ano = 1853;
+$livro-&gt;save();
+
+$livro = new \App\Models\Livro;
+$livro-&gt;titulo = &quot;O Primo Basílio&quot;;
+$livro-&gt;autor = &quot;Eça de Queiroz&quot;;
+$livro-&gt;ano = 1878;
+$livro-&gt;save();
+</code></pre>
+
+<p>Na view da index podemos listar os livros cadastrados:</p>
+<pre class="codehilite"><code class="language-php">use App\Models\Livro;
+
+public function index(){
+  return view('livros.index',[
+    'livros' =&gt; Livro::all()
+  ]);
+}
+</code></pre>
+
+<p>No blade index.blade.php, listamos os livros:</p>
+<pre class="codehilite"><code class="language-php">&lt;h1&gt;Listagem de Livros&lt;/h1&gt;
+&lt;ul&gt;
+    @foreach($livros as $livro)
+        &lt;li&gt;{{ $livro-&gt;titulo }}, por &lt;i&gt;{{ $livro-&gt;autor }}&lt;/i&gt; em {{ $livro-&gt;ano }}&lt;/li&gt;
+    @endforeach
+&lt;/ul&gt;
+</code></pre>
+
+<h3 id="busca">Busca</h3>
+<p>Inserindo um campo para busca simples no blade:</p>
+<pre class="codehilite"><code class="language-html">&lt;form&gt;
+    &lt;input type=&quot;text&quot; name=&quot;search&quot; value=&quot;{{ request('search') }}&quot;&gt;
+    &lt;button type=&quot;submit&quot;&gt;Pesquisar&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>E no controller temos que tratar a busca:</p>
+<pre class="codehilite"><code class="language-php">public function index(Request $request){
+    if($request-&gt;has('search')){
+        $livros = Livro::where('titulo','like','%'.$request-&gt;search.'%')-&gt;get();
+    } else {
+        $livros = Livro::all();
+    }
+
+    return view('livros.index',[
+        'livros' =&gt; $livros
+    ]);
+}
+</code></pre>
+
+<h3 id="command">Command</h3>
+<p>Por fim, podemos criar um comando no artisan que automatiza o cadastro de livros a partir de alguma lógica que podemos desenvolver. </p>
+<pre class="codehilite"><code class="language-php">docker exec -it cursolaravel php artisan make:command ImportaLivros
+</code></pre>
+
+<p>O comando acima criará o arquivo <code>app/Console/Commands/ImportaLivros.php</code>, o qual temos que mudar o <code>$signature</code> e implementar a lógica do comando:</p>
+<pre class="codehilite"><code class="language-php">#[Signature('livros:importar')]
+
+public function handle()
+{
+    $livro = new \App\Models\Livro;
+    $livro-&gt;titulo = &quot;A Hora da Estrela&quot;;
+    $livro-&gt;autor = &quot;Clarice Lispector&quot;;
+    $livro-&gt;ano = 1977;
+    $livro-&gt;save();
+}
+</code></pre>
+
+<p>Ao rodarmos no terminal o comando <code>docker exec -it cursolaravel php artisan livros:importar</code> o livro da Clarice será cadastrado. Essa é um implementação simples (e inútil, pois o mesmo livro é sempre cadastrado repetidamente), mas a ideia é que qualquer lógica pode ser implementada no <code>handle()</code> para cadastro de muitos livros a partir de uma fonte externa, como, por exemplo, uma lista de livros oriunda de um arquivo csv.</p>
+<h3 id="dusk">Dusk</h3>
+<p>Os testes com <strong>Laravel Dusk</strong> no nosso contexto tem dois propósitos:</p>
+<ol>
+<li><strong>Testar funcionalidades reais do sistema</strong>, simulando a interação de um usuário no navegador.</li>
+<li><strong>Servir como documentação funcional</strong>, demonstrando como as principais funcionalidades do sistema devem se comportar.</li>
+</ol>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer require --dev laravel/dusk
+docker exec -it cursolaravel php artisan dusk:install
+docker exec -it cursolaravel php artisan dusk:chrome-driver
+</code></pre>
+
+<p>Para rodar os testes, configure no .env (e aproveite coloque no .env.example):</p>
+<pre class="codehilite"><code class="language-php">APP_URL=http://cursolaravel
+DUSK_DRIVER_URL='http://selenium:4444/wd/hub'
+DUSK_START_MAXIMIZED=true
+DUSK_HEADLESS_DISABLED=true
+</code></pre>
+
+<p>Criando uma classe do Dusk para inserirmos nosso teste:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan dusk:make BuscaLivroTest
+</code></pre>
+
+<p>Criando um teste que verifica se na rota /livros existe a frase "Listagem de Livros":</p>
+<pre class="codehilite"><code class="language-php">$browser-&gt;visit('/livros')
+    -&gt;pause(2000)
+    -&gt;typeSlowly('search', 'primo', 300)
+    -&gt;pause(2000)
+    -&gt;press('Pesquisar')
+    -&gt;pause(2000)
+    -&gt;assertSee('O Primo Basílio');
+</code></pre>
+
+<p>Acessar <a href="http://localhost:7900/">http://localhost:7900/</a> com senha <code>secret</code> e assistir o teste rodando.</p>
+<p>Rodar o teste:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan dusk tests/Browser/BuscaLivroTest.php
+</code></pre>
+
+<h2 id="exercicio-importacao-de-livros">Exercício - Importação de Livros</h2>
+<p>1 - Criar um comando para importar os livros do arquivo csv <a href="../assets/livros.csv">livros</a> no model Livro. Importante:</p>
+<ul>
+<li>No método <code>handle()</code>, implemente a lógica para ler o arquivo <code>livros.csv</code> e para cada livro, fazer a inserção;</li>
+<li>Dica 1: Para zerar os registros a cada importação, pode-se usar o comando <code>\App\Models\Livro::truncate()</code> no começo do método <code>handle()</code>.</li>
+<li>Dica 2: Você pode usar a classe <code>League\Csv\Reader</code> (disponível via Composer) para facilitar a leitura do CSV.</li>
+</ul>
+<p>2 - Criar teste Dusk para buscar a string "processo" e deverá ter um assert para ver Franz Kafka e um assert not para José de Alencar;</p>
+<p>3 - Criar estatísticas básicas sobre os dados importados</p>
+<ul>
+<li>Criar o controller <code>EstatisticaController</code> com um método chamado <code>stats</code>.</li>
+<li>Defina uma rota <code>livros/stats</code> que aponte para o método <code>stats</code>.</li>
+<li>No método <code>stats</code> apresente uma tabela com a quantidade de livros por ano.</li>
+</ul>
+<p>Exemplo de saída (com dados fictícios):</p>
+<table class="table">
+<thead>
+  <tr>
+    <th>ano</th>
+    <th>quantidade</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>1998</td>
+    <td>4</td>
+  </tr>
+  <tr>
+    <td>2000</td>
+    <td>7</td>
+  </tr>
+</tbody>
+</table>
+
+<p>4 -  No método <code>stats</code> apresente uma segunda tabela com a quantidade de livros por autor.</p>
+<p>Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar na TV rapidamente e solução do exercício.</p>
+<h1 id="dia-2">Dia 2</h1>
+<h2 id="crud">CRUD</h2>
+<p>CRUD é um acrônimo para as quatro operações básicas utilizadas na manipulação de dados em sistemas web: Create (Criar), Read (Ler), Update (Atualizar) e Delete (Excluir). Essas operações interagem com bancos de dados, permitindo, por exemplo, que usuários possam cadastrar novas informações, visualizar registros existentes, modificar dados já salvos e remover registros.</p>
+<h3 id="create">Create</h3>
+<p>São geralmente necessárias duas rotas para salvar um registro em uma operação CRUD porque o processo é dividido em duas etapas: exibir o formulário e processar os dados enviados. A rota GET serve para exibir o formulário de criação e a rota POST serve para processar os dados enviados pelo formulário no controller:</p>
+<pre class="codehilite"><code class="language-php">Route::get('/livros/create', [LivroController::class,'create']);
+Route::post('/livros', [LivroController::class,'store']);
+</code></pre>
+
+<p>Para mostrar o formulário html usamos o método <em>create</em> :</p>
+<pre class="codehilite"><code class="language-php">public function create(){
+    return view('livros.create');
+}
+</code></pre>
+
+<p>Formulário html <code>resources/views/livros/create.blade.php</code> com o seguinte conteúdo:</p>
+<pre class="codehilite"><code class="language-php">&lt;form method=&quot;POST&quot; action=&quot;/livros&quot;&gt;
+    @csrf
+    Título: &lt;input type=&quot;text&quot; name=&quot;titulo&quot;&gt;
+    Autor: &lt;input type=&quot;text&quot; name=&quot;autor&quot;&gt;
+    Ano: &lt;input type=&quot;text&quot; name=&quot;ano&quot;&gt;
+    &lt;button type=&quot;submit&quot;&gt;Enviar&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>Por fim o método store, que salva no banco de dados o cadastro do livro:</p>
+<pre class="codehilite"><code class="language-php">public function store(Request $request){
+    $livro = new Livro;
+    $livro-&gt;titulo = $request-&gt;titulo;
+    $livro-&gt;autor = $request-&gt;autor;
+    $livro-&gt;ano = $request-&gt;ano;
+    $livro-&gt;save();
+    return redirect('/livros');
+}
+</code></pre>
+
+<h3 id="read">Read</h3>
+<p>Já implementamos uma forma de acessar os livros em forma de listagem com o método index, podemos implementar outra forma de acesso individual para cada livro. Rota para acesso ao registro de um livro específico:</p>
+<pre class="codehilite"><code class="language-php">Route::get('/livros/{livro}', [LivroController::class,'show']);
+</code></pre>
+
+<p>Respectivo controller:</p>
+<pre class="codehilite"><code class="language-php">public function show(Livro $livro){
+    return view('livros.show',[
+        'livro' =&gt; $livro
+    ]);
+}
+</code></pre>
+
+<p>Criamos um blade para a rota show <code>resources/views/livros/show.blade.php</code> com o seguinte conteúdo:</p>
+<pre class="codehilite"><code class="language-php">Título: {{ $livro-&gt;titulo }} &lt;br&gt;
+Autor: &lt;i&gt;{{ $livro-&gt;autor }}&lt;/i&gt; &lt;br&gt;
+Ano de publicação: {{ $livro-&gt;ano }} &lt;br&gt;
+&lt;a href=&quot;/livros&quot;&gt;Voltar&lt;/a&gt;
+</code></pre>
+
+<p>No index.blade.php podemos criar um link para o <code>show</code> de cada livro:</p>
+<pre class="codehilite"><code class="language-php">&lt;a href=&quot;/livros/{{ $livro-&gt;id}}&quot;&gt;{{ $livro-&gt;titulo }}&lt;/a&gt;
+</code></pre>
+
+<h3 id="update">Update</h3>
+<p>Novamente precisamos de duas rotas para atualizar um registro, uma para exibir o formulário e outra para processar os dados enviados.</p>
+<pre class="codehilite"><code class="language-php">Route::get('/livros/{livro}/edit', [LivroController::class,'edit']);
+Route::patch('/livros/{livro}', [LivroController::class,'update']);
+</code></pre>
+
+<p>Implementação no controller:</p>
+<pre class="codehilite"><code class="language-php">public function edit(Livro $livro){
+    return view('livros.edit',[
+        'livro' =&gt; $livro
+    ]);
+}
+
+public function update(Request $request, Livro $livro){
+    $livro-&gt;titulo = $request-&gt;titulo;
+    $livro-&gt;autor = $request-&gt;autor;
+    $livro-&gt;ano = $request-&gt;ano;
+    $livro-&gt;save();
+    return redirect(&quot;/livros/{$livro-&gt;id}&quot;);
+}
+</code></pre>
+
+<p>Criando o blade para edição:</p>
+<pre class="codehilite"><code class="language-php">touch resources/views/livros/edit.blade.php
+</code></pre>
+
+<p>Html para edição no <code>edit.blade.php</code>:</p>
+<pre class="codehilite"><code class="language-php">&lt;form method=&quot;POST&quot; action=&quot;/livros/{{ $livro-&gt;id }}&quot;&gt;
+    @csrf
+    @method('PATCH')
+    Título: &lt;input type=&quot;text&quot; name=&quot;titulo&quot; value=&quot;{{ $livro-&gt;titulo }}&quot;&gt;
+    Autor: &lt;input type=&quot;text&quot; name=&quot;autor&quot; value=&quot;{{ $livro-&gt;autor }}&quot;&gt;
+    Ano: &lt;input type=&quot;text&quot; name=&quot;ano&quot; value=&quot;{{ $livro-&gt;ano }}&quot;&gt;
+    &lt;button type=&quot;submit&quot;&gt;Enviar&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>Vamos colocar o botão para edição no blade <code>show.blade.php</code>:</p>
+<pre class="codehilite"><code class="language-php">&lt;a href=&quot;/livros/{{ $livro-&gt;id }}/edit&quot;&gt;Editar&lt;/a&gt; &lt;br&gt;
+</code></pre>
+
+<h3 id="delete">Delete</h3>
+<p>Rota para delete:</p>
+<pre class="codehilite"><code class="language-php">Route::delete('/livros/{livro}', [LivroController::class,'destroy']);
+</code></pre>
+
+<p>Controller para delete:</p>
+<pre class="codehilite"><code class="language-php">public function destroy(Livro $livro)
+{
+    $livro-&gt;delete();
+    return redirect('/livros');
+}
+</code></pre>
+
+<p>Botão html para delete que podemos colocar no blade do <code>show.blade.php</code>:</p>
+<pre class="codehilite"><code class="language-php">&lt;form action=&quot;/livros/{{ $livro-&gt;id }} &quot; method=&quot;post&quot;&gt;
+    @csrf
+    @method('delete')
+    &lt;button type=&quot;submit&quot; onclick=&quot;return confirm('Tem certeza?');&quot;&gt;Apagar&lt;/button&gt; 
+&lt;/form&gt;
+</code></pre>
+
+<p>Implementação do dusk para testar as operações de CRUD:</p>
+<pre class="codehilite"><code class="language-bash">php artisan dusk:make LivroCrudTest
+</code></pre>
+
+<p>Vamos testar sequencialmente as operações:</p>
+<pre class="codehilite"><code class="language-php">use App\Models\Livro;
+public function test_crud_livros(): void
+{
+    $this-&gt;browse(function (Browser $browser) {
+        // Create
+        $browser-&gt;visit('/livros/create')
+            -&gt;typeSlowly('titulo', '2001: Uma odisséia no espaço')
+            -&gt;typeSlowly('autor', 'Arthur C. Clarke')
+            -&gt;typeSlowly('ano', '1968')
+            -&gt;press('Enviar')
+            -&gt;assertPathIs('/livros')
+            -&gt;assertSee('2001: Uma odisséia no espaço');
+
+        // Read
+        $browser-&gt;clickLink('2001: Uma odisséia no espaço')
+            -&gt;assertSee('Arthur C. Clarke')
+            -&gt;assertSee('1968');
+
+        // Update
+        $browser-&gt;clickLink('Editar')
+            -&gt;typeSlowly('titulo', '2001: Uma odisséia no espaço - Edição Revisada')
+            -&gt;press('Enviar')
+            -&gt;assertSee('2001: Uma odisséia no espaço - Edição Revisada');
+
+        // Delete
+        $browser-&gt;press('Apagar')
+            -&gt;acceptDialog()
+            -&gt;assertPathIs('/livros')
+            -&gt;assertDontSee('2001: Uma odisséia no espaço - Edição Revisada');
+    });
+}
+</code></pre>
+
+<p>Rodando o teste:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
+</code></pre>
+
+<h2 id="exercicio-2">Exercício 2</h2>
+<ol>
+<li>Criar um CRUD completo para o model frases. </li>
+<li>Criar uma classe dusk que testa todas funcionalidades do CRUD frases</li>
+<li>Criar um comando, importarfrases, que importa o arquivo csv: <a href="../assets/frases.csv">frases</a></li>
+<li>Criar uma rota <code>/frasedodia</code> e o método correspondente que ao ser acessada mostra uma frase aleatória, porém correspondente ao dia da semana. </li>
+</ol>
+<p>Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar a implementação na TV.</p>
+<h1 id="dia-3">Dia 3</h1>
+<p>Instalação do template USP conforme: <a href="https://github.com/uspdev/laravel-usp-theme/">https://github.com/uspdev/laravel-usp-theme/</a></p>
+<p>Instalação do senhaunica-socialite conforme: <a href="https://github.com/uspdev/senhaunica-socialite">https://github.com/uspdev/senhaunica-socialite</a></p>
+<p>Configurações para usar o faker:</p>
+<pre class="codehilite"><code class="language-bash">APP_URL=http://localhost:8000
+SENHAUNICA_KEY=faker
+SENHAUNICA_SECRET=faker
+SENHAUNICA_CALLBACK_ID=1
+SENHAUNICA_ADMINS=111111
+SENHAUNICA_DEV=&quot;http://auth.local:3141/wsusuario/oauth&quot;
+</code></pre>
+
+<h2 id="migration-de-alteracao">Migration de Alteração</h2>
+<p>Quando o sistema está produção, você nunca deve alterar uma migration que já foi para o ar, mas sim criar uma migration que altera uma anterior. Por exemplo, se quisermos que adicionar o campo user_id na tabela livros:</p>
+<pre class="codehilite"><code class="language-bash">php artisan make:migration add_user_id_to_livros_table --table=livros
+</code></pre>
+
+<p>Nova coluna user_id:</p>
+<pre class="codehilite"><code class="language-php">$table-&gt;unsignedBigInteger('user_id')-&gt;nullable();
+
+$table-&gt;foreign('user_id')-&gt;references('id')-&gt;on('users')-&gt;nullOnDelete();
+</code></pre>
+
+<p>Aplique a mudança no banco de dados:</p>
+<pre class="codehilite"><code class="language-bash">php artisan migrate
+</code></pre>
+
+<p>No controller, é possível capturar o usuário logado assim: <code>auth()-&gt;user()-&gt;id</code>.</p>
+<h2 id="validacao">Validação</h2>
+<h3 id="validacao-no-controller">Validação no Controller</h3>
+<p>Quando estamos dentro de um método do controller, a forma mais rápida de validação é usando <code>$request-&gt;validate</code>, que validará os campos com as condições que passarmos e caso falhe a validação, automaticamente o usuário é retornado para página de origem com todos inputs que foram enviados na requisição, além da mensagens de erro:</p>
+<pre class="codehilite"><code class="language-php">$request-&gt;validate([
+  'titulo' =&gt; 'required',
+  'autor' =&gt; 'required',
+  'ano' =&gt; 'required|integer',
+]);
+</code></pre>
+
+<p>Podemos usar a função <code>old('titulo')</code> nos formulários, que nesse caso verifica se há input na sessão para o campo <code>titulo</code>:</p>
+<pre class="codehilite"><code class="language-html">Título: &lt;input type=&quot;text&quot; name=&quot;titulo&quot; value=&quot;{{old('titulo')}}&quot;&gt;
+Autor: &lt;input type=&quot;text&quot; name=&quot;autor&quot; value=&quot;{{old('autor')}}&quot;&gt;
+Ano: &lt;input type=&quot;text&quot; name=&quot;ano&quot; value=&quot;{{old('ano')}}&quot;&gt;
+</code></pre>
+
+<h3 id="formrequest">FormRequest</h3>
+<p>A validação, que muitas vezes será idêntica no store e no update, pode ser delegada para um FormRequest. Crie um FormRequest com o artisan:</p>
+<pre class="codehilite"><code class="language-bash">php artisan make:request LivroRequest
+</code></pre>
+
+<p>Esse comando gerou o arquivo <code>app/Http/Requests/LivroRequest.php</code>. Como ainda não falamos de permissões, retorne <code>true</code> no método<br />
+<code>authorize()</code>. As validações podem ser implementada em <code>rules()</code>.</p>
+<pre class="codehilite"><code class="language-php">public function rules(){
+    $rules = [
+        'titulo' =&gt; 'required',
+        'autor'  =&gt; 'required',
+        'ano' =&gt; 'required|integer',
+    ];
+    return $rules;
+}
+</code></pre>
+
+<h2 id="mutators">Mutators</h2>
+<p>Há situações em que queremos fazer um leve processamento antes de salvar um valor no banco de dados e logo após recuperarmos um valor. Vamos adicionar um campo para preço. Já sabemos como criar uma migration de alteração para alterar a tabela livros:</p>
+<pre class="codehilite"><code class="language-bash">php artisan make:migration add_preco_column_in_livros --table=livros
+</code></pre>
+
+<p>E adicionamos na nova coluna:</p>
+<pre class="codehilite"><code class="language-php">$table-&gt;float('preco')-&gt;nullable();
+</code></pre>
+
+<p>No LivroRequest também deixaremos esse campo como opcional: <code>'preco'  =&gt; 'nullable'</code>. </p>
+<p>Queremos que o usuário digite, por exemplo, <code>12,50</code>, mas guardaremos <code>12.5</code>. Quando quisermos mostrar o valor, vamos fazer a operação inversa. Poderíamos fazer esse tratamento diretamente no controller, mas também podemos usar <code>mutators</code> através no model do livro:</p>
+<pre class="codehilite"><code class="language-php">use Illuminate\Database\Eloquent\Casts\Attribute;
+
+protected function preco(): Attribute
+{
+    return Attribute::make(
+        get: fn($value) =&gt; number_format($value, 2, ',', ''),
+        set: fn($value) =&gt; str_replace(',','.',$value)
+    );
+}
+</code></pre>
+
+<h2 id="exercicio-3">Exercício 3</h2>
+<ol>
+<li>No exercício anterior, inserir o usuário no model de frases como nullable, e restringir o cadastro somente para usuários cadastrados, guardando o id do respectivo usuário que está realizando o cadastro;</li>
+<li>Alterar o Dusk do exercício anterior (frases) para realizar todos os testes com um usuário logado, para isso será necessário criar o usuário durante o teste;</li>
+<li>Faça uma migration de alteração para adicionar o campo pontuação para a frase (entre 0 e 10 - validação com FormRequest);</li>
+<li>Faça um mutator converter a virgula, quando existir, para ponto.</li>
+<li>Corrija seus formulários para sempre conterem a função old()</li>
+</ol>
+<h1 id="instrucoes-para-producao">Instruções para produção</h1>
+<p><strong>1 - Imagem do docker</strong></p>
+<p>Para construção da imagem baseada na tag (versão) criar o arquivo <code>.github/workflows/docker.yml</code>:<br />
+<a href="/assets/files/laravel/docker.yml">Arquivo modelo docker.yml</a></p>
+<p><strong>2 - testes no dusk</strong></p>
+<p>Para rodar os testes no dusk baseado na configuração do docker-compose.yml, criar o arquivo <code>.github/workflows/dusk.yml</code>:<br />
+<a href="/assets/files/laravel/dusk.yml">Arquivo modelo dusk.yml</a><br />
+É necessário alterar a variável <code>SERVICE_NAME</code> no <code>dusk.yml</code> colocando o nome do sistema. </p>
+<!--
+
+## Dusk
+
+Os testes com **Laravel Dusk** no nosso contexto tem dois propósitos:
+
+1. **Testar funcionalidades reais do sistema**, simulando a interação de um usuário no navegador.
+2. **Servir como documentação funcional**, demonstrando como as principais funcionalidades do sistema devem se comportar.
+
+Vamos configurar o **em modo assistido**, ou seja, diretamente na sua máquina, pois assim é possível **visualizar o navegador Chrome virtual executando os testes**. Por esse motivo, neste caso **não executamos os testes em container**.
+
+E vamos configurar o **`.github/workflows`** para os testes rodarem automaticamente no **GitHub Actions**, garantindo que falhas nos testes sejam detectadas durante novos commits ou pull requests.
+
+
+<pre class="codehilite"><code class="language-bash">composer require --dev laravel/dusk
+php artisan dusk:install
+php artisan dusk:chrome-driver
+</code></pre>
+
+
+
+Colocar linha `php artisan dusk:chrome-driver --detect` no composer.json:
+
+
+<pre class="codehilite"><code class="language-php">&quot;scripts&quot;: {
+    &quot;post-install-cmd&quot;: [
+        &quot;@php artisan dusk:chrome-driver --detect&quot;
+    ]
+}
+</code></pre>
+
+
+
+Criar uma Trait que comunica com o senhaunica-socialite:
+
+<pre class="codehilite"><code class="language-bash">mkdir app/Helpers;
+touch app/Helpers/UspdevDuskTrait.php
+</code></pre>
+
+
+
+Conteúdo da Trait:
+
+<pre class="codehilite"><code class="language-bash">&lt;?php
+
+namespace App\Helpers;
+
+use App\Models\User;
+use Spatie\Permission\Models\Permission;
+
+trait UspdevDuskTrait
+{
+    protected $adminUser;
+    protected $commonUser;
+
+    protected function setupAdminAndUser()
+    {
+        Permission::firstOrCreate(['name' =&gt; 'admin', 'guard_name' =&gt; 'senhaunica']);
+        Permission::firstOrCreate(['name' =&gt; 'user', 'guard_name' =&gt; 'senhaunica']);
+
+        $this-&gt;commonUser = User::firstOrCreate(
+            ['email' =&gt; 'user@test.com'],
+            ['name' =&gt; 'Dusk User', 'password' =&gt; bcrypt('password')]
+        );
+        $this-&gt;commonUser-&gt;givePermissionTo('user', 'senhaunica');
+
+        $this-&gt;adminUser = User::firstOrCreate(
+            ['email' =&gt; 'admin@test.com'],
+            ['name' =&gt; 'Dusk Admin', 'password' =&gt; bcrypt('password')]
+        );
+        $this-&gt;adminUser-&gt;givePermissionTo('admin', 'senhaunica');
+    }
+}
+</code></pre>
+
+
+
+Criar um arquivo .env.testing.example:
+
+
+<pre class="codehilite"><code class="language-bash">APP_NAME=&quot;Exemplo Dusk&quot;
+APP_ENV=testing
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:47800
+DUSK_DRIVER_URL=http://localhost:9515
+
+# DB
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=exemplo_dusk
+DB_USERNAME=admin
+DB_PASSWORD=admin
+
+# Filas
+QUEUE_CONNECTION=sync
+
+# Drivers de Performance para Testes
+# Usamos 'array' ou 'file' para garantir que os testes não poluam o cache real
+CACHE_DRIVER=array
+FILESYSTEM_DISK=local
+
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+# Configurações de Email (Não envia emails reais durante o teste)
+MAIL_MAILER=log
+
+# Dusk
+DUSK_START_MAXIMIZED=true
+DUSK_HEADLESS_DISABLED=true
+</code></pre>
+
+
+
+
+### Rodando os testes
+
+Copie o arquivo de exemplo:
+
+
+<pre class="codehilite"><code class="language-bash">    cp .env.testing.example .env.testing
+</code></pre>
+
+
+
+Preparar o ambiente de testes:
+
+
+<pre class="codehilite"><code class="language-bash">    composer install
+    php artisan key:generate --env=testing
+    php artisan migrate:fresh --env=testing
+    php artisan serve --port=47800 --env=testing
+</code></pre>
+
+
+
+Durante a execução, o navegador Chrome controlado pelo Laravel Dusk abrirá automaticamente e realizará as interações definidas nos testes.
+
+
+
+<pre class="codehilite"><code class="language-bash">    php artisan dusk --env=testing
+</code></pre>
+
+
+
+Usar a trait criada em app/Helpers:
+
+
+<pre class="codehilite"><code class="language-php">    use App\Helpers\UspdevDuskTrait;
+    class NovoTest  extends DuskTestCase{
+        use UspdevDuskTrait;
+
+        protected function setUp(): void
+        {
+            parent::setUp();
+            ...
+            $this-&gt;setupAdminAndUser(); // cria usuários $this-&gt;commonUser e $this-&gt;adminUser
+        }
+    ...
+</code></pre>
+
+
+
+
+## Campos do tipo select 
+
+Vamos supor que queremos um campo adicional na tabela de livros
+chamado `tipo`. Já sabemos como criar uma migration de alteração
+para alterar a tabela livros:
+
+
+<pre class="codehilite"><code class="language-bash">php artisan make:migration add_tipo_column_in_livros --table=livros
+</code></pre>
+
+
+
+E adicionamos na nova coluna:
+
+<pre class="codehilite"><code class="language-php">$table-&gt;string('tipo');
+</code></pre>
+
+
+
+Vamos trabalhar com apenas dois tipos: nacional e internacional.
+A lista de tipos poderia vir de qualquer fonte: outro model, api,
+csv etc. No nosso caso vamos fixar esse dois tipos em um array e
+usar em todo o sistema. No model do livro vamos adicionar um método
+estático que retorna os tipos, pois assim, fica fácil mudar caso 
+a fonte seja alterada no futuro:
+
+
+<pre class="codehilite"><code class="language-php">public static function tipos(){
+    return [
+        'Nacional',
+        'Internacional'
+    ];
+}
+</code></pre>
+
+
+
+No `form.blade.php` podemos inserir o tipo com um campo select desta forma:
+{% highlight html %}
+
+<select name="tipo">
+    <option value="" selected=""> - Selecione  -</option>
+    @foreach ($livro::tipos() as $tipo)
+        <option value="{{$tipo}}" {{ ( $livro->tipo == $tipo) ? 'selected' : ''}}>
+            {{$tipo}}
+        </option>
+    @endforeach
+</select>
+
+
+<pre class="codehilite"><code>Se quisermos contemplar o `old` para casos de erros de validação:
+{% highlight html %}
+
+&lt;select name=&quot;tipo&quot;&gt;
+    &lt;option value=&quot;&quot; selected=&quot;&quot;&gt; - Selecione  -&lt;/option&gt;
+    @foreach ($livro::tipos() as $tipo)
+        {{-- 1. Situação em que não houve tentativa de submissão --}}
+        @if (old('tipo') == '')
+        &lt;option value=&quot;{{$tipo}}&quot; {{ ( $livro-&gt;tipo == $tipo) ? 'selected' : ''}}&gt;
+            {{$tipo}}
+        &lt;/option&gt;
+        {{-- 2. Situação em que houve tentativa de submissão, o valor de old prevalece --}}
+        @else
+            &lt;option value=&quot;{{$tipo}}&quot; {{ ( old('tipo') == $tipo) ? 'selected' : ''}}&gt;
+                {{$tipo}}
+            &lt;/option&gt;
+        @endif
+    @endforeach
+&lt;/select&gt;
+</code></pre>
+
+
+
+Por fim, temos que validar o campo tipo para que só entrem os valores do nosso array.
+No LivroRequest.php:
+
+
+<pre class="codehilite"><code class="language-php">use Illuminate\Validation\Rule;
+...
+'tipo'   =&gt; ['required', Rule::in(\App\Models\Livro::tipos())],
+</code></pre>
+
+
+
+
+
+# Dia 4
+
+## Testes automatizados com Dusk
+
+Dusk é uma ferramenta de teste automatizado que permite escrever testes de navegador.
+
+Execute o seguinte comando para adicionar o Laravel Dusk como uma dependência de desenvolvimento:
+
+
+<pre class="codehilite"><code class="language-php">composer require laravel/dusk --dev
+php artisan dusk:install
+</code></pre>
+
+
+
+O diretório tests/Browser será criado automaticamente e um arquivo de configuração para o Dusk.
+
+Você terá um arquivo .env.dusk.local com as configurações específicas para o ambiente de teste Dusk. Copie o arquivo .env para .env.dusk.local e ajuste conforme necessário.
+
+Você pode criar um novo teste de navegador usando o Artisan:
+
+
+<pre class="codehilite"><code class="language-php">php artisan dusk:make LivroCrudTest
+</code></pre>
+
+
+
+Isso criará um novo arquivo de teste em tests/Browser/LivroCrudTest.php
+
+Visita a página de criação de livros, preenche o formulário e verifica se o livro foi criado corretamente:
+
+<pre class="codehilite"><code class="language-php">public function testCreateLivro()
+{
+    $this-&gt;browse(function (Browser $browser) {
+        $browser-&gt;visit('/livros/create')
+                -&gt;type('title', 'Meu Novo Post')
+                -&gt;type('content', 'Este é o conteúdo do meu novo post.')
+                -&gt;press('Salvar')
+                -&gt;assertPathIs('/posts')
+                -&gt;assertSee('Meu Novo Post')
+                -&gt;assertSee('Este é o conteúdo do meu novo post.');
+    });
+}
+</code></pre>
+
+
+
+
+Para executar seus testes, use o seguinte comando:
+
+<pre class="codehilite"><code class="language-php">php artisan dusk
+</code></pre>
+
+
+
+Cria um livro diretamente no banco de dados, visita a página de detalhes do livro e verifica se as informações estão corretas:
+
+<pre class="codehilite"><code class="language-php">public function testReadPost()
+{
+    $post = Post::create([
+        'title' =&gt; 'Post Existente',
+        'content' =&gt; 'Este é um post existente.',
+    ]);
+
+    $this-&gt;browse(function (Browser $browser) use ($post) {
+        $browser-&gt;visit('/posts/' . $post-&gt;id)
+                -&gt;assertSee('Post Existente')
+                -&gt;assertSee('Este é um post existente.');
+    });
+}
+</code></pre>
+
+
+
+Cria um livro, visita a página de edição, atualiza os dados e verifica se as mudanças foram salvas:
+
+<pre class="codehilite"><code class="language-php">public function testUpdatePost()
+{
+    $post = Post::create([
+        'title' =&gt; 'Post Atualizável',
+        'content' =&gt; 'Este é um post que será atualizado.',
+    ]);
+
+    $this-&gt;browse(function (Browser $browser) use ($post) {
+        $browser-&gt;visit('/posts/' . $post-&gt;id . '/edit')
+                -&gt;type('title', 'Post Atualizado')
+                -&gt;type('content', 'Este é o conteúdo atualizado do post.')
+                -&gt;press('Salvar')
+                -&gt;assertPathIs('/posts/' . $post-&gt;id)
+                -&gt;assertSee('Post Atualizado')
+                -&gt;assertSee('Este é o conteúdo atualizado do post.');
+    });
+}
+</code></pre>
+
+
+
+Cria um livro, executa a ação de deleção e verifica se o livro foi removido da lista.
+
+<pre class="codehilite"><code class="language-php">public function testDeletePost()
+{
+    $post = Post::create([
+        'title' =&gt; 'Post Deletável',
+        'content' =&gt; 'Este é um post que será deletado.',
+    ]);
+
+    $this-&gt;browse(function (Browser $browser) use ($post) {
+        $browser-&gt;visit('/posts')
+                -&gt;assertSee('Post Deletável')
+                -&gt;press('#delete-post-' . $post-&gt;id) // Supondo que existe um botão de deleção com este ID
+                -&gt;assertPathIs('/posts')
+                -&gt;assertDontSee('Post Deletável');
+    });
+}
+</code></pre>
+
+
+
+
+# Dia 5 (Em construção)
+
+## Relações
+
+One (User) To Many (Livros)
+
+Primeiramente vamos implementar esse relação no nível do banco de dados.
+Na migration dos livros insira:
+
+
+<pre class="codehilite"><code class="language-php">$table-&gt;unsignedBigInteger('user_id')-&gt;nullable();
+$table-&gt;foreign('user_id')-&gt;references('id')-&gt;on('users')-&gt;onDelete('set null');;
+</code></pre>
+
+
+
+No model Livro podemos criar um método que carregará o objeto
+`user` automaticamente ou no model `User` podemos carregar todos
+livros do usuário:
+
+
+<pre class="codehilite"><code class="language-php">class Livro extends Model
+{
+    public function user(){
+        return $this-&gt;belongsTo(\App\Models\User::class);
+    }
+}
+
+class User extends Model
+{
+    public function livros()
+    {
+        return $this-&gt;hasMany(App\Models\Livro::class);
+    }
+}
+</code></pre>
+
+
+
+Assim no `fields.blade.php` faremos referência direta  a esse usuário:
+
+{% highlight html %}
+
+<li>Cadastrado por {{ $livro->user->name ?? '' }}</li>
+
+
+<pre class="codehilite"><code># Extra
+
+Configuração do .env para conexão com banco de dados:
+
+```bash
+DB_DATABASE=treinamento                                                                                                           
+DB_USERNAME=admin                                                                                                                 
+DB_PASSWORD=admin
+</code></pre>
+
+
+
+
+Criando model e tabela no banco de dados:
+
+## biblioteca Audit
+
+O módulo Audit é uma forma de verificar e manter registros das modificações feitas por usuários no sistema.
+
+1. Instalação
+- O pacote é instalado via Composer. Para o obter é necessário executar este comando dentro da pasta do seu projeto:
+
+
+<pre class="codehilite"><code class="language-bash">composer require owen-it/laravel-auditing
+</code></pre>
+
+
+
+ 2. Configuração 
+- Após isso, use o comando a seguir para publicar as configurações feitas e criar o arquivo **config/audit.php**:
+
+
+<pre class="codehilite"><code class="language-bash">php artisan vendor:publish --provider &quot;OwenIt\Auditing\AuditingServiceProvider&quot; --tag=&quot;config&quot;
+</code></pre>
+
+
+3. Migration
+- A seguir, crie a tabela audits com o seguinte comando: 
+
+
+<pre class="codehilite"><code class="language-bash">php artisan vendor:publish --provider &quot;OwenIt\Auditing\AuditingServiceProvider&quot; --tag=&quot;migrations&quot;
+</code></pre>
+
+
+
+<pre class="codehilite"><code class="language-bash">php artisan migrate
+</code></pre>
+
+
+
+ 4. Model
+- Para implementar o audit no model desejado, é necessário adicionar as linhas:
+
+
+<pre class="codehilite"><code class="language-php">use OwenIt\Auditing\Contracts\Auditable;
+
+class Instance extends Model implements Auditable
+{
+    use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+
+    / ...
+}    
+</code></pre>
+
+
+
+ 5. Implementação
+
+ Agora vamos implementar o módulo para ser exibido nas views. 
+
+- Primeiro, para facilitar a leitura dos usuários, é necessário mapear os campos da migration do Model em que o audit será utilizado. Então, em **app/Utils** vamos criar **Mapeamento.php** para o Model Livro, como no exemplo abaixo:
+
+
+<pre class="codehilite"><code class="language-php">&lt;?php
+
+namespace App\Utils;
+
+use App\Models\Livro;
+
+class Mapeamento
+{
+    public static function map($chave){
+        $mapeamento = [
+            'id' =&gt; 'ID',
+            'autores' =&gt; 'Autores',
+            'titulo' =&gt; 'Título',
+            'editora' =&gt; 'Editora',
+            'ano' =&gt; 'Ano',
+            'isbn' =&gt; 'ISBN',
+        ];
+
+        return $mapeamento[$chave];
+    }
+}
+</code></pre>
+
+
+
+- Agora vamos chamar este mapeamento dentro do Model correspondente:
+
+**app/Models/Livro.php**
+
+<pre class="codehilite"><code class="language-php">use App\Utils\Mapeamento;
+
+class Livro extends Model implements Auditable
+{
+    / ...
+
+    public function mapeamento($chave) {
+        return MapRecords::map($chave);
+    }
+}
+</code></pre>
+
+
+- Após isso, é preciso adicionar a exibição do módulo audit nas views, criando uma tabela com as alterações que foram feitas, a data da alteração e o usuário que a realizou. Dentro da pasta **resources/views/livros/partials** vamos criar **audit.blade.php**, já adicionando o mapeamento feito anteriormente na tabela:
+**partials/audit.blade.php**
+
+
+<pre class="codehilite"><code class="language-php">&lt;table class=&quot;table table-striped&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th scope=&quot;col&quot;&gt;Data&lt;/th&gt;
+      &lt;th scope=&quot;col&quot;&gt;Usuário(a)&lt;/th&gt;
+      &lt;th scope=&quot;col&quot;&gt;Campos alterados&lt;/th&gt;
+      &lt;th scope=&quot;col&quot;&gt;Alterações&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    @foreach($model-&gt;audits as $field =&gt; $audit)
+        &lt;tr&gt;
+        &lt;td&gt; {{ \Carbon\Carbon::parse($audit-&gt;getMetadata()['audit_created_at'])-&gt;setTimezone('America/Sao_Paulo')-&gt;format('d/m/Y H:i') }} &lt;/td&gt;
+        &lt;td&gt; {{ $audit-&gt;getMetadata()['user_name'] }}&lt;/td&gt;
+        &lt;td&gt; 
+            @foreach($audit-&gt;getModified() as $field=&gt;$modified)
+            @if($field)
+                &lt;b&gt;{{ $livro-&gt;mapeamento($field) }}: {{ $modified['old'] }}&lt;br&gt;
+            @endif
+            @endforeach
+        &lt;/td&gt;
+        &lt;td&gt; 
+            @foreach($audit-&gt;getModified() as $field2=&gt;$modified)
+            @if($field)
+                &lt;b&gt;{{ $record-&gt;mapeamento($field2) }}: {{ $modified['new'] }}&lt;br&gt;
+            @endif
+            @endforeach
+        &lt;/td&gt;
+        &lt;/tr&gt;
+    @endforeach
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</code></pre>
+
+
+
+- Agora vamos incluir a tabela na view **show.blade.php** de livros:
+
+
+<pre class="codehilite"><code class="language-php">@include('livros.partials.audit', ['model'=&gt;$livro])
+</code></pre>
+
+
+
+- Para que a página não fique muito poluída, optamos por inserir a tabela dentro de uma tag details usando um alerta bootstrap, desta forma:
+
+
+<pre class="codehilite"><code class="language-php">&lt;div class=&quot;alert alert-info&quot; role=&quot;alert&quot;&gt;
+    &lt;details&gt;
+        &lt;summary&gt;Visualizar histórico de alterações&lt;/summary&gt;
+        &lt;br&gt;
+        @include('livros.partials.audit', ['model'=&gt;$livro])
+    &lt;/details&gt;
+&lt;/div&gt;
+</code></pre>
+
+
+ Para mais informações visite: <a href="https://laravel-auditing.com/">Laravel Auditing</a>
+---
+Escrito por Isabela
+![Logo do Laravel](/assets/images/laravel.png)
+
+-->
+        </div>
+    </div>
+    <!-- Prism JS e Autoloader para linguagens -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
