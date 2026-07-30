@@ -1,3 +1,7 @@
+@extends('laravel-usp-theme::master')
+
+@section('content')
+
 <form method="POST" action="/livros/{{ $livro->id }}">
     @csrf
     @method('PATCH')
@@ -6,3 +10,4 @@
     Ano: <input type="text" name="ano" value="{{ old('ano', $livro->ano) }}">
     <button type="submit">Enviar</button>
 </form>
+@endsection

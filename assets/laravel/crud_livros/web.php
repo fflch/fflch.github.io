@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LivroController;
+use App\Http\Controllers\IndexController;
+
+Route::get('/', [IndexController::class,'index']);
 
 Route::get('/livros', [LivroController::class,'index']);
 Route::get('/livros/create', [LivroController::class,'create']);
