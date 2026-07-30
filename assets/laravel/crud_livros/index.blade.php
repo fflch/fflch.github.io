@@ -1,3 +1,6 @@
+@extends('laravel-usp-theme::master')
+
+@section('content')
 <form>
     <input type="text" name="search" value="{{ request('search') }}">
     <button type="submit">Pesquisar</button>
@@ -10,3 +13,4 @@
         <li><a href="/livros/{{ $livro->id}}">{{ $livro->titulo }}</a>, por <i>{{ $livro->autor }}</i> em {{ $livro->ano }}</li>
     @endforeach
 </ul>
+@endsection

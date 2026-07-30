@@ -1,3 +1,7 @@
+@extends('laravel-usp-theme::master')
+
+@section('content')
+
 Título: {{ $livro->titulo }} <br>
 Autor: <i>{{ $livro->autor }}</i> <br>
 Ano de publicação: {{ $livro->ano }} <br>
@@ -9,4 +13,5 @@ Ano de publicação: {{ $livro->ano }} <br>
     @method('delete')
     <button type="submit" onclick="return confirm('Tem certeza?');">Apagar</button> 
 </form>
+@endsection
 
