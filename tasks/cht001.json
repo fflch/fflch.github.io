@@ -1,0 +1,16 @@
+{
+  "peso": 8,
+  "titulo": "Atendimento de Chamados Técnicos",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A atividade de atendimento de chamados técnicos compreende a recepção e resolução dos chamados do sistema https://atendimento.fflch.usp.br/; Consistindo em suporte aos usuários, em particular na configuração de estações de trabalho, manutenção de hardware e instalação de softwares. Trata-se de atividade contínua e de caráter operacional, essencial para garantir o pleno funcionamento dos recursos computacionais da unidade. As atividades constantes relacionadas a este atendimento são: \\bigskip\\begin{itemize} \\item Habilitação de pontos de rede; \\item Inclusão de computadores no domínio; \\item Instalação e atualização de softwares (Microsoft Office, GIMP, navegadores, leitores de PDF, entre outros); \\item Instalação e configuração do antivírus corporativo; \\item Substituição de componentes de hardware (HD/SSD, memória RAM, fontes, placas de rede); \\item Formatação e reinstalação de sistemas operacionais quando necessário; \\item Diagnóstico e solução de problemas de conectividade (copaco); \\end{itemize}",
+  "responsaveis": [
+    "Felipe",
+    "Wellington",
+    "Paulo",
+    "Célio",
+    "Normando"
+  ],
+  "status": true
+}

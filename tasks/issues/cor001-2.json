@@ -1,0 +1,6 @@
+{
+  "status": true,
+  "descricao": "Implementar o módulo trash do Drupal para permitir a recuperação de conteúdo excluído, garantindo que os usuários possam restaurar itens acidentalmente deletados sem a necessidade de intervenção técnica.",
+  "data": "23/02/2026",
+  "responsavel": "Augusto"
+}

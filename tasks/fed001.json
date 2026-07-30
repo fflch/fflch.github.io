@@ -1,0 +1,13 @@
+{
+  "peso": 2,
+  "titulo": "uspdev/senhaunicapixelfed",
+  "estagiarios": [
+    "Guilherme"
+  ],
+  "descricao": "Esta tarefa consiste na participação técnica no projeto de implantação e manutenção de instâncias federadas baseadas nas plataformas Pixelfed e Mastodon, integrando a unidade ao ecossistema do Fediverso. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Instalação e atualização das plataformas Pixelfed e Mastodon; \\item Configuração de ambiente (servidor, banco de dados, cache, filas e armazenamento); \\item Monitoramento de desempenho e uso de recursos; \\item Aplicação de atualizações de segurança e correções críticas; \\item Configuração de integração com serviços de e-mail e autenticação; \\item Gestão de backups e testes de restauração; \\item Desenvolvimento de código para integração com contexto USP (exemplo: login com senha única); \\item Documentação da arquitetura e dos procedimentos operacionais; \\item Planejamento de escalabilidade e alta disponibilidade conforme crescimento da comunidade; \\end{itemize}",
+  "responsaveis": [
+    "Mônica",
+    "Ricardo"
+  ],
+  "status": true
+}

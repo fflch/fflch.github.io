@@ -1,0 +1,12 @@
+{
+  "peso": 5,
+  "titulo": "fflch/switches-netmiko",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O projeto fflch/switches-netmiko consiste em uma ferramenta desenvolvida em Python para automação da configuração de switches de rede, de qualque marcar e modelo, utilizando conexões SSH por meio da biblioteca Netmiko. O sistema é utilizado para aplicar configuração, realizar ajustes em massa e padronizar parâmetros de rede, reduzindo erros manuais e aumentando a eficiência operacional. As atividades constantes relacionadas a este projeto são: \\bigskip\\begin{itemize} \\item Manutenção e atualização do código Python e das dependências do projeto; \\item Testes de compatibilidade com diferentes modelos e fabricantes de equipamentos; \\item Atualização de comandos conforme mudanças de firmware dos switches; \\item Implementação de novas funcionalidades conforme necessidades da infraestrutura; \\end{itemize}",
+  "responsaveis": [
+    "Ricardo"
+  ],
+  "status": true
+}

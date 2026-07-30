@@ -1,0 +1,12 @@
+{
+  "peso": 8,
+  "titulo": "Desenhos Técnicos de Cabeamento em Planta Baixa",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na elaboração e atualização de desenhos técnicos do cabeamento estruturado da unidade em planta baixa, utilizando ferramentas como AutoCAD ou softwares equivalentes (vamos decidir). O objetivo é manter documentação precisa da infraestrutura física de rede, garantindo rastreabilidade, padronização e suporte adequado para futuras expansões. Trata-se de atividade contínua de documentação técnica da infraestrutura. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Elaboração de desenhos técnicos do cabeamento estruturado em planta baixa; \\item Representação de pontos de rede, racks, patch panels e switches; \\item Atualização das plantas conforme novas instalações ou remanejamentos; \\item Indicação de identificação lógica e física dos pontos; \\item Conferência entre planta e instalação real; \\item Organização de camadas (layers) no AutoCAD para padronização técnica; \\item Registro de trajetos de eletrocalhas e tubulações; \\item Versionamento e arquivamento das plantas atualizadas; \\item Apoio técnico em projetos de expansão ou reforma com base nos desenhos existentes; \\end{itemize}",
+  "responsaveis": [
+    "Paulo"
+  ],
+  "status": true
+}

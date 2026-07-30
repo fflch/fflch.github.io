@@ -1,0 +1,12 @@
+{
+  "peso": 2,
+  "titulo": "uspdev/webform-replicado",
+  "estagiarios": [
+    "Camila"
+  ],
+  "descricao": "O módulo uspdev/webform-replicado integra formulários Webform do Drupal com o processo de replicação de dados institucionais da USP. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Manutenção da integração com os serviços de replicação de dados da USP; \\item Atualização de compatibilidade com novas versões do Drupal e Webform; \\item Monitoramento de falhas em transações; \\item Adequação a mudanças nos serviços externos de replicação; \\item Testes de integração após atualizações; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

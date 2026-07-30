@@ -1,0 +1,6 @@
+{
+  "status": true,
+  "descricao": "Fazer uma simulação destruindo o domain controller no ambiente dev e recuperando o arquivo de backup para subir o samba novamente. Implementar a rotina de backup online com novo comando do samba: samba-tool domain backup, exemplo: \\texttt{samba-tool domain backup online --targetdir=/home/vagrant/bkponline --server=vagrantsamba.smbdomain.local.br -UAdministrator --password='senha'}. Manter o backup offline, exemplo: \\texttt{samba-tool domain backup offline --targetdir=/home/vagrant/bkpoffline}. Documentar o processo de recuperação do samba usando o backup, tanto para backup online quanto offline.",
+  "data": "20/02/2026",
+  "responsavel": ""
+}

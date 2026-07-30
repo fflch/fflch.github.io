@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "Administração de Windows Server do Servidor de Impressão",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Essa tarefa trata da administração do Windows Server que hospeda o servidor de impressão. As atividades constantes relacionadas a esta administração são: \\bigskip\\begin{itemize} \\item Instalação periódica de atualizações de segurança e patches do sistema operacional; \\item Monitoramento de eventos do sistema (Event Viewer); \\item Controle de espaço em disco; \\item Configuração e verificação de rotinas de backup; \\item Planejamento de janelas de manutenção e reinicializações programadas devido a atualizações; \\item Verificação de compatibilidade após atualizações e mudanças na infraestrutura; \\item Atualização do windows server; \\end{itemize}",
+  "responsaveis": [
+    "Vago"
+  ],
+  "status": true
+}

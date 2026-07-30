@@ -1,0 +1,12 @@
+{
+  "peso": 2,
+  "titulo": "fflch/webform-ficha-catalografica",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O módulo fflch/webform-ficha-catalografica foi desenvolvido para atender às demandas da Biblioteca da Faculdade, permitindo que alunos de pós-graduação gerem automaticamente fichas catalográficas para teses e dissertações. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Manutenção da lógica de geração automática das fichas; \\item Atualização de compatibilidade com novas versões do Drupal e Webform; \\item Ajustes de formatação conforme normas bibliográficas; \\item Correção de inconsistências nos pdfs gerados; \\item Implementação de melhorias solicitadas pela Biblioteca; \\item Testes após atualizações do core; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "fflch/ansible-role-django e fflch/template-django",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O projeto fflch/ansible-role-django é utilizado para automação de deploy de sistema em django. O repositório fflch/template-django contém um template que ofercemos aos(as) pesquisadores mostrando como preparar a aplicação para ir para produção. As atividades constantes relacionadas a este projeto são: \\bigskip\\begin{itemize} \\item Atualização da role para versões mais recentes do Debian; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "fflch/cortec",
+  "estagiarios": [
+    "Pedro"
+  ],
+  "descricao": "O sistema fflch/cortec é um software desenvolvido para análise e processamento de texto. As atividades constantes relacionadas a este sistema são: \\bigskip\\begin{itemize} \\item Atualização constante do core do Laravel; \\item Monitoramento contínuo dos logs em storage/logs/laravel.log; \\item Implementação de novas funcionalidades conforme as demandas dos usuários; \\item Manutenção do playbook Ansible para deploy contínuo do sistema; \\item Garantir que os testes de usabilidade com Dusk estejam sempre atualizados; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "VMs de Backups",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A tarefa de VMs de backup refere-se à manutenção contínua das máquinas virtuais, local e na nuvem, responsáveis pelos serviços de backup. Essas máquinas garantem a cópia e preservação dos arquivos e dados de todos os demais servidores da infraestrutura. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Monitoramento diário da execução dos jobs de backup; \\item Verificação periódica da integridade das cópias realizadas; \\item Atualização de sistemas operacionais; \\item Gestão de armazenamento e expansão de volumes quando necessário; \\item Testes regulares de restauração para garantir a confiabilidade das cópias; \\item Documentação das rotinas de restauração; \\end{itemize}",
+  "responsaveis": [
+    "José Roberto"
+  ],
+  "status": true
+}

@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "Wordpress Centro Observatório das Instituições (COI)",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste no suporte técnico na construção de um dashboard no wordpress do COI. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Suporte no desenvolvimento do plugin wordpress; \\item Documentação das alterações realizadas; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

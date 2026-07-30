@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "Aplicações Web de Pesquisas Científicas",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na análise, validação e implantação de aplicações web científicas e acadêmicas desenvolvidas por docentes e pesquisadores, geralmente utilizando tecnologias como Shiny (R), Django ou frameworks equivalentes. A atividade envolve tanto a revisão técnica de código quanto a preparação e manutenção da infraestrutura necessária para publicação em ambiente de produção (com Ansible). As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Análise técnica de pull requests de aplicações científicas e acadêmicas; \\item Revisão de boas práticas de código, segurança e organização do projeto; \\item Preparação das rotinas de deploy (ansible) e do ambiente de produção (criação da VMs na nuvem USP); \\item Configuração de proxy reverso e certificados; \\item Publicação e colocação em produção das aplicações aprovadas (via Pull Request); \\item Monitoramento inicial pós-implantação; \\item Apoio técnico aos pesquisadores para ajustes e melhorias; \\item Manutenção e atualização das aplicações já em produção; \\item Garantia de backup e integridade dos dados associados às aplicações; \\end{itemize}\\smallskip \\textbf{Sistemas em Produção} - Atualmente encontram-se em produção as seguintes aplicações: dicbio, macc, verbalcollocations e map; comprend encontra-se em desenvolvimento ;",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

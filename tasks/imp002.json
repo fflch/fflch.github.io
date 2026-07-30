@@ -1,0 +1,12 @@
+{
+  "peso": 3,
+  "titulo": "Configuração das Impressoras",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa trata da configuração direta das impressoras físicas da unidade, isto é, a administração dos próprios dispositivos, garantindo seu correto funcionamento. As atividades constantes relacionadas a este serviço são: \\bigskip\\begin{itemize} \\item Definição e padronização do nome da impressora; \\item Configuração e parâmetros de rede (copaco) e porta do switch; \\item Configuração de servidor SMTP para envio de digitalizações por e-mail; \\item Configuração de funcionalidades de scanner (digitalização para e-mail); \\item Nas impressoras das salas pró-aluno, sempre bloquear cópias e scanner; \\item Criação e gerenciamento de senha de administrador; \\item Atualização de firmware do equipamento quando necessário; \\item Testes de conectividade e integração com o servidor de impressão; \\item Documentação das configurações aplicadas de cada modelo de equipamento; \\end{itemize}",
+  "responsaveis": [
+    "Néli"
+  ],
+  "status": true
+}

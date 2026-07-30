@@ -1,0 +1,6 @@
+{
+  "status": true,
+  "descricao": "Adaptar fflch/gwmariadb para suportar postgresql, vamos renomear o projeto para gwdb",
+  "data": "13/07/2026",
+  "responsavel": "Mônica"
+}

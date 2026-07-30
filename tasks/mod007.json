@@ -1,0 +1,12 @@
+{
+  "peso": 3,
+  "titulo": "Pull Requests – Centro da Metrópole",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na análise técnica, validação funcional e publicação de pull requests relacionados aos módulos e tema Drupal do Centro da Metrópole. Envolve revisão de código, testes em ambiente de homologação, verificação de compatibilidade com nossa distribuição. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Revisão técnica de pull requests do repositório fflch/urbandatabrasil-userform; \\item Revisão técnica de pull requests do repositório fflch/cem-theme; \\item Revisão técnica de pull requests do repositório fflch/centrodametropole-breadcrumb; \\item Verificação de compatibilidade com a versão do Drupal Core e módulos instalados; \\item Validação de padrões de código, segurança e boas práticas; \\item Implantação em ambiente de produção; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

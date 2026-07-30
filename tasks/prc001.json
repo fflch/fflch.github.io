@@ -1,0 +1,12 @@
+{
+  "peso": 3,
+  "titulo": "Moodles USP",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste no suporte técnico, manutenção evolutiva e garantia de compatibilidade dos plugins Moodle utilizados nos ambientes da USP, incluindo os projetos moodle-block-externalsync, fflch/moodle4-composer, moodle-block-extensao e moodle-enrol-extensao. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Atualização e adaptação dos plugins para novas versões do Moodle; \\item Correção de bugs e atendimento a issues reportadas por usuários; \\item Testes em ambiente de desenvolvimento antes da publicação em produção; \\item Ajustes de integração com replicado; \\item Revisão de código para garantir segurança e boas práticas de desenvolvimento; \\item Monitoramento de desempenho e impacto dos plugins no ambiente Moodle; \\item Documentação técnica das funcionalidades implementadas; \\end{itemize}",
+  "responsaveis": [
+    "Thiago"
+  ],
+  "status": true
+}

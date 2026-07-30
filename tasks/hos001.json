@@ -1,0 +1,13 @@
+{
+  "peso": 1,
+  "titulo": "Sistemas operacionais Hosts: VMware, EqualLogic e Proxmox",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A tarefa de administração do ambiente dos sistemas operacionais dos Hosts (VMware, EqualLogic e Proxmox) envolve atividades contínuas de manutenção, atualização e garantia de disponibilidade da infraestrutura. Essas atividades asseguram desempenho, segurança e alta disponibilidade das máquinas virtuais hospedadas nestes hosts. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Acompanhamento dos logs nos hosts, na camada dos sistemas operacionais: VMware (vSphere e vCenter), EqualLogic e Proxmox; \\item Atualização ou re-instalação dos sistema operacionais quando necessário; \\item Realizar configurações dos sistemas operacionais e documentar essas configurações; \\end{itemize}",
+  "responsaveis": [
+    "Ricardo",
+    "José Roberto"
+  ],
+  "status": true
+}

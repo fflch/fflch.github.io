@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "fflch/sites",
+  "estagiarios": [
+    "Lucas"
+  ],
+  "descricao": "O sistema fflch/sites é responsável pelo gerenciamento dos sites em Drupal na faculdade, ajudando a solicitação de um novo site e o controle de permissão pelo solicitante. As atividades constantes relacionadas a este sistema são: \\bigskip\\begin{itemize} \\item Atualização constante do core do Laravel; \\item Monitoramento contínuo dos logs em storage/logs/laravel.log; \\item Implementação de novas funcionalidades conforme as demandas dos usuários; \\item Manutenção do playbook Ansible para deploy contínuo do sistema; \\item Garantir que os testes de usabilidade com Dusk estejam sempre atualizados; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

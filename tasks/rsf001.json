@@ -1,0 +1,12 @@
+{
+  "peso": 5,
+  "titulo": "Administração da Controladora SmartZone",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A controladora SmartZone é responsável pelo gerenciamento centralizado dos access points da unidade, configuração de redes Wi-Fi institucionais (como eduroam). As atividades constantes relacionadas a este serviço são: \\bigskip\\begin{itemize} \\item Monitoramento da saúde e status dos access points gerenciados; \\item Criação e manutenção de SSIDs para casos específicos (como eventos); \\item Aplicação de atualizações e firmware da controladora; \\item Backup periódico das configurações do sistema; \\item Análise de performance da rede wireless e diagnóstico de instabilidades; \\item Ajustes de parâmetros de rádio e otimização de cobertura; \\item Tratamento de incidentes relacionados à conectividade Wi-Fi; \\item Documentação das alterações realizadas na configuração da rede; \\end{itemize}",
+  "responsaveis": [
+    "José Roberto"
+  ],
+  "status": true
+}

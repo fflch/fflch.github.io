@@ -1,0 +1,12 @@
+{
+  "peso": 5,
+  "titulo": "Aparelhos VoIP",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na gestão e configuração dos equipamentos de telefonia VoIP, abrangendo a administração dos ramais, aparelhos telefônicos e parâmetros técnicos associados ao serviço. As atividades envolvem tanto a configuração lógica quanto a manutenção operacional dos aparelhos. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Configuração e manutenção de ramais VoIP (junto com a Superintendência); \\item Provisionamento de novos ramais; \\item Troca e substituição de aparelhos defeituosos; \\item Suporte na configuração de parâmetros como identificação de chamada e grupos de atendimento; \\item Reconfiguração de aparelhos após mudanças de prédio; \\end{itemize}",
+  "responsaveis": [
+    "Néli"
+  ],
+  "status": true
+}

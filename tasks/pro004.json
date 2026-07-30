@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "uspdev/ansible-role-sssd-ldap",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O projeto uspdev/ansible-role-sssd-ldap configurar uma máquina cliente do ldap para autenticação usando sssd. As atividades constantes relacionadas a este projeto são: \\bigskip\\begin{itemize} \\item Atualização da role para versões mais recentes do Debian; \\end{itemize}",
+  "responsaveis": [
+    "Thiago"
+  ],
+  "status": true
+}

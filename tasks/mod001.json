@@ -1,0 +1,12 @@
+{
+  "peso": 2,
+  "titulo": "fflch/webform-senhaunica",
+  "estagiarios": [
+    "Anderson"
+  ],
+  "descricao": "O módulo fflch/webform-senhaunica integra o Webform com a autenticação Senha Única USP. O objetivo é permitir que formulários institucionais sejam preenchidos exclusivamente por usuários autenticados via Senha Única, sem que necessariamente possuam conta ativa ou sessão autenticada no Drupal. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Manutenção da integração com o serviço de autenticação Senha Única USP; \\item Adequação do módulo a mudanças na API ou protocolos de autenticação institucional; \\item Atualização de compatibilidade com novas versões do Drupal e do Webform; \\item Correção de falhas relacionadas ao fluxo de autenticação externa; \\item Garantia de segurança no tratamento de tokens e dados retornados pela autenticação; \\item Implementação de melhorias no controle de acesso aos formulários; \\item Testes de compatibilidade após atualizações do core ou do módulo Webform; \\item Monitoramento de eventuais incidentes de autenticação reportados por usuários; \\item Documentação técnica do fluxo de autenticação e configuração do módulo; \\item Suporte a equipes internas para utilização correta do módulo em novos formulários; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

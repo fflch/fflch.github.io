@@ -1,0 +1,6 @@
+{
+  "status": true,
+  "descricao": "Atualização da VM do bind para Debian 13. Documentar o processo de atualização e o que deve ser copiado de uma máquina para outra.",
+  "data": "19/02/2026",
+  "responsavel": "Ricardo"
+}

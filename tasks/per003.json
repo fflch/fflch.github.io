@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "Aplicação de DAEs e Atualização do ReplicadoDev",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na aplicação de DAEs no replicado, bem como na atualização periódica da base de dados do ambiente ReplicadoDev por meio do carregamento do dump mais recente do banco de dados do Replicado. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Aplicação de DAEs; \\item Criação do dump atualizado do banco de dados do Replicado; \\item Importação do dump no ambiente ReplicadoDev; \\item Criação e remoção de usuários para estagiário dev; \\item Comunicação aos estagiários sobre a atualização do ambiente; \\item Registro e documentação da atualização realizada; \\end{itemize}",
+  "responsaveis": [
+    "José Roberto"
+  ],
+  "status": true
+}

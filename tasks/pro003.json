@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "fflch/ansible-role-sap-ase",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O projeto fflch/ansible-role-sap-ase é utilizado para automação e padronização de configurações de infraestrutura e serviços institucionais. Ele apoia o provisionamento, configuração e manutenção automatizada de servidores e serviços. As atividades constantes relacionadas a este projeto são: \\bigskip\\begin{itemize} \\item Atualização e revisão contínua das tasks e handlers; \\item Testes em ambiente de homologação antes de aplicação em produção; \\item Manutenção de variáveis, templates e arquivos de configuração; \\item Garantia de idempotência e boas práticas de automação; \\item Documentação de uso e integração com demais playbooks; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

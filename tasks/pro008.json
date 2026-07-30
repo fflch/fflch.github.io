@@ -1,0 +1,12 @@
+{
+  "peso": 3,
+  "titulo": "fflch/ansible-role-fsecure",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O projeto fflch/ansible-role-fsecure é uma role de deploy do anti-vírus corporativo usado na USP. As atividades constantes relacionadas a este projeto são: \\bigskip\\begin{itemize} \\item Atualização da role para versões mais recentes do Debian; \\item Garantir que a role esteja funcionado no ambiente provisioner-dev; \\item Garantir que a role esteja funcionado com a versão mais recente do with-secure;\\end{itemize}",
+  "responsaveis": [
+    "Augusto"
+  ],
+  "status": true
+}

@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "VM Virtual SmartZone",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A infraestrutura da máquina virtual que hospeda a controladora SmartZone envolve atividades contínuas de administração da VM. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Monitoramento de utilização de CPU, memória RAM e espaço em disco da máquina virtual; \\item Expansão de disco ou memória quando necessário; \\item Verificação de integridade do sistema operacional da VM; \\item Aplicação de atualizações e patches de segurança da plataforma; \\item Backup periódico da máquina virtual; \\item Planejamento e execução de migração da VM entre hosts físicos (manutenção ou balanceamento de carga); \\item Testes de disponibilidade após reinicializações ou movimentações; \\item Monitoramento de consumo de recursos no hypervisor; \\item Documentação de alterações estruturais realizadas; \\end{itemize}",
+  "responsaveis": [
+    "José Roberto"
+  ],
+  "status": true
+}

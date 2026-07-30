@@ -1,0 +1,15 @@
+{
+  "peso": 8,
+  "titulo": "Playbooks Ansible",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Essa tarefa envolve três repositórios git, além das máquinas virtuais da produção correspondentes. Os repositórios são fflch/ansible-role-tasks, fflch/provisioner e fflch/provisioner-dev e tem como finalidade o provisionamento da infraestrutura da Faculdade. Dentro de cada um desses repositórios, há um diretório com o nome do responsável. Essa tarefa consistem em: \\bigskip\\begin{itemize} \\item Manter os playbooks e tasks Ansible dentro do diretório do responsável atualizados com as mais novas recentes versões do Ansible o do Debian; \\item Manter o ambiente de testes, provisioner-dev fiel ao repositório de produção; \\item Quando houver novas versões do Debian, criar a nova VM e migração do serviço; \\end{itemize}",
+  "responsaveis": [
+    "Ricardo",
+    "Augusto",
+    "Mônica",
+    "Thiago"
+  ],
+  "status": true
+}

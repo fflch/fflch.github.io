@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "fflch/webapps",
+  "estagiarios": [
+    "Lucas"
+  ],
+  "descricao": "O sistema fflch/webapps é responsável pela gestão dos containers no docker swarm: \\bigskip\\begin{itemize} \\item Atualização constante do core do Laravel; \\item Monitoramento contínuo dos logs em storage/logs/laravel.log; \\item Implementação de novas funcionalidades conforme as demandas dos usuários; \\item Garantir que os testes de usabilidade com Dusk estejam sempre atualizados; \\end{itemize}",
+  "responsaveis": [
+    "Ricardo"
+  ],
+  "status": true
+}

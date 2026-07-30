@@ -1,0 +1,14 @@
+{
+  "peso": 3,
+  "titulo": "uspdev/replicado2mongodb",
+  "estagiarios": [
+    "Rafael",
+    "Letycia",
+    "Leonardo"
+  ],
+  "descricao": "Esta tarefa consiste na elaboração, validação e execução de consultas SQL diretamente na base de dados do Replicado, visando atender demandas institucionais do Escritório de Apoio Institucional ao Pesquisador (EAIP) e demais setores da unidade que necessitem de extrações específicas de dados acadêmicos e administrativos, com consolidação das queries em projeto uspdev/replicado2mongodb. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Levantamento da necessidade do solicitante, compreendendo filtros, períodos e critérios específicos; \\item Análise da estrutura das tabelas do Replicado e identificação de relacionamentos necessários para a extração correta dos dados; \\item Desenvolvimento de queries SQL otimizadas e seguras; \\item Testes das consultas em ambiente de desenvolvimento antes da execução em ambiente produtivo; \\item Validação dos resultados junto ao solicitante para garantir aderência à demanda; \\item Geração dos resultados em formatos como CSV; \\item Registro e documentação das consultas executadas para futura rastreabilidade; \\item Suporte técnico posterior para esclarecimentos ou ajustes nas extrações realizadas; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

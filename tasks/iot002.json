@@ -1,0 +1,12 @@
+{
+  "peso": 2,
+  "titulo": "Fechaduras Eletrônicas (ControlID)",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na gestão e configuração das fechaduras eletrônicas utilizadas na Faculdade. A atividade envolve a administração de permissões, atualização de firmware e integração com a infraestrutura de rede. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Configuração de novas fechaduras; \\item Configuração de parâmetros das fechaduras; \\item Atualização de firmware dos dispositivos; \\item Verificação e configuração da porta do switch onde o equipamento está conectado; \\item Testes de conectividade e comunicação com o sistema central; \\item Diagnóstico e resolução de falhas de funcionamento; \\item Acionamento de suporte especializado quando necessário; \\end{itemize}",
+  "responsaveis": [
+    "Vago"
+  ],
+  "status": true
+}

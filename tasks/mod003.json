@@ -1,0 +1,12 @@
+{
+  "peso": 2,
+  "titulo": "fflch/boletim",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O módulo fflch/boletim é responsável pela geração e envio automatizado do boletim semanal de notícias da Faculdade por email. Ele consolida conteúdos publicados no site principal e organiza a distribuição para listas de destinatários previamente definidas. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Manutenção da lógica de agregação de notícias; \\item Atualização de compatibilidade com novas versões do Drupal; \\item Ajustes nos templates de email (HTML responsivo); \\item Integração com serviços de envio de email; \\item Monitoramento de falhas no envio; \\item Implementação de melhorias na formatação do boletim; \\item Correção de bugs reportados por usuários; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

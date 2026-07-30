@@ -1,0 +1,12 @@
+{
+  "peso": 2,
+  "titulo": "Câmeras PTZ",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na gestão e configuração das câmeras de monitoramento do tipo PTZ. A atividade envolve configuração de parâmetros de rede, permissões de acesso, atualização de firmware e manutenção operacional dos equipamentos. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Configuração inicial e provisionamento das câmeras PTZ; \\item Ajuste de parâmetros de rede; \\item Configuração de usuários e permissões de acesso; \\item Atualização de firmware dos dispositivos; \\item Configuração de parâmetros; \\item Monitoramento da porta do switch e alimentação PoE; \\item Diagnóstico de falhas de imagem ou conectividade; \\end{itemize}",
+  "responsaveis": [
+    "Vago"
+  ],
+  "status": true
+}

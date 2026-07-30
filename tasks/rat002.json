@@ -1,0 +1,12 @@
+{
+  "peso": 5,
+  "titulo": "Configuração de switches",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa envolve o acompanhamento contínuo das condições operacionais dos switches responsáveis pela distribuição da conectividade cabeada. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Monitoramento do estado físico dos switches (temperatura, ventilação e ruído anormal) com SNMP; \\item Verificação periódica de logs de hardware e alertas críticos; \\item Acompanhamento do consumo de CPU, memória e utilização de portas; \\item Inspeção de fontes e módulos de uplink; \\item Testes de portas de uplink com falhas ou intermitência; \\item Identificação e substituição de cabos de uplink defeituosos; \\item Atualização e controle de inventário (patrimonial); \\item Acionamento de garantia junto ao fabricante em caso de falha de hardware; \\end{itemize}",
+  "responsaveis": [
+    "Ricardo"
+  ],
+  "status": true
+}

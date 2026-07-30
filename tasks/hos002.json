@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "Manutenção física dos Hosts e Storages",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A Manutenção Física dos Hosts e Storages compreende atividades contínuas voltadas à garantia do funcionamento adequado dos servidores físicos e storages, assegurando disponibilidade, desempenho e confiabilidade da infraestrutura. Essas atividades envolvem inspeções preventivas, ações corretivas e acompanhamento dos componentes críticos de hardware. \\bigskip\\begin{itemize} \\item Verificação periódica do estado físico dos servidores e storages; \\item Monitoramento e substituição preventiva ou corretiva de discos, fontes de alimentação, controladoras, memórias RAM, placas de rede ou qualquer outro componente físico danificado (usando peças dos equipamentos desativados ou procedendo com a compra de componentes); \\item Monitoramento da interface de gerenciamento remoto dos equipamentos (como iDRAC nos servidores Dell); \\item Atualização de firmware de BIOS; \\end{itemize}",
+  "responsaveis": [
+    "José Roberto"
+  ],
+  "status": true
+}

@@ -1,0 +1,12 @@
+{
+  "peso": 3,
+  "titulo": "Documentação Técnica",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na manutenção contínua da documentação técnica distribuída nos repositórios git que concentram tutoriais, guias operacionais e procedimentos internos da equipe de TI. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Atualização da documentação técnica no repositório fflch/scripts; \\item Atualização deste documento  no repositório fflch/docs; \\item Revisão e organização de conteúdos técnicos no repositório fflch/x; \\item Manutenção dos tutoriais públicos hospedados no repositório fflch.github.io; \\item uspdev/slides;  \\item Atualização do curso de moodle fflch/curso-moodle; \\end{itemize}",
+  "responsaveis": [
+    "Thiago"
+  ],
+  "status": true
+}

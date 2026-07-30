@@ -1,0 +1,12 @@
+{
+  "peso": 2,
+  "titulo": "Câmeras de Segurança (Intelbras)",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na configuração de rede das câmeras de segurança da marca Intelbras. A atividade envolve configuração de parâmetros de rede, atualização de firmware, assim como da NVR. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Instalação e configuração inicial das câmeras; \\item Configuração de parâmetros de rede; \\item Atualização de firmware dos dispositivos; \\item Verificação de alimentação PoE e porta do switch (carga); \\item Configuração de usuários e permissões de acesso; \\end{itemize}",
+  "responsaveis": [
+    "Vago"
+  ],
+  "status": true
+}

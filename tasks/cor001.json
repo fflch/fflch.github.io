@@ -1,0 +1,12 @@
+{
+  "peso": 13,
+  "titulo": "Drupal",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa versa sobre a manutenção da nossa distribuição Drupal e compreende a atualização contínua do core, dos módulos de terceiros e do profile próprio. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Atualização periódica do core do Drupal, acompanhando releases estáveis e patches de segurança; \\item Migração dos sites para nova versão quando houver atualização; \\item Atualização de módulos de terceiros utilizados na distribuição; \\item Adequação e refatoração do profile próprio para manter compatibilidade com novas versões; \\item Garantia de compatibilidade com versões suportadas de PHP e banco de dados; \\end{itemize}",
+  "responsaveis": [
+    "Augusto"
+  ],
+  "status": true
+}

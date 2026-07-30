@@ -1,0 +1,25 @@
+\chapter{Servidores}
+
+A camada de administração de servidores foi estruturada em três ramos principais: \textbf{Provisionamento}, \textbf{Manutenção dos Hosts} e \textbf{Administração de Máquinas Virtuais (VMs)}.
+
+O \textbf{Provisionamento} compreende as tarefas relacionadas à configuração automática das máquinas virtuais, incluindo a definição de serviços, instalação de dependências e padronização do ambiente, realizadas por meio da ferramenta Ansible.
+
+A \textbf{Hosts} engloba todos os serviços necessários para garantir o funcionamento adequado dos servidores físicos. Isso inclui a verificação e substituição de componentes de hardware, como discos, fontes de alimentação e memória RAM, bem como a administração e atualização do sistema operacional.
+
+Por fim, a \textbf{Administração de Máquinas Virtuais (VMs)} refere-se às máquinas virtuais criadas manualmente, sem o uso de ferramentas de automação como o Ansible. Nesses casos, a configuração, atualização e manutenção dos serviços devem ser realizadas de forma manual, exigindo controle e documentação mais rigorosos.
+
+\section{Provisionamento}
+
+\loadjson{pro}
+
+\newpage
+\section{Hosts}
+
+Nesta seção estão descritas as atividades relacionadas à manutenção e à operação dos servidores físicos e dos storages. Essas atividades incluem a verificação, o diagnóstico e a substituição de componentes de hardware, como discos, fontes de alimentação, controladoras, placas de rede e memória RAM, além da administração, atualização e monitoramento dos sistemas operacionais e das plataformas de virtualização atualmente em uso: Dell EqualLogic, VMware vSphere, VMware vCenter e Proxmox VE (em implementação).
+
+\loadjson{hos}
+
+\newpage
+\section{Administração de Máquinas Virtuais (VMs)}
+
+\loadjson{vms}

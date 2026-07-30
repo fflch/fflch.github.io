@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "uspdev/wsfoto",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A biblioteca uspdev/wsfoto é utilizada para acessar a API que fornecem as fotos do cartão USP. As atividades constantes relacionadas a esta biblioteca são: \\bigskip\\begin{itemize} \\item Atualização constante para compatibilidade com versões recentes do PHP; \\item Monitoramento de issues e correções de bugs reportados; \\item Implementação de melhorias e novas funcionalidades; \\item Manutenção da documentação e exemplos de uso; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

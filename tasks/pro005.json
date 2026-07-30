@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "fflch/ansible-role-proaluno",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O projeto fflch/ansible-role-proaluno é role usada para configuração das máquinas nas salas pró-aluno. As atividades constantes relacionadas a este projeto são: \\bigskip\\begin{itemize} \\item Atualização da role para versões mais recentes do Debian; \\item Instalação de programas solicitados por docentes e alunos; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

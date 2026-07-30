@@ -1,0 +1,12 @@
+{
+  "peso": 5,
+  "titulo": "fflch/ansible-role-sambadc",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O projeto fflch/ansible-role-sambadc é uma role do ansible para instalação e configuração do Samba como Domain Controller. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Atualização da role para versões mais recentes do Debian; \\item Garantir que a role esteja funcionado no ambiente provisioner-dev; \\end{itemize}",
+  "responsaveis": [
+    "Augusto"
+  ],
+  "status": true
+}

@@ -1,0 +1,12 @@
+{
+  "peso": 8,
+  "titulo": "Cursos e Tutoriais Drupal",
+  "estagiarios": [
+    "João"
+  ],
+  "descricao": "Esta tarefa consiste na criação e manutenção de tutoriais voltados aos usuários do Drupal, considerando os módulos habilitados e as customizações implementadas no profile da fflchprofile e oferecimento de cursos de capacitação em Drupal para docentes, servidores e estagiários administrativos, com base nos tutoriais e na documentação previamente produzidos, com frequência mínima de um curso por ano. O objetivo é garantir que se utilizem corretamente os recursos disponíveis. Os tutoriais são tanto em formato textual quanto em vídeo, de acordo com a complexidade do recurso abordado. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Elaboração de tutoriais em texto para funcionalidades da nossa instância Drupal; \\item Produção de vídeos explicativos demonstrando fluxos de uso; \\item Atualização dos tutoriais conforme mudanças no core, módulos ou profile; \\item Documentação de novos módulos implementados na plataforma; \\item Padronização da linguagem e organização do material didático; \\item Publicação e organização dos tutoriais no site e no youtube; \\item Revisão periódica para evitar obsolescência do conteúdo; \\end{itemize}",
+  "responsaveis": [
+    "Augusto"
+  ],
+  "status": true
+}

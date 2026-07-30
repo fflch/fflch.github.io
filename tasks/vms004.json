@@ -1,0 +1,12 @@
+{
+  "peso": 5,
+  "titulo": "Monitoramento de Infraestrutura",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na implementação, manutenção e evolução do monitoramento da infraestrutura de TI utilizando o Zabbix ou ferramentas similares. Trata-se de atividade estratégica para garantir alta disponibilidade dos serviços. O monitoramento abrange servidores físicos e virtuais, serviços web, bancos de dados, dispositivos de rede, storages, links de internet e demais componentes críticos da infraestrutura. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Instalação, atualização e manutenção do servidor de monitoramento; \\item Configuração de hosts, templates, triggers e itens de monitoramento; \\item Monitoramento de uso de CPU, memória, disco, rede e disponibilidade de serviços; \\item Configuração de alertas por e-mail ou outros meios de notificação; \\item Criação de dashboards e relatórios de disponibilidade; \\item Ajuste fino de thresholds para reduzir falsos positivos; \\end{itemize}",
+  "responsaveis": [
+    "Vago"
+  ],
+  "status": true
+}

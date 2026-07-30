@@ -1,0 +1,6 @@
+{
+  "status": true,
+  "descricao": "Instalação do proxmox nos dois servidores Dell que desceram da FCS. Reinstalação do Equallogic no storage que desceu da FCS, que será o storage dos proxmox.",
+  "data": "19/02/2026",
+  "responsavel": "José Roberto"
+}

@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "uspdev/utils",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A biblioteca uspdev/utils é utilizada para fornecer métodos estáticos reutilizáveis em sistemas PHP. As atividades constantes relacionadas a esta biblioteca são: \\bigskip\\begin{itemize} \\item Atualização constante para compatibilidade com versões recentes do PHP; \\item Monitoramento de issues e correções de bugs reportados; \\item Implementação de melhorias e novas funcionalidades; \\item Manutenção da documentação e exemplos de uso; \\item Garantia de testes automatizados; \\item Acompanhar o impacto das mudanças do uspdev nos sistema locais da FFLCH; \\end{itemize}",
+  "responsaveis": [
+    "Thiago"
+  ],
+  "status": true
+}

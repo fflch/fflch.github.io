@@ -1,0 +1,12 @@
+{
+  "peso": 3,
+  "titulo": "Gestão e Qualidade dos Access Points",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A gestão da qualidade dos Access Points (APs) da unidade envolve o acompanhamento contínuo do desempenho dos equipamentos de rede sem fio, verificação de funcionamento físico e acionamento de garantia quando necessário. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Monitoramento da estabilidade e desempenho dos Access Points; \\item Identificação de falhas recorrentes ou degradação de sinal; \\item Testes físicos em campo para validação de cobertura e conectividade; \\item Mapeamento e identificação da localização geográfica dos APs em planta baixa; \\item Atualização da documentação física e lógica dos pontos instalados; \\item Acompanhamento de chamados relacionados a problemas de Wi-Fi; \\item Acionamento de garantia junto ao fabricante quando identificado defeito de hardware; \\item Controle de inventário (patrimonial) dos equipamentos; \\end{itemize}",
+  "responsaveis": [
+    "José Roberto"
+  ],
+  "status": true
+}

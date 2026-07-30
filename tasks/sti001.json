@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "Sistemas da Superintendência de Tecnologia da Informação",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na realização de intervenções administrativas nos sistemas geridos pela Superintendência de Tecnologia da Informação (STI), quando determinadas ações não podem ser executadas diretamente pelos usuários ou pelos setores solicitantes. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Aprovação de contas de e-mail institucionais; \\item Inserção e atualização de pessoas no sistema AutentUSP; \\end{itemize}",
+  "responsaveis": [
+    "Néli"
+  ],
+  "status": true
+}

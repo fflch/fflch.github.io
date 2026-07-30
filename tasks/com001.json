@@ -1,0 +1,12 @@
+{
+  "peso": 8,
+  "titulo": "Compra de Equipamentos Técnicos para Uso Interno da Seção de TI",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste no planejamento, especificação técnica e realização de compras de equipamentos e materiais destinados ao uso interno da Seção de Informática. Não se incluem nesta atividade bens de uso coletivo institucional, como computadores para docentes ou setores administrativos, mas sim materiais técnicos específicos utilizados pela equipe de TI nas atividades operacionais e de infraestrutura. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Levantamento periódico de necessidade de materiais e reposição de estoque; \\item Especificação técnica de equipamentos como cabeamento estruturado, patch panels, fibras ópticas, caixas RJ45, conectores, organizadores de rack, ferramentas especializadas e equipamentos de certificação (ex.: Fluke); \\item Conferência técnica do material recebido; \\item Planejamento de compras preventivas para evitar indisponibilidade de insumos críticos; \\end{itemize}",
+  "responsaveis": [
+    "Normando"
+  ],
+  "status": true
+}

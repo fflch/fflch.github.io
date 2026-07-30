@@ -1,0 +1,15 @@
+{
+  "peso": 8,
+  "titulo": "Chamados Técnicos Relacionados ao Drupal",
+  "estagiarios": [
+    "Anderson",
+    "Camila",
+    "Isaac",
+    "João"
+  ],
+  "descricao": "Esta tarefa consiste no atendimento contínuo de chamados técnicos relacionados à plataforma Drupal, recebidos por email, telefone, atendimento presencial ou pelo sistema de chamados. O objetivo é apoiar os usuários na resolução de problemas. Trata-se de atividade operacional permanente. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Atendimento de solicitações e dúvidas de usuários sobre uso do Drupal; \\item Diagnóstico e resolução de problemas técnicos reportados; \\item Correção de erros de configuração ou permissões; \\item Apoio na criação e edição de conteúdos; \\item Orientação sobre boas práticas de publicação; \\item Encaminhamento de problemas mais complexos para análise técnica aprofundada; \\item Registro e acompanhamento dos chamados até sua resolução; \\item Identificação de demandas recorrentes para melhoria da documentação e dos tutoriais; \\end{itemize}",
+  "responsaveis": [
+    "Augusto"
+  ],
+  "status": true
+}

@@ -1,0 +1,12 @@
+{
+  "peso": 2,
+  "titulo": "Nobreaks",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na gestão e manutenção dos nobreaks (UPS) utilizados para garantir a continuidade elétrica de servidores, switches e roteadores. A atividade envolve monitoramento preventivo, testes periódicos, assegurando proteção contra quedas de energia e variações elétricas. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Monitoramento do status operacional dos nobreaks; \\item Verificação periódica do estado das baterias; \\item Configuração de alarmes e notificações; \\item Configuração da interface de rede dos nobreaks; \\item Coleta e análise de pacotes SNMP;  \\end{itemize}",
+  "responsaveis": [
+    "José Roberto"
+  ],
+  "status": true
+}

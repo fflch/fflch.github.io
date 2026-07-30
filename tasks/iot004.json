@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "Alarmes",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na configuração de rede dos alarmes. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Cadastro e gerenciamento de usuários e senhas; \\item Atualização de firmware quando aplicável; \\item Configuração da interface de rede; \\end{itemize}",
+  "responsaveis": [
+    "Vago"
+  ],
+  "status": true
+}

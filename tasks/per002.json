@@ -1,0 +1,12 @@
+{
+  "peso": 3,
+  "titulo": "Administração de Sistemas Locais",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na execução de ações administrativas em sistemas locais que não podem ser realizadas diretamente pelos usuários finais, exigindo perfil de administrador global. A equipe de TI exerce papel de administração centralizada. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item No sistema trabalhoacademico.fflch.usp.br: cadastro de membros de banca externos à USP; \\item No sistema salas.fflch.usp.br: cadastro de novas salas; atualização de recursos existentes (ex.: sala com projetor); alteração de capacidade; ativação e desativação de salas; cadastro de administradores de categoria; \\item No sistema listas.fflch.usp.br: inclusão de novos e-mails como destinatários ou remetentes; solicitação e cadastro de novas listas junto à Superintendência; \\item Nos sistemas bibliotecalemadigeo.fflch.usp.br, bibliotecalaboplan.fflch.usp.br, bibliotecageomorfo.fflch.usp.br, bibliotecacelp.fflch.usp.br, bibliotecacejap.fflch.usp.br: concessão e revogação de acesso de estagiários do setor; \\item biblio.fflch.usp.br sistema da biblioteca \\item sistemas pessoas.fflch.usp.br \\end{itemize}",
+  "responsaveis": [
+    "Néli"
+  ],
+  "status": true
+}

@@ -1,0 +1,12 @@
+{
+  "peso": 3,
+  "titulo": "Gestão de Acessos Estagiários TI",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na gestão dos procedimentos técnicos e administrativos necessários quando há ingresso ou desligamento de estagiários no setor de TI. A atividade envolve concessão, revisão e revogação de acessos a sistemas internos, trata-se de uma tarefa crítica de segurança. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Configuração de acesso delegado às contas de email institucionais sites.fflch@usp.br e sistemas.fflch@usp.br; \\item Concessão ou revogação de permissões no sistema sites.fflch.usp.br (administração de sites); \\item Concessão ou revogação de permissões de acessos no sistema pessoas.fflch.usp.br; \\item Concessão e remoção de acesso ao sistema copaco.fflch.usp.br para cadastro de MAC address; \\item Criação ou bloqueio de acesso no sistema senha.fflch.usp.br (domínio institucional); \\item Concessão e revogação de acesso ao sistema atendimento.fflch.usp.br, assim como inserção e remoção nas filas de atendimento; \\item Atualização da página institucional da equipe em https://sti.fflch.usp.br/equipe; \\item Orientação inicial aos novos estagiários sobre políticas de acesso e uso dos sistemas; \\end{itemize}",
+  "responsaveis": [
+    "Néli"
+  ],
+  "status": true
+}

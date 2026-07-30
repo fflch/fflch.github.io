@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "fflch/ansible-role-deploy-laravel",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O projeto fflch/ansible-role-deploy-laravel é utilizado para automação de deploy dos sistemas em Laravel. As atividades constantes relacionadas a este projeto são: \\bigskip\\begin{itemize} \\item Atualização da role para versões mais recentes do Debian; \\end{itemize}",
+  "responsaveis": [
+    "Ricardo"
+  ],
+  "status": true
+}

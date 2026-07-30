@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "uspdev/laravel-usp-validators",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A biblioteca uspdev/laravel-usp-validators é utilizada para fornecer validadores laravel para o contexto da USP. As atividades constantes relacionadas a esta biblioteca são: \\bigskip\\begin{itemize} \\item Atualização constante para compatibilidade com versões recentes do PHP; \\item Monitoramento de issues e correções de bugs reportados; \\item Implementação de melhorias e novas funcionalidades; \\item Manutenção da documentação e exemplos de uso; \\end{itemize}",
+  "responsaveis": [
+    "Thiago"
+  ],
+  "status": true
+}

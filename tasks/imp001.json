@@ -1,0 +1,12 @@
+{
+  "peso": 3,
+  "titulo": "Servidor de Impressão Windows",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O servidor de impressão baseado em Windows Server é responsável pelo gerenciamento centralizado das filas de impressão da unidade e pela distribuição automática de drivers aos computadores clientes do domínio. Ele garante padronização das configurações das impressoras nos computadores dos usuários. As atividades constantes relacionadas a este serviço são: \\bigskip\\begin{itemize} \\item Instalação e atualização de drivers de impressão no servidor; \\item Ajuste das propriedades dos drivers, incluindo definição de recursos como impressão colorida, duplex, grampeamento e funcionalidades específicas de cada impressora; \\item Publicação e organização das filas de impressão no Domain Controller (Política de Grupo); \\item Adição e remoção de impressoras físicas e lógicas no servidor; \\item Monitoramento das filas de impressão e tratamento de falhas do serviço de spooler; \\item Aplicação de políticas de grupo (GPO) para distribuição automática das impressoras aos usuários; \\item Suporte a usuários em casos de falhas recorrentes ou reconfigurações necessárias; \\end{itemize}",
+  "responsaveis": [
+    "Néli"
+  ],
+  "status": true
+}

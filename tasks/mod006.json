@@ -1,0 +1,12 @@
+{
+  "peso": 2,
+  "titulo": "uspdev/webform-pagamentos",
+  "estagiarios": [
+    "Isaac"
+  ],
+  "descricao": "O módulo uspdev/webform-pagamentos integra formulários Webform do Drupal com os sistemas de pagamento institucional da USP, permitindo a geração de boleto e pagamentos via PIX diretamente a partir dos formulários. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Manutenção da integração com os serviços de boleto e PIX da USP; \\item Atualização de compatibilidade com novas versões do Drupal e Webform; \\item Monitoramento de falhas em transações; \\item Implementação de melhorias no fluxo de pagamento; \\item Adequação a mudanças nos serviços externos de pagamento; \\item Testes de integração após atualizações; \\item Documentação técnica do processo de geração e confirmação de pagamentos; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

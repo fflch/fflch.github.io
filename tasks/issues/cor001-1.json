@@ -1,0 +1,6 @@
+{
+  "status": true,
+  "descricao": "Realizar migração dos sites hospedados no Aegir para a nova infraestrutura utilizando Ansible.",
+  "data": "23/02/2026",
+  "responsavel": "Augusto"
+}

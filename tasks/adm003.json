@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "Verificação de E-mails",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na verificação diária das caixas de e-mail institucionais do setor. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Monitoramento diário das caixas ti.fflch@usp.br, sites.fflch@usp.br e sistemas.fflch@usp.br;  \\item Encaminhamento interno das demandas para os responsáveis adequados; \\item Resposta direta aos usuários quando a solução estiver no escopo imediato; \\item Acompanhamento de pendências até sua resolução; \\item Organização e arquivamento das mensagens para manter rastreabilidade;\\end{itemize}",
+  "responsaveis": [
+    "Néli"
+  ],
+  "status": true
+}

@@ -1,0 +1,15 @@
+{
+  "peso": 8,
+  "titulo": "Acompanhamento de Instalações de Cabeamento Estruturado",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O acompanhamento de novas instalações de cabeamento estruturado envolve a supervisão técnica de serviços realizados por equipes internas ou terceirizadas, garantindo conformidade com normas técnicas e padrões ABNT. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Verificação da conformidade das instalações com normas técnicas; \\item Inspeção da qualidade de conectores, patch panels e terminações; \\item Acompanhamento da certificação dos pontos de rede com equipamento apropriado; \\item Avaliação da organização física e identificação dos cabos e tomadas instaladas; \\item Atualização da documentação técnica no sistema rede.fflch.usp.br; \\end{itemize}",
+  "responsaveis": [
+    "Néli",
+    "Paulo",
+    "Célio",
+    "José Roberto"
+  ],
+  "status": true
+}

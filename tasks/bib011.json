@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "fflch/laravel-comet-theme",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A biblioteca fflch/laravel-comet-theme fornece o template laravel para os sistemas do laboratório COMET (Letras). As atividades constantes relacionadas a esta biblioteca são: \\bigskip\\begin{itemize} \\item Atualização constante para compatibilidade com versões recentes do PHP; \\item Monitoramento de issues e correções de bugs reportados; \\item Implementação de melhorias e novas funcionalidades; \\item Manutenção da documentação e exemplos de uso; \\end{itemize}",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}

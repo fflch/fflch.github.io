@@ -1,0 +1,11 @@
+{
+  "tipo": "ti",
+  "data": "2026-08-12",
+  "issues": [
+    "pro010-2.json",
+    "pro010-3.json",
+    "pro010-4.json",
+    "vms001-1.json",
+    "hos001-1.json"
+  ]
+}

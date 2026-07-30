@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "uspdev/laravel-usp-theme",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A biblioteca uspdev/laravel-usp-theme é utilizada como template dos sistemas em laravel da Faculdade. As atividades constantes relacionadas a esta biblioteca são: \\bigskip\\begin{itemize} \\item Atualização constante para compatibilidade com versões recentes do PHP; \\item manutenção da skin FFLCH; \\item Implementação de melhorias e novas funcionalidades; \\item Manutenção da documentação e exemplos de uso; \\item Acompanhar o impacto das mudanças do uspdev nos sistema locais da FFLCH; \\end{itemize}",
+  "responsaveis": [
+    "Ricardo"
+  ],
+  "status": true
+}

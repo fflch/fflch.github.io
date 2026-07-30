@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "Projetores (Datashow) com interface de rede",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Esta tarefa consiste na gestão, configuração e manutenção dos projetores (datashow) utilizados em salas de aula, auditórios e ambientes administrativos da unidade. A atividade envolve a configuração técnica dos equipamentos. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Instalação e configuração inicial de projetores; \\item Atualização de firmware quando disponível; \\item Verificação de cabeamento e conectividade; \\item Configuração da interface de rede; \\item Orientação aos usuários sobre uso adequado do equipamento pela rede; \\end{itemize}",
+  "responsaveis": [
+    "Vago"
+  ],
+  "status": true
+}

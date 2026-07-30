@@ -1,0 +1,15 @@
+{
+  "peso": 3,
+  "titulo": "Camada 2",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "rat003.tex",
+  "responsaveis": [
+    "Ricardo",
+    "Felipe",
+    "Wellington",
+    "Augusto"
+  ],
+  "status": true
+}

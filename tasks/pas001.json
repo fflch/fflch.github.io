@@ -1,0 +1,16 @@
+{
+  "peso": 5,
+  "titulo": "Organização e Manutenção das Salas de Rack",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A tarefa de organização e manutenção da sala de racks compreende atividades relacionadas à infraestrutura física de TI, incluindo cabeamento estruturado, organização de equipamentos, verificação de energia e climatização. Trata-se de atividade preventiva e contínua. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Organização e identificação de cabos de rede e patch cords; \\item Mapeamento das portas do patch panels no sistema rede.fflch.usp.br; \\item Monitoramento do funcionamento dos nobreaks; \\item Acompanhamento das condições de climatização e funcionamento do ar condicionado, acionando o serviço gerais quando necessário; \\item Acionar o setor de limpeza e acompanhá-lo; \\end{itemize}",
+  "responsaveis": [
+    "Felipe",
+    "Wellington",
+    "Paulo",
+    "Célio",
+    "Normando"
+  ],
+  "status": true
+}

@@ -1,0 +1,6 @@
+{
+  "status": true,
+  "descricao": "Implementação de política de backup dos dumps dos PostgreSQL para o entrypoint, assim como é feito com mariadb. Atualmente não há backup do PostgreSQL.",
+  "data": "20/02/2026",
+  "responsavel": ""
+}

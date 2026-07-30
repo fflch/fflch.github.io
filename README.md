@@ -1,15 +1,21 @@
-Inspirado em: https://just-the-docs.github.io/just-the-docs/
+Figuras:
 
-Instalação de pacotes:
+    python3 -m venv venv
+    source venv/bin/activate
+    pip3 install -r requirements.txt
 
-    sudo apt-get install libxml2-dev libxslt-dev build-essential libxml2 libxml2-dev libxslt1-dev ruby-dev ruby-bundler nodejs
-    sudo gem install bundler
+Generate:
 
-Subindo ambiente dev:
+    python3 estrutura.py
+    python3 generate_site.py
 
-    git clone git@github.com:VOCE/fflch.github.io.git
-    cd fflch.github.io
-    bundle config set --local path 'vendor/bundle'
-    bundle install
-    bundle exec jekyll serve
+
+
+- Criar fflch/ansible-role-deploy-pixelfed
+- Criar provisioner-dev mongodb, redis, minio
+
+https://github.com/fflch/ansible-role-deploy-pixelfed
+
+
+
 

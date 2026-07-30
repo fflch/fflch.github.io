@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "uspdev/copaco",
+  "estagiarios": [
+    "Pedro"
+  ],
+  "descricao": "O sistema uspdev/copaco está disponível em \\url{https://github.com/uspdev/copaco} e é responsável pela organização dos endereços MAC dos equipamentos da Faculdade. Ele é utilizado para manter um controle eficiente dos dispositivos conectados à rede. As atividades constantes relacionadas a este sistema são: \\bigskip\\begin{itemize} \\item Atualização constante do core do Laravel; \\item Monitoramento contínuo dos logs em storage/logs/laravel.log; \\item Implementação de novas funcionalidades conforme as demandas dos usuários; \\item Manutenção do playbook Ansible para deploy contínuo do sistema; \\item Garantir que os testes de usabilidade com Dusk estejam sempre atualizados; \\end{itemize}",
+  "responsaveis": [
+    "Ricardo"
+  ],
+  "status": true
+}

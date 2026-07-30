@@ -1,0 +1,42 @@
+\chapter*{Introdução}
+\addcontentsline{toc}{chapter}{Introdução}
+
+Este documento detalha a governança de Tecnologia da Informação (TI) da Faculdade de Filosofia, Letras e Ciências Humanas (FFLCH) da Universidade de São Paulo (USP). Seu objetivo é fornecer uma visão integrada e estruturada do ambiente tecnológico da unidade, abrangendo desde a camada física de hardware e rede até as camadas de software, aplicações institucionais, serviços em nuvem e computação científica. Além disso, descreve a distribuição das responsabilidades entre as pessoas que trabalham com TI na faculdade.
+
+Para além da documentação técnica dos processos internos, estruturamos as tarefas rotineiras de forma hierárquica, conforme ilustrado na Figura ~\ref{fig:infra}.
+
+Com o intuito de tornar a distribuição de responsabilidades mais objetiva e transparente, adotamos uma adaptação da metodologia de \textit{Story Points}, amplamente utilizada em métodos ágeis de gestão. A abordagem segue os princípios apresentados por Mike Cohn no livro \textit{Agile Estimating and Planning}.
+
+Nesse contexto, cada tarefa recebe uma pontuação baseada na sequência de Fibonacci (1, 2, 3, 5, 8, \dots), o que reflete o aumento não linear da complexidade à medida que o esforço cresce.
+A atribuição do peso considera três dimensões principais:
+
+\begin{enumerate}
+    \item Complexidade técnica da tarefa;
+    \item Tempo médio despendido para sua execução;
+    \item Recorrência ou frequência com que a tarefa se repete.
+\end{enumerate}
+
+A carga total relativa de responsabilidades de um membro da equipe será dada pela soma dos pesos das tarefas atribuídas a ele.
+
+Essa abordagem permite capturar não apenas o esforço pontual, mas também o impacto sistêmico das atividades recorrentes na operação contínua da infraestrutura de TI da FFLCH. Ressalta-se que \textbf{a soma dos pesos para um membro em particular constitui um indicador gerencial de distribuição de responsabilidades, não sendo utilizado como métrica de produtividade individual}.
+
+Essa metodologia busca conferir maior transparência ao processo de alocação de tarefas, subsidiando decisões estratégicas relacionadas ao balanceamento de carga, dimensionamento da equipe e planejamento de médio e longo prazo.
+
+Adicionalmente, cada tarefa é identificada por um código único composto pela sigla da categoria da tarefa, exemplo, \textit{inf} para infraestrutura, e um número, ficando \textit{inf005}, o que permite a rastreabilidade da tarefa ao longo do documento e em outros capítulos correlatos. 
+
+O código da tarefa também é utilizado como referência cruzada no capítulo de documentação técnica. Nesse capítulo, são disponibilizados tutoriais, procedimentos operacionais, diagramas, configurações e demais informações complementares necessárias para a correta execução da atividade. Assim, tarefas que demandam maior detalhamento técnico possuem documentação associada explicitamente vinculada ao seu identificador, por exemplo, na tarefa de configuração lógica da rede, o detalhamento de como a rede é segmentada, quais blocos de IPs públicos administramos, entre outras informações, estão disponíveis no capítulo de documentação técnica, referenciados pelo código da tarefa.
+
+Assim, neste documento, as tarefas são listadas e agrupadas por contexto, de forma a explicitar a organização estrutural do diagrama da Figura ~\ref{fig:infra}. Para cada tarefa, são apresentados: (i) seu código identificador, (ii) uma descrição sintética da atividade, (iii) o responsável designado e (iv) o peso atribuído segundo a metodologia baseada em \textit{Story Points}.
+
+Depois que todas tarefas foram descritas, é apresentada uma consolidação quantitativa contendo, para cada responsável, a lista de tarefas atribuídas ao mesmo, assim como a soma dos respectivos pesos.
+
+Por fim, essa estrutura promove não apenas a organização administrativa das responsabilidades, mas também a consolidação de um repositório de conhecimento técnico estruturado, contribuindo para a continuidade operacional, para a capacitação de novos membros da equipe, nova gestão, e para a mitigação de riscos associados à dependência de conhecimento tácito, ou seja, evitando que o conhecimento de uma tarefa qualquer em particular fique extremamente vinculado a um(a) funcionário(a) em específico e não possa ser executado por outra pessoa.
+
+\begin{landscape}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1.6\textwidth, keepaspectratio]{docs/ti_fflch.pdf}
+        \caption{Diagrama de infraestrutura}
+        \label{fig:infra}
+    \end{figure}
+\end{landscape}

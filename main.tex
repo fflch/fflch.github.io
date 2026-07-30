@@ -1,0 +1,73 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tocloft}
+\usepackage[portuguese]{babel}
+\usepackage[useregional]{datetime2}
+\usepackage{xcolor}
+\usepackage{amsthm} % para \theoremstyle
+\usepackage{tcolorbox} % para caixas personalizadas
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{luacode}
+\usepackage{pdflscape}
+
+\input{custom/comandos.tex}
+
+% Configuração global (vale para todas as listas)
+\setlist{noitemsep, topsep=0pt, parsep=0pt, partopsep=0pt}
+
+% Usar o estilo 'definition' que não tem itálico
+\theoremstyle{definition}
+
+\newtheorem{issue}{Issue}
+\newcommand{\titleref}[1]{%
+    \expandafter\ifx\csname r@#1\endcsname\relax
+        ??%
+    \else
+        \nameref{#1}%
+    \fi
+}
+
+% Formato que mostra apenas o número, sem a palavra "Capítulo"
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\thechapter}{20pt}{\Huge}
+
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+
+% redefine o formato da data
+\renewcommand{\today}{\number\day/\number\month/\number\year}
+
+\geometry{margin=2cm}
+
+\title{Documentação dos Serviços de Tecnologia da Informação}
+\author{Faculdade de Filosofia, Letras e Ciências Humanas (FFLCH) \\ Universidade de São Paulo (USP)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\input{chapters/intro}
+\input{chapters/DE}
+\input{chapters/SE}
+\input{chapters/SU}
+\input{chapters/RE}
+\input{chapters/SI}
+\input{chapters/AS}
+
+\input{chapters/GE}
+\input{chapters/CC}
+\input{chapters/PU}
+
+\input{chapters/RESP}
+
+\end{document}

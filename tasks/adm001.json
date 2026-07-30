@@ -1,0 +1,13 @@
+{
+  "peso": 8,
+  "titulo": "Gestão da Equipe",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "adm001.tex",
+  "responsaveis": [
+    "Néli",
+    "Thiago"
+  ],
+  "status": true
+}

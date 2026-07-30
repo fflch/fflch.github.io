@@ -1,0 +1,278 @@
+\renewcommand{\arraystretch}{1.4}
+
+% =====================================================
+% BLOCO LUA GLOBAL
+% =====================================================
+
+\begin{luacode*}
+
+json = utilities.json
+lfs  = require("lfs")
+
+function contar_pendencias(codigo_tarefa)
+
+  local pasta_issues = "tasks/issues"
+  local total = 0
+
+  for arquivo in lfs.dir(pasta_issues) do
+    if arquivo:match("%.json$") and arquivo:match("^" .. codigo_tarefa) then
+
+      local caminho = pasta_issues .. "/" .. arquivo
+      local file = io.open(caminho, "r")
+
+      if file then
+        local conteudo = file:read("*a")
+        file:close()
+
+        local data = json.tolua(conteudo)
+
+        if data.status == true then
+          total = total + 1
+        end
+      end
+
+    end
+  end
+
+  return total
+end
+
+function responsaveis()
+
+  local pasta = "tasks"
+  local responsaveis = {}
+
+  -- ==========================
+  -- LER TODOS OS JSON
+  -- ==========================
+  for arquivo in lfs.dir(pasta) do
+    if arquivo:match("%.json$") then
+
+      local caminho = pasta .. "/" .. arquivo
+      local file = io.open(caminho, "r")
+
+      if file then
+        local conteudo = file:read("*a")
+        file:close()
+
+        local data = json.tolua(conteudo)
+
+        if data.responsavel then
+
+          local nome   = data.responsavel
+          local codigo = arquivo:gsub("%.json$", "")
+          local titulo = data.titulo or ""
+          local peso   = tonumber(data.peso) or 0
+
+          if not responsaveis[nome] then
+            responsaveis[nome] = {
+              tarefas = {},
+              soma = 0
+            }
+          end
+
+          local pendencias = contar_pendencias(codigo)
+
+          table.insert(responsaveis[nome].tarefas, {
+            codigo = codigo,
+            titulo = titulo,
+            peso   = peso,
+            pendencias = pendencias
+          })
+
+          responsaveis[nome].soma =
+            responsaveis[nome].soma + peso
+        end
+      end
+    end
+  end
+
+  -- ==========================
+  -- CRIAR LISTA ORDENADA
+  -- ==========================
+
+  local lista_nomes = {}
+
+  for nome, _ in pairs(responsaveis) do
+    table.insert(lista_nomes, nome)
+  end
+
+  table.sort(lista_nomes, function(a, b)
+
+    if a == "Desativado" then
+      return false
+    elseif b == "Desativado" then
+      return true
+    else
+      return a < b
+    end
+
+  end)
+
+  -- ==========================
+  -- IMPRESSÃO LATEX
+  -- ==========================
+
+  for _, nome in ipairs(lista_nomes) do
+
+    local dados = responsaveis[nome]
+    local soma_pendencias = 0
+
+    -- Ordenar tarefas por código
+    table.sort(dados.tarefas, function(a, b)
+      return a.codigo < b.codigo
+    end)
+
+    tex.print("\\section*{" .. nome .. "}")
+
+    tex.print("\\begin{longtable}{|p{0.15\\textwidth}|p{0.55\\textwidth}|p{0.1\\textwidth}|p{0.1\\textwidth}|}")
+    tex.print("\\hline")
+    tex.print("\\textbf{Código} & \\textbf{Descrição} & \\textbf{Peso} & \\textbf{Issues} \\\\ \\hline")
+  
+    for _, tarefa in ipairs(dados.tarefas) do
+      soma_pendencias = soma_pendencias + tarefa.pendencias
+      tex.print(
+        tarefa.codigo .. " & " ..
+        tarefa.titulo .. " & " ..
+        tarefa.peso .. " & " ..
+        tarefa.pendencias .. " \\\\ \\hline"
+      )
+    end
+
+    tex.print("\\textbf{Soma} &  & \\textbf{" .. dados.soma .. "} & \\textbf{" .. soma_pendencias .. "} \\\\ \\hline")
+    tex.print("\\end{longtable}")
+    tex.print("\\bigskip")
+
+  end
+
+end
+
+
+------------------------------------------------------
+-- Função 1: Issues por prefixo (sem id no JSON)
+------------------------------------------------------
+function gerar_issues(prefixo)
+
+  local resultados = {}
+
+  for file in lfs.dir("tasks/issues") do
+    if file:match("^" .. prefixo .. "%-(%d+)%.json$") then
+
+      -- extrai número direto do nome do arquivo
+      local numero = file:match("%-(%d+)%.json$")
+
+      local f = io.open("tasks/issues/" .. file, "r")
+      local content = f:read("*a")
+      f:close()
+
+      local data = json.tolua(content)
+
+      if data.status == true then
+        table.insert(resultados, {
+          numero = tonumber(numero),
+          descricao = data.descricao
+        })
+      end
+    end
+  end
+
+  table.sort(resultados, function(a,b)
+    return a.numero < b.numero
+  end)
+
+  tex.sprint("\\begin{tabular}{|p{0.1\\textwidth}|p{0.775\\textwidth}|}")
+  tex.sprint("\\hline")
+  tex.sprint("\\textbf{Issue} & \\textbf{Descrição} \\\\ \\hline")
+
+  for _, item in ipairs(resultados) do
+    tex.sprint(item.numero .. " & " .. item.descricao .. " \\\\ \\hline")
+  end
+
+  tex.sprint("\\end{tabular}")
+  tex.sprint("\\bigskip")
+  tex.sprint("\\\\")
+end
+
+------------------------------------------------------
+-- Função 2: Ler tarefa pelo nome (sem id no JSON)
+------------------------------------------------------
+function read_task(nome)
+
+  local caminho = "tasks/" .. nome .. ".json"
+  local file = io.open(caminho, "r")
+  local content = file:read("*a")
+  file:close()
+
+  local data = json.tolua(content)
+
+  tex.sprint("\\newpage")
+  tex.sprint("\\begin{tabular}{|p{0.1\\textwidth}|p{0.1\\textwidth}|p{0.57\\textwidth}|}")
+  tex.sprint("\\hline")
+
+  -- agora usamos o nome como ID
+  tex.sprint(nome ..
+    " & Peso: " .. data.peso ..
+    " & " .. data.titulo ..
+    " \\\\ \\hline")
+
+  tex.sprint("\\multicolumn{2}{|p{0.2\\textwidth}|}{\\textbf{Responsável:}} & " ..
+    data.responsavel ..
+    " \\\\ \\hline")
+
+  tex.sprint("\\multicolumn{2}{|p{0.2\\textwidth}|}{\\textbf{Estagiários(as):}} & " ..
+    table.concat(data.estagiarios, "; ") ..
+    " \\\\ \\hline")
+
+  tex.sprint("\\multicolumn{3}{|p{0.8\\textwidth}|}{" ..
+    data.descricao ..
+    "} \\\\ \\hline")
+
+  tex.sprint("\\end{tabular}")
+  tex.sprint("\\bigskip")
+
+  tex.sprint("\\\\ Pendências em aberto para " .. data.titulo .. ":\\\\ \\\\")
+
+  gerar_issues(nome)
+end
+
+function list_json_by_prefix(prefix)
+  local lfs = require("lfs")
+  local files = {}
+
+  for file in lfs.dir("tasks") do
+    if string.match(file, "^"..prefix.."%d+%.json$") then
+      table.insert(files, file)
+    end
+  end
+
+  -- Ordenação numérica correta
+  table.sort(files, function(a, b)
+    local numA = tonumber(string.match(a, "%d+"))
+    local numB = tonumber(string.match(b, "%d+"))
+    return numA < numB
+  end)
+
+  return files
+end
+
+function loadjson(prefix)
+  local files = list_json_by_prefix(prefix)
+
+  for _, file in ipairs(files) do
+    local id = string.gsub(file, "%.json$", "")
+    tex.print("\\inputjson{" .. id .. "}")
+  end
+end
+
+\end{luacode*}
+
+% =====================================================
+% COMANDOS LATEX
+% =====================================================
+
+\newcommand{\inputjson}[1]{\directlua{read_task("#1")}}
+%\newcommand{\issues}[1]{\directlua{gerar_issues("#1")}}
+\newcommand{\responsaveis}{%
+  \directlua{responsaveis()}%
+}
+\newcommand{\loadjson}[1]{\directlua{loadjson("#1")}}

@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "fflch/ansible-cups",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "O projeto fflch/ansible-cups é uma role usada para deploy do servidor de impressão CUPS. As atividades constantes relacionadas a este projeto são: \\bigskip\\begin{itemize} \\item Atualização da role para versões mais recentes do Debian; \\end{itemize}",
+  "responsaveis": [
+    "Thiago"
+  ],
+  "status": true
+}
