@@ -338,7 +338,7 @@ Exemplo de saída (com dados fictícios):
 
 Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar na TV rapidamente e solução do exercício.
 
-
+--- 
 # Dia 2
 
 ## CRUD
@@ -552,6 +552,7 @@ docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
 
 Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar a implementação na TV.
 
+--- 
 # Dia 3
 
 Instalação do template USP conforme: [https://github.com/uspdev/laravel-usp-theme/](https://github.com/uspdev/laravel-usp-theme/)
@@ -689,7 +690,7 @@ protected function preco(): Attribute
 4. Faça um mutator converter a virgula, quando existir, para ponto.
 5. Corrija seus formulários para sempre conterem a função old()
 
-
+--- 
 # Dia 4
 
 Revisão do ambiente:
@@ -708,107 +709,66 @@ curl -L https://fflch.github.io/assets/laravel/Dockerfile -o Dockerfile
 curl -L https://fflch.github.io/assets/laravel/docker-compose.yml -o docker-compose.yml
 docker compose up --build
 ```
-
 Arquivos prontos para subir o ambiente com o conteúdo visto até então, ou sejá, CRUD do model Livros e testes no Dusk.
 
-```bash
-mkdir -p app/Http/Requests
-mkdir -p app/Console/Commands
-mkdir -p resources/views/livros
-mkdir -p tests/Browser
+[[include:laravel/crud_livros/crud_livros.sh]]
 
-# .env
-curl -L https://fflch.github.io/assets/laravel/crud_livros/env -o .env
-
-# Migration
-curl -L https://fflch.github.io/assets/laravel/crud_livros/2026_07_30_131403_create_livros_table.php \
-    -o database/migrations/2026_07_30_131403_create_livros_table.php
-
-# Models
-curl -L https://fflch.github.io/assets/laravel/crud_livros/Livro.php \
-    -o app/Models/Livro.php
-
-curl -L https://fflch.github.io/assets/laravel/crud_livros/User.php \
-    -o app/Models/User.php
-
-# Controller
-curl -L https://fflch.github.io/assets/laravel/crud_livros/LivroController.php \
-    -o app/Http/Controllers/LivroController.php
-
-curl -L https://fflch.github.io/assets/laravel/crud_livros/IndexController.php \
-    -o app/Http/Controllers/IndexController.php
-
-# Form Request
-curl -L https://fflch.github.io/assets/laravel/crud_livros/LivroRequest.php \
-    -o app/Http/Requests/LivroRequest.php
-
-# Artisan Command
-curl -L https://fflch.github.io/assets/laravel/crud_livros/ImportaLivros.php \
-    -o app/Console/Commands/ImportaLivros.php
-
-# Views
-curl -L https://fflch.github.io/assets/laravel/crud_livros/home.blade.php \
-    -o resources/views/home.blade.php
-
-curl -L https://fflch.github.io/assets/laravel/crud_livros/index.blade.php \
-    -o resources/views/livros/index.blade.php
-
-curl -L https://fflch.github.io/assets/laravel/crud_livros/create.blade.php \
-    -o resources/views/livros/create.blade.php
-
-curl -L https://fflch.github.io/assets/laravel/crud_livros/edit.blade.php \
-    -o resources/views/livros/edit.blade.php
-
-curl -L https://fflch.github.io/assets/laravel/crud_livros/show.blade.php \
-    -o resources/views/livros/show.blade.php
-
-# Rotas
-curl -L https://fflch.github.io/assets/laravel/crud_livros/web.php \
-    -o routes/web.php
-
-# Teste
-curl -L https://fflch.github.io/assets/laravel/crud_livros/LivroCrudTest.php \
-    -o tests/Browser/LivroCrudTest.php
-
-docker exec -it cursolaravel php artisan vendor:publish --provider="Uspdev\SenhaunicaSocialite\SenhaunicaServiceProvider" --tag="migrations"
-docker exec -it cursolaravel php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
-docker exec -it cursolaravel php artisan migrate
-```
-
-
-```bash
-docker exec -it cursolaravel composer require league/csv
-docker exec -it cursolaravel composer require uspdev/laravel-usp-theme
-docker exec -it cursolaravel composer require uspdev/senhaunica-socialite
-docker exec -it cursolaravel php artisan migrate
-docker exec -it cursolaravel php artisan app:importa-livros
-docker exec -it cursolaravel composer require --dev laravel/dusk
-docker exec -it cursolaravel php artisan dusk:install
-docker exec -it cursolaravel php artisan dusk:chrome-driver
-docker exec -it cursolaravel php artisan vendor:publish --provider="Uspdev\UspTheme\ServiceProvider" --tag=config
-docker exec -it cursolaravel php artisan vendor:publish --provider="Uspdev\UspTheme\ServiceProvider" --tag=assets --force
-
-
-
-```
+Acessar o laravel criado: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ```bash
 docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
 ```
 
+Acessar [http://localhost:7900/](http://localhost:7900/) com senha `secret` e assistir o teste rodando.
 
-# Instruções para produção
+Importando csv com os livros:
+```bash
+docker exec -it cursolaravel php artisan app:importa-livros
+```
+## Relacionamentos
 
-**1 - Imagem do docker**
+Na tabela `livros` já inserimos o campo `user_id` apontando para tabela `users`. Vamos agora criar as relações (one-to-many) no laravel:
 
-Para construção da imagem baseada na tag (versão) criar o arquivo `.github/workflows/docker.yml`:
-[Arquivo modelo docker.yml](/assets/files/laravel/docker.yml)
+Model Livro:
 
-**2 - testes no dusk**
+```php
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+```
 
-Para rodar os testes no dusk baseado na configuração do docker-compose.yml, criar o arquivo `.github/workflows/dusk.yml`:
-[Arquivo modelo dusk.yml](/assets/files/laravel/dusk.yml)
-É necessário alterar a variável `SERVICE_NAME` no `dusk.yml` colocando o nome do sistema. 
+Nos fornece o poder de acessar o objeto usuário a partir do livro, exemplo no `show.blade.php`
+```html
+<p>
+    Livro cadastrado em {{ $livro->created_at->format('d/m/Y H:i') }} <br>
+    Última atualização em {{ $livro->updated_at->format('d/m/Y H:i') }} por <b>{{ $livro->user?->name }}</b> 
+</p>
+```
+
+Model User:
+```php
+public function livros()
+{
+    return $this->hasMany(Livro::class);
+}
+```
+
+Nos fornece o poder de acessar todos os objetos de livros a partir de um usuário, exemplo no `show.blade.php`:
+
+```html
+<div>
+    @if($livro->user)
+        Outros livros cadastrados ou editados por {{ $livro->user?->name }}:
+        <ul>
+        @foreach($livro->user->livros as $outro_livro)
+            <li>{{ $outro_livro->titulo }}</li>
+        @endforeach
+        </ul>
+    @endif
+</div>
+```
+
 
 
 <!--
@@ -827,17 +787,19 @@ https://github.com/laravel-shift/blueprint
 - Upload de arquivos
 - Trabalhando com pdf
 - Vídeos
-
-models:
-  Livro4:
-    titulo: string
-    autor: string
-    ano: integer
-
-controllers:
-  Livro4:
-    resource: web
-
-config:
-  generate_tests: false
 -->
+
+--- 
+
+# Instruções para produção
+
+**1 - Imagem do docker**
+
+Para construção da imagem baseada na tag (versão) criar o arquivo `.github/workflows/docker.yml`:
+[Arquivo modelo docker.yml](/assets/files/laravel/docker.yml)
+
+**2 - testes no dusk**
+
+Para rodar os testes no dusk baseado na configuração do docker-compose.yml, criar o arquivo `.github/workflows/dusk.yml`:
+[Arquivo modelo dusk.yml](/assets/files/laravel/dusk.yml)
+É necessário alterar a variável `SERVICE_NAME` no `dusk.yml` colocando o nome do sistema. 

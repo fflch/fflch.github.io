@@ -28,6 +28,7 @@ class LivroController extends Controller
         $livro->titulo = $request->titulo;
         $livro->autor = $request->autor;
         $livro->ano = $request->ano;
+        $livro->user_id = auth()->id();
         $livro->save();
         return redirect('/livros');
     }
@@ -48,6 +49,7 @@ class LivroController extends Controller
         $livro->titulo = $request->titulo;
         $livro->autor = $request->autor;
         $livro->ano = $request->ano;
+        $livro->user_id = auth()->id();
         $livro->save();
         return redirect("/livros/{$livro->id}");
     }
