@@ -14,7 +14,7 @@ Generate:
 - Criar fflch/ansible-role-deploy-pixelfed
 - Criar provisioner-dev mongodb, redis, minio
 
-https://github.com/fflch/ansible-role-deploy-pixelfed
+ https://github.com/fflch/ansible-role-deploy-pixelfed
 
 
 
