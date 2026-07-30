@@ -234,11 +234,9 @@ Por fim, podemos criar um comando no artisan que automatiza o cadastro de livros
 docker exec -it cursolaravel php artisan make:command ImportaLivros
 ```
 
-O comando acima criará o arquivo `app/Console/Commands/ImportaLivros.php`, o qual temos que mudar o `$signature` e implementar a lógica do comando:
+O comando acima criará o arquivo `app/Console/Commands/ImportaLivros.php`, vamos implementar a inserção de um livro via linha de comando:
 
 ```php
-#[Signature('livros:importar')]
-
 public function handle()
 {
     $livro = new \App\Models\Livro;
@@ -249,7 +247,7 @@ public function handle()
 }
 ```
 
-Ao rodarmos no terminal o comando `docker exec -it cursolaravel php artisan livros:importar` o livro da Clarice será cadastrado. Essa é um implementação simples (e inútil, pois o mesmo livro é sempre cadastrado repetidamente), mas a ideia é que qualquer lógica pode ser implementada no `handle()` para cadastro de muitos livros a partir de uma fonte externa, como, por exemplo, uma lista de livros oriunda de um arquivo csv.
+Ao rodarmos no terminal o comando `docker exec -it cursolaravel php artisan app:importa-livros` o livro da Clarice será cadastrado. Essa é um implementação simples (e inútil, pois o mesmo livro é sempre cadastrado repetidamente), mas a ideia é que qualquer lógica pode ser implementada no `handle()` para cadastro de muitos livros a partir de uma fonte externa, como, por exemplo, uma lista de livros oriunda de um arquivo csv.
 
 ### Dusk
 
@@ -609,7 +607,7 @@ $request->validate([
 ]);
 ```
 
-Podemos usar a função `old('titulo')` nos formulários, que nesse caso verifica se há input na sessão para o campo `titulo`:
+A função `old('titulo')` verifica se há input na sessão para o campo `titulo`, para o `create.blade.php`:
 
 ```html
 Título: <input type="text" name="titulo" value="{{old('titulo')}}">
@@ -617,12 +615,20 @@ Autor: <input type="text" name="autor" value="{{old('autor')}}">
 Ano: <input type="text" name="ano" value="{{old('ano')}}">
 ```
 
+E no para o `edir.blade.php`:
+
+```html
+Título: <input type="text" name="titulo" value="{{ old('titulo', $livro->titulo) }}">
+Autor: <input type="text" name="autor" value="{{ old('autor', $livro->autor) }}">
+Ano: <input type="text" name="ano" value="{{ old('ano', $livro->ano) }}">
+```
+
 ### FormRequest
 
 A validação, que muitas vezes será idêntica no store e no update, pode ser delegada para um FormRequest. Crie um FormRequest com o artisan:
 
 ```bash
-php artisan make:request LivroRequest
+docker exec -it cursolaravel php artisan make:request LivroRequest
 ```
 
 Esse comando gerou o arquivo `app/Http/Requests/LivroRequest.php`. Como ainda não falamos de permissões, retorne `true` no método
@@ -676,6 +682,23 @@ protected function preco(): Attribute
 4. Faça um mutator converter a virgula, quando existir, para ponto.
 5. Corrija seus formulários para sempre conterem a função old()
 
+
+# Dia 4
+
+Arquivos prontos para subir o ambiente com o conteúdo visto até então, ou sejá, CRUD do model Livros e teste Dusk.
+
+```bash
+docker exec -it cursolaravel composer require league/csv
+docker exec -it cursolaravel composer require uspdev/laravel-usp-theme
+docker exec -it cursolaravel composer require uspdev/senhaunica-socialite
+docker exec -it cursolaravel php artisan migrate
+docker exec -it cursolaravel php artisan app:importa-livros
+
+docker exec -it cursolaravel composer require --dev laravel/dusk
+docker exec -it cursolaravel php artisan dusk:install
+docker exec -it cursolaravel php artisan dusk:chrome-driver
+docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
+```
 
 
 # Instruções para produção
