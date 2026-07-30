@@ -207,7 +207,7 @@ No dia {data_reuniao}, {horario}, teremos nossa reunião de {tipo_reuniao.capita
 Pautas da Reunião:
 
 {lista_pautas}
-Lembrem que o planejamento das reuniões pode ser visto em: https://fflch.github.io/documentation/
+Lembrem que o planejamento das reuniões pode ser visto em: https://fflch.github.io
 """
 
     texto_assunto = f"Reunião {data_reuniao} - {tipo_reuniao.capitalize()}"
