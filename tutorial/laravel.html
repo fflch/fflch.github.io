@@ -659,6 +659,12 @@ Ano: &lt;input type=&quot;text&quot; name=&quot;ano&quot; value=&quot;{{ old('an
 }
 </code></pre>
 
+<p>No controler, trocamos as chamadas de <code>Request</code> para <code>LivroRequest</code>:</p>
+<pre class="codehilite"><code class="language-php">use App\Http\Requests\LivroRequest;
+public function update(LivroRequest $request, Livro $livro){
+public function store(LivroRequest $request)
+</code></pre>
+
 <h2 id="mutators">Mutators</h2>
 <p>Há situações em que queremos fazer um leve processamento antes de salvar um valor no banco de dados e logo após recuperarmos um valor. Vamos adicionar um campo para preço. Já sabemos como criar uma migration de alteração para alterar a tabela livros:</p>
 <pre class="codehilite"><code class="language-bash">php artisan make:migration add_preco_column_in_livros --table=livros
@@ -764,6 +770,8 @@ curl -L https://fflch.github.io/assets/laravel/crud_livros/web.php \
 curl -L https://fflch.github.io/assets/laravel/crud_livros/LivroCrudTest.php \
     -o tests/Browser/LivroCrudTest.php
 
+docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Uspdev\SenhaunicaSocialite\SenhaunicaServiceProvider&quot; --tag=&quot;migrations&quot;
+docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Spatie\Permission\PermissionServiceProvider&quot;
 docker exec -it cursolaravel php artisan migrate
 </code></pre>
 

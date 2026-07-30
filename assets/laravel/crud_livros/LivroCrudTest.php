@@ -12,6 +12,13 @@ class LivroCrudTest extends DuskTestCase
     public function test_crud_livros(): void
     {
         $this->browse(function (Browser $browser) {
+            // Login
+            $browser->visit('/')
+                ->clickLink('Entrar')
+                ->waitFor('#loginUsuario')
+                ->typeSlowly('#loginUsuario', '111111')
+                ->press('Login');
+                
             // Create
             $browser->visit('/livros/create')
                 ->typeSlowly('titulo', '2001: Uma odisséia no espaço')

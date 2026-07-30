@@ -10,6 +10,7 @@ class User extends Authenticatable
 {
     use HasRoles, HasSenhaunica;
     protected $guard_name = 'senhaunica';
+    protected $guarded = [];
 
     protected function casts(): array
     {
