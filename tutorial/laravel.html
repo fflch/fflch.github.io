@@ -66,7 +66,10 @@
 <li><a href="#exercicio-3">Exercício 3</a></li>
 </ul>
 </li>
-<li><a href="#dia-4">Dia 4</a></li>
+<li><a href="#dia-4">Dia 4</a><ul>
+<li><a href="#relacionamentos">Relacionamentos</a></li>
+</ul>
+</li>
 <li><a href="#instrucoes-para-producao">Instruções para produção</a></li>
 </ul>
 </div>
@@ -86,7 +89,7 @@ cd cursolaravel
 </code></pre>
 
 <p><a href="../assets/laravel/Dockerfile">Dockerfile</a> pronto para usar no contexto USP:</p>
-<pre class="codehilite"><code class="language-dockerfile">FROM uspdev/uspdev-php-apache:8.4
+<pre class="codehilite"><code class="language-dockerfile">FROM uspdev/uspdev-php-apache:latest
 
 RUN sed -i 's|/var/www/html|/var/www/html/public|' \
     /etc/apache2/sites-available/000-default.conf
@@ -420,6 +423,7 @@ DUSK_HEADLESS_DISABLED=true
 
 <p>4 -  No método <code>stats</code> apresente uma segunda tabela com a quantidade de livros por autor.</p>
 <p>Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar na TV rapidamente e solução do exercício.</p>
+<hr />
 <h1 id="dia-2">Dia 2</h1>
 <h2 id="crud">CRUD</h2>
 <p>CRUD é um acrônimo para as quatro operações básicas utilizadas na manipulação de dados em sistemas web: Create (Criar), Read (Ler), Update (Atualizar) e Delete (Excluir). Essas operações interagem com bancos de dados, permitindo, por exemplo, que usuários possam cadastrar novas informações, visualizar registros existentes, modificar dados já salvos e remover registros.</p>
@@ -592,6 +596,7 @@ public function test_crud_livros(): void
 <li>Criar uma rota <code>/frasedodia</code> e o método correspondente que ao ser acessada mostra uma frase aleatória, porém correspondente ao dia da semana. </li>
 </ol>
 <p>Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar a implementação na TV.</p>
+<hr />
 <h1 id="dia-3">Dia 3</h1>
 <p>Instalação do template USP conforme: <a href="https://github.com/uspdev/laravel-usp-theme/">https://github.com/uspdev/laravel-usp-theme/</a></p>
 <p>Instalação do senhaunica-socialite conforme: <a href="https://github.com/uspdev/senhaunica-socialite">https://github.com/uspdev/senhaunica-socialite</a></p>
@@ -695,6 +700,7 @@ protected function preco(): Attribute
 <li>Faça um mutator converter a virgula, quando existir, para ponto.</li>
 <li>Corrija seus formulários para sempre conterem a função old()</li>
 </ol>
+<hr />
 <h1 id="dia-4">Dia 4</h1>
 <p>Revisão do ambiente:</p>
 <pre class="codehilite"><code class="language-bash">mkdir cursolaravel
@@ -770,34 +776,71 @@ curl -L https://fflch.github.io/assets/laravel/crud_livros/web.php \
 curl -L https://fflch.github.io/assets/laravel/crud_livros/LivroCrudTest.php \
     -o tests/Browser/LivroCrudTest.php
 
+# Senha Única
+docker exec -it cursolaravel composer require uspdev/senhaunica-socialite
 docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Uspdev\SenhaunicaSocialite\SenhaunicaServiceProvider&quot; --tag=&quot;migrations&quot;
 docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Spatie\Permission\PermissionServiceProvider&quot;
 docker exec -it cursolaravel php artisan migrate
-</code></pre>
 
-<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer require league/csv
-docker exec -it cursolaravel composer require uspdev/laravel-usp-theme
-docker exec -it cursolaravel composer require uspdev/senhaunica-socialite
-docker exec -it cursolaravel php artisan migrate
-docker exec -it cursolaravel php artisan app:importa-livros
+# dusk
 docker exec -it cursolaravel composer require --dev laravel/dusk
 docker exec -it cursolaravel php artisan dusk:install
 docker exec -it cursolaravel php artisan dusk:chrome-driver
+
+# theme
+docker exec -it cursolaravel composer require uspdev/laravel-usp-theme
 docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Uspdev\UspTheme\ServiceProvider&quot; --tag=config
 docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Uspdev\UspTheme\ServiceProvider&quot; --tag=assets --force
+
+# outras libs
+docker exec -it cursolaravel composer require league/csv
 </code></pre>
 
+<p>Acessar o laravel criado: <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a></p>
 <pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
 </code></pre>
 
-<h1 id="instrucoes-para-producao">Instruções para produção</h1>
-<p><strong>1 - Imagem do docker</strong></p>
-<p>Para construção da imagem baseada na tag (versão) criar o arquivo <code>.github/workflows/docker.yml</code>:<br />
-<a href="/assets/files/laravel/docker.yml">Arquivo modelo docker.yml</a></p>
-<p><strong>2 - testes no dusk</strong></p>
-<p>Para rodar os testes no dusk baseado na configuração do docker-compose.yml, criar o arquivo <code>.github/workflows/dusk.yml</code>:<br />
-<a href="/assets/files/laravel/dusk.yml">Arquivo modelo dusk.yml</a><br />
-É necessário alterar a variável <code>SERVICE_NAME</code> no <code>dusk.yml</code> colocando o nome do sistema. </p>
+<p>Acessar <a href="http://localhost:7900/">http://localhost:7900/</a> com senha <code>secret</code> e assistir o teste rodando.</p>
+<p>Importando csv com os livros:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan app:importa-livros
+</code></pre>
+
+<h2 id="relacionamentos">Relacionamentos</h2>
+<p>Na tabela <code>livros</code> já inserimos o campo <code>user_id</code> apontando para tabela <code>users</code>. Vamos agora criar as relações (one-to-many) no laravel:</p>
+<p>Model Livro:</p>
+<pre class="codehilite"><code class="language-php">public function user()
+{
+    return $this-&gt;belongsTo(User::class);
+}
+</code></pre>
+
+<p>Nos fornece o poder de acessar o objeto usuário a partir do livro, exemplo no <code>show.blade.php</code></p>
+<pre class="codehilite"><code class="language-html">&lt;p&gt;
+    Livro cadastrado em {{ $livro-&gt;created_at-&gt;format('d/m/Y H:i') }} &lt;br&gt;
+    Última atualização em {{ $livro-&gt;updated_at-&gt;format('d/m/Y H:i') }} por &lt;b&gt;{{ $livro-&gt;user?-&gt;name }}&lt;/b&gt; 
+&lt;/p&gt;
+</code></pre>
+
+<p>Model User:</p>
+<pre class="codehilite"><code class="language-php">public function livros()
+{
+    return $this-&gt;hasMany(Livro::class);
+}
+</code></pre>
+
+<p>Nos fornece o poder de acessar todos os objetos de livros a partir de um usuário, exemplo no <code>show.blade.php</code>:</p>
+<pre class="codehilite"><code class="language-html">&lt;div&gt;
+    @if($livro-&gt;user)
+        Outros livros cadastrados ou editados por {{ $livro-&gt;user?-&gt;name }}:
+        &lt;ul&gt;
+        @foreach($livro-&gt;user-&gt;livros as $outro_livro)
+            &lt;li&gt;{{ $outro_livro-&gt;titulo }}&lt;/li&gt;
+        @endforeach
+        &lt;/ul&gt;
+    @endif
+&lt;/div&gt;
+</code></pre>
+
 <!--
 Ideias para dia 4:
 https://github.com/laravel-shift/blueprint
@@ -814,20 +857,17 @@ https://github.com/laravel-shift/blueprint
 - Upload de arquivos
 - Trabalhando com pdf
 - Vídeos
-
-models:
-  Livro4:
-    titulo: string
-    autor: string
-    ano: integer
-
-controllers:
-  Livro4:
-    resource: web
-
-config:
-  generate_tests: false
 -->
+
+<hr />
+<h1 id="instrucoes-para-producao">Instruções para produção</h1>
+<p><strong>1 - Imagem do docker</strong></p>
+<p>Para construção da imagem baseada na tag (versão) criar o arquivo <code>.github/workflows/docker.yml</code>:<br />
+<a href="/assets/files/laravel/docker.yml">Arquivo modelo docker.yml</a></p>
+<p><strong>2 - testes no dusk</strong></p>
+<p>Para rodar os testes no dusk baseado na configuração do docker-compose.yml, criar o arquivo <code>.github/workflows/dusk.yml</code>:<br />
+<a href="/assets/files/laravel/dusk.yml">Arquivo modelo dusk.yml</a><br />
+É necessário alterar a variável <code>SERVICE_NAME</code> no <code>dusk.yml</code> colocando o nome do sistema. </p>
         </div>
     </div>
     <!-- Prism JS e Autoloader para linguagens -->
