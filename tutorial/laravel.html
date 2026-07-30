@@ -66,6 +66,7 @@
 <li><a href="#exercicio-3">Exercício 3</a></li>
 </ul>
 </li>
+<li><a href="#dia-4">Dia 4</a></li>
 <li><a href="#instrucoes-para-producao">Instruções para produção</a></li>
 </ul>
 </div>
@@ -334,10 +335,8 @@ public function index(){
 <pre class="codehilite"><code class="language-php">docker exec -it cursolaravel php artisan make:command ImportaLivros
 </code></pre>
 
-<p>O comando acima criará o arquivo <code>app/Console/Commands/ImportaLivros.php</code>, o qual temos que mudar o <code>$signature</code> e implementar a lógica do comando:</p>
-<pre class="codehilite"><code class="language-php">#[Signature('livros:importar')]
-
-public function handle()
+<p>O comando acima criará o arquivo <code>app/Console/Commands/ImportaLivros.php</code>, vamos implementar a inserção de um livro via linha de comando:</p>
+<pre class="codehilite"><code class="language-php">public function handle()
 {
     $livro = new \App\Models\Livro;
     $livro-&gt;titulo = &quot;A Hora da Estrela&quot;;
@@ -347,7 +346,7 @@ public function handle()
 }
 </code></pre>
 
-<p>Ao rodarmos no terminal o comando <code>docker exec -it cursolaravel php artisan livros:importar</code> o livro da Clarice será cadastrado. Essa é um implementação simples (e inútil, pois o mesmo livro é sempre cadastrado repetidamente), mas a ideia é que qualquer lógica pode ser implementada no <code>handle()</code> para cadastro de muitos livros a partir de uma fonte externa, como, por exemplo, uma lista de livros oriunda de um arquivo csv.</p>
+<p>Ao rodarmos no terminal o comando <code>docker exec -it cursolaravel php artisan app:importa-livros</code> o livro da Clarice será cadastrado. Essa é um implementação simples (e inútil, pois o mesmo livro é sempre cadastrado repetidamente), mas a ideia é que qualquer lógica pode ser implementada no <code>handle()</code> para cadastro de muitos livros a partir de uma fonte externa, como, por exemplo, uma lista de livros oriunda de um arquivo csv.</p>
 <h3 id="dusk">Dusk</h3>
 <p>Os testes com <strong>Laravel Dusk</strong> no nosso contexto tem dois propósitos:</p>
 <ol>
@@ -631,15 +630,21 @@ $table-&gt;foreign('user_id')-&gt;references('id')-&gt;on('users')-&gt;nullOnDel
 ]);
 </code></pre>
 
-<p>Podemos usar a função <code>old('titulo')</code> nos formulários, que nesse caso verifica se há input na sessão para o campo <code>titulo</code>:</p>
+<p>A função <code>old('titulo')</code> verifica se há input na sessão para o campo <code>titulo</code>, para o <code>create.blade.php</code>:</p>
 <pre class="codehilite"><code class="language-html">Título: &lt;input type=&quot;text&quot; name=&quot;titulo&quot; value=&quot;{{old('titulo')}}&quot;&gt;
 Autor: &lt;input type=&quot;text&quot; name=&quot;autor&quot; value=&quot;{{old('autor')}}&quot;&gt;
 Ano: &lt;input type=&quot;text&quot; name=&quot;ano&quot; value=&quot;{{old('ano')}}&quot;&gt;
 </code></pre>
 
+<p>E no para o <code>edir.blade.php</code>:</p>
+<pre class="codehilite"><code class="language-html">Título: &lt;input type=&quot;text&quot; name=&quot;titulo&quot; value=&quot;{{ old('titulo', $livro-&gt;titulo) }}&quot;&gt;
+Autor: &lt;input type=&quot;text&quot; name=&quot;autor&quot; value=&quot;{{ old('autor', $livro-&gt;autor) }}&quot;&gt;
+Ano: &lt;input type=&quot;text&quot; name=&quot;ano&quot; value=&quot;{{ old('ano', $livro-&gt;ano) }}&quot;&gt;
+</code></pre>
+
 <h3 id="formrequest">FormRequest</h3>
 <p>A validação, que muitas vezes será idêntica no store e no update, pode ser delegada para um FormRequest. Crie um FormRequest com o artisan:</p>
-<pre class="codehilite"><code class="language-bash">php artisan make:request LivroRequest
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan make:request LivroRequest
 </code></pre>
 
 <p>Esse comando gerou o arquivo <code>app/Http/Requests/LivroRequest.php</code>. Como ainda não falamos de permissões, retorne <code>true</code> no método<br />
@@ -684,6 +689,20 @@ protected function preco(): Attribute
 <li>Faça um mutator converter a virgula, quando existir, para ponto.</li>
 <li>Corrija seus formulários para sempre conterem a função old()</li>
 </ol>
+<h1 id="dia-4">Dia 4</h1>
+<p>Arquivos prontos para subir o ambiente com o conteúdo visto até então, ou sejá, CRUD do model Livros e teste Dusk.</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer require league/csv
+docker exec -it cursolaravel composer require uspdev/laravel-usp-theme
+docker exec -it cursolaravel composer require uspdev/senhaunica-socialite
+docker exec -it cursolaravel php artisan migrate
+docker exec -it cursolaravel php artisan app:importa-livros
+
+docker exec -it cursolaravel composer require --dev laravel/dusk
+docker exec -it cursolaravel php artisan dusk:install
+docker exec -it cursolaravel php artisan dusk:chrome-driver
+docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
+</code></pre>
+
 <h1 id="instrucoes-para-producao">Instruções para produção</h1>
 <p><strong>1 - Imagem do docker</strong></p>
 <p>Para construção da imagem baseada na tag (versão) criar o arquivo <code>.github/workflows/docker.yml</code>:<br />
