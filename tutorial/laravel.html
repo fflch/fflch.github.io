@@ -194,6 +194,7 @@ curl -L https://fflch.github.io/assets/laravel/docker-compose.yml -o docker-comp
 <p>Acessar o laravel criado: <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a></p>
 <p>Acessar phpmyadmin criado: <a href="http://127.0.0.1:8081/">http://127.0.0.1:8081/</a></p>
 <p>Acessar servidor de autenticação USP: <a href="http://auth.local:3141">http://auth.local:3141</a></p>
+<p>Acessar <a href="http://localhost:7900/">http://localhost:7900/</a> com senha <code>secret</code> para assistir os testes rodando.</p>
 <p>No arquivo .env vamos trocar para mariadb:</p>
 <pre class="codehilite"><code class="language-bash">DB_CONNECTION=mariadb
 DB_HOST=mariadb
@@ -385,7 +386,6 @@ DUSK_HEADLESS_DISABLED=true
     -&gt;assertSee('O Primo Basílio');
 </code></pre>
 
-<p>Acessar <a href="http://localhost:7900/">http://localhost:7900/</a> com senha <code>secret</code> e assistir o teste rodando.</p>
 <p>Rodar o teste:</p>
 <pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan dusk tests/Browser/BuscaLivroTest.php
 </code></pre>
@@ -816,10 +816,37 @@ https://github.com/laravel-shift/blueprint
 <p><strong>1 - Imagem do docker</strong></p>
 <p>Para construção da imagem baseada na tag (versão) criar o arquivo <code>.github/workflows/docker.yml</code>:<br />
 <a href="/assets/files/laravel/docker.yml">Arquivo modelo docker.yml</a></p>
+<pre class="codehilite"><code class="language-bash">mkdir -p .github/workflows
+curl -L https://fflch.github.io/assets/laravel/docker.yml -o .github/workflows/docker.yml
+</code></pre>
+
 <p><strong>2 - testes no dusk</strong></p>
 <p>Para rodar os testes no dusk baseado na configuração do docker-compose.yml, criar o arquivo <code>.github/workflows/dusk.yml</code>:<br />
-<a href="/assets/files/laravel/dusk.yml">Arquivo modelo dusk.yml</a><br />
-É necessário alterar a variável <code>SERVICE_NAME</code> no <code>dusk.yml</code> colocando o nome do sistema. </p>
+<a href="/assets/files/laravel/dusk.yml">Arquivo modelo dusk.yml</a></p>
+<pre class="codehilite"><code class="language-bash">curl -L https://fflch.github.io/assets/laravel/dusk.yml -o .github/workflows/dusk.yml
+</code></pre>
+
+<p>É necessário alterar a variável <code>SERVICE_NAME</code> no <code>dusk.yml</code> colocando o nome do sistema, que no caso do curso é <code>cursolaravel</code>. Além disso o <code>.env.example</code> do sistema deve estar preparado para rodar os testes no dusk com o ambiente criado pelo docker-compose.yml, ou seja, o <code>.env.example</code> deve conter minimamente:</p>
+<pre class="codehilite"><code class="language-bash">DB_CONNECTION=mariadb
+DB_HOST=mariadb
+DB_PORT=3306
+DB_DATABASE=cursolaravel # TROCAR PARA NOME DO SISTEMA
+DB_USERNAME=cursolaravel # TROCAR PARA NOME DO SISTEMA
+DB_PASSWORD=cursolaravel # TROCAR PARA NOME DO SISTEMA
+
+APP_URL=http://cursolaravel # TROCAR PARA NOME DO SISTEMA
+DUSK_DRIVER_URL='http://selenium:4444/wd/hub'
+DUSK_START_MAXIMIZED=true
+DUSK_HEADLESS_DISABLED=true
+
+SENHAUNICA_KEY=faker
+SENHAUNICA_SECRET=faker
+SENHAUNICA_CALLBACK_ID=1
+SENHAUNICA_ADMINS=111111
+SENHAUNICA_DEV=&quot;http://auth.local:3141/wsusuario/oauth&quot;
+
+USP_THEME_SKIN=fflch
+</code></pre>
         </div>
     </div>
     <!-- Prism JS e Autoloader para linguagens -->
