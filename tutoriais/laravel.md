@@ -5,16 +5,12 @@ title: Laravel
 
 ## Configurando ambiente 
 
-Iremos usar o docker para fazer a instalação;
+Iremos usar o docker para fazer a instalação. O Composer é um gerenciador de dependências para PHP. Ele permite instalar, atualizar e gerenciar bibliotecas e pacotes de forma simples, garantindo que um projeto tenha todas as dependências necessárias. No Laravel, o Composer é usado para instalar o framework e suas bibliotecas.
 
 ```bash
 mkdir cursolaravel
 cd cursolaravel
-```
 
-O Composer é um gerenciador de dependências para PHP. Ele permite instalar, atualizar e gerenciar bibliotecas e pacotes de forma simples, garantindo que um projeto tenha todas as dependências necessárias. No Laravel, o Composer é usado para instalar o framework e suas bibliotecas.
-
-```bash
 docker run --rm -it \
   -v $(pwd):/app \
   -u $(id -u):$(id -g) \
@@ -28,6 +24,12 @@ docker run --rm -it \
 
 [docker-compose.yml](../assets/laravel/docker-compose.yml) pronto para usar no contexto USP:
 [[include:laravel/docker-compose.yml]]
+
+Baixando ambos:
+```bash
+curl -L https://fflch.github.io/assets/laravel/Dockerfile -o Dockerfile
+curl -L https://fflch.github.io/assets/laravel/docker-compose.yml -o docker-compose.yml
+```
 
 
 Criando a imagem e subindo ambiente:
@@ -505,7 +507,7 @@ php artisan dusk:make LivroCrudTest
 Vamos testar sequencialmente as operações:
 ```php
 use App\Models\Livro;
-public function test_crud_livros(): void
+public function test_curso(): void
 {
     $this->browse(function (Browser $browser) {
         // Create
@@ -693,28 +695,53 @@ protected function preco(): Attribute
 --- 
 # Dia 4
 
-Revisão do ambiente:
+Revisão do ambiente, arquivos prontos para subir o ambiente com o conteúdo visto até então:
 
 ```bash
-mkdir cursolaravel
-cd cursolaravel
+# .env
+curl -L https://fflch.github.io/assets/laravel/curso/env -o .env
 
-docker run --rm -it \
-  -v $(pwd):/app \
-  -u $(id -u):$(id -g) \
-  composer:latest \
-  composer create-project laravel/laravel .
+# Artisan Command para importar csv dos livros
+mkdir -p app/Console/Commands
+curl -L https://fflch.github.io/assets/laravel/curso/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
 
-curl -L https://fflch.github.io/assets/laravel/Dockerfile -o Dockerfile
-curl -L https://fflch.github.io/assets/laravel/docker-compose.yml -o docker-compose.yml
-docker compose up --build
+# Index
+curl -L https://fflch.github.io/assets/laravel/curso/IndexController.php -o app/Http/Controllers/IndexController.php
+curl -L https://fflch.github.io/assets/laravel/curso/home.blade.php -o resources/views/home.blade.php
+curl -L https://fflch.github.io/assets/laravel/curso/web.php -o routes/web.php
+
+# Arrumando Model User para senha única
+curl -L https://fflch.github.io/assets/laravel/curso/User.php -o app/Models/User.php
+
+# Instalação do Senha Única
+docker exec -it cursolaravel composer require uspdev/senhaunica-socialite
+docker exec -it cursolaravel php artisan vendor:publish --provider="Uspdev\SenhaunicaSocialite\SenhaunicaServiceProvider" --tag="migrations"
+docker exec -it cursolaravel php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+docker exec -it cursolaravel php artisan migrate
+
+# Instalação do Dusk
+docker exec -it cursolaravel composer require --dev laravel/dusk
+docker exec -it cursolaravel php artisan dusk:install
+docker exec -it cursolaravel php artisan dusk:chrome-driver
+
+# Instalação do theme USP
+docker exec -it cursolaravel composer require uspdev/laravel-usp-theme
+docker exec -it cursolaravel php artisan vendor:publish --provider="Uspdev\UspTheme\ServiceProvider" --tag=config
+docker exec -it cursolaravel php artisan vendor:publish --provider="Uspdev\UspTheme\ServiceProvider" --tag=assets --force
+
+# Instalação outras libs
+docker exec -it cursolaravel composer require league/csv
 ```
-Arquivos prontos para subir o ambiente com o conteúdo visto até então, ou sejá, CRUD do model Livros e testes no Dusk.
-
-[[include:laravel/crud_livros/crud_livros.sh]]
-
 Acessar o laravel criado: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
+Gerando o CRUD para livros:
+```bash
+docker exec -it cursolaravel composer req uspdev/simple-crud-generator --dev
+docker exec -it cursolaravel php artisan scg
+docker exec -it cursolaravel php artisan migrate
+```
+
+Mude o .env e rode o testes com o dusk:
 ```bash
 docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
 ```
