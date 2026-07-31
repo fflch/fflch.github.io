@@ -8,14 +8,11 @@ title: Laravel
 Iremos usar o docker para fazer a instalação. O Composer é um gerenciador de dependências para PHP. Ele permite instalar, atualizar e gerenciar bibliotecas e pacotes de forma simples, garantindo que um projeto tenha todas as dependências necessárias. No Laravel, o Composer é usado para instalar o framework e suas bibliotecas.
 
 ```bash
-mkdir cursolaravel
-cd cursolaravel
-
 docker run --rm -it \
   -v $(pwd):/app \
   -u $(id -u):$(id -g) \
   composer:latest \
-  composer create-project laravel/laravel .
+  composer create-project laravel/laravel cursolaravel
 ```
 
 [Dockerfile](../assets/laravel/Dockerfile) pronto para usar no contexto USP:
