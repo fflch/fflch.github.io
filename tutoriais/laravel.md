@@ -43,6 +43,8 @@ Acessar phpmyadmin criado: [http://127.0.0.1:8081/](http://127.0.0.1:8081/)
 
 Acessar servidor de autenticação USP: [http://auth.local:3141](http://auth.local:3141)
 
+Acessar [http://localhost:7900/](http://localhost:7900/) com senha `secret` para assistir os testes rodando.
+
 
 No arquivo .env vamos trocar para mariadb:
 
@@ -290,8 +292,6 @@ $browser->visit('/livros')
     ->pause(2000)
     ->assertSee('O Primo Basílio');
 ```
-
-Acessar [http://localhost:7900/](http://localhost:7900/) com senha `secret` e assistir o teste rodando.
 
 Rodar o teste:
 
@@ -825,8 +825,40 @@ https://github.com/laravel-shift/blueprint
 Para construção da imagem baseada na tag (versão) criar o arquivo `.github/workflows/docker.yml`:
 [Arquivo modelo docker.yml](/assets/files/laravel/docker.yml)
 
+```bash
+mkdir -p .github/workflows
+curl -L https://fflch.github.io/assets/laravel/docker.yml -o .github/workflows/docker.yml
+```
+
 **2 - testes no dusk**
 
 Para rodar os testes no dusk baseado na configuração do docker-compose.yml, criar o arquivo `.github/workflows/dusk.yml`:
 [Arquivo modelo dusk.yml](/assets/files/laravel/dusk.yml)
-É necessário alterar a variável `SERVICE_NAME` no `dusk.yml` colocando o nome do sistema. 
+
+```bash
+curl -L https://fflch.github.io/assets/laravel/dusk.yml -o .github/workflows/dusk.yml
+```
+
+É necessário alterar a variável `SERVICE_NAME` no `dusk.yml` colocando o nome do sistema, que no caso do curso é `cursolaravel`. Além disso o `.env.example` do sistema deve estar preparado para rodar os testes no dusk com o ambiente criado pelo docker-compose.yml, ou seja, o `.env.example` deve conter minimamente:
+
+```bash
+DB_CONNECTION=mariadb
+DB_HOST=mariadb
+DB_PORT=3306
+DB_DATABASE=cursolaravel # TROCAR PARA NOME DO SISTEMA
+DB_USERNAME=cursolaravel # TROCAR PARA NOME DO SISTEMA
+DB_PASSWORD=cursolaravel # TROCAR PARA NOME DO SISTEMA
+
+APP_URL=http://cursolaravel # TROCAR PARA NOME DO SISTEMA
+DUSK_DRIVER_URL='http://selenium:4444/wd/hub'
+DUSK_START_MAXIMIZED=true
+DUSK_HEADLESS_DISABLED=true
+
+SENHAUNICA_KEY=faker
+SENHAUNICA_SECRET=faker
+SENHAUNICA_CALLBACK_ID=1
+SENHAUNICA_ADMINS=111111
+SENHAUNICA_DEV="http://auth.local:3141/wsusuario/oauth"
+
+USP_THEME_SKIN=fflch
+```
