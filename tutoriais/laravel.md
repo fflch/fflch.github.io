@@ -692,54 +692,36 @@ protected function preco(): Attribute
 --- 
 # Dia 4
 
-Revisão do ambiente, arquivos prontos para subir o ambiente com o conteúdo visto até então:
+Revisão do ambiente com o conteúdo visto até então:
 
 ```bash
-# .env
-curl -L https://fflch.github.io/assets/laravel/curso/env -o .env
+docker run --rm -it \
+  -v $(pwd):/app \
+  -u $(id -u):$(id -g) \
+  composer:latest \
+  composer create-project uspdev/starter-ng cursolaravel
 
-# Artisan Command para importar csv dos livros
-mkdir -p app/Console/Commands
-curl -L https://fflch.github.io/assets/laravel/curso/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
-
-# Index
-curl -L https://fflch.github.io/assets/laravel/curso/IndexController.php -o app/Http/Controllers/IndexController.php
-curl -L https://fflch.github.io/assets/laravel/curso/home.blade.php -o resources/views/home.blade.php
-curl -L https://fflch.github.io/assets/laravel/curso/web.php -o routes/web.php
-
-# Arrumando Model User para senha única
-curl -L https://fflch.github.io/assets/laravel/curso/User.php -o app/Models/User.php
-
-# Instalação do Senha Única
-docker exec -it cursolaravel composer require uspdev/senhaunica-socialite
-docker exec -it cursolaravel php artisan vendor:publish --provider="Uspdev\SenhaunicaSocialite\SenhaunicaServiceProvider" --tag="migrations"
-docker exec -it cursolaravel php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
-docker exec -it cursolaravel php artisan migrate
-
-# Instalação do Dusk
-docker exec -it cursolaravel composer require --dev laravel/dusk
-docker exec -it cursolaravel php artisan dusk:install
-docker exec -it cursolaravel php artisan dusk:chrome-driver
-
-# Instalação do theme USP
-docker exec -it cursolaravel composer require uspdev/laravel-usp-theme
-docker exec -it cursolaravel php artisan vendor:publish --provider="Uspdev\UspTheme\ServiceProvider" --tag=config
-docker exec -it cursolaravel php artisan vendor:publish --provider="Uspdev\UspTheme\ServiceProvider" --tag=assets --force
-
-# Instalação outras libs
-docker exec -it cursolaravel composer require league/csv
+cd cursolaravel
+docker compose up --build
 ```
+
+Rodando as migrations:
+```bash
+docker exec -it cursolaravel composer dump-autoload -o
+docker exec -it cursolaravel php artisan migrate:fresh
+```
+
 Acessar o laravel criado: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 Gerando o CRUD para livros:
 ```bash
-docker exec -it cursolaravel composer req uspdev/simple-crud-generator --dev
 docker exec -it cursolaravel php artisan scg
 docker exec -it cursolaravel php artisan migrate
 ```
 
 Mude o .env e rode o testes com o dusk:
 ```bash
+docker exec -it cursolaravel php artisan dusk:chrome-driver
 docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
 ```
 
@@ -747,8 +729,13 @@ Acessar [http://localhost:7900/](http://localhost:7900/) com senha `secret` e as
 
 Importando csv com os livros:
 ```bash
+mkdir -p app/Console/Commands
+curl -L https://fflch.github.io/assets/laravel/curso/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
+
 docker exec -it cursolaravel php artisan app:importa-livros
 ```
+
+
 ## Relacionamentos
 
 Na tabela `livros` já inserimos o campo `user_id` apontando para tabela `users`. Vamos agora criar as relações (one-to-many) no laravel:
@@ -793,7 +780,10 @@ Nos fornece o poder de acessar todos os objetos de livros a partir de um usuári
 </div>
 ```
 
-
+```bash
+# Instalação outras libs
+docker exec -it cursolaravel composer require league/csv
+```
 
 <!--
 Ideias para dia 4:
