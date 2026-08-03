@@ -702,56 +702,39 @@ protected function preco(): Attribute
 </ol>
 <hr />
 <h1 id="dia-4">Dia 4</h1>
-<p>Revisão do ambiente, arquivos prontos para subir o ambiente com o conteúdo visto até então:</p>
-<pre class="codehilite"><code class="language-bash"># .env
-curl -L https://fflch.github.io/assets/laravel/curso/env -o .env
+<p>Revisão do ambiente com o conteúdo visto até então:</p>
+<pre class="codehilite"><code class="language-bash">docker run --rm -it \
+  -v $(pwd):/app \
+  -u $(id -u):$(id -g) \
+  composer:latest \
+  composer create-project uspdev/starter-ng cursolaravel
 
-# Artisan Command para importar csv dos livros
-mkdir -p app/Console/Commands
-curl -L https://fflch.github.io/assets/laravel/curso/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
+cd cursolaravel
+docker compose up --build
+</code></pre>
 
-# Index
-curl -L https://fflch.github.io/assets/laravel/curso/IndexController.php -o app/Http/Controllers/IndexController.php
-curl -L https://fflch.github.io/assets/laravel/curso/home.blade.php -o resources/views/home.blade.php
-curl -L https://fflch.github.io/assets/laravel/curso/web.php -o routes/web.php
-
-# Arrumando Model User para senha única
-curl -L https://fflch.github.io/assets/laravel/curso/User.php -o app/Models/User.php
-
-# Instalação do Senha Única
-docker exec -it cursolaravel composer require uspdev/senhaunica-socialite
-docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Uspdev\SenhaunicaSocialite\SenhaunicaServiceProvider&quot; --tag=&quot;migrations&quot;
-docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Spatie\Permission\PermissionServiceProvider&quot;
-docker exec -it cursolaravel php artisan migrate
-
-# Instalação do Dusk
-docker exec -it cursolaravel composer require --dev laravel/dusk
-docker exec -it cursolaravel php artisan dusk:install
-docker exec -it cursolaravel php artisan dusk:chrome-driver
-
-# Instalação do theme USP
-docker exec -it cursolaravel composer require uspdev/laravel-usp-theme
-docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Uspdev\UspTheme\ServiceProvider&quot; --tag=config
-docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Uspdev\UspTheme\ServiceProvider&quot; --tag=assets --force
-
-# Instalação outras libs
-docker exec -it cursolaravel composer require league/csv
+<p>Rodando as migrations:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer dump-autoload -o
+docker exec -it cursolaravel php artisan migrate:fresh
 </code></pre>
 
 <p>Acessar o laravel criado: <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a></p>
 <p>Gerando o CRUD para livros:</p>
-<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer req uspdev/simple-crud-generator --dev
-docker exec -it cursolaravel php artisan scg
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan scg
 docker exec -it cursolaravel php artisan migrate
 </code></pre>
 
 <p>Mude o .env e rode o testes com o dusk:</p>
-<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan dusk:chrome-driver
+docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
 </code></pre>
 
 <p>Acessar <a href="http://localhost:7900/">http://localhost:7900/</a> com senha <code>secret</code> e assistir o teste rodando.</p>
 <p>Importando csv com os livros:</p>
-<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan app:importa-livros
+<pre class="codehilite"><code class="language-bash">mkdir -p app/Console/Commands
+curl -L https://fflch.github.io/assets/laravel/curso/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
+
+docker exec -it cursolaravel php artisan app:importa-livros
 </code></pre>
 
 <h2 id="relacionamentos">Relacionamentos</h2>
@@ -788,6 +771,10 @@ docker exec -it cursolaravel php artisan migrate
         &lt;/ul&gt;
     @endif
 &lt;/div&gt;
+</code></pre>
+
+<pre class="codehilite"><code class="language-bash"># Instalação outras libs
+docker exec -it cursolaravel composer require league/csv
 </code></pre>
 
 <!--
