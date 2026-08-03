@@ -31,7 +31,7 @@
         <div class="markdown-body">
             <div class="toc">
 <ul>
-<li><a href="#dia-1">Dia 1</a><ul>
+<li><a href="#dia-1-mvc-command-e-dusk">Dia 1 - MVC, Command e Dusk</a><ul>
 <li><a href="#configurando-ambiente">Configurando ambiente</a></li>
 <li><a href="#mvc">MVC</a><ul>
 <li><a href="#model">Model</a></li>
@@ -44,18 +44,15 @@
 <li><a href="#exercicio-importacao-de-livros">Exercício - Importação de Livros</a></li>
 </ul>
 </li>
-<li><a href="#dia-2">Dia 2</a><ul>
-<li><a href="#crud">CRUD</a><ul>
+<li><a href="#dia-2-crud">Dia 2 - CRUD</a><ul>
 <li><a href="#create">Create</a></li>
 <li><a href="#read">Read</a></li>
 <li><a href="#update">Update</a></li>
 <li><a href="#delete">Delete</a></li>
-</ul>
-</li>
 <li><a href="#exercicio-2">Exercício 2</a></li>
 </ul>
 </li>
-<li><a href="#dia-3">Dia 3</a><ul>
+<li><a href="#dia-3-migrations-de-alteracao-validacoes-mutators">Dia 3 - Migrations de alteração, Validações, Mutators,</a><ul>
 <li><a href="#migration-de-alteracao">Migration de Alteração</a></li>
 <li><a href="#validacao">Validação</a><ul>
 <li><a href="#validacao-no-controller">Validação no Controller</a></li>
@@ -66,14 +63,19 @@
 <li><a href="#exercicio-3">Exercício 3</a></li>
 </ul>
 </li>
-<li><a href="#dia-4">Dia 4</a><ul>
+<li><a href="#dia-4-alem-do-crud">Dia 4 - Além do CRUD</a><ul>
 <li><a href="#relacionamentos">Relacionamentos</a></li>
+<li><a href="#observer-e-emails">Observer e Emails</a></li>
+<li><a href="#replicado-usp">Replicado USP</a></li>
+<li><a href="#autorizacao">Autorização</a></li>
+<li><a href="#metodos-adicionais-no-controller-alem-do-crud-pdf-e-excel">Métodos adicionais no Controller, além do CRUD, pdf e excel</a></li>
+<li><a href="#upload">Upload</a></li>
 </ul>
 </li>
 <li><a href="#instrucoes-para-producao">Instruções para produção</a></li>
 </ul>
 </div>
-<h1 id="dia-1">Dia 1</h1>
+<h1 id="dia-1-mvc-command-e-dusk">Dia 1 - MVC, Command e Dusk</h1>
 <h2 id="configurando-ambiente">Configurando ambiente</h2>
 <p>Iremos usar o docker para fazer a instalação. O Composer é um gerenciador de dependências para PHP. Ele permite instalar, atualizar e gerenciar bibliotecas e pacotes de forma simples, garantindo que um projeto tenha todas as dependências necessárias. No Laravel, o Composer é usado para instalar o framework e suas bibliotecas.</p>
 <pre class="codehilite"><code class="language-bash">docker run --rm -it \
@@ -172,6 +174,15 @@ CMD [&quot;apache2-foreground&quot;]
         aliases:
           - auth.local
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: cursolaravel_mailpit
+    ports:
+      - &quot;1025:1025&quot;   # SMTP
+      - &quot;8025:8025&quot;   # Interface Web
+    networks:
+      - cursolaravel-network
+
 networks:
   cursolaravel-network:
 
@@ -191,6 +202,7 @@ curl -L https://fflch.github.io/assets/laravel/docker-compose.yml -o docker-comp
 <p>Acessar o laravel criado: <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a></p>
 <p>Acessar phpmyadmin criado: <a href="http://127.0.0.1:8081/">http://127.0.0.1:8081/</a></p>
 <p>Acessar servidor de autenticação USP: <a href="http://auth.local:3141">http://auth.local:3141</a></p>
+<p>Acessar servidor de email: <a href="http://localhost:8025/">http://localhost:8025/</a></p>
 <p>Acessar <a href="http://localhost:7900/">http://localhost:7900/</a> com senha <code>secret</code> para assistir os testes rodando.</p>
 <p>No arquivo .env vamos trocar para mariadb:</p>
 <pre class="codehilite"><code class="language-bash">DB_CONNECTION=mariadb
@@ -424,8 +436,7 @@ DUSK_HEADLESS_DISABLED=true
 <p>4 -  No método <code>stats</code> apresente uma segunda tabela com a quantidade de livros por autor.</p>
 <p>Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar na TV rapidamente e solução do exercício.</p>
 <hr />
-<h1 id="dia-2">Dia 2</h1>
-<h2 id="crud">CRUD</h2>
+<h1 id="dia-2-crud">Dia 2 - CRUD</h1>
 <p>CRUD é um acrônimo para as quatro operações básicas utilizadas na manipulação de dados em sistemas web: Create (Criar), Read (Ler), Update (Atualizar) e Delete (Excluir). Essas operações interagem com bancos de dados, permitindo, por exemplo, que usuários possam cadastrar novas informações, visualizar registros existentes, modificar dados já salvos e remover registros.</p>
 <h3 id="create">Create</h3>
 <p>São geralmente necessárias duas rotas para salvar um registro em uma operação CRUD porque o processo é dividido em duas etapas: exibir o formulário e processar os dados enviados. A rota GET serve para exibir o formulário de criação e a rota POST serve para processar os dados enviados pelo formulário no controller:</p>
@@ -597,7 +608,7 @@ public function test_curso(): void
 </ol>
 <p>Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar a implementação na TV.</p>
 <hr />
-<h1 id="dia-3">Dia 3</h1>
+<h1 id="dia-3-migrations-de-alteracao-validacoes-mutators">Dia 3 - Migrations de alteração, Validações, Mutators,</h1>
 <p>Instalação do template USP conforme: <a href="https://github.com/uspdev/laravel-usp-theme/">https://github.com/uspdev/laravel-usp-theme/</a></p>
 <p>Instalação do senhaunica-socialite conforme: <a href="https://github.com/uspdev/senhaunica-socialite">https://github.com/uspdev/senhaunica-socialite</a></p>
 <p>Configurações para usar o faker:</p>
@@ -701,7 +712,7 @@ protected function preco(): Attribute
 <li>Corrija seus formulários para sempre conterem a função old()</li>
 </ol>
 <hr />
-<h1 id="dia-4">Dia 4</h1>
+<h1 id="dia-4-alem-do-crud">Dia 4 - Além do CRUD</h1>
 <p>Revisão do ambiente com o conteúdo visto até então:</p>
 <pre class="codehilite"><code class="language-bash">docker run --rm -it \
   -v $(pwd):/app \
@@ -730,13 +741,6 @@ docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
 </code></pre>
 
 <p>Acessar <a href="http://localhost:7900/">http://localhost:7900/</a> com senha <code>secret</code> e assistir o teste rodando.</p>
-<p>Importando csv com os livros:</p>
-<pre class="codehilite"><code class="language-bash">mkdir -p app/Console/Commands
-curl -L https://fflch.github.io/assets/laravel/curso/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
-
-docker exec -it cursolaravel php artisan app:importa-livros
-</code></pre>
-
 <h2 id="relacionamentos">Relacionamentos</h2>
 <p>Na tabela <code>livros</code> já inserimos o campo <code>user_id</code> apontando para tabela <code>users</code>. Vamos agora criar as relações (one-to-many) no laravel:</p>
 <p>Model Livro:</p>
@@ -773,26 +777,313 @@ docker exec -it cursolaravel php artisan app:importa-livros
 &lt;/div&gt;
 </code></pre>
 
+<h2 id="observer-e-emails">Observer e Emails</h2>
+<p>Um Observer é uma classe que escuta e reage a eventos do ciclo de vida de uma Model, como created, updated ou deleted:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan make:observer LivroObserver --model=Livro
+</code></pre>
+
+<p>Criando um template de email na pasta <code>resources/views/emails/livros</code> com o nome <code>create.blade.php</code>:</p>
+<pre class="codehilite"><code class="language-bash">mkdir -p resources/views/emails/livros
+</code></pre>
+
+<p>Template:</p>
+<pre class="codehilite"><code class="language-bash">Novo livro criado: {{ $livro-&gt;titulo }}
+</code></pre>
+
+<p>Criando a rotina de envio de email:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan make:mail LivroCreatedMail
+</code></pre>
+
+<p>Configurando o email com ShouldQueue para que o Laravel envie o email em segundo plano:</p>
+<pre class="codehilite"><code class="language-php">use App\Models\Livro;
+class LivroCreatedMail extends Mailable implements ShouldQueue 
+{
+    private Livro $livro;
+    public function __construct(Livro $livro)
+    {
+        $this-&gt;livro = $livro;
+    }
+
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: 'Novo Livro Cadastrado: ' . $this-&gt;livro-&gt;titulo,
+        );
+    }
+
+    public function content(): Content
+        {
+            return new Content(
+                view: 'emails.livros.create',
+                with: [
+                    'livro' =&gt; $this-&gt;livro,
+                ],
+            );
+        }
+    }
+</code></pre>
+
+<p>Configurando o observer para disparar o email na ação de livro criado:</p>
+<pre class="codehilite"><code class="language-php">namespace App\Observers;
+
+use App\Models\Livro;
+use App\Mail\LivroCreatedMail;
+use Illuminate\Support\Facades\Mail;
+
+class LivroObserver
+{
+    public function created(Livro $livro): void
+    {
+        Mail::to('destinatario@email.com')-&gt;queue(new LivroCreatedMail($livro));
+    }
+}
+</code></pre>
+
+<p>Registrando o observer no <code>AppServiceProvider.php</code>:</p>
+<pre class="codehilite"><code class="language-php">use App\Models\Livro;
+use App\Observers\LivroObserver;
+
+    public function boot(): void
+    {
+        Livro::observe(LivroObserver::class);
+    }
+}
+</code></pre>
+
+<p>Agrupe os testes de e-mail do mesmo Model em uma única classe, utilizando o prefixo Livro para identificar os testes da Model Livro, neste caso:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan dusk:make LivroEmailsTest
+</code></pre>
+
+<p>Implemente o teste Dusk para confirmar se o email está sendo disparado:</p>
+<pre class="codehilite"><code class="language-php">&lt;?php
+
+namespace Tests\Browser;
+
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Laravel\Dusk\Browser;
+use Tests\DuskTestCase;
+use Illuminate\Support\Facades\Http;
+
+use App\Mail\LivroCriadoMail;
+use Illuminate\Support\Facades\Mail;
+
+class LivroEmailsTest extends DuskTestCase
+{
+    protected function setUp(): void
+    {
+        // Limpa as mensagens do Mailpit antes de cada teste
+        parent::setUp();
+        Http::delete('http://mailpit:8025/api/v1/messages');
+    }
+
+    public function test_create_livro(): void
+    {
+        Mail::fake();
+        $this-&gt;browse(function (Browser $browser) {
+            // Login
+            $browser-&gt;visit('/')
+                -&gt;clickLink('Entrar')
+                -&gt;waitFor('#loginUsuario')
+                -&gt;typeSlowly('#loginUsuario', '111111')
+                -&gt;press('Login');
+
+            // Create
+            $browser-&gt;visit('/livros/create')
+                -&gt;typeSlowly('titulo', '2001: Uma odisséia no espaço')
+                -&gt;typeSlowly('autor', 'Arthur C. Clarke')
+                -&gt;typeSlowly('ano', '1968')
+                -&gt;press('Enviar')
+                -&gt;assertPathIs('/livros')
+                -&gt;assertSee('2001: Uma odisséia no espaço');
+        });
+
+        // Consulta a API do Mailpit para verificar se o e-mail foi entregue
+        $response = Http::get('http://mailpit:8025/api/v1/messages');
+        $messages = $response-&gt;json('messages');
+        $latestMail = $messages[0];
+
+        // Valida o assunto do e-mail enviado pela Mailable
+        $this-&gt;assertStringContainsString('Novo Livro Cadastrado: ' . '2001: Uma odisséia no espaço', $latestMail['Subject']);
+
+        // Valida se o destinatário é o correto 
+        $this-&gt;assertEquals('destinatario@email.com', $latestMail['To'][0]['Address']);
+    }
+}
+</code></pre>
+
+<h2 id="replicado-usp">Replicado USP</h2>
+<p>Na USP, o banco de dados corporativo central (Sybase/SQL Server) é replicado para bases de dados locais nas unidades, esse banco local é chamado de Replicado.</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer require uspdev/replicado
+</code></pre>
+
+<p>Como funciona?</p>
+<pre class="codehilite"><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Uspdev\Replicado\Pessoa;
+
+class IndexController extends Controller
+{
+    public function index(){
+
+        if (auth()-&gt;check()) {
+            $curso = Pessoa::retornarCursoPorCodpes(auth()-&gt;user()-&gt;codpes)['nomcur'];
+        } else {
+            $curso = 'usuário não logado';
+        }
+
+        return view('index', ['curso' =&gt; $curso]);
+    }
+}
+</code></pre>
+
+<p>No blade:</p>
+<pre class="codehilite"><code class="language-html">Seu curso é: {{ $curso }}
+</code></pre>
+
+<h2 id="autorizacao">Autorização</h2>
+<p>Um Gate no Laravel é uma função usada para verificar se um usuário autenticado tem permissão para realizar uma ação específica na aplicação. O senha única socialite fornece acesso para um Gate chamado de <code>admin</code> para aqueles usuários com número USP no .env: <code>SENHAUNICA_ADMINS=111111,782783</code>, no exemplo, somente as pessoas com número USP 111111 e 782783 terão acesso de admim. Para restringir o acesso a controllers somente para admin:</p>
+<pre class="codehilite"><code class="language-php">use Illuminate\Support\Facades\Gate;
+
+public function index(){
+    Gate::authorize('admin');
+    ...
+}
+</code></pre>
+
+<p>Implementando policies</p>
+<h2 id="metodos-adicionais-no-controller-alem-do-crud-pdf-e-excel">Métodos adicionais no Controller, além do CRUD, pdf e excel</h2>
+<p>Importando csv com os livros:</p>
+<pre class="codehilite"><code class="language-bash">mkdir -p app/Console/Commands
+curl -L https://fflch.github.io/assets/laravel/curso/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
+
+docker exec -it cursolaravel php artisan app:importa-livros
+</code></pre>
+
 <pre class="codehilite"><code class="language-bash"># Instalação outras libs
 docker exec -it cursolaravel composer require league/csv
 </code></pre>
 
+<h2 id="upload">Upload</h2>
+<p>Exemplo de upload para uma imagem por livro. Usaremos uma abordagem mais segura porque impede o acesso público direto via URL. Quando os arquivos ficam na pasta pública, qualquer pessoa que descubra o link pode visualizá-los, ignorando a autenticação do sistema. No diretório privado, a entrega do arquivo obrigatoriamente passa por uma rota e um método no Controller. Isso permite validar se o usuário está logado e aplicar políticas de permissão, garantindo total controle sobre quem pode visualizar ou baixar o conteúdo.</p>
+<p>No arquivo <code>App/Http/Requests/LivroRequest.php</code>:</p>
+<pre class="codehilite"><code class="language-php">'imagem'   =&gt; 'nullable|image|mimes:jpeg,jpg|max:2048',
+</code></pre>
+
+<p>Formulário de criação:</p>
+<pre class="codehilite"><code class="language-php">&lt;form method=&quot;POST&quot; action=&quot;/livros&quot; enctype=&quot;multipart/form-data&quot;&gt;
+    ...
+    Capa (JPEG): &lt;input type=&quot;file&quot; name=&quot;imagem&quot; accept=&quot;image/jpeg&quot;&gt;
+    ...
+&lt;/form&gt;
+</code></pre>
+
+<p>Formulário de edição:</p>
+<pre class="codehilite"><code class="language-php">&lt;form method=&quot;POST&quot; action=&quot;/livros/{{ $livro-&gt;id }}&quot; enctype=&quot;multipart/form-data&quot;&gt;
+    ...
+    @if($livro-&gt;imagem_path)
+        &lt;img src=&quot;/livros/imagem/{{ $livro-&gt;id }}&quot; width=&quot;200px&quot;&gt; &lt;br&gt;
+    @endif
+    Imagem: &lt;input type=&quot;file&quot; name=&quot;imagem&quot; accept=&quot;image/jpeg&quot;&gt;
+    ...
+&lt;/form&gt;
+</code></pre>
+
+<p>Migration de alteração:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan make:migration add_imagem_column_in_livros --table=livros
+</code></pre>
+
+<p>Novos campos:</p>
+<pre class="codehilite"><code class="language-php">$table-&gt;string('imagem_original_name')-&gt;nullable();
+$table-&gt;string('imagem_path')-&gt;nullable();
+</code></pre>
+
+<p>Aplicando</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan migrate
+</code></pre>
+
+<p>No controller, store e update:</p>
+<pre class="codehilite"><code class="language-php">if ($request-&gt;hasFile('imagem')) {
+    $livro-&gt;imagem_original_name = $request-&gt;file('imagem')-&gt;getClientOriginalName();
+    $livro-&gt;imagem_path = $request-&gt;file('imagem')-&gt;store('livros');
+}
+</code></pre>
+
+<p>Rota e método a para ver a imagem, pois por padrão estamos colocando-as numa pasta privada e método para remoção do arquivo:</p>
+<pre class="codehilite"><code class="language-php">use Illuminate\Support\Facades\Storage;
+
+# rota: Route::get('/livros/imagem/{livro}', [LivroController::class,'imagem']);
+public function imagem(Livro $livro)
+{
+    return Storage::download($livro-&gt;imagem_path, $livro-&gt;imagem_original_name);
+}
+
+# rota: Route::delete('/livros/imagem/{livro}', [LivroController::class,'destroy_imagem']);
+public function destroy_imagem(Livro $livro)
+{
+    if ($livro-&gt;imagem_path &amp;&amp; Storage::exists($livro-&gt;imagem_path)) {
+        Storage::delete($livro-&gt;imagem_path);
+        $livro-&gt;imagem_path = null;
+        $livro-&gt;imagem_original_name = null;
+        $livro-&gt;save();
+    }
+    return back();
+}
+
+# atualizar
+public function destroy(Livro $livro)
+{
+    if ($livro-&gt;imagem_path &amp;&amp; Storage::exists($livro-&gt;imagem_path)) {
+        Storage::delete($livro-&gt;imagem_path);
+    }
+    $livro-&gt;delete();
+    return redirect('/livros');
+}
+</code></pre>
+
+<p>No <code>show.blade.php</code>:</p>
+<pre class="codehilite"><code class="language-php">@if($livro-&gt;imagem_path)
+    &lt;img src=&quot;/livros/imagem/{{ $livro-&gt;id }}&quot; width=&quot;200px&quot;&gt; &lt;br&gt;
+
+    &lt;form action=&quot;/livros/imagem/{{ $livro-&gt;id }} &quot; method=&quot;post&quot;&gt;
+    @csrf
+    @method('delete')
+    &lt;button type=&quot;submit&quot; onclick=&quot;return confirm('Tem certeza?');&quot;&gt;Deletar Imagem&lt;/button&gt; 
+&lt;/form&gt;
+@endif
+</code></pre>
+
+<p>Teste de upload com o dusk:</p>
+<pre class="codehilite"><code class="language-php">use Illuminate\Http\UploadedFile;
+
+$this-&gt;browse(function (Browser $browser) {
+    $image1 = UploadedFile::fake()-&gt;image('imagem1.jpg', 640, 480);
+    $image2 = UploadedFile::fake()-&gt;image('imagem2.jpg', 640, 480);
+
+    # create
+    $browser-&gt;visit('/livros/create')
+        -&gt;attach('imagem', $image1-&gt;getPathname())
+
+    # update 
+    $browser-&gt;clickLink('Editar')
+        -&gt;attach('imagem', $image2-&gt;getPathname())
+
+    # delete imagem
+    $browser-&gt;press('Deletar Imagem')
+        -&gt;acceptDialog();
+</code></pre>
+
+<p>Quando um livro pode ter múltiplos arquivos associados (como fotos de capa, sumário, anexos ou capítulos em PDF), a melhor prática é criar um Model entidade, como por exemplo, LivroArquivo via relacionamento Um para Muitos (hasMany) ao invés de fazer no model do livro como feito aqui, entretanto, a parte de manipulação do arquivo, continua exatamente a mesma.</p>
 <!--
 Ideias para dia 4:
 https://github.com/laravel-shift/blueprint
 
 - Permission customizadas
-- Jobs
-- Envio de Email
-- Relacionamentos
-- select
-- rule
-- replicado
 - audit
-- stepper
-- Upload de arquivos
-- Trabalhando com pdf
-- Vídeos
+Status nos models e stepper
+Configurações globais
 -->
 
 <hr />
