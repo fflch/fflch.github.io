@@ -1,0 +1,12 @@
+{
+  "status": true,
+  "peso": 1,
+  "titulo": "uspdev/starter-ng",
+  "responsaveis": [
+    "Thiago"
+  ],
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Gerador de projetos laravel no padrão USPdev"
+}

@@ -1,0 +1,12 @@
+{
+  "status": true,
+  "peso": 1,
+  "titulo": "fflch/wordpress",
+  "responsaveis": [
+    "Augusto"
+  ],
+  "estagiarios": [
+    "Anderson"
+  ],
+  "descricao": "Instância Wordpress similar ao Drupal na FFLCH"
+}

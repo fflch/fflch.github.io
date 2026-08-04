@@ -1,0 +1,12 @@
+{
+  "status": true,
+  "peso": 1,
+  "titulo": "fflch/wifi",
+  "responsaveis": [
+    "Gilberto"
+  ],
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "Sistema web para gerenciamento de acesso à rede Wi-Fi de visitantes da FFLCH-USP"
+}

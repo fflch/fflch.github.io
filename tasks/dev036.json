@@ -1,0 +1,12 @@
+{
+  "status": true,
+  "peso": 1,
+  "titulo": "fflch/memorianegra",
+  "responsaveis": [
+    "Thiago"
+  ],
+  "estagiarios": [
+    "Pedro"
+  ],
+  "descricao": "Faz o donwload de metadados de obras no servidor z39 da USP baseado numa lista de vocabulário"
+}

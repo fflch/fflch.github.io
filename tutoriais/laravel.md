@@ -971,7 +971,7 @@ public function index(){
 Importando csv com os livros:
 ```bash
 mkdir -p app/Console/Commands
-curl -L https://fflch.github.io/assets/laravel/curso/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
+curl -L https://fflch.github.io/assets/laravel/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
 
 docker exec -it cursolaravel php artisan app:importa-livros
 ```
@@ -1120,6 +1120,8 @@ https://github.com/laravel-shift/blueprint
 - audit
 Status nos models e stepper
 Configurações globais
+laravel-fflch-pdf
+
 -->
 
 --- 
@@ -1147,24 +1149,8 @@ curl -L https://fflch.github.io/assets/laravel/dusk.yml -o .github/workflows/dus
 
 É necessário alterar a variável `SERVICE_NAME` no `dusk.yml` colocando o nome do sistema, que no caso do curso é `cursolaravel`. Além disso o `.env.example` do sistema deve estar preparado para rodar os testes no dusk com o ambiente criado pelo docker-compose.yml, ou seja, o `.env.example` deve conter minimamente:
 
+[Arquivo modelo .env.example](/assets/files/laravel/env.example)
+
 ```bash
-DB_CONNECTION=mariadb
-DB_HOST=mariadb
-DB_PORT=3306
-DB_DATABASE=cursolaravel # TROCAR PARA NOME DO SISTEMA
-DB_USERNAME=cursolaravel # TROCAR PARA NOME DO SISTEMA
-DB_PASSWORD=cursolaravel # TROCAR PARA NOME DO SISTEMA
-
-APP_URL=http://cursolaravel # TROCAR PARA NOME DO SISTEMA
-DUSK_DRIVER_URL='http://selenium:4444/wd/hub'
-DUSK_START_MAXIMIZED=true
-DUSK_HEADLESS_DISABLED=true
-
-SENHAUNICA_KEY=faker
-SENHAUNICA_SECRET=faker
-SENHAUNICA_CALLBACK_ID=1
-SENHAUNICA_ADMINS=111111
-SENHAUNICA_DEV="http://auth.local:3141/wsusuario/oauth"
-
-USP_THEME_SKIN=fflch
+curl -L https://fflch.github.io/assets/files/laravel/env.example >> .env.example
 ```
