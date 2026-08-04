@@ -1145,7 +1145,11 @@ Para rodar os testes no dusk baseado na configuração do docker-compose.yml, cr
 curl -L https://fflch.github.io/assets/laravel/dusk.yml -o .github/workflows/dusk.yml
 ```
 
-É necessário alterar a variável `SERVICE_NAME` no `dusk.yml` colocando o nome do sistema, que no caso do curso é `cursolaravel`. Além disso o `.env.example` do sistema deve estar preparado para rodar os testes no dusk com o ambiente criado pelo docker-compose.yml, ou seja, o `.env.example` deve conter minimamente:
+É necessário alterar a variável `SERVICE_NAME` no `dusk.yml` colocando o nome do sistema, que no caso do curso é `cursolaravel`. 
+
+**3 - .env.example**
+
+Além disso o `.env.example` do sistema deve estar preparado para rodar os testes no dusk com o ambiente criado pelo docker-compose.yml, ou seja, o `.env.example` deve conter minimamente:
 
 [Arquivo modelo .env.example](/assets/laravel/env.example)
 [[include:laravel/env.example]]
