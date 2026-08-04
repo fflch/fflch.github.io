@@ -957,7 +957,7 @@ public function index(){
 <h2 id="metodos-adicionais-no-controller-alem-do-crud-pdf-e-excel">Métodos adicionais no Controller, além do CRUD, pdf e excel</h2>
 <p>Importando csv com os livros:</p>
 <pre class="codehilite"><code class="language-bash">mkdir -p app/Console/Commands
-curl -L https://fflch.github.io/assets/laravel/curso/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
+curl -L https://fflch.github.io/assets/laravel/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
 
 docker exec -it cursolaravel php artisan app:importa-livros
 </code></pre>
@@ -1084,6 +1084,8 @@ https://github.com/laravel-shift/blueprint
 - audit
 Status nos models e stepper
 Configurações globais
+laravel-fflch-pdf
+
 -->
 
 <hr />
@@ -1102,25 +1104,8 @@ curl -L https://fflch.github.io/assets/laravel/docker.yml -o .github/workflows/d
 </code></pre>
 
 <p>É necessário alterar a variável <code>SERVICE_NAME</code> no <code>dusk.yml</code> colocando o nome do sistema, que no caso do curso é <code>cursolaravel</code>. Além disso o <code>.env.example</code> do sistema deve estar preparado para rodar os testes no dusk com o ambiente criado pelo docker-compose.yml, ou seja, o <code>.env.example</code> deve conter minimamente:</p>
-<pre class="codehilite"><code class="language-bash">DB_CONNECTION=mariadb
-DB_HOST=mariadb
-DB_PORT=3306
-DB_DATABASE=cursolaravel # TROCAR PARA NOME DO SISTEMA
-DB_USERNAME=cursolaravel # TROCAR PARA NOME DO SISTEMA
-DB_PASSWORD=cursolaravel # TROCAR PARA NOME DO SISTEMA
-
-APP_URL=http://cursolaravel # TROCAR PARA NOME DO SISTEMA
-DUSK_DRIVER_URL='http://selenium:4444/wd/hub'
-DUSK_START_MAXIMIZED=true
-DUSK_HEADLESS_DISABLED=true
-
-SENHAUNICA_KEY=faker
-SENHAUNICA_SECRET=faker
-SENHAUNICA_CALLBACK_ID=1
-SENHAUNICA_ADMINS=111111
-SENHAUNICA_DEV=&quot;http://auth.local:3141/wsusuario/oauth&quot;
-
-USP_THEME_SKIN=fflch
+<p><a href="/assets/files/laravel/env.example">Arquivo modelo .env.example</a></p>
+<pre class="codehilite"><code class="language-bash">curl -L https://fflch.github.io/assets/files/laravel/env.example &gt;&gt; .env.example
 </code></pre>
         </div>
     </div>
