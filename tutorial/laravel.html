@@ -1092,20 +1092,54 @@ laravel-fflch-pdf
 <h1 id="instrucoes-para-producao">Instruções para produção</h1>
 <p><strong>1 - Imagem do docker</strong></p>
 <p>Para construção da imagem baseada na tag (versão) criar o arquivo <code>.github/workflows/docker.yml</code>:<br />
-<a href="/assets/files/laravel/docker.yml">Arquivo modelo docker.yml</a></p>
+<a href="/assets/laravel/docker.yml">Arquivo modelo docker.yml</a></p>
 <pre class="codehilite"><code class="language-bash">mkdir -p .github/workflows
 curl -L https://fflch.github.io/assets/laravel/docker.yml -o .github/workflows/docker.yml
 </code></pre>
 
 <p><strong>2 - testes no dusk</strong></p>
 <p>Para rodar os testes no dusk baseado na configuração do docker-compose.yml, criar o arquivo <code>.github/workflows/dusk.yml</code>:<br />
-<a href="/assets/files/laravel/dusk.yml">Arquivo modelo dusk.yml</a></p>
+<a href="/assets/laravel/dusk.yml">Arquivo modelo dusk.yml</a></p>
 <pre class="codehilite"><code class="language-bash">curl -L https://fflch.github.io/assets/laravel/dusk.yml -o .github/workflows/dusk.yml
 </code></pre>
 
 <p>É necessário alterar a variável <code>SERVICE_NAME</code> no <code>dusk.yml</code> colocando o nome do sistema, que no caso do curso é <code>cursolaravel</code>. Além disso o <code>.env.example</code> do sistema deve estar preparado para rodar os testes no dusk com o ambiente criado pelo docker-compose.yml, ou seja, o <code>.env.example</code> deve conter minimamente:</p>
-<p><a href="/assets/files/laravel/env.example">Arquivo modelo .env.example</a></p>
-<pre class="codehilite"><code class="language-bash">curl -L https://fflch.github.io/assets/files/laravel/env.example &gt;&gt; .env.example
+<p><a href="/assets/laravel/env.example">Arquivo modelo .env.example</a></p>
+<pre class="codehilite"><code class="language-bash"># Configurações Mínimas em dev
+
+QUEUE_CONNECTION=sync
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=
+MAIL_PASSWORD=
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS=test@example.com
+MAIL_FROM_NAME=&quot;Laravel&quot;
+
+DB_CONNECTION=mariadb
+DB_HOST=mariadb
+DB_PORT=3306
+DB_DATABASE=cursolaravel # TROCAR PARA NOME DO SISTEMA
+DB_USERNAME=cursolaravel # TROCAR PARA NOME DO SISTEMA
+DB_PASSWORD=cursolaravel # TROCAR PARA NOME DO SISTEMA
+
+APP_URL=http://cursolaravel # TROCAR PARA NOME DO SISTEMA
+DUSK_DRIVER_URL='http://selenium:4444/wd/hub'
+DUSK_START_MAXIMIZED=true
+DUSK_HEADLESS_DISABLED=true
+
+SENHAUNICA_KEY=faker
+SENHAUNICA_SECRET=faker
+SENHAUNICA_CALLBACK_ID=1
+SENHAUNICA_ADMINS=111111
+SENHAUNICA_DEV=&quot;http://auth.local:3141/wsusuario/oauth&quot;
+
+USP_THEME_SKIN=fflch # ou uspdev
+</code></pre>
+
+<pre class="codehilite"><code class="language-bash">curl -L https://fflch.github.io/assets/laravel/env.example &gt;&gt; .env.example
 </code></pre>
         </div>
     </div>
