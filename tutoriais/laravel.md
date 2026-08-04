@@ -1110,8 +1110,6 @@ $this->browse(function (Browser $browser) {
 Quando um livro pode ter múltiplos arquivos associados (como fotos de capa, sumário, anexos ou capítulos em PDF), a melhor prática é criar um Model entidade, como por exemplo, LivroArquivo via relacionamento Um para Muitos (hasMany) ao invés de fazer no model do livro como feito aqui, entretanto, a parte de manipulação do arquivo, continua exatamente a mesma.
 
 
-
-
 <!--
 Ideias para dia 4:
 https://github.com/laravel-shift/blueprint
@@ -1131,7 +1129,7 @@ laravel-fflch-pdf
 **1 - Imagem do docker**
 
 Para construção da imagem baseada na tag (versão) criar o arquivo `.github/workflows/docker.yml`:
-[Arquivo modelo docker.yml](/assets/files/laravel/docker.yml)
+[Arquivo modelo docker.yml](/assets/laravel/docker.yml)
 
 ```bash
 mkdir -p .github/workflows
@@ -1141,7 +1139,7 @@ curl -L https://fflch.github.io/assets/laravel/docker.yml -o .github/workflows/d
 **2 - testes no dusk**
 
 Para rodar os testes no dusk baseado na configuração do docker-compose.yml, criar o arquivo `.github/workflows/dusk.yml`:
-[Arquivo modelo dusk.yml](/assets/files/laravel/dusk.yml)
+[Arquivo modelo dusk.yml](/assets/laravel/dusk.yml)
 
 ```bash
 curl -L https://fflch.github.io/assets/laravel/dusk.yml -o .github/workflows/dusk.yml
@@ -1149,8 +1147,9 @@ curl -L https://fflch.github.io/assets/laravel/dusk.yml -o .github/workflows/dus
 
 É necessário alterar a variável `SERVICE_NAME` no `dusk.yml` colocando o nome do sistema, que no caso do curso é `cursolaravel`. Além disso o `.env.example` do sistema deve estar preparado para rodar os testes no dusk com o ambiente criado pelo docker-compose.yml, ou seja, o `.env.example` deve conter minimamente:
 
-[Arquivo modelo .env.example](/assets/files/laravel/env.example)
+[Arquivo modelo .env.example](/assets/laravel/env.example)
+[[include:laravel/env.example]]
 
 ```bash
-curl -L https://fflch.github.io/assets/files/laravel/env.example >> .env.example
+curl -L https://fflch.github.io/assets/laravel/env.example >> .env.example
 ```
