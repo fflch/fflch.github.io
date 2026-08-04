@@ -1103,7 +1103,9 @@ curl -L https://fflch.github.io/assets/laravel/docker.yml -o .github/workflows/d
 <pre class="codehilite"><code class="language-bash">curl -L https://fflch.github.io/assets/laravel/dusk.yml -o .github/workflows/dusk.yml
 </code></pre>
 
-<p>É necessário alterar a variável <code>SERVICE_NAME</code> no <code>dusk.yml</code> colocando o nome do sistema, que no caso do curso é <code>cursolaravel</code>. Além disso o <code>.env.example</code> do sistema deve estar preparado para rodar os testes no dusk com o ambiente criado pelo docker-compose.yml, ou seja, o <code>.env.example</code> deve conter minimamente:</p>
+<p>É necessário alterar a variável <code>SERVICE_NAME</code> no <code>dusk.yml</code> colocando o nome do sistema, que no caso do curso é <code>cursolaravel</code>. </p>
+<p><strong>3 - .env.example</strong></p>
+<p>Além disso o <code>.env.example</code> do sistema deve estar preparado para rodar os testes no dusk com o ambiente criado pelo docker-compose.yml, ou seja, o <code>.env.example</code> deve conter minimamente:</p>
 <p><a href="/assets/laravel/env.example">Arquivo modelo .env.example</a></p>
 <pre class="codehilite"><code class="language-bash"># Configurações Mínimas em dev
 
