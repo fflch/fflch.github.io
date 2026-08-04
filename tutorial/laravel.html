@@ -67,9 +67,9 @@
 <li><a href="#relacionamentos">Relacionamentos</a></li>
 <li><a href="#observer-e-emails">Observer e Emails</a></li>
 <li><a href="#replicado-usp">Replicado USP</a></li>
-<li><a href="#autorizacao">Autorização</a></li>
-<li><a href="#metodos-adicionais-no-controller-alem-do-crud-pdf-e-excel">Métodos adicionais no Controller, além do CRUD, pdf e excel</a></li>
 <li><a href="#upload">Upload</a></li>
+<li><a href="#autorizacao">Autorização</a></li>
+<li><a href="#excel-e-pdf-alem-do-crud-relatorios">excel e pdf - além do CRUD, relatórios</a></li>
 </ul>
 </li>
 <li><a href="#instrucoes-para-producao">Instruções para produção</a></li>
@@ -943,29 +943,6 @@ class IndexController extends Controller
 <pre class="codehilite"><code class="language-html">Seu curso é: {{ $curso }}
 </code></pre>
 
-<h2 id="autorizacao">Autorização</h2>
-<p>Um Gate no Laravel é uma função usada para verificar se um usuário autenticado tem permissão para realizar uma ação específica na aplicação. O senha única socialite fornece acesso para um Gate chamado de <code>admin</code> para aqueles usuários com número USP no .env: <code>SENHAUNICA_ADMINS=111111,782783</code>, no exemplo, somente as pessoas com número USP 111111 e 782783 terão acesso de admim. Para restringir o acesso a controllers somente para admin:</p>
-<pre class="codehilite"><code class="language-php">use Illuminate\Support\Facades\Gate;
-
-public function index(){
-    Gate::authorize('admin');
-    ...
-}
-</code></pre>
-
-<p>Implementando policies</p>
-<h2 id="metodos-adicionais-no-controller-alem-do-crud-pdf-e-excel">Métodos adicionais no Controller, além do CRUD, pdf e excel</h2>
-<p>Importando csv com os livros:</p>
-<pre class="codehilite"><code class="language-bash">mkdir -p app/Console/Commands
-curl -L https://fflch.github.io/assets/laravel/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
-
-docker exec -it cursolaravel php artisan app:importa-livros
-</code></pre>
-
-<pre class="codehilite"><code class="language-bash"># Instalação outras libs
-docker exec -it cursolaravel composer require league/csv
-</code></pre>
-
 <h2 id="upload">Upload</h2>
 <p>Exemplo de upload para uma imagem por livro. Usaremos uma abordagem mais segura porque impede o acesso público direto via URL. Quando os arquivos ficam na pasta pública, qualquer pessoa que descubra o link pode visualizá-los, ignorando a autenticação do sistema. No diretório privado, a entrega do arquivo obrigatoriamente passa por uma rota e um método no Controller. Isso permite validar se o usuário está logado e aplicar políticas de permissão, garantindo total controle sobre quem pode visualizar ou baixar o conteúdo.</p>
 <p>No arquivo <code>App/Http/Requests/LivroRequest.php</code>:</p>
@@ -1076,16 +1053,178 @@ $this-&gt;browse(function (Browser $browser) {
 </code></pre>
 
 <p>Quando um livro pode ter múltiplos arquivos associados (como fotos de capa, sumário, anexos ou capítulos em PDF), a melhor prática é criar um Model entidade, como por exemplo, LivroArquivo via relacionamento Um para Muitos (hasMany) ao invés de fazer no model do livro como feito aqui, entretanto, a parte de manipulação do arquivo, continua exatamente a mesma.</p>
+<h2 id="autorizacao">Autorização</h2>
+<p>Um Gate no Laravel é uma função usada para verificar se um usuário autenticado tem permissão para realizar uma ação específica na aplicação. O senha única socialite fornece acesso para um Gate chamado de <code>admin</code> para aqueles usuários com número USP no .env: <code>SENHAUNICA_ADMINS=111111,782783</code>, no exemplo, somente as pessoas com número USP 111111 e 782783 terão acesso de admim. Para restringir o acesso a controllers somente para admin:</p>
+<pre class="codehilite"><code class="language-php">use Illuminate\Support\Facades\Gate;
+
+public function index(){
+    Gate::authorize('admin');
+    ...
+}
+</code></pre>
+
+<p>Ou no blade:</p>
+<pre class="codehilite"><code class="language-php">@can('admin')
+  {{-- Verificar permission customizada --}}
+@endcan
+</code></pre>
+
+<p>criando algumas permissões a serem utilizadas pela aplicação:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan make:migration seed_permission_table
+</code></pre>
+
+<p>Arquivo com os Gates:</p>
+<pre class="codehilite"><code class="language-php">use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+...
+
+public function up()
+{
+    Permission::firstOrCreate(['name' =&gt; 'vigilantes']);
+    Permission::firstOrCreate(['name' =&gt; 'limpeza']);
+}
+</code></pre>
+
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel php artisan migrate
+</code></pre>
+
+<h2 id="excel-e-pdf-alem-do-crud-relatorios">excel e pdf - além do CRUD, relatórios</h2>
+<p>Importando csv com os livros:</p>
+<pre class="codehilite"><code class="language-bash">mkdir -p app/Console/Commands
+curl -L https://fflch.github.io/assets/laravel/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
+
+docker exec -it cursolaravel composer require league/csv
+docker exec -it cursolaravel php artisan app:importa-livros
+</code></pre>
+
+<pre class="codehilite"><code class="language-bash">composer require phpoffice/phpspreadsheet
+</code></pre>
+
+<p>Gerando excel</p>
+<pre class="codehilite"><code class="language-php">use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+# rota: Route::get('/livros/excel', [LivroController::class,'excel']);
+public function excel(Request $request)
+{
+    if ($request-&gt;has('search')) {
+        $livros = Livro::where('titulo', 'like', '%' . $request-&gt;search . '%')-&gt;get();
+    } else {
+        $livros = Livro::all();
+    }
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet-&gt;getActiveSheet();
+
+    // Cabeçalho
+    $sheet-&gt;fromArray([
+        ['Título', 'Autor', 'Ano']
+    ]);
+
+    // Dados
+    $linha = 2;
+    foreach ($livros as $livro) {
+        $sheet-&gt;fromArray([
+            $livro-&gt;titulo,
+            $livro-&gt;autor,
+            $livro-&gt;ano,
+        ], null, &quot;A{$linha}&quot;);
+
+        $linha++;
+    }
+
+    $writer = new Xlsx($spreadsheet);
+
+    return response()-&gt;streamDownload(
+        fn() =&gt; $writer-&gt;save('php://output'),
+        'livros.xlsx'
+    );
+}
+</code></pre>
+
+<p>No blade:</p>
+<pre class="codehilite"><code class="language-html">&lt;a href=&quot;/excel/?search={{ session('search') }}&quot; class=&quot;btn btn-success&quot;&gt;
+    Exportar Excel
+&lt;/a&gt;
+</code></pre>
+
+<p>Dusk:</p>
+<pre class="codehilite"><code class="language-php">$browser-&gt;visit('/excel?search=Edição Revisada');
+$response = $this-&gt;get('/excel?search=Edição Revisada');
+$response-&gt;assertStatus(200);
+$response-&gt;assertHeader('content-disposition', 'attachment; filename=livros.xlsx');
+</code></pre>
+
+<ul>
+<li>Gerando Pdf no padrão da FFLCH**</li>
+</ul>
+<p>Instalação</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer require fflch/laravel-fflch-pdf
+docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Barryvdh\DomPDF\ServiceProvider&quot;
+docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Fflch\LaravelFflchPdf\LaravelFflchPdfServiceProvider&quot;
+</code></pre>
+
+<p>Em config/dompdf.php: <code>"enable_php" =&gt; true</code> e no seu .env <code>FFLCHPDF_SETOR='Setor de Graduação'</code>.</p>
+<pre class="codehilite"><code class="language-php">use PDF;
+
+# rota: Route::get('/livros/pdf', [LivroController::class,'pdf']);
+public function pdf(Request $request)
+{
+    if ($request-&gt;filled('search')) {
+        $livros = Livro::where('titulo', 'like', '%' . $request-&gt;search . '%')-&gt;get();
+    } else {
+        $livros = Livro::all();
+    }
+
+    $pdf = PDF::loadView('livros.pdf', [
+        'livros' =&gt; $livros,
+    ]);
+
+    return $pdf-&gt;download('livros.pdf');
+}
+</code></pre>
+
+<p>Formatação do pdf em <code>resources/views/livros/pdf.blade.php</code>:</p>
+<pre class="codehilite"><code class="language-php">@extends('laravel-fflch-pdf::main')
+
+@section('content')
+
+&lt;h1&gt;Relação de Livros&lt;/h1&gt;
+
+&lt;table width=&quot;100%&quot; border=&quot;1&quot; cellspacing=&quot;0&quot; cellpadding=&quot;5&quot;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Título&lt;/th&gt;
+            &lt;th&gt;Autor&lt;/th&gt;
+            &lt;th&gt;Ano&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        @foreach($livros as $livro)
+        &lt;tr&gt;
+            &lt;td&gt;{{ $livro-&gt;titulo }}&lt;/td&gt;
+            &lt;td&gt;{{ $livro-&gt;autor }}&lt;/td&gt;
+            &lt;td&gt;{{ $livro-&gt;ano }}&lt;/td&gt;
+        &lt;/tr&gt;
+        @endforeach
+    &lt;/tbody&gt;
+&lt;/table&gt;
+@endsection
+</code></pre>
+
+<p>No blade:</p>
+<pre class="codehilite"><code class="language-html">&lt;a href=&quot;/pdf/?search={{ session('search') }}&quot; class=&quot;btn btn-success&quot;&gt;
+    Exportar Pdf
+&lt;/a&gt;
+</code></pre>
+
 <!--
-Ideias para dia 4:
-https://github.com/laravel-shift/blueprint
 
-- Permission customizadas
-- audit
-Status nos models e stepper
-Configurações globais
-laravel-fflch-pdf
+- audit owen-it/laravel-auditing
 
+Status nos models e stepper composer require fflch/laravel-fflch-stepper e composer require spatie/laravel-model-status
+
+Configurações globais composer require spatie/laravel-settings
 -->
 
 <hr />
