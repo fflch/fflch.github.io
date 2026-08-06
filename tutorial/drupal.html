@@ -136,6 +136,24 @@ CMD [&quot;apache2-foreground&quot;]
         aliases:
           - auth.local
 
+  selenium:
+    image: selenium/standalone-chrome
+    container_name: cursodrupal_selenium
+    ports:
+      - &quot;7900:7900&quot;
+    networks:
+      - cursodrupal-network
+    shm_size: 2gb
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: cursodrupal_mailpit
+    ports:
+      - &quot;1025:1025&quot;   # SMTP
+      - &quot;8025:8025&quot;   # Interface Web
+    networks:
+      - cursodrupal-network
+
 networks:
   cursodrupal-network:
 

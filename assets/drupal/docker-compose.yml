@@ -59,6 +59,24 @@ services:
         aliases:
           - auth.local
 
+  selenium:
+    image: selenium/standalone-chrome
+    container_name: cursodrupal_selenium
+    ports:
+      - "7900:7900"
+    networks:
+      - cursodrupal-network
+    shm_size: 2gb
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: cursodrupal_mailpit
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Interface Web
+    networks:
+      - cursodrupal-network
+
 networks:
   cursodrupal-network:
 
