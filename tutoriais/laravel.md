@@ -1134,7 +1134,7 @@ docker exec -it cursolaravel php artisan app:importa-livros
 ```
 
 ```bash
-composer require phpoffice/phpspreadsheet
+docker exec -it cursolaravel composer require phpoffice/phpspreadsheet
 ```
 
 Gerando excel
@@ -1182,21 +1182,21 @@ public function excel(Request $request)
 
 No blade:
 ```html
-<a href="/excel/?search={{ session('search') }}" class="btn btn-success">
+<a href="/livros/excel/?search={{ request('search') }}" class="btn btn-success">
     Exportar Excel
 </a>
 ```
 
-Dusk:
+Teste no Dusk simples, somente verificando se a rota entrega um arquivo excel:
 
 ```php
-$browser->visit('/excel?search=Edição Revisada');
-$response = $this->get('/excel?search=Edição Revisada');
+$browser->visit('/livros/excel?search=Editado');
+$response = $this->get('/livros/excel?search=Editado');
 $response->assertStatus(200);
 $response->assertHeader('content-disposition', 'attachment; filename=livros.xlsx');
 ```
 
-* Gerando Pdf no padrão da FFLCH**
+**Gerando Pdf no padrão da FFLCH**
 
 Instalação
 
@@ -1206,7 +1206,7 @@ docker exec -it cursolaravel php artisan vendor:publish --provider="Barryvdh\Dom
 docker exec -it cursolaravel php artisan vendor:publish --provider="Fflch\LaravelFflchPdf\LaravelFflchPdfServiceProvider"
 ```
 
-Em config/dompdf.php: `"enable_php" => true` e no seu .env `FFLCHPDF_SETOR='Setor de Graduação'`.
+No seu .env, configure o cabeçalho do pdf: `FFLCHPDF_SETOR='Setor de Graduação'`.
 
 ```php
 use PDF;
@@ -1258,24 +1258,67 @@ Formatação do pdf em `resources/views/livros/pdf.blade.php`:
 @endsection
 ```
 
-
 No blade:
 ```html
-<a href="/pdf/?search={{ session('search') }}" class="btn btn-success">
+<a href="/livros/pdf/?search={{ request('search') }}" class="btn btn-success">
     Exportar Pdf
 </a>
 ```
 
-<!--
+Por fim, um teste no dusk simples verificando se o pdf foi gerado:
 
-- audit owen-it/laravel-auditing
+```php
+$browser->visit('/livros/pdf?search=Editado');
+$response = $this->get('/livros/pdf?search=Editado');
+$response->assertStatus(200);
+$response->assertHeader('content-disposition', 'attachment; filename=livros.pdf');
+```
 
-Status nos models e stepper composer require fflch/laravel-fflch-stepper e composer require spatie/laravel-model-status
+**Workflow**
 
-Configurações globais composer require spatie/laravel-settings
--->
+Implementando a lógica no model quando o sistema existe etapas, exemplo: pedido, análise e aprovado.
 
---- 
+Biblioteca para registro de status:
+
+```bash
+docker exec -it cursolaravel composer require spatie/laravel-model-status
+docker exec -it cursolaravel php artisan vendor:publish --provider="Spatie\ModelStatus\ModelStatusServiceProvider" --tag="migrations"
+docker exec -it cursolaravel php artisan migrate
+```
+
+Infomando o Model que ele tem status:
+
+```php
+use Spatie\ModelStatus\HasStatuses;
+
+class Livro extends Model
+{
+    use HasStatuses;
+}
+```
+
+No controller do Livro colocar status no create e no update respectivamente:
+```php
+$livro->setStatus('pedido');
+$livro->setStatus('aprovado');
+```
+
+Biblioteca da FFLCH para ver os status:
+
+```bash
+docker exec -it cursolaravel composer require fflch/laravel-fflch-stepper
+docker exec -it cursolaravel php artisan vendor:publish --provider="Fflch\LaravelFflchStepper\LaravelFflchStepperServiceProvider" --tag="config"
+```
+
+Seguir a documentação da biblioteca em [https://github.com/fflch/laravel-fflch-stepper](https://github.com/fflch/laravel-fflch-stepper)
+
+
+## Exercício
+
+1 - Fazer auditoria do model `Livro` no qual o administrador poderá ver todos usuários que alteraram um determinado livro e quando. Usar `owen-it/laravel-auditing`. Caso real de uso: [https://github.com/uspdev/copaco/blob/master/resources/views/partials/audit/index.blade.php](https://github.com/uspdev/copaco/blob/master/resources/views/partials/audit/index.blade.php)
+
+2 - Criar uma rotina de envio de email quando um livro for cadastrado. Ao invés deixar fixo o texto do email no sistema no arquivo blade, dar a opção do usuário do sistema alterar partes do texto do email, para isso criar uma área de configuração no sistema que poderá ser usada pelos usuários para alterar os emails. Usar `spatie/laravel-settings`.  Caso real de uso: [https://github.com/uspdev/estagios/blob/master/resources/views/emails/alteracao.blade.php](https://github.com/uspdev/estagios/blob/master/resources/views/emails/alteracao.blade.php)
+ 
 
 # Instruções para produção
 
