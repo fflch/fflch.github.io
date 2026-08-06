@@ -70,6 +70,7 @@
 <li><a href="#upload">Upload</a></li>
 <li><a href="#autorizacao">Autorização</a></li>
 <li><a href="#excel-e-pdf-alem-do-crud-relatorios">excel e pdf - além do CRUD, relatórios</a></li>
+<li><a href="#exercicio">Exercício</a></li>
 </ul>
 </li>
 <li><a href="#instrucoes-para-producao">Instruções para produção</a></li>
@@ -1097,7 +1098,7 @@ docker exec -it cursolaravel composer require league/csv
 docker exec -it cursolaravel php artisan app:importa-livros
 </code></pre>
 
-<pre class="codehilite"><code class="language-bash">composer require phpoffice/phpspreadsheet
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer require phpoffice/phpspreadsheet
 </code></pre>
 
 <p>Gerando excel</p>
@@ -1143,28 +1144,26 @@ public function excel(Request $request)
 </code></pre>
 
 <p>No blade:</p>
-<pre class="codehilite"><code class="language-html">&lt;a href=&quot;/excel/?search={{ session('search') }}&quot; class=&quot;btn btn-success&quot;&gt;
+<pre class="codehilite"><code class="language-html">&lt;a href=&quot;/livros/excel/?search={{ request('search') }}&quot; class=&quot;btn btn-success&quot;&gt;
     Exportar Excel
 &lt;/a&gt;
 </code></pre>
 
-<p>Dusk:</p>
-<pre class="codehilite"><code class="language-php">$browser-&gt;visit('/excel?search=Edição Revisada');
-$response = $this-&gt;get('/excel?search=Edição Revisada');
+<p>Teste no Dusk simples, somente verificando se a rota entrega um arquivo excel:</p>
+<pre class="codehilite"><code class="language-php">$browser-&gt;visit('/livros/excel?search=Editado');
+$response = $this-&gt;get('/livros/excel?search=Editado');
 $response-&gt;assertStatus(200);
 $response-&gt;assertHeader('content-disposition', 'attachment; filename=livros.xlsx');
 </code></pre>
 
-<ul>
-<li>Gerando Pdf no padrão da FFLCH**</li>
-</ul>
+<p><strong>Gerando Pdf no padrão da FFLCH</strong></p>
 <p>Instalação</p>
 <pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer require fflch/laravel-fflch-pdf
 docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Barryvdh\DomPDF\ServiceProvider&quot;
 docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Fflch\LaravelFflchPdf\LaravelFflchPdfServiceProvider&quot;
 </code></pre>
 
-<p>Em config/dompdf.php: <code>"enable_php" =&gt; true</code> e no seu .env <code>FFLCHPDF_SETOR='Setor de Graduação'</code>.</p>
+<p>No seu .env, configure o cabeçalho do pdf: <code>FFLCHPDF_SETOR='Setor de Graduação'</code>.</p>
 <pre class="codehilite"><code class="language-php">use PDF;
 
 # rota: Route::get('/livros/pdf', [LivroController::class,'pdf']);
@@ -1213,21 +1212,49 @@ public function pdf(Request $request)
 </code></pre>
 
 <p>No blade:</p>
-<pre class="codehilite"><code class="language-html">&lt;a href=&quot;/pdf/?search={{ session('search') }}&quot; class=&quot;btn btn-success&quot;&gt;
+<pre class="codehilite"><code class="language-html">&lt;a href=&quot;/livros/pdf/?search={{ request('search') }}&quot; class=&quot;btn btn-success&quot;&gt;
     Exportar Pdf
 &lt;/a&gt;
 </code></pre>
 
-<!--
+<p>Por fim, um teste no dusk simples verificando se o pdf foi gerado:</p>
+<pre class="codehilite"><code class="language-php">$browser-&gt;visit('/livros/pdf?search=Editado');
+$response = $this-&gt;get('/livros/pdf?search=Editado');
+$response-&gt;assertStatus(200);
+$response-&gt;assertHeader('content-disposition', 'attachment; filename=livros.pdf');
+</code></pre>
 
-- audit owen-it/laravel-auditing
+<p><strong>Workflow</strong></p>
+<p>Implementando a lógica no model quando o sistema existe etapas, exemplo: pedido, análise e aprovado.</p>
+<p>Biblioteca para registro de status:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer require spatie/laravel-model-status
+docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Spatie\ModelStatus\ModelStatusServiceProvider&quot; --tag=&quot;migrations&quot;
+docker exec -it cursolaravel php artisan migrate
+</code></pre>
 
-Status nos models e stepper composer require fflch/laravel-fflch-stepper e composer require spatie/laravel-model-status
+<p>Infomando o Model que ele tem status:</p>
+<pre class="codehilite"><code class="language-php">use Spatie\ModelStatus\HasStatuses;
 
-Configurações globais composer require spatie/laravel-settings
--->
+class Livro extends Model
+{
+    use HasStatuses;
+}
+</code></pre>
 
-<hr />
+<p>No controller do Livro colocar status no create e no update respectivamente:</p>
+<pre class="codehilite"><code class="language-php">$livro-&gt;setStatus('pedido');
+$livro-&gt;setStatus('aprovado');
+</code></pre>
+
+<p>Biblioteca da FFLCH para ver os status:</p>
+<pre class="codehilite"><code class="language-bash">docker exec -it cursolaravel composer require fflch/laravel-fflch-stepper
+docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Fflch\LaravelFflchStepper\LaravelFflchStepperServiceProvider&quot; --tag=&quot;config&quot;
+</code></pre>
+
+<p>Seguir a documentação da biblioteca em <a href="https://github.com/fflch/laravel-fflch-stepper">https://github.com/fflch/laravel-fflch-stepper</a></p>
+<h2 id="exercicio">Exercício</h2>
+<p>1 - Fazer auditoria do model <code>Livro</code> no qual o administrador poderá ver todos usuários que alteraram um determinado livro e quando. Usar <code>owen-it/laravel-auditing</code>. Caso real de uso: <a href="https://github.com/uspdev/copaco/blob/master/resources/views/partials/audit/index.blade.php">https://github.com/uspdev/copaco/blob/master/resources/views/partials/audit/index.blade.php</a></p>
+<p>2 - Criar uma rotina de envio de email quando um livro for cadastrado. Ao invés deixar fixo o texto do email no sistema no arquivo blade, dar a opção do usuário do sistema alterar partes do texto do email, para isso criar uma área de configuração no sistema que poderá ser usada pelos usuários para alterar os emails. Usar <code>spatie/laravel-settings</code>.  Caso real de uso: <a href="https://github.com/uspdev/estagios/blob/master/resources/views/emails/alteracao.blade.php">https://github.com/uspdev/estagios/blob/master/resources/views/emails/alteracao.blade.php</a></p>
 <h1 id="instrucoes-para-producao">Instruções para produção</h1>
 <p><strong>1 - Imagem do docker</strong></p>
 <p>Para construção da imagem baseada na tag (versão) criar o arquivo <code>.github/workflows/docker.yml</code>:<br />
