@@ -36,6 +36,7 @@ jobs:
           python estrutura.py
           python generate_site.py
           python webapps.py
+          python dio.py
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

@@ -351,7 +351,7 @@ def generate_issues_cards(tasks, issues):
 
 def load_siglas():
     siglas = {}
-    path = os.path.join("files", "siglas.csv")
+    path = os.path.join("content", "siglas.csv")
 
     if not os.path.exists(path):
         return siglas
@@ -364,7 +364,7 @@ def load_siglas():
     return siglas
 
 def converter_md_para_html(codigo_task):
-    origem_md = os.path.join("files", "documentation", f"{codigo_task}.md")
+    origem_md = os.path.join("content", "documentation", f"{codigo_task}.md")
     dir_destino = os.path.join(OUTPUT_DIR, "documentation")
     arquivo_destino = os.path.join(dir_destino, f"{codigo_task}.html")
 
@@ -564,6 +564,10 @@ def generate_estagiario_summary(tasks, issues):
 
     return html
 
+import os
+import json
+from datetime import datetime
+
 def buscar_proxima_reuniao_e_issues(tipo_reuniao, dicionario_siglas, tasks):
     meetings_dir = "meetings"
     if not os.path.exists(meetings_dir):
@@ -594,9 +598,13 @@ def buscar_proxima_reuniao_e_issues(tipo_reuniao, dicionario_siglas, tasks):
         with open(os.path.join(meetings_dir, arquivo_proxima), 'r', encoding='utf-8') as file:
             dados_reuniao = json.load(file)
             lista_issues = dados_reuniao.get("issues", [])
+            lista_extra = dados_reuniao.get("extra", [])  # <--- Lê a lista extra
             
-            if lista_issues:
+            # Verifica se existe algum item (issue ou extra)
+            if lista_issues or lista_extra:
                 html_issues += "<ul style='padding-left: 20px; margin-top: 5px; font-size: 0.9em;'>"
+                
+                # 1. Processa as issues registradas em arquivo
                 for iss_arq in lista_issues:
                     caminho_issue_real = os.path.join("tasks", "issues", iss_arq)
                     issue = {}
@@ -615,6 +623,13 @@ def buscar_proxima_reuniao_e_issues(tipo_reuniao, dicionario_siglas, tasks):
                         <strong>{titulo_task}</strong> - {issue.get("descricao")}
                         ({issue.get("responsavel", "Não atribuído")})<br>
                     </li>"""
+                
+                # 2. Processa os itens extras (sem arquivo de issue)
+                for item_extra in lista_extra:
+                    html_issues += f"""<li>
+                        {item_extra}
+                    </li>"""
+
                 html_issues += "</ul>"
             else:
                 html_issues = "<br><span class='text-muted'>Nenhuma pauta associada.</span>"
@@ -622,7 +637,7 @@ def buscar_proxima_reuniao_e_issues(tipo_reuniao, dicionario_siglas, tasks):
         html_issues = "<br><span class='text-danger'>Erro ao carregar pautas.</span>"
 
     return data_formatada_br, html_issues
-
+    
 def generate_responsavel_summary(tasks, issues):
     responsaveis = defaultdict(list)
 
@@ -756,7 +771,7 @@ def generate_html(tasks, issues, tutoriais):
     """
 
     for arquivo in arquivos_json:
-        caminho_json = f'files/{arquivo}'
+        caminho_json = f'content/{arquivo}'
         
         if os.path.exists(caminho_json):
             with open(caminho_json, 'r', encoding='utf-8') as f:
@@ -766,7 +781,7 @@ def generate_html(tasks, issues, tutoriais):
             tipo_limpo = arquivo.replace('meeting-', '').replace('.json', '')
             
             nome_base_csv = arquivo.replace('.json', '.csv')
-            string_participantes = extrai_participantes_csv(f'files/{nome_base_csv}')
+            string_participantes = extrai_participantes_csv(f'content/{nome_base_csv}')
             
             hands_on_html = ""
             if dados.get('handons'):

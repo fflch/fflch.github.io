@@ -9,7 +9,7 @@ import base64
 
 # Configuração de Caminhos Base
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FILES_DIR = os.path.join(BASE_DIR, "files")
+FILES_DIR = os.path.join(BASE_DIR, "content")
 TASKS_DIR = os.path.join(BASE_DIR, "tasks")
 MEETINGS_DIR = os.path.join(BASE_DIR, "meetings")
 SIGLAS_PATH = os.path.join(FILES_DIR, "siglas.csv")
@@ -94,13 +94,19 @@ def buscar_proxima_reuniao_dados(tipo_reuniao):
         with open(os.path.join(MEETINGS_DIR, arquivo_proxima), 'r', encoding='utf-8') as file:
             dados_reuniao = json.load(file)
             lista_issues = dados_reuniao.get("issues", [])
+            lista_extra = dados_reuniao.get("extra", [])  # <--- Lê a lista de pautas extras
             
-            if lista_issues:
+            # Se houver qualquer pauta (issue ou extra)
+            if lista_issues or lista_extra:
+                # 1. Adiciona as issues registradas
                 for iss_arq in lista_issues:
                     responsavel, descricao = obter_dados_issue(iss_arq)
                     titulo_task = obter_titulo_task_mae(iss_arq)
-                    
-                    texto_issues += f"- {titulo_task}: {descricao} ({responsavel})\n\n"
+                    texto_issues += f"- {titulo_task}: {descricao} ({responsavel})\n"
+                
+                # 2. Adiciona as pautas extras
+                for item_extra in lista_extra:
+                    texto_issues += f"- {item_extra}\n"
             else:
                 texto_issues = "- Nenhuma pauta vinculada até o momento.\n"
     except:
@@ -147,7 +153,7 @@ def extrair_nomes_csv(tipo_reuniao):
 
 def get_meeting(tipo):
     # Caminho para a pasta onde estão os arquivos
-    pasta = 'files'
+    pasta = FILES_DIR
     
     # Formata o nome do arquivo com base no tipo (ex: 'ti' vira 'meeting-ti.json')
     nome_arquivo = f"meeting-{tipo.lower()}.json"

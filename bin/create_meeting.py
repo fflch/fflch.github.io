@@ -6,7 +6,7 @@ from datetime import datetime
 
 # Configuração de Caminhos Base
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FILES_DIR = os.path.join(BASE_DIR, "files")
+FILES_DIR = os.path.join(BASE_DIR, "content")
 TASKS_DIR = os.path.join(BASE_DIR, "tasks")
 ISSUES_DIR = os.path.join(TASKS_DIR, "issues")
 MEETINGS_DIR = os.path.join(BASE_DIR, "meetings")
@@ -137,6 +137,26 @@ def selecionar_issues(issues, dicionario_siglas):
 
 
 # ----------------------------------------
+# Entrada Interativa para Pautas Extras
+# ----------------------------------------
+def cadastrar_pautas_extras():
+    extras = []
+    print("\n--- Pautas Extras / Assuntos Gerais ---")
+    print("Deseja adicionar pautas extras que não estão registradas como issues?")
+    print("Digite um assunto por vez e pressione Enter. Deixe em branco e pressione Enter para finalizar.\n")
+
+    contador = 1
+    while True:
+        pauta = input(f"Pauta extra #{contador} (Enter para finalizar): ").strip()
+        if not pauta:
+            break
+        extras.append(pauta)
+        contador += 1
+
+    return extras
+
+
+# ----------------------------------------
 # MAIN
 # ----------------------------------------
 def main():
@@ -177,14 +197,18 @@ def main():
     issues_abertas = listar_issues_abertas()
     issues_vinculadas = selecionar_issues(issues_abertas, siglas)
 
-    # 4. Formatação dos Dados do JSON de Saída
+    # 4. Cadastra pautas extras (não registradas em arquivo)
+    pautas_extras = cadastrar_pautas_extras()
+
+    # 5. Formatação dos Dados do JSON de Saída
     reuniao_dados = {
         "tipo": tipo_reuniao,
         "data": data_reuniao,
-        "issues": issues_vinculadas
+        "issues": issues_vinculadas,
+        "extra": pautas_extras
     }
 
-    # 5. Salva o arquivo final
+    # 6. Salva o arquivo final
     os.makedirs(MEETINGS_DIR, exist_ok=True)
     nome_arquivo_reuniao = f"{tipo_reuniao}-{data_reuniao}.json"
     caminho_final = os.path.join(MEETINGS_DIR, nome_arquivo_reuniao)
