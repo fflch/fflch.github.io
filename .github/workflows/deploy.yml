@@ -33,10 +33,10 @@ jobs:
 
       - name: Generate HTML
         run: |
-          python estrutura.py
+          python scripts/estrutura.py
+          python scripts/webapps.py
+          python scripts/dio.py
           python generate_site.py
-          python webapps.py
-          python dio.py
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
