@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Implementar o servidor do Laboratório de Climatologia e Biogeografia utilizando Ansible, com instalação e configuração dos softwares Grads e WRF para modelagem climática.",
   "data": "24/02/2026",
-  "responsavel": "Mônica"
+  "responsavel": "Mônica",
+  "data_fechamento": "11/08/2026"
 }

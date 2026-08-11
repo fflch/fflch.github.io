@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Quantificação e classificação dos patch cords óticos que temos disponíveis",
   "data": "07/05/2026",
-  "responsavel": "Néli"
+  "responsavel": "Néli",
+  "data_fechamento": "11/08/2026"
 }

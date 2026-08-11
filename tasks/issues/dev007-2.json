@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Ao imprimir, retornar para a página anterior, e não para lista de impressoras",
   "data": "20/02/2026",
-  "responsavel": "Alan"
+  "responsavel": "Alan",
+  "data_fechamento": "11/08/2026"
 }

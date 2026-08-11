@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Definir usuário Administradores das fechadura, senão a fechaduras ficam abertas (foi feito)?",
   "data": "20/07/2026",
-  "responsavel": "Alan"
+  "responsavel": "Alan",
+  "data_fechamento": "11/08/2026"
 }

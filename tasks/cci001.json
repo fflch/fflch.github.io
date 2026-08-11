@@ -6,7 +6,8 @@
   ],
   "descricao": "Esta tarefa consiste no suporte técnico, manutenção e acompanhamento de aplicações científicas e acadêmicas que não são disponibilizadas via interface web pública, mas que demandam infraestrutura dedicada e ambientes computacionais especializados. A atividade envolve preparação de servidores, gestão de recursos computacionais, suporte a pesquisadores e garantia de disponibilidade dos serviços. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Apoio técnico aos pesquisadores; \\item Prepação do ambiente computaconal para alocação dos serviços (usando ou não o Ansible); \\item Registro e documentação das configurações e intervenções realizadas; \\item Garantia de backup e integridade dos dados associados às aplicações; \\end{itemize} \\textbf{Sistemas em Produção} - Atualmente encontram-se em produção as seguintes aplicações: lcb, envi, nunaliit e nehilp;",
   "responsaveis": [
-    "Mônica"
+    "Mônica",
+    "Thiago"
   ],
   "status": true
 }

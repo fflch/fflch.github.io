@@ -6,7 +6,7 @@
   ],
   "descricao": "Esta tarefa consiste no suporte técnico no Drupal usado para coleta e consolidação de indicadores das Bibliotecas da USP, especificamente os projetos fflch/drupal-indicadores e fflch/indicadores, assim como VM relacionada. As atividades constantes relacionadas a esta tarefa são: \\bigskip\\begin{itemize} \\item Atualização do core do Drupal e dos módulos dependentes; \\item Manutenção e evolução do módulo customizado indicadores; \\item Implementação de novos campos, métricas ou relatórios conforme demanda; \\item Suporte técnico aos(as) bibliotecários(as) da ABCD; \\end{itemize}",
   "responsaveis": [
-    "Mônica"
+    ""
   ],
-  "status": true
+  "status": false
 }

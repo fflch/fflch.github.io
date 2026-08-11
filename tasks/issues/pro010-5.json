@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Migrar do sybase para o Microsoft SQL Server",
   "data": "20/02/2026",
-  "responsavel": ""
+  "responsavel": "",
+  "data_fechamento": "11/08/2026"
 }

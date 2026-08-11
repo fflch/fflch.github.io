@@ -1,0 +1,14 @@
+{
+  "peso": 1,
+  "titulo": "fflch/wp-fflch-theme",
+  "estagiarios": [
+    "Não Há"
+  ],
+  "descricao": "A manutenção do tema institucional fflch/fflch-theme em wp compreende a gestão da identidade visual digital da Faculdade dentro do Drupal. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Atualização e adequação do tema às novas versões do Drupal; \\item Manutenção da identidade visual institucional; \\item Implementação de melhorias de usabilidade e acessibilidade; \\item Correção de incompatibilidades com módulos atualizados; \\item Ajustes de CSS, templates Twig e bibliotecas JS; \\item Garantia de responsividade em dispositivos móveis; \\item Testes após atualizações de core e módulos; \\item Documentação das customizações realizadas; \\end{itemize}",
+  "responsaveis": [
+    "Thiago"
+  ],
+  "status": true
+}
+
+

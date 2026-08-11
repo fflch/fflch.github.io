@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Habilitar captive portal para autenticação de visitantes na rede SSID FFLCH.",
   "data": "23/02/2026",
-  "responsavel": ""
+  "responsavel": "",
+  "data_fechamento": "11/08/2026"
 }

@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Realizar re-segmentação da topologia de rede com redivisão dos blocos IPv4 para otimização da infraestrutura.",
   "data": "23/02/2026",
-  "responsavel": ""
+  "responsavel": "",
+  "data_fechamento": "11/08/2026"
 }

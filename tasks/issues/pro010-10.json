@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Verificar se as chaves ssl do proxy reverso estão no backup e criar um rotina Ansible de como migrá-las de um servidor para outro servidor para atualizarmos o proxy reverso para um servidor com uma versão mais recente do Debian.",
   "data": "20/02/2026",
-  "responsavel": ""
+  "responsavel": "",
+  "data_fechamento": "11/08/2026"
 }

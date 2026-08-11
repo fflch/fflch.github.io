@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Remover o recurso de usuário local e usar usuário local da biblioteca senhaunica-socialite",
   "data": "19/02/2026",
-  "responsavel": "Ricardo"
+  "responsavel": "Ricardo",
+  "data_fechamento": "11/08/2026"
 }
