@@ -70,6 +70,9 @@
 <li><a href="#upload">Upload</a></li>
 <li><a href="#autorizacao">Autorização</a></li>
 <li><a href="#excel-e-pdf-alem-do-crud-relatorios">excel e pdf - além do CRUD, relatórios</a></li>
+</ul>
+</li>
+<li><a href="#conteudos-extra">Conteúdos extra</a><ul>
 <li><a href="#exercicio">Exercício</a></li>
 </ul>
 </li>
@@ -1252,6 +1255,11 @@ docker exec -it cursolaravel php artisan vendor:publish --provider=&quot;Fflch\L
 </code></pre>
 
 <p>Seguir a documentação da biblioteca em <a href="https://github.com/fflch/laravel-fflch-stepper">https://github.com/fflch/laravel-fflch-stepper</a></p>
+<h1 id="conteudos-extra">Conteúdos extra</h1>
+<ul>
+<li>Actions</li>
+<li>Jobs/Fila</li>
+</ul>
 <h2 id="exercicio">Exercício</h2>
 <p>1 - Fazer auditoria do model <code>Livro</code> no qual o administrador poderá ver todos usuários que alteraram um determinado livro e quando. Usar <code>owen-it/laravel-auditing</code>. Caso real de uso: <a href="https://github.com/uspdev/copaco/blob/master/resources/views/partials/audit/index.blade.php">https://github.com/uspdev/copaco/blob/master/resources/views/partials/audit/index.blade.php</a></p>
 <p>2 - Criar uma rotina de envio de email quando um livro for cadastrado. Ao invés deixar fixo o texto do email no sistema no arquivo blade, dar a opção do usuário do sistema alterar partes do texto do email, para isso criar uma área de configuração no sistema que poderá ser usada pelos usuários para alterar os emails. Usar <code>spatie/laravel-settings</code>.  Caso real de uso: <a href="https://github.com/uspdev/estagios/blob/master/resources/views/emails/alteracao.blade.php">https://github.com/uspdev/estagios/blob/master/resources/views/emails/alteracao.blade.php</a></p>
