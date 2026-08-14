@@ -1313,6 +1313,11 @@ docker exec -it cursolaravel php artisan vendor:publish --provider="Fflch\Larave
 Seguir a documentação da biblioteca em [https://github.com/fflch/laravel-fflch-stepper](https://github.com/fflch/laravel-fflch-stepper)
 
 
+# Conteúdos extra
+
+- Actions
+- Jobs/Fila
+
 ## Exercício
 
 1 - Fazer auditoria do model `Livro` no qual o administrador poderá ver todos usuários que alteraram um determinado livro e quando. Usar `owen-it/laravel-auditing`. Caso real de uso: [https://github.com/uspdev/copaco/blob/master/resources/views/partials/audit/index.blade.php](https://github.com/uspdev/copaco/blob/master/resources/views/partials/audit/index.blade.php)
