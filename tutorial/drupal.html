@@ -161,6 +161,11 @@ volumes:
   mariadb_data:
 </code></pre>
 
+<p>Baixando ambos:</p>
+<pre class="codehilite"><code class="language-bash">curl -L https://fflch.github.io/assets/drupal/Dockerfile -o Dockerfile
+curl -L https://fflch.github.io/assets/drupal/docker-compose.yml -o docker-compose.yml
+</code></pre>
+
 <p>Agora executamos o build da imagem e iniciamos o site.</p>
 <pre class="codehilite"><code class="language-bash">docker compose up --build
 </code></pre>
@@ -168,6 +173,7 @@ volumes:
 <p>Acessar o drupal criado: <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a></p>
 <p>Acessar phpmyadmin criado: <a href="http://127.0.0.1:8081/">http://127.0.0.1:8081/</a></p>
 <p>Acessar servidor de autenticação USP: <a href="http://auth.local:3141">http://auth.local:3141</a></p>
+<p>Acessar servidor de email: <a href="http://localhost:8025/">http://localhost:8025/</a></p>
 <p>Instalação automática do Drupal</p>
 <pre class="codehilite"><code class="language-bash">docker exec -it cursodrupal composer update
 
@@ -225,7 +231,7 @@ $cpf = $generator-&gt;generate(
 
 <h2 id="exercicio-1">Exercício 1</h2>
 <p>Criar um módulo chamado geracnpj, que exiba um cnpj aleatório, assim como fizemos no geracpf. </p>
-<p>Criar um segundo módulo chamado gerafrases, que mostrará frases inspiradoras dependendo do dia da semana. As frases que deverão ser mostradas estão no arquivo csv <a href="/assets/files/frases.csv">frases</a>. Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar os dois módulos na TV.</p>
+<p>Criar um segundo módulo chamado gerafrases, que mostrará frases inspiradoras dependendo do dia da semana. As frases que deverão ser mostradas estão no arquivo csv <a href="../assets/frases.csv">frases</a>. Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar os dois módulos na TV.</p>
 <h1 id="dia-2">Dia 2</h1>
 <p>CRUD para cadastro de frases. Nosso módulo se chamará <code>muralmotivacional</code>:</p>
 <pre class="codehilite"><code class="language-bash">docker exec -it cursodrupal ./vendor/bin/drush generate module

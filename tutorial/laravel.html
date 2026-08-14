@@ -68,6 +68,9 @@
 <li><a href="#observer-e-emails">Observer e Emails</a></li>
 <li><a href="#replicado-usp">Replicado USP</a></li>
 <li><a href="#upload">Upload</a></li>
+</ul>
+</li>
+<li><a href="#dia-5-alem-do-crud-continuacao">Dia 5 - Além do CRUD - continuação</a><ul>
 <li><a href="#autorizacao">Autorização</a></li>
 <li><a href="#excel-e-pdf-alem-do-crud-relatorios">excel e pdf - além do CRUD, relatórios</a></li>
 </ul>
@@ -788,6 +791,7 @@ docker exec -it cursolaravel php artisan dusk tests/Browser/LivroCrudTest.php
 
 <p>Criando um template de email na pasta <code>resources/views/emails/livros</code> com o nome <code>create.blade.php</code>:</p>
 <pre class="codehilite"><code class="language-bash">mkdir -p resources/views/emails/livros
+touch resources/views/emails/livros/create.blade.php
 </code></pre>
 
 <p>Template:</p>
@@ -816,14 +820,13 @@ class LivroCreatedMail extends Mailable implements ShouldQueue
     }
 
     public function content(): Content
-        {
-            return new Content(
-                view: 'emails.livros.create',
-                with: [
-                    'livro' =&gt; $this-&gt;livro,
-                ],
-            );
-        }
+    {
+        return new Content(
+            view: 'emails.livros.create',
+            with: [
+                'livro' =&gt; $this-&gt;livro,
+            ],
+        );
     }
 </code></pre>
 
@@ -931,13 +934,11 @@ use Uspdev\Replicado\Pessoa;
 class IndexController extends Controller
 {
     public function index(){
-
         if (auth()-&gt;check()) {
             $curso = Pessoa::retornarCursoPorCodpes(auth()-&gt;user()-&gt;codpes)['nomcur'];
         } else {
             $curso = 'usuário não logado';
         }
-
         return view('index', ['curso' =&gt; $curso]);
     }
 }
@@ -1056,7 +1057,9 @@ $this-&gt;browse(function (Browser $browser) {
         -&gt;acceptDialog();
 </code></pre>
 
-<p>Quando um livro pode ter múltiplos arquivos associados (como fotos de capa, sumário, anexos ou capítulos em PDF), a melhor prática é criar um Model entidade, como por exemplo, LivroArquivo via relacionamento Um para Muitos (hasMany) ao invés de fazer no model do livro como feito aqui, entretanto, a parte de manipulação do arquivo, continua exatamente a mesma.</p>
+<p><strong>Atenção</strong><br />
+Quando um livro pode ter múltiplos arquivos associados (como fotos de capa, sumário, anexos ou capítulos em PDF), a melhor prática é criar um Model entidade, como por exemplo, LivroArquivo via relacionamento Um para Muitos (hasMany) ao invés de fazer no model do livro como feito aqui, entretanto, a parte de manipulação do arquivo, continua exatamente a mesma.</p>
+<h1 id="dia-5-alem-do-crud-continuacao">Dia 5 - Além do CRUD - continuação</h1>
 <h2 id="autorizacao">Autorização</h2>
 <p>Um Gate no Laravel é uma função usada para verificar se um usuário autenticado tem permissão para realizar uma ação específica na aplicação. O senha única socialite fornece acesso para um Gate chamado de <code>admin</code> para aqueles usuários com número USP no .env: <code>SENHAUNICA_ADMINS=111111,782783</code>, no exemplo, somente as pessoas com número USP 111111 e 782783 terão acesso de admim. Para restringir o acesso a controllers somente para admin:</p>
 <pre class="codehilite"><code class="language-php">use Illuminate\Support\Facades\Gate;
