@@ -781,6 +781,7 @@ docker exec -it cursolaravel php artisan make:observer LivroObserver --model=Liv
 Criando um template de email na pasta `resources/views/emails/livros` com o nome `create.blade.php`:
 ```bash
 mkdir -p resources/views/emails/livros
+touch resources/views/emails/livros/create.blade.php
 ```
 
 Template:
@@ -812,14 +813,13 @@ class LivroCreatedMail extends Mailable implements ShouldQueue
     }
 
     public function content(): Content
-        {
-            return new Content(
-                view: 'emails.livros.create',
-                with: [
-                    'livro' => $this->livro,
-                ],
-            );
-        }
+    {
+        return new Content(
+            view: 'emails.livros.create',
+            with: [
+                'livro' => $this->livro,
+            ],
+        );
     }
 ```
 
@@ -936,13 +936,11 @@ use Uspdev\Replicado\Pessoa;
 class IndexController extends Controller
 {
     public function index(){
-
         if (auth()->check()) {
             $curso = Pessoa::retornarCursoPorCodpes(auth()->user()->codpes)['nomcur'];
         } else {
             $curso = 'usuário não logado';
         }
-        
         return view('index', ['curso' => $curso]);
     }
 }
@@ -1077,7 +1075,10 @@ $this->browse(function (Browser $browser) {
         ->acceptDialog();
 ```
 
+**Atenção**
 Quando um livro pode ter múltiplos arquivos associados (como fotos de capa, sumário, anexos ou capítulos em PDF), a melhor prática é criar um Model entidade, como por exemplo, LivroArquivo via relacionamento Um para Muitos (hasMany) ao invés de fazer no model do livro como feito aqui, entretanto, a parte de manipulação do arquivo, continua exatamente a mesma.
+
+# Dia 5 - Além do CRUD - continuação
 
 ## Autorização
 

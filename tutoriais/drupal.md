@@ -26,9 +26,14 @@ docker run --rm -it \
 [Dockerfile](../assets/drupal/Dockerfile) pronto para usar no contexto USP:
 [[include:drupal/Dockerfile]]
 
-
 [docker-compose.yml](../assets/drupal/docker-compose.yml) pronto para usar no contexto USP:
 [[include:drupal/docker-compose.yml]]
+
+Baixando ambos:
+```bash
+curl -L https://fflch.github.io/assets/drupal/Dockerfile -o Dockerfile
+curl -L https://fflch.github.io/assets/drupal/docker-compose.yml -o docker-compose.yml
+```
 
 Agora executamos o build da imagem e iniciamos o site.
 ```bash
@@ -40,6 +45,8 @@ Acessar o drupal criado: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 Acessar phpmyadmin criado: [http://127.0.0.1:8081/](http://127.0.0.1:8081/)
 
 Acessar servidor de autenticação USP: [http://auth.local:3141](http://auth.local:3141)
+
+Acessar servidor de email: [http://localhost:8025/](http://localhost:8025/)
 
 Instalação automática do Drupal
 
@@ -109,7 +116,7 @@ $build['content'] = [
 
 Criar um módulo chamado geracnpj, que exiba um cnpj aleatório, assim como fizemos no geracpf. 
 
-Criar um segundo módulo chamado gerafrases, que mostrará frases inspiradoras dependendo do dia da semana. As frases que deverão ser mostradas estão no arquivo csv [frases](/assets/files/frases.csv). Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar os dois módulos na TV.
+Criar um segundo módulo chamado gerafrases, que mostrará frases inspiradoras dependendo do dia da semana. As frases que deverão ser mostradas estão no arquivo csv [frases](../assets/frases.csv). Na próxima reunião, cada membro do grupo (estagiários e funcionários) deve apresentar os dois módulos na TV.
 
 # Dia 2
 

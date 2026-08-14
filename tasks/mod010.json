@@ -1,0 +1,12 @@
+{
+  "peso": 1,
+  "titulo": "fflch/compras",
+  "estagiarios": [
+    "Camila"
+  ],
+  "descricao": "O módulo fflch/compras integra integra o drupal com o csv do compras gov sp",
+  "responsaveis": [
+    "Mônica"
+  ],
+  "status": true
+}
