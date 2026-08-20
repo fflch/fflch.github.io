@@ -15,6 +15,8 @@ OUTPUT_FILE = os.path.join(OUTPUT_DIR, "index.html")
 TUTORIAIS_DIR = "tutoriais"
 ASSETS_DIR = "assets"
 OUTPUT_TUTORIAIS = os.path.join(OUTPUT_DIR, "tutorial")
+REPORTS_DIR = os.path.join("content", "reports")
+OUTPUT_REPORTS = os.path.join(OUTPUT_DIR, "reports")
 
 # Mapeamento de extensões para linguagens do Prism.js
 EXT_TO_LANG = {
@@ -54,6 +56,98 @@ def extrai_participantes_csv(caminho_csv):
             if row:  # Ignora linhas vazias
                 nomes.append(row[0].strip())
     return ", ".join(nomes)
+
+def processar_relatorios():
+    """Lê a pasta content/reports, processa includes, converte para HTML e gera lista alfabética."""
+    if not os.path.exists(REPORTS_DIR):
+        return []
+
+    os.makedirs(OUTPUT_REPORTS, exist_ok=True)
+    relatorios = []
+
+    css_style = """
+        body { padding: 40px; background: #f8f9fa; } 
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        pre { border-radius: 6px; }
+        .toc { 
+            background: #f1f3f5; 
+            padding: 15px 20px; 
+            border-radius: 6px; 
+            border-left: 4px solid #0d6efd; 
+            margin-bottom: 30px; 
+        }
+        .toc ul { margin-bottom: 0; padding-left: 20px; }
+        .toc a { text-decoration: none; color: #0d6efd; font-weight: 500; }
+        .toc a:hover { text-decoration: underline; }
+    """
+
+    for arquivo in sorted(os.listdir(REPORTS_DIR)):
+        if arquivo.endswith(".md"):
+            caminho_md = os.path.join(REPORTS_DIR, arquivo)
+            nome_base = os.path.splitext(arquivo)[0]
+            arquivo_html_nome = f"{nome_base}.html"
+            caminho_html_destino = os.path.join(OUTPUT_REPORTS, arquivo_html_nome)
+
+            with open(caminho_md, "r", encoding="utf-8") as f:
+                conteudo_md = f.read()
+
+            titulo = extrair_titulo_md(conteudo_md, nome_base)
+            
+            # Remove Front Matter
+            conteudo_md_limpo = re.sub(r"^---\s*\ntitle:.*?\n---\s*\n", "", conteudo_md, flags=re.MULTILINE | re.DOTALL)
+            
+            # Injeta TOC automático caso não exista
+            if "[TOC]" not in conteudo_md_limpo and "[toc]" not in conteudo_md_limpo:
+                conteudo_md_limpo = f"[TOC]\n\n" + conteudo_md_limpo
+
+            # Processa includes de assets/
+            conteudo_md_processado = resolver_includes_assets(conteudo_md_limpo)
+
+            # Converte Markdown para HTML (tabelas, códigos, etc)
+            html_corpo = markdown.markdown(
+                conteudo_md_processado,
+                extensions=['extra', 'codehilite', 'fenced_code', 'nl2br', 'tables', 'toc']
+            )
+
+            # Template HTML individual do relatório (com suporte ao MathJax para fórmulas matemáticas)
+            html_completo = f"""<!DOCTYPE html>
+                <html lang="pt-br">
+                <head>
+                    <meta charset="UTF-8">
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <!-- Prism CSS para realce de sintaxe -->
+                    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+                    <!-- MathJax para renderização de fórmulas e equações LaTeX -->
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/polyfill/3.25.1/polyfill.min.js"></script>
+                    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+                    <title>{titulo}</title>
+                    <style>{css_style}</style>
+                </head>
+                <body>
+                    <div class="container">
+                        <a href="../index.html" class="btn btn-sm btn-outline-secondary mb-4">← Voltar à Página Inicial</a>
+                        <h1>{titulo}</h1>
+                        <hr>
+                        <div class="markdown-body">
+                            {html_corpo}
+                        </div>
+                    </div>
+                    <!-- Prism JS -->
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+                </body>
+                </html>"""
+
+            with open(caminho_html_destino, "w", encoding="utf-8") as f:
+                f.write(html_completo)
+
+            relatorios.append({
+                "titulo": titulo,
+                "link": f"reports/{arquivo_html_nome}"
+            })
+
+    relatorios.sort(key=lambda x: x["titulo"].lower())
+    return relatorios
 
 # ----------------------------------------
 # PROCESSAR TUTORIAIS
@@ -701,7 +795,7 @@ arquivos_json = [
     'meeting-laravel.json',
 ]
 
-def generate_html(tasks, issues, tutoriais):
+def generate_html(tasks, issues, tutoriais, relatorios):
     siglas = load_siglas()
     groups = group_by_prefix(tasks)
     sorted_prefixes = sorted(groups.keys())
@@ -737,6 +831,7 @@ def generate_html(tasks, issues, tutoriais):
             <li><a href="#por-estagiario">Atividades por estagiário(a)</a></li>
             <li><a href="#estrutura">Organização estrutural das atividades</a></li>
             <li><a href="#reunioes">Reuniões Técnicas</a></li>
+            <li><a href="#relatorios">Relatórios</a></li>
             
         </ul>
         </div>
@@ -920,6 +1015,32 @@ def generate_html(tasks, issues, tutoriais):
 
             html += "</div></div>"
 
+    # --- SEÇÃO DE RELATÓRIOS ---
+    html += """
+    <hr class="my-5">
+    <h1 id="relatorios">Relatórios</h1>
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+    """
+    if relatorios:
+        for rel in relatorios:
+            html += f"""
+                <li class="list-group-item">
+                    <a href="{rel['link']}" class="fw-bold text-primary text-decoration-none" target="_blank">
+                        📊 {rel['titulo']}
+                    </a>
+                </li>
+            """
+    else:
+        html += '<li class="list-group-item text-muted">Nenhum relatório cadastrado até o momento.</li>'
+
+    html += """
+            </ul>
+        </div>
+    </div>
+    """
+
     return html
 
 def main():
@@ -929,11 +1050,12 @@ def main():
 
     tasks = load_tasks()
     issues = load_issues(tasks)
+    relatorios = processar_relatorios()
     
     # Processa os tutoriais da pasta tutoriais/
     tutoriais = processar_tutoriais()
 
-    html = generate_html(tasks, issues, tutoriais)
+    html = generate_html(tasks, issues, tutoriais, relatorios)
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
