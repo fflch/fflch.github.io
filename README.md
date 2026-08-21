@@ -18,4 +18,22 @@ Generate:
 
 
 
+ cabeamento:
+https://portal.if.usp.br/ccifusp/pt-br/node/592
+https://portal.if.usp.br/ccifusp/sites/portal.if.usp.br.ccifusp/files/Aviso%20de%20Contrata%C3%A7%C3%A3o%20-%2020-2025.pdf
+
+
+Insumos de informática
+
+     Pregão eletrônico no 17/2025 - IFUSP;
+
+
+     Material de infraestrutura de rede de dados
+
+     Pregão eletrônico no 20/2025 - IFUSP;
+
+     Processo SEI no 154.00004881/2024-88;
+
+
+
 
