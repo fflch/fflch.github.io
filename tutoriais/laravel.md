@@ -28,7 +28,6 @@ curl -L https://fflch.github.io/assets/laravel/Dockerfile -o Dockerfile
 curl -L https://fflch.github.io/assets/laravel/docker-compose.yml -o docker-compose.yml
 ```
 
-
 Criando a imagem e subindo ambiente:
 ```bash
 docker compose up --build
