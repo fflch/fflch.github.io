@@ -102,6 +102,7 @@ def processar_relatorios():
 
             # Processa includes de assets/
             conteudo_md_processado = resolver_includes_assets(conteudo_md_limpo)
+            conteudo_md_processado = resolver_includes_html(conteudo_md_processado)
 
             # Converte Markdown para HTML (tabelas, códigos, etc)
             html_corpo = markdown.markdown(
@@ -175,6 +176,29 @@ FILENAME_TO_LANG = {
     '.env': 'bash',
     '.env.example': 'bash'
 }
+
+def resolver_includes_html(conteudo_md):
+    """
+    Substitui [[include_html:caminho/arquivo.html]] pelo conteúdo HTML bruto
+    lido da pasta assets/. Permite que o HTML seja renderizado diretamente no Markdown.
+    """
+    def substituidor(match):
+        caminho_relativo = match.group(1).strip()
+        caminho_asset = os.path.join(ASSETS_DIR, caminho_relativo)
+        
+        if os.path.exists(caminho_asset):
+            try:
+                with open(caminho_asset, 'r', encoding='utf-8') as f:
+                    conteudo_html = f.read()
+                # Retorna o HTML diretamente, garantindo quebras de linha antes e depois
+                return f"\n\n{conteudo_html}\n\n"
+            except Exception as e:
+                return f"\n*Erro ao ler include HTML {caminho_relativo}: {e}*\n"
+        else:
+            return f"\n*Arquivo HTML não encontrado: assets/{caminho_relativo}*\n"
+
+    # Procura pela sintaxe [[include_html: caminho/arquivo.html]]
+    return re.sub(r"\[\[include_html:\s*(.*?)\s*\]\]", substituidor, conteudo_md)
 
 def resolver_includes_assets(conteudo_md):
     """
@@ -257,7 +281,8 @@ def processar_tutoriais():
 
             # Processa includes de assets/
             conteudo_md_processado = resolver_includes_assets(conteudo_md_limpo)
-
+            conteudo_md_processado = resolver_includes_html(conteudo_md_processado)
+            
             # Converte Markdown para HTML com suporte a TOC automático e IDs nos headers
             html_corpo = markdown.markdown(
                 conteudo_md_processado,
@@ -494,6 +519,7 @@ def converter_md_para_html(codigo_task):
 
         # Processa includes de assets/ caso existam
         conteudo_md_processado = resolver_includes_assets(conteudo_md)
+        conteudo_md_processado = resolver_includes_html(conteudo_md_processado)
 
         # Converte Markdown para HTML incluindo a extensão 'toc'
         html_corpo = markdown.markdown(

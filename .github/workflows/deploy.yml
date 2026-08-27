@@ -36,6 +36,7 @@ jobs:
           python scripts/estrutura.py
           python scripts/webapps.py
           python scripts/dio.py
+          python scripts/topologia.py
           python generate_site.py
 
       - name: Deploy to GitHub Pages
