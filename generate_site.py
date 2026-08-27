@@ -7,6 +7,7 @@ import shutil
 import csv
 from pathlib import Path
 import markdown
+import base64
 
 OUTPUT_DIR = "docs"
 TASKS_DIR = "tasks"
@@ -57,6 +58,8 @@ def extrai_participantes_csv(caminho_csv):
                 nomes.append(row[0].strip())
     return ", ".join(nomes)
 
+import base64
+
 def processar_relatorios():
     """Lê a pasta content/reports, processa includes, converte para HTML e gera lista alfabética."""
     if not os.path.exists(REPORTS_DIR):
@@ -64,6 +67,13 @@ def processar_relatorios():
 
     os.makedirs(OUTPUT_REPORTS, exist_ok=True)
     relatorios = []
+
+    # Carrega a imagem da FFLCH e converte para Base64 para incorporação perfeita no PDF e Word
+    logo_base64 = ""
+    caminho_logo = os.path.join(ASSETS_DIR, "fflch.png")
+    if os.path.exists(caminho_logo):
+        with open(caminho_logo, "rb") as img_file:
+            logo_base64 = "data:image/png;base64," + base64.b64encode(img_file.read()).decode('utf-8')
 
     css_style = """
         body { padding: 40px; background: #f8f9fa; } 
@@ -79,6 +89,16 @@ def processar_relatorios():
         .toc ul { margin-bottom: 0; padding-left: 20px; }
         .toc a { text-decoration: none; color: #0d6efd; font-weight: 500; }
         .toc a:hover { text-decoration: underline; }
+
+        /* Esconde o cabeçalho timbrado na tela normal */
+        #header-timbrado-export {
+            display: none;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            #header-timbrado-export { display: block !important; }
+        }
     """
 
     for arquivo in sorted(os.listdir(REPORTS_DIR)):
@@ -104,38 +124,125 @@ def processar_relatorios():
             conteudo_md_processado = resolver_includes_assets(conteudo_md_limpo)
             conteudo_md_processado = resolver_includes_html(conteudo_md_processado)
 
-            # Converte Markdown para HTML (tabelas, códigos, etc)
+            # Converte Markdown para HTML
             html_corpo = markdown.markdown(
                 conteudo_md_processado,
                 extensions=['extra', 'codehilite', 'fenced_code', 'nl2br', 'tables', 'toc']
             )
 
-            # Template HTML individual do relatório (com suporte ao MathJax para fórmulas matemáticas)
+            img_tag_logo = f'<img src="{logo_base64}" alt="Logo FFLCH" style="max-width: 100px; height: auto;">' if logo_base64 else ''
+
+            # HTML do relatório
             html_completo = f"""<!DOCTYPE html>
                 <html lang="pt-br">
                 <head>
                     <meta charset="UTF-8">
                     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-                    <!-- Prism CSS para realce de sintaxe -->
                     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-                    <!-- MathJax para renderização de fórmulas e equações LaTeX -->
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/polyfill/3.25.1/polyfill.min.js"></script>
-                    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+                    
+                    <!-- Bibliotecas para exportação -->
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
                     <title>{titulo}</title>
                     <style>{css_style}</style>
                 </head>
                 <body>
                     <div class="container">
-                        <a href="../index.html" class="btn btn-sm btn-outline-secondary mb-4">← Voltar à Página Inicial</a>
-                        <h1>{titulo}</h1>
-                        <hr>
-                        <div class="markdown-body">
-                            {html_corpo}
+                        
+                        <!-- Topo com Navegação e Botões (apenas na tela) -->
+                        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+                            <a href="../index.html" class="btn btn-sm btn-outline-secondary">← Voltar à Página Inicial</a>
+                            <div>
+                                <button onclick="exportarPDF()" class="btn btn-sm btn-outline-danger me-2">📄 Exportar PDF</button>
+                                <button onclick="exportarWord()" class="btn btn-sm btn-outline-primary">📝 Exportar Word (.docx)</button>
+                            </div>
                         </div>
+
+                        <!-- Área de Conteúdo principal -->
+                        <div id="export-content">
+                            
+                            <!-- Cabeçalho Timbrado FFLCH (Oculto na página web, visível no PDF/Word) -->
+                            <div id="header-timbrado-export" style="border-bottom: 2px solid #002B49; padding-bottom: 12px; margin-bottom: 25px;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <td style="width: 110px; vertical-align: middle;">
+                                            {img_tag_logo}
+                                        </td>
+                                        <td style="vertical-align: middle; padding-left: 10px;">
+                                            <div style="color: #002B49; font-family: Arial, sans-serif; font-weight: bold; font-size: 15pt; line-height: 1.2;">UNIVERSIDADE DE SÃO PAULO</div>
+                                            <div style="color: #555; font-size: 10pt;">Faculdade de Filosofia, Letras e Ciências Humanas</div>
+                                            <div style="color: #002B49; font-weight: bold; font-size: 9.5pt; margin-top: 2px;">Seção Técnico-Administrativa de TI</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <h1>{titulo}</h1>
+                            <hr>
+                            <div class="markdown-body">
+                                {html_corpo}
+                            </div>
+                        </div>
+
                     </div>
+
                     <!-- Prism JS -->
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+                    <!-- Script de Exportação -->
+                    <script>
+                    function exportarPDF() {{
+                        const element = document.getElementById('export-content');
+                        const header = document.getElementById('header-timbrado-export');
+                        
+                        // Exibe o cabeçalho timbrado para exportação
+                        header.style.display = 'block';
+
+                        const opt = {{
+                            margin:       [10, 10, 10, 10],
+                            filename:     '{nome_base}.pdf',
+                            image:        {{ type: 'jpeg', quality: 0.98 }},
+                            html2canvas:  {{ scale: 2, useCORS: true, logging: false }},
+                            jsPDF:        {{ unit: 'mm', format: 'a4', orientation: 'portrait' }},
+                            pagebreak:    {{ mode: ['avoid-all', 'css', 'legacy'] }}
+                        }};
+
+                        html2pdf().set(opt).from(element).save().then(() => {{
+                            header.style.display = 'none';
+                        }}).catch(err => {{
+                            console.error(err);
+                            header.style.display = 'none';
+                        }});
+                    }}
+
+                    function exportarWord() {{
+                        const element = document.getElementById('export-content');
+                        const clone = element.cloneNode(true);
+                        
+                        const headerClone = clone.querySelector('#header-timbrado-export');
+                        if (headerClone) {{
+                            headerClone.style.display = 'block';
+                        }}
+
+                        const headerHTML = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+                            "xmlns:w='urn:schemas-microsoft-com:office:word' "+
+                            "xmlns='http://www.w3.org/TR/REC-html40'>"+
+                            "<head><meta charset='utf-8'><title>{titulo}</title>"+
+                            "<style>"+
+                            "body {{ font-family: Arial, sans-serif; font-size: 11pt; }}"+
+                            "table {{ border-collapse: collapse; width: 100%; }}"+
+                            "td, th {{ border: 1px solid #ddd; padding: 6px; }}"+
+                            "pre {{ background: #f4f4f4; padding: 10px; border-radius: 4px; font-family: Courier New; }}"+
+                            "</style></head><body>";
+                            
+                        const footerHTML = "</body></html>";
+                        const sourceHTML = headerHTML + clone.innerHTML + footerHTML;
+
+                        const blob = new Blob(['\\ufeff', sourceHTML], {{ type: 'application/msword' }});
+                        saveAs(blob, '{nome_base}.docx');
+                    }}
+                    </script>
                 </body>
                 </html>"""
 
