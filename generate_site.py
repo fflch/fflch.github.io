@@ -19,6 +19,8 @@ ASSETS_DIR = "assets"
 OUTPUT_TUTORIAIS = os.path.join(OUTPUT_DIR, "tutorial")
 REPORTS_DIR = os.path.join("content", "reports")
 OUTPUT_REPORTS = os.path.join(OUTPUT_DIR, "reports")
+PAGES_DIR = os.path.join("content", "pages")
+OUTPUT_DOCS = "docs"
 
 # Mapeamento de extensões para linguagens do Prism.js
 EXT_TO_LANG = {
@@ -282,6 +284,238 @@ def processar_relatorios():
 
     relatorios.sort(key=lambda x: x["titulo"].lower())
     return relatorios
+
+import os
+import re
+import base64
+import markdown
+from datetime import datetime
+
+# Certifique-se de que estas variáveis estão definidas no seu script:
+# PAGES_DIR = os.path.join("content", "pages")
+# OUTPUT_DOCS = "docs"
+# ASSETS_DIR = "assets"
+
+def processar_paginas():
+    """
+    Lê os arquivos Markdown da pasta 'content/pages', processa includes,
+    converte para HTML e salva o resultado na pasta 'docs/'.
+    Não retorna lista e nem gera índice global.
+    """
+    if not os.path.exists(PAGES_DIR):
+        return
+
+    # Cria a pasta 'docs' (OUTPUT_DOCS) se ela não existir
+    os.makedirs(os.path.join(OUTPUT_DOCS, "pages"), exist_ok=True)
+
+    # Carrega a logo em base64 se disponível
+    logo_base64 = ""
+    caminho_logo = os.path.join(ASSETS_DIR, "fflch.png")
+    if os.path.exists(caminho_logo):
+        with open(caminho_logo, "rb") as img_file:
+            logo_base64 = "data:image/png;base64," + base64.b64encode(img_file.read()).decode('utf-8')
+
+    css_style = """
+        body { padding: 40px; background: #f8f9fa; } 
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        pre { border-radius: 6px; }
+        
+        /* Estilo do Sumário na tela normal (com links azuis) */
+        .toc { 
+            background: #f1f3f5; 
+            padding: 15px 20px; 
+            border-radius: 6px; 
+            border-left: 4px solid #0d6efd; 
+            margin-bottom: 30px; 
+        }
+        .toc ul { margin-bottom: 0; padding-left: 20px; }
+        .toc a { text-decoration: none; color: #0d6efd; font-weight: 500; }
+        .toc a:hover { text-decoration: underline; }
+
+        /* Estilo simplificado para impressão tradicional */
+        @media print {
+            .no-print { display: none !important; }
+            #header-timbrado-export { display: block !important; }
+            .toc { 
+                background: none !important; 
+                border: none !important; 
+                padding: 0 !important; 
+            }
+            .toc a { color: #000 !important; text-decoration: none !important; }
+        }
+    """
+
+    for arquivo in os.listdir(PAGES_DIR):
+        if arquivo.endswith(".md"):
+            caminho_md = os.path.join(PAGES_DIR, arquivo)
+            nome_base = os.path.splitext(arquivo)[0]
+            arquivo_html_nome = f"{nome_base}.html"
+            
+            caminho_html_destino = os.path.join(OUTPUT_DOCS, "pages", arquivo_html_nome)
+
+            with open(caminho_md, "r", encoding="utf-8") as f:
+                conteudo_md = f.read()
+
+            titulo = extrair_titulo_md(conteudo_md, nome_base)
+            
+            # Remove Front Matter
+            conteudo_md_limpo = re.sub(r"^---\s*\ntitle:.*?\n---\s*\n", "", conteudo_md, flags=re.MULTILINE | re.DOTALL)
+            
+            # Injeta TOC automático caso não exista
+            if "[TOC]" not in conteudo_md_limpo and "[toc]" not in conteudo_md_limpo:
+                conteudo_md_limpo = f"[TOC]\n\n" + conteudo_md_limpo
+
+            # Processa includes de assets/
+            conteudo_md_processado = resolver_includes_assets(conteudo_md_limpo)
+
+            # Converte Markdown para HTML
+            html_corpo = markdown.markdown(
+                conteudo_md_processado,
+                extensions=['extra', 'codehilite', 'fenced_code', 'nl2br', 'tables', 'toc']
+            )
+
+            img_tag_logo = f'<img src="{logo_base64}" alt="Logo FFLCH" style="max-width: 100px; height: auto;">' if logo_base64 else ''
+
+            html_completo = f"""<!DOCTYPE html>
+                <html lang="pt-br">
+                <head>
+                    <meta charset="UTF-8">
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+                    
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+                    <title>{titulo}</title>
+                    <style>{css_style}</style>
+                </head>
+                <body>
+                    <div class="container">
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+                            <a href="../index.html" class="btn btn-sm btn-outline-secondary">← Voltar à Página Inicial</a>
+                            <div>
+                                <button onclick="exportarPDF()" class="btn btn-sm btn-outline-danger me-2">📄 Exportar PDF</button>
+                                <button onclick="exportarWord()" class="btn btn-sm btn-outline-primary">📝 Exportar Word (.docx)</button>
+                            </div>
+                        </div>
+
+                        <div id="export-content">
+                            
+                            <div id="header-timbrado-export" style="display: none; padding-bottom: 12px; margin-bottom: 25px;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <td style="width: 110px; vertical-align: middle;">
+                                            {img_tag_logo}
+                                        </td>
+                                        <td style="vertical-align: middle; padding-left: 10px;">
+                                            <div style="color: #002B49; font-family: Arial, sans-serif; font-weight: bold; font-size: 15pt; line-height: 1.2;">UNIVERSIDADE DE SÃO PAULO</div>
+                                            <div style="color: #555; font-size: 10pt;">Faculdade de Filosofia, Letras e Ciências Humanas</div>
+                                            <div style="color: #002B49; font-weight: bold; font-size: 9.5pt; margin-top: 2px;">Seção de Informática</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <hr>
+                                São Paulo, {datetime.now().strftime("%d/%m/%Y")}
+                            </div>
+                            <h1>{titulo}</h1>
+                            <hr>
+                            <div class="markdown-body">
+                                {html_corpo}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+
+                    <script>
+                    function limparTOCParaExportacao(clone) {{
+                        const toc = clone.querySelector('.toc');
+                        if (toc) {{
+                            toc.style.background = 'none';
+                            toc.style.border = 'none';
+                            toc.style.padding = '0';
+                            toc.style.margin = '0 0 20px 0';
+
+                            const links = toc.querySelectorAll('a');
+                            links.forEach(a => {{
+                                const span = document.createElement('span');
+                                span.textContent = a.textContent;
+                                span.style.color = '#000000';
+                                span.style.textDecoration = 'none';
+                                a.parentNode.replaceChild(span, a);
+                            }});
+
+                            const uls = toc.querySelectorAll('ul');
+                            uls.forEach(ul => {{
+                                ul.style.listStyleType = 'disc';
+                                ul.style.paddingLeft = '20px';
+                                ul.style.margin = '4px 0';
+                                ul.style.color = '#000000';
+                            }});
+                        }}
+                    }}
+
+                    function exportarPDF() {{
+                        const element = document.getElementById('export-content');
+                        const clone = element.cloneNode(true);
+                        
+                        const headerClone = clone.querySelector('#header-timbrado-export');
+                        if (headerClone) {{
+                            headerClone.style.display = 'block';
+                        }}
+
+                        limparTOCParaExportacao(clone);
+
+                        const opt = {{
+                            margin:       [10, 10, 10, 10],
+                            filename:     '{nome_base}.pdf',
+                            image:        {{ type: 'jpeg', quality: 0.98 }},
+                            html2canvas:  {{ scale: 2, useCORS: true, logging: false }},
+                            jsPDF:        {{ unit: 'mm', format: 'a4', orientation: 'portrait' }},
+                            pagebreak:    {{ mode: ['avoid-all', 'css', 'legacy'] }}
+                        }};
+
+                        html2pdf().set(opt).from(clone).save();
+                    }}
+
+                    function exportarWord() {{
+                        const element = document.getElementById('export-content');
+                        const clone = element.cloneNode(true);
+                        
+                        const headerClone = clone.querySelector('#header-timbrado-export');
+                        if (headerClone) {{
+                            headerClone.style.display = 'block';
+                        }}
+
+                        limparTOCParaExportacao(clone);
+
+                        const headerHTML = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+                            "xmlns:w='urn:schemas-microsoft-com:office:word' "+
+                            "xmlns='http://www.w3.org/TR/REC-html40'>"+
+                            "<head><meta charset='utf-8'><title>{titulo}</title>"+
+                            "<style>"+
+                            "body {{ font-family: Arial, sans-serif; font-size: 11pt; color: #000; }}"+
+                            "table {{ border-collapse: collapse; width: 100%; }}"+
+                            "td, th {{ border: 1px solid #ddd; padding: 6px; }}"+
+                            "ul {{ padding-left: 20px; }}"+
+                            "li {{ margin-bottom: 3px; }}"+
+                            "pre {{ background: #f4f4f4; padding: 10px; border-radius: 4px; font-family: Courier New; }}"+
+                            "</style></head><body>";
+                            
+                        const footerHTML = "</body></html>";
+                        const sourceHTML = headerHTML + clone.innerHTML + footerHTML;
+
+                        const blob = new Blob(['\\ufeff', sourceHTML], {{ type: 'application/msword' }});
+                        saveAs(blob, '{nome_base}.docx');
+                    }}
+                    </script>
+                </body>
+                </html>"""
+
+            with open(caminho_html_destino, "w", encoding="utf-8") as f:
+                f.write(html_completo)
 
 # ----------------------------------------
 # PROCESSAR TUTORIAIS
@@ -1204,6 +1438,8 @@ def generate_html(tasks, issues, tutoriais, relatorios):
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    processar_paginas()
 
     copy_assets()
 
