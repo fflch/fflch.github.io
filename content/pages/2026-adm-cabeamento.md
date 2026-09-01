@@ -25,7 +25,8 @@ Ademais, o banheiro adaptado, reformado na mesma intervenção, também foi cons
 
 ### Empresas Consultadas
 
-Solicitação de orçamento enviada às empresas listadas abaixo, selecionadas a partir do termo de busca no Google: `"cabeamento estruturado and são paulo and empresa"`.
+Solicitação de orçamento enviada às empresas listadas abaixo, selecionadas a partir do termo de busca no Google: `"cabeamento estruturado and são paulo and empresa"`. [Email enviado em 01/09/2026](../../assets/2026/obra-cabeamento-adm/email1.pdf).
+
 
 <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
   <thead>
