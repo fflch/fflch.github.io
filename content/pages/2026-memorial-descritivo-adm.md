@@ -6,6 +6,7 @@ title: Contratação de serviços especializados de engenharia de telecomunicaç
 **CNPJ da FFLCH:** 63.025.530/0016-90  
 **Objeto:** Contratação de empresa especializada para remoção de cabeamento estruturado legado, lançamento de novo cabeamento para até 450 pontos de rede, conectorização, identificação, organização e certificação técnica de pontos de rede lógica.  
 **Escopo do fornecimento:** Prestação de serviço com fornecimento de mão de obra especializada, ferramentas e equipamentos de certificação.  
+**Agendamento para vistoria:** Neli Maximino <ti.fflch@usp.br>
 
 ---
 
