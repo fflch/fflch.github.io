@@ -19,17 +19,18 @@ title: Contratação de serviços especializados de engenharia de telecomunicaç
 * A sala técnica de telecomunicações (TR - *telecommunications room*) está localizada na área central do pavimento térreo.
 * Todo o cabeamento vindo do 1º pavimento desce para a sala TR no térreo por meio de eletrocalhas e tubulações pré-existentes.
 * **Pontos mapeados em planta:** Estão oficialmente identificados nas plantas baixas 386 pontos de rede (123 no térreo e 263 no 1º pavimento).
-* **Margem de folga/reserva técnica:** Visando cobrir eventuais pontos não identificados nas plantas originais ou pequenas adequações de layout, a contratação prevê uma margem de folga de até 64 pontos adicionais, totalizando a capacidade contratual de **até 450 pontos de rede**.
+* **Comprimento e metragens aproximadas:** As metragens descritas neste documento e nas plantas oficiais representam **valores aproximados**, servindo como estimativa inicial para o dimensionamento do lançamento de cabos.
+* **Margem de folga/cobertura de pontos ativos:** A margem de expansão de até 64 pontos adicionais (totalizando a capacidade contratual de **até 450 pontos de rede**) destina-se especificamente a **contemplar e regularizar pontos de rede que estão atualmente em uso efetivo, mas que não foram previamente identificados ou mapeados nas plantas baixas originais**, assegurando o atendimento integral de todos os postos de trabalho operacionais.
 
-| Pavimento / Categoria | Quantidade de pontos | Metragem estimada de cabeamento |
+| Pavimento / Categoria | Quantidade de pontos | Metragem estimada/aproximada de cabeamento |
 | :--- | :---: | :---: |
-| **Térreo (mapeado)** | 123 pontos | 3.435,00 m |
-| **1º Pavimento (mapeado)** | 263 pontos | 16.225,00 m |
-| **Subtotal mapeado nas plantas** | **386 pontos** | **19.660,00 m** |
-| **Margem de folga / não identificados** | **Até 64 pontos** | Sob demanda |
+| **Térreo (mapeado)** | 123 pontos | ~ 3.435,00 m |
+| **1º Pavimento (mapeado)** | 263 pontos | ~ 16.225,00 m |
+| **Subtotal mapeado nas plantas** | **386 pontos** | **~ 19.660,00 m** |
+| **Margem de folga / pontos em uso não mapeados** | **Até 64 pontos** | Sob demanda |
 | **Total máximo contratado** | **Até 450 pontos** | **Conforme demanda executada** |
 
-1.3. A localização exata e a metragem individualizada dos lances de cabo dos 386 pontos de rede já mapeados estão detalhadas nas plantas baixas oficiais do órgão:
+1.3. A localização e a indicação espacial dos 386 pontos de rede mapeados estão detalhadas nas plantas baixas oficiais do órgão:
 * **Plantas e mapeamento técnico:** Térreo [https://rede.fflch.usp.br/plantas/public/15](https://rede.fflch.usp.br/plantas/public/15) e 1º Pavimento [https://rede.fflch.usp.br/plantas/public/14](https://rede.fflch.usp.br/plantas/public/14)
 
 1.4. **Restrição absoluta de escopo e manutenção da infraestrutura existente:**
@@ -56,7 +57,9 @@ Tendo em vista que o edifício possui geometria horizontal proeminente e a eletr
 4. **Conectorização e montagem:**
    * Conectorização das tomadas fêmeas RJ-45 (módulos keystone) nas caixas e espelhos dos usuários (ponta remota).
    * Crimpagem e organização dos cabos nos patch panels situados nos racks da sala TR (ponta central).
-5. **Identificação e etiquetagem:** Identificação padronizada e legível em ambas as extremidades dos cabos, nos espelhos/tomadas e nos patch panels, seguindo a codificação fornecida pela contratante.
+5. **Identificação e etiquetagem bidirecional detalhada:**
+   * **Na extremidade central (Rack / TR):** A contratada é obrigatoriamente responsável por afixar uma etiqueta **atrás do patch panel** (na traseira do painel/cabo), identificando claramente a **SALA/AMBIENTE DE DESTINO** atendido por aquele ponto.
+   * **Na extremidade remota (Tomada / Usuário):** A contratada é obrigatoriamente responsável por afixar uma etiqueta **na tomada/espelho da sala**, identificando explicitamente a **SALA TÉCNICA (TR)** de origem e o **PATCH PANEL / PORTA** correspondente no rack.
 6. **Certificação técnica e carga no sistema local:**
    * Execução dos testes de certificação ponto a ponto no modo **link permanente (*permanent link*)** em **100% dos pontos executados (até o limite de 450 pontos)**, utilizando equipamento certificador de alta precisão (ex.: Fluke Networks DSX Series ou equivalente) com certificado de calibração válido e atualizado.
    * **Lançamento dos resultados:** A contratada deverá **carregar/alimentar individualmente os dados do resultado da certificação de cada ponto em um sistema local**. Para isso, a contratante fornecerá login, senha e o treinamento básico para acesso ao sistema.
@@ -75,7 +78,7 @@ Tendo em vista que o edifício possui geometria horizontal proeminente e a eletr
 > * Equipamento certificador de rede calibrado e acessórios de teste;
 > * Ferramental completo (alicates de crimpagem/punch-down, guias passa-cabo, etiquetadoras industriais);
 > * Equipamentos para trabalho em altura (escadas industriais, plataformas, andaimes);
-> * Insumos secundários de fixação e organização (braçadeiras de nylon/velcro, etiquetas industriais adesivas e fitas de sinalização).
+> * Insumos secundários de fixação e organização (braçadeiras de nylon/velcro, etiquetas industriais adesivas duráveis e fitas de sinalização).
 
 ---
 
@@ -100,13 +103,14 @@ O aceite definitivo dos serviços prestados e a liberação do pagamento ficam c
 
 1. **Certificação em link permanente (*permanent link*):** Todos os **pontos efetivamente executados (até 450 pontos)** deverão ser testados sob o parâmetro de **link permanente**, garantindo a qualidade do lance de cabo e das conexões de fêmea a fêmea sem a interferência dos cordões de manobra.
 2. **Alimentação do sistema local:** Inserção/upload dos relatórios de certificação de cada ponto no **sistema local da contratante**, utilizando credenciais de acesso disponibilizadas pela equipe de TI do órgão.
-3. **Parâmetros de desempenho (pass):** Apresentação de resultado **aprovado (pass) em 100% dos pontos instalados**, em conformidade com as normas ABNT aplicáveis, contemplando:
+3. **Padrão de etiquetagem verificado:** Validação da correta afixação das etiquetas de identificação cruzada (**atrás do patch panel indicando a sala** e **na tomada da sala indicando a TR e a porta do patch panel**).
+4. **Parâmetros de desempenho (pass):** Apresentação de resultado **aprovado (pass) em 100% dos pontos instalados**, em conformidade com as normas ABNT aplicáveis, contemplando:
    * Mapa de fiação (*wiremap*);
    * Comprimento do lance de cabo;
    * Atenuação e perda de inserção;
    * Perda de retorno (*return loss*);
    * Parâmetros de diafonia (*NEXT, PS-NEXT, ELFEXT, PS-ELFEXT*).
-4. **Relatório técnico consolidado:** Entrega da documentação técnica completa contendo os arquivos originais dos testes em meio digital (PDF e arquivo nativo do equipamento certificador).
+5. **Relatório técnico consolidado:** Entrega da documentação técnica completa contendo os arquivos originais dos testes em meio digital (PDF e arquivo nativo do equipamento certificador).
 
 ---
 
