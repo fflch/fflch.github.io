@@ -1,7 +1,6 @@
 venv
 *~
 *.swp
-*.pdf
 # Arquivos gerados pelo latex:
 *.acn
 *.acr
@@ -41,5 +40,4 @@ venv
 # outros
 *.swp*
 
-main.pdf
 docs
