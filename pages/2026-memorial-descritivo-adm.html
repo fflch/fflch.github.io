@@ -101,33 +101,34 @@
 * A sala técnica de telecomunicações (TR - <em>telecommunications room</em>) está localizada na área central do pavimento térreo.<br />
 * Todo o cabeamento vindo do 1º pavimento desce para a sala TR no térreo por meio de eletrocalhas e tubulações pré-existentes.<br />
 * <strong>Pontos mapeados em planta:</strong> Estão oficialmente identificados nas plantas baixas 386 pontos de rede (123 no térreo e 263 no 1º pavimento).<br />
-* <strong>Margem de folga/reserva técnica:</strong> Visando cobrir eventuais pontos não identificados nas plantas originais ou pequenas adequações de layout, a contratação prevê uma margem de folga de até 64 pontos adicionais, totalizando a capacidade contratual de <strong>até 450 pontos de rede</strong>.</p>
+* <strong>Comprimento e metragens aproximadas:</strong> As metragens descritas neste documento e nas plantas oficiais representam <strong>valores aproximados</strong>, servindo como estimativa inicial para o dimensionamento do lançamento de cabos.<br />
+* <strong>Margem de folga/cobertura de pontos ativos:</strong> A margem de expansão de até 64 pontos adicionais (totalizando a capacidade contratual de <strong>até 450 pontos de rede</strong>) destina-se especificamente a <strong>contemplar e regularizar pontos de rede que estão atualmente em uso efetivo, mas que não foram previamente identificados ou mapeados nas plantas baixas originais</strong>, assegurando o atendimento integral de todos os postos de trabalho operacionais.</p>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Pavimento / Categoria</th>
 <th style="text-align: center;">Quantidade de pontos</th>
-<th style="text-align: center;">Metragem estimada de cabeamento</th>
+<th style="text-align: center;">Metragem estimada/aproximada de cabeamento</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;"><strong>Térreo (mapeado)</strong></td>
 <td style="text-align: center;">123 pontos</td>
-<td style="text-align: center;">3.435,00 m</td>
+<td style="text-align: center;">~ 3.435,00 m</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>1º Pavimento (mapeado)</strong></td>
 <td style="text-align: center;">263 pontos</td>
-<td style="text-align: center;">16.225,00 m</td>
+<td style="text-align: center;">~ 16.225,00 m</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Subtotal mapeado nas plantas</strong></td>
 <td style="text-align: center;"><strong>386 pontos</strong></td>
-<td style="text-align: center;"><strong>19.660,00 m</strong></td>
+<td style="text-align: center;"><strong>~ 19.660,00 m</strong></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Margem de folga / não identificados</strong></td>
+<td style="text-align: left;"><strong>Margem de folga / pontos em uso não mapeados</strong></td>
 <td style="text-align: center;"><strong>Até 64 pontos</strong></td>
 <td style="text-align: center;">Sob demanda</td>
 </tr>
@@ -138,7 +139,7 @@
 </tr>
 </tbody>
 </table>
-<p>1.3. A localização exata e a metragem individualizada dos lances de cabo dos 386 pontos de rede já mapeados estão detalhadas nas plantas baixas oficiais do órgão:<br />
+<p>1.3. A localização e a indicação espacial dos 386 pontos de rede mapeados estão detalhadas nas plantas baixas oficiais do órgão:<br />
 * <strong>Plantas e mapeamento técnico:</strong> Térreo <a href="https://rede.fflch.usp.br/plantas/public/15">https://rede.fflch.usp.br/plantas/public/15</a> e 1º Pavimento <a href="https://rede.fflch.usp.br/plantas/public/14">https://rede.fflch.usp.br/plantas/public/14</a></p>
 <p>1.4. <strong>Restrição absoluta de escopo e manutenção da infraestrutura existente:</strong><br />
 * O objeto compreende <strong>exclusivamente a substituição do cabeamento estruturado</strong>.<br />
@@ -163,7 +164,9 @@
 <li><strong>Conectorização e montagem:</strong></li>
 <li>Conectorização das tomadas fêmeas RJ-45 (módulos keystone) nas caixas e espelhos dos usuários (ponta remota).</li>
 <li>Crimpagem e organização dos cabos nos patch panels situados nos racks da sala TR (ponta central).</li>
-<li><strong>Identificação e etiquetagem:</strong> Identificação padronizada e legível em ambas as extremidades dos cabos, nos espelhos/tomadas e nos patch panels, seguindo a codificação fornecida pela contratante.</li>
+<li><strong>Identificação e etiquetagem bidirecional detalhada:</strong></li>
+<li><strong>Na extremidade central (Rack / TR):</strong> A contratada é obrigatoriamente responsável por afixar uma etiqueta <strong>atrás do patch panel</strong> (na traseira do painel/cabo), identificando claramente a <strong>SALA/AMBIENTE DE DESTINO</strong> atendido por aquele ponto.</li>
+<li><strong>Na extremidade remota (Tomada / Usuário):</strong> A contratada é obrigatoriamente responsável por afixar uma etiqueta <strong>na tomada/espelho da sala</strong>, identificando explicitamente a <strong>SALA TÉCNICA (TR)</strong> de origem e o <strong>PATCH PANEL / PORTA</strong> correspondente no rack.</li>
 <li><strong>Certificação técnica e carga no sistema local:</strong></li>
 <li>Execução dos testes de certificação ponto a ponto no modo <strong>link permanente (<em>permanent link</em>)</strong> em <strong>100% dos pontos executados (até o limite de 450 pontos)</strong>, utilizando equipamento certificador de alta precisão (ex.: Fluke Networks DSX Series ou equivalente) com certificado de calibração válido e atualizado.</li>
 <li><strong>Lançamento dos resultados:</strong> A contratada deverá <strong>carregar/alimentar individualmente os dados do resultado da certificação de cada ponto em um sistema local</strong>. Para isso, a contratante fornecerá login, senha e o treinamento básico para acesso ao sistema.</li>
@@ -181,7 +184,7 @@ Caberá à contratada fornecer toda a infraestrutura operacional para execução
 * Equipamento certificador de rede calibrado e acessórios de teste;<br />
 * Ferramental completo (alicates de crimpagem/punch-down, guias passa-cabo, etiquetadoras industriais);<br />
 * Equipamentos para trabalho em altura (escadas industriais, plataformas, andaimes);<br />
-* Insumos secundários de fixação e organização (braçadeiras de nylon/velcro, etiquetas industriais adesivas e fitas de sinalização).</p>
+* Insumos secundários de fixação e organização (braçadeiras de nylon/velcro, etiquetas industriais adesivas duráveis e fitas de sinalização).</p>
 </blockquote>
 <hr />
 <h2 id="3-seguranca-e-saude-no-trabalho-sst">3. Segurança e saúde no trabalho (SST)</h2>
@@ -203,6 +206,7 @@ A gestão, supervisão e integral responsabilidade civil, trabalhista, acidentá
 <ol>
 <li><strong>Certificação em link permanente (<em>permanent link</em>):</strong> Todos os <strong>pontos efetivamente executados (até 450 pontos)</strong> deverão ser testados sob o parâmetro de <strong>link permanente</strong>, garantindo a qualidade do lance de cabo e das conexões de fêmea a fêmea sem a interferência dos cordões de manobra.</li>
 <li><strong>Alimentação do sistema local:</strong> Inserção/upload dos relatórios de certificação de cada ponto no <strong>sistema local da contratante</strong>, utilizando credenciais de acesso disponibilizadas pela equipe de TI do órgão.</li>
+<li><strong>Padrão de etiquetagem verificado:</strong> Validação da correta afixação das etiquetas de identificação cruzada (<strong>atrás do patch panel indicando a sala</strong> e <strong>na tomada da sala indicando a TR e a porta do patch panel</strong>).</li>
 <li><strong>Parâmetros de desempenho (pass):</strong> Apresentação de resultado <strong>aprovado (pass) em 100% dos pontos instalados</strong>, em conformidade com as normas ABNT aplicáveis, contemplando:</li>
 <li>Mapa de fiação (<em>wiremap</em>);</li>
 <li>Comprimento do lance de cabo;</li>
