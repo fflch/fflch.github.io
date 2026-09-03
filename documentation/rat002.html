@@ -498,6 +498,7 @@ ip interface dhcp-client option-60
 
 <p>Define qual é a vlan de voz:</p>
 <pre class="codehilite"><code class="language-bash">lldp network-policy 1 application voice vlan 2168
+lldp nearest-bridge chassis tlv med capability enable network-policy enable
 </code></pre>
 
 <p>Colocando as portas 1 até 5 na vlan de voz:</p>
@@ -551,6 +552,12 @@ auto-fabric protocols spb interface 1/1/1-52 admin-state disable
 <p>Habilita acesso http e https:</p>
 <pre class="codehilite"><code class="language-bash">ip service http admin-state enable
 aaa authentication http local
+</code></pre>
+
+<p>Salvando:</p>
+<pre class="codehilite"><code class="language-bash">modify running-directory working
+write memory
+write memory flash-synchro
 </code></pre>
 
 <h3 id="agregacao-huawei-s6730-h24x6c-v2">Agregação Huawei S6730-H24X6C-V2</h3>
