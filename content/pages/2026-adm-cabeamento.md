@@ -74,55 +74,60 @@ Solicitação de orçamento enviada às empresas listadas abaixo, selecionadas a
     </tr>
     <tr style="background-color: #f8fafc;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">Lofty</td>
-      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:willerson@loftynet.com.br" style="color: #2563eb; text-decoration: none;">willerson@loftynet.com.br</a></td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:willerson@grupolofy.com.br" style="color: #2563eb; text-decoration: none;">willerson@grupolofy.com.br</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="https://www.loftynet.com.br" target="_blank" style="color: #2563eb; text-decoration: none;">www.loftynet.com.br</a></td>
     </tr>
     <tr style="background-color: #ffffff;">
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">M&N Engenharia</td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:nelsonmaster.mn@gmail.com" style="color: #2563eb; text-decoration: none;">nelsonmaster.mn@gmail.com</a></td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; color: #94a3b8;">-</td>
+    </tr>
+    <tr style="background-color: #f8fafc;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">Net Clear</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:joseroberto@netclear.com.br" style="color: #2563eb; text-decoration: none;">joseroberto@netclear.com.br</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="https://www.netclear.com.br" target="_blank" style="color: #2563eb; text-decoration: none;">www.netclear.com.br</a></td>
     </tr>
-    <tr style="background-color: #f8fafc;">
+    <tr style="background-color: #ffffff;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">Net Telecom</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:deivid.silva@nettelecom.com.br" style="color: #2563eb; text-decoration: none;">deivid.silva@nettelecom.com.br</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="https://www.nettelecom.com.br" target="_blank" style="color: #2563eb; text-decoration: none;">www.nettelecom.com.br</a></td>
     </tr>
-    <tr style="background-color: #ffffff;">
+    <tr style="background-color: #f8fafc;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">NewCon</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:silvia.thomaz@newcon-br.com" style="color: #2563eb; text-decoration: none;">silvia.thomaz@newcon-br.com</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="https://www.newcon-br.com" target="_blank" style="color: #2563eb; text-decoration: none;">www.newcon-br.com</a></td>
     </tr>
-    <tr style="background-color: #f8fafc;">
+    <tr style="background-color: #ffffff;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">Redson</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:redson.ltda@redson.com.br" style="color: #2563eb; text-decoration: none;">redson.ltda@redson.com.br</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="https://www.redson.com.br" target="_blank" style="color: #2563eb; text-decoration: none;">www.redson.com.br</a></td>
     </tr>
-    <tr style="background-color: #ffffff;">
+    <tr style="background-color: #f8fafc;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">Rema Tecnologia</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:rema.tecnologia@gmail.com" style="color: #2563eb; text-decoration: none;">rema.tecnologia@gmail.com</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; color: #94a3b8;">-</td>
     </tr>
-    <tr style="background-color: #f8fafc;">
+    <tr style="background-color: #ffffff;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">Rstelecom</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:rstelecom1@rstelecom1.com.br" style="color: #2563eb; text-decoration: none;">rstelecom1@rstelecom1.com.br</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="https://www.rstelecom1.com.br" target="_blank" style="color: #2563eb; text-decoration: none;">www.rstelecom1.com.br</a></td>
     </tr>
-    <tr style="background-color: #ffffff;">
+    <tr style="background-color: #f8fafc;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">RSX Telecom</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:comercial.rsxtelecom@gmail.com" style="color: #2563eb; text-decoration: none;">comercial.rsxtelecom@gmail.com</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; color: #94a3b8;">-</td>
     </tr>
-    <tr style="background-color: #f8fafc;">
+    <tr style="background-color: #ffffff;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">Teleiza</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:teleiza@teleiza.com.br" style="color: #2563eb; text-decoration: none;">teleiza@teleiza.com.br</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="https://teleiza.com.br" target="_blank" style="color: #2563eb; text-decoration: none;">www.teleiza.com.br</a></td>
     </tr>
-    <tr style="background-color: #ffffff;">
+    <tr style="background-color: #f8fafc;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">Tree Systems</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:pronaldo@treesystems.com.br" style="color: #2563eb; text-decoration: none;">pronaldo@treesystems.com.br</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="https://www.treesystems.com.br" target="_blank" style="color: #2563eb; text-decoration: none;">www.treesystems.com.br</a></td>
     </tr>
-    <tr style="background-color: #f8fafc;">
+    <tr style="background-color: #ffffff;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">Valtec Soluções</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:gilson.silva@valtecsolucoes.com.br" style="color: #2563eb; text-decoration: none;">gilson.silva@valtecsolucoes.com.br</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="https://www.valtecsolucoes.com.br" target="_blank" style="color: #2563eb; text-decoration: none;">www.valtecsolucoes.com.br</a></td>
