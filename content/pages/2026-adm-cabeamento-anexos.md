@@ -10,6 +10,8 @@ Durante a execução da obra, o elevador de acessibilidade foi instalado exatame
 
 Ademais, o banheiro adaptado, reformado na mesma intervenção, também foi construído exatamente em frente à eletrocalha responsável pelo cabeamento de rede do 1º pavimento para o térreo com destino à Sala Técnica 2 (TR2), conforme demonstrado na **Foto 2**.
 
+[Ofício para inclusão da DFD no PCA fora do prazo](../../assets/2026/obra-cabeamento-adm/DFD_422_2026.pdf)
+
 <table style="width: 100%; border-collapse: collapse; border: none; margin: 20px 0;">
   <tr>
     <td style="width: 50%; padding: 6px; border: none; text-align: center; vertical-align: top;">
@@ -110,6 +112,35 @@ Solicitação de orçamento enviada às empresas listadas abaixo, selecionadas a
     <tr style="background-color: #ffffff;">
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0f172a;">Valtec Soluções</td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:gilson.silva@valtecsolucoes.com.br" style="color: #2563eb; text-decoration: none;">gilson.silva@valtecsolucoes.com.br</a></td>
+    </tr>
+  </tbody>
+</table>
+
+### Anexo C: Orçamentos Recebidos
+
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+  <thead>
+    <tr style="background-color: #1e293b; color: #ffffff; text-align: left;">
+      <th style="padding: 12px 16px; font-weight: 600; border-bottom: 2px solid #0f172a; text-align: center;">Proposta</th>
+      <th style="padding: 12px 16px; font-weight: 600; border-bottom: 2px solid #0f172a;">Email da Resposta</th>
+      <th style="padding: 12px 16px; font-weight: 600; border-bottom: 2px solid #0f172a;">Arquivo de Orçamento</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff;">
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; text-align: center; color: #0f172a;">1</td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="../../assets/2026/obra-cabeamento-adm/respostas/orc1-email.pdf" style="color: #2563eb; text-decoration: none;">📧 Resposta 1</a></td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="../../assets/2026/obra-cabeamento-adm/respostas/orc1.pdf" style="color: #2563eb; text-decoration: none;">📄 Orçamento 1</a></td>
+    </tr>
+    <tr style="background-color: #f8fafc;">
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; text-align: center; color: #0f172a;">2</td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="../../assets/2026/obra-cabeamento-adm/respostas/orc2-email.pdf" style="color: #2563eb; text-decoration: none;">📧 Resposta 2</a></td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="../../assets/2026/obra-cabeamento-adm/respostas/orc2.pdf" style="color: #2563eb; text-decoration: none;">📄 Orçamento 2</a></td>
+    </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; text-align: center; color: #0f172a;">3</td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="../../assets/2026/obra-cabeamento-adm/respostas/orc3-email.pdf" style="color: #2563eb; text-decoration: none;">📧 Resposta 3</a></td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="../../assets/2026/obra-cabeamento-adm/respostas/orc3.pdf" style="color: #2563eb; text-decoration: none;">📄 Orçamento 3</a></td>
     </tr>
   </tbody>
 </table>
