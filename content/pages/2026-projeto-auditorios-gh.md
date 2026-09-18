@@ -6,8 +6,6 @@ title: Proposta para rede Reforma e recuperação dos auditórios Milton Santos 
   <img src="../../assets/2026/auditorios-gh/reforma.svg" alt="Reforma Auditórios" width="100%">
 </p>
 
-# Proposta de Infraestrutura de Rede: Reforma e Recuperação dos Auditórios Milton Santos e Nicolau Sevcenko
-
 **Nota Introdutória:**  
 A figura apresentada é um recorte da planta oficial e serve como representação ilustrativa da proposta da equipe de TI para os trajetos de cabeamento e o posicionamento das caixas de rede. O desenho não está em escala e não possui o posicionamento executivo exato, devendo ser apreciado pela equipe de Engenharia e incorporado ao projeto executivo da obra.  
  
