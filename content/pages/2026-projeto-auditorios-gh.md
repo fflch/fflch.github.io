@@ -1,5 +1,5 @@
 ---
-title: Proposta para rede Reforma e recuperação dos auditórios Milton Santos e Nicolau Sevcenko.
+title: Proposta de rede na Reforma de recuperação dos auditórios Milton Santos e Nicolau Sevcenko
 ---
 
 <p align="center">
