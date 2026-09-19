@@ -13,6 +13,8 @@ No esquema gráfico, não foi indicada a posição de subida da eletrocalha até
 
 Optou-se pela instalação de **2 (dois) pontos de rede por caixa de tomada**, com a finalidade de prover conectividade para Access Points (Wi-Fi), câmeras PTZ, computadores, projetores e outros periféricos.
 
+Ressalta-se que toda a infraestrutura destinada a este projeto — incluindo eletrocalhas, canaletas, eletrodutos e caixas de tomada — é de uso exclusivo para o cabeamento de rede Cat6. Para mitigar riscos de interferência eletromagnética e degradação do sinal, essas vias e caixas não devem, em hipótese alguma, conter circuitos elétricos de potência ou cabos de outros sistemas, como áudio, vídeo (HDMI) e automação.
+
 ---
 
 ## 1. Descrição Detalhada da Legenda
