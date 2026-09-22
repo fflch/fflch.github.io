@@ -142,6 +142,11 @@ Solicitação de orçamento enviada às empresas listadas abaixo, selecionadas a
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="../../assets/2026/obra-cabeamento-adm/respostas/orc3-email.pdf" style="color: #2563eb; text-decoration: none;">📧 Resposta 3</a></td>
       <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="../../assets/2026/obra-cabeamento-adm/respostas/orc3.pdf" style="color: #2563eb; text-decoration: none;">📄 Orçamento 3</a></td>
     </tr>
+    <tr style="background-color: #ffffff;">
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; text-align: center; color: #0f172a;">4</td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="../../assets/2026/obra-cabeamento-adm/respostas/orc4-email.pdf" style="color: #2563eb; text-decoration: none;">📧 Resposta 4</a></td>
+      <td style="padding: 10px 16px; border-bottom: 1px solid #e2e8f0;"><a href="../../assets/2026/obra-cabeamento-adm/respostas/orc4.pdf" style="color: #2563eb; text-decoration: none;">📄 Orçamento 4</a></td>
+    </tr>
   </tbody>
 </table>
 
