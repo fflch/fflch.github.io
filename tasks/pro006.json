@@ -4,7 +4,7 @@
   "estagiarios": [
     "Pedro"
   ],
-  "descricao": "O projeto fflch/playbooks-proaluno-fflch são os playbooks de aplicação das configurações nas salas pró-aluno. As atividades constantes relacionadas a este projeto são: \\bigskip\\begin{itemize} \\item Aplicação dos playbooks nas máquinas reais; \\item Inserção das máquinas reais no inventário do Ansible;\\end{itemize}",
+  "descricao": "O projeto fflch/playbooks-proaluno-fflch são os playbooks de aplicação das configurações nas salas pró-aluno, o repositório correspondente de teste é https://github.com/uspdev/playbooks-sandbox-proaluno.As atividades constantes relacionadas a este projeto são: \\bigskip\\begin{itemize} \\item Aplicação dos playbooks nas máquinas reais; \\item Inserção das máquinas reais no inventário do Ansible;\\end{itemize}",
   "responsaveis": [
     "Mônica"
   ],
