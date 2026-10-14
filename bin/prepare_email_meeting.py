@@ -10,8 +10,9 @@ import base64
 # Configuração de Caminhos Base
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILES_DIR = os.path.join(BASE_DIR, "content")
-TASKS_DIR = os.path.join(BASE_DIR, "tasks")
-MEETINGS_DIR = os.path.join(BASE_DIR, "meetings")
+TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
+ISSUES_DIR = os.path.join(BASE_DIR, "content", "issues")
+MEETINGS_DIR = os.path.join(BASE_DIR, "content", "meetings")
 SIGLAS_PATH = os.path.join(FILES_DIR, "siglas.csv")
 
 
@@ -50,7 +51,7 @@ def obter_titulo_task_mae(nome_issue_arquivo):
 # Pega o Responsável e dados de uma Issue específica
 # ----------------------------------------
 def obter_dados_issue(nome_issue_arquivo):
-    caminho_issue = os.path.join(TASKS_DIR, "issues", nome_issue_arquivo)
+    caminho_issue = os.path.join(ISSUES_DIR, nome_issue_arquivo)
     if os.path.exists(caminho_issue):
         try:
             with open(caminho_issue, encoding="utf-8") as f:

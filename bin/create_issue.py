@@ -5,8 +5,8 @@ from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-TASKS_DIR = os.path.join(BASE_DIR, "tasks")
-ISSUES_DIR = os.path.join(TASKS_DIR, "issues")
+TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
+ISSUES_DIR = os.path.join(BASE_DIR, "content", "issues")
 
 
 # ----------------------------------------

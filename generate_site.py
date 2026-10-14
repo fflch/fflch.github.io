@@ -11,15 +11,16 @@ import base64
 from jinja2 import Environment, FileSystemLoader
 
 OUTPUT_DIR = "docs"
-TASKS_DIR = "tasks"
-ISSUES_DIR = os.path.join(TASKS_DIR, "issues")
+TASKS_DIR = os.path.join("content", "tasks")
+ISSUES_DIR = os.path.join("content", "issues")
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "index.html")
-TUTORIAIS_DIR = "tutoriais"
+TUTORIAIS_DIR = os.path.join("content", "tutoriais")
 ASSETS_DIR = "assets"
 OUTPUT_TUTORIAIS = os.path.join(OUTPUT_DIR, "tutorial")
 REPORTS_DIR = os.path.join("content", "reports")
 OUTPUT_REPORTS = os.path.join(OUTPUT_DIR, "reports")
 PAGES_DIR = os.path.join("content", "pages")
+MEETINGS_DIR = os.path.join("content", "meetings")
 OUTPUT_DOCS = "docs"
 TEMPLATES_DIR = "templates"
 
@@ -457,7 +458,7 @@ def count_open_issues(task_codigo, issues):
 
 
 def buscar_proxima_reuniao_e_issues(tipo_reuniao, dicionario_siglas, tasks):
-    meetings_dir = "meetings"
+    meetings_dir = MEETINGS_DIR
     if not os.path.exists(meetings_dir):
         return "Nenhuma reunião agendada", {"pautas": [], "erro": False}
 
@@ -489,7 +490,7 @@ def buscar_proxima_reuniao_e_issues(tipo_reuniao, dicionario_siglas, tasks):
             lista_extra = dados_reuniao.get("extra", [])
 
             for iss_arq in lista_issues:
-                caminho_issue_real = os.path.join("tasks", "issues", iss_arq)
+                caminho_issue_real = os.path.join(ISSUES_DIR, iss_arq)
                 issue = {}
                 if os.path.exists(caminho_issue_real):
                     try:

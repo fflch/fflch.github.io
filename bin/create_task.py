@@ -5,8 +5,8 @@ import re
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SIGLAS_CSV = os.path.join(BASE_DIR, "files", "siglas.csv")
-TASKS_DIR = os.path.join(BASE_DIR, "tasks")
+SIGLAS_CSV = os.path.join(BASE_DIR, "content", "siglas.csv")
+TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
 
 
 def load_siglas():

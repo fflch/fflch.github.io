@@ -7,9 +7,9 @@ from datetime import datetime
 # Configuração de Caminhos Base
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILES_DIR = os.path.join(BASE_DIR, "content")
-TASKS_DIR = os.path.join(BASE_DIR, "tasks")
-ISSUES_DIR = os.path.join(TASKS_DIR, "issues")
-MEETINGS_DIR = os.path.join(BASE_DIR, "meetings")
+TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
+ISSUES_DIR = os.path.join(BASE_DIR, "content", "issues")
+MEETINGS_DIR = os.path.join(BASE_DIR, "content", "meetings")
 SIGLAS_PATH = os.path.join(FILES_DIR, "siglas.csv")
 
 
