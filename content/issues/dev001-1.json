@@ -1,6 +1,6 @@
 {
   "status": true,
-  "descricao": "Gerar o arquivo kea-dhcp4.conf, substituto do dhcpd.conf, do isc-dhcp-server.",
+  "descricao": "Gerar o arquivo kea-dhcp4.conf, substituto do dhcpd.conf, do isc-dhcp-server. - Trocar o servidor dhcp na produção",
   "data": "19/02/2026",
-  "responsavel": "Pedro"
+  "responsavel": "Ricardo"
 }

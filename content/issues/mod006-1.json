@@ -1,6 +1,6 @@
 {
   "status": true,
-  "descricao": "Implementar a opção de habilitar a geração de boleto ou pix nas configurações do webform",
+  "descricao": "Implementar a opção de habilitar a geração de boleto ou pix nas configurações do webform e colocar na produção",
   "data": "24/02/2026",
-  "responsavel": "Isaac"
+  "responsavel": "Mônica"
 }

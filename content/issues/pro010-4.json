@@ -1,6 +1,6 @@
 {
   "status": true,
-  "descricao": "Demonstração do servidor S3, rustfs ou similar",
+  "descricao": "Subior o Garage S3 na produção",
   "data": "13/07/2026",
   "responsavel": "Ricardo"
 }

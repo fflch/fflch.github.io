@@ -1,6 +1,6 @@
 {
   "status": true,
-  "descricao": "Criar playbook do mongodb no provisioner-dev e depois no provisioner",
+  "descricao": "Criar playbook do mongodb no provisioner-dev e depois na produção com provisioner",
   "data": "20/07/2026",
-  "responsavel": "Augusto"
+  "responsavel": "Mônica"
 }

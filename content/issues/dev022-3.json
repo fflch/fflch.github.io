@@ -1,6 +1,6 @@
 {
   "status": true,
-  "descricao": "Implementar queries de transposição ETL do replicado para um banco de dados não estruturado, mongodb.",
+  "descricao": "Implementar queries de listagem do replicado para mongodb.",
   "data": "20/02/2026",
   "responsavel": "Mônica"
 }

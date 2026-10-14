@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Adaptar fflch/gwmariadb para suportar postgresql, vamos renomear o projeto para gwdb",
   "data": "13/07/2026",
-  "responsavel": "Mônica"
+  "responsavel": "Mônica",
+  "data_fechamento": "14/10/2026"
 }

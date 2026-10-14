@@ -1,6 +1,6 @@
 {
   "status": true,
-  "descricao": "Demonstração do provisionamento do cluster com nodes de Docker Swarm",
+  "descricao": "Demonstração do provisionamento do cluster com nodes de Docker Swarm na Nuvem USP",
   "data": "13/07/2026",
   "responsavel": "Augusto"
 }

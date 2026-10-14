@@ -1,6 +1,6 @@
 {
   "status": true,
-  "descricao": "subir o core do drupal para 9.5, php para 8.1 e drush para 11",
+  "descricao": "Subir o core do drupal para 9.5, php para 8.1 e drush para 10/11 ainda usando ansible",
   "data": "20/07/2026",
   "responsavel": "Augusto"
 }
