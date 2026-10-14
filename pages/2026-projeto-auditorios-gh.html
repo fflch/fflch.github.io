@@ -1,77 +1,51 @@
 <!DOCTYPE html>
-                <html lang="pt-br">
-                <head>
-                    <meta charset="UTF-8">
-                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-                    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-                    
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Proposta de rede na Reforma de recuperação dos auditórios Milton Santos e Nicolau Sevcenko</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/report.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
-                    <title>Proposta de rede na Reforma de recuperação dos auditórios Milton Santos e Nicolau Sevcenko</title>
-                    <style>
-        body { padding: 40px; background: #f8f9fa; } 
-        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        pre { border-radius: 6px; }
-        
-        /* Estilo do Sumário na tela normal (com links azuis) */
-        .toc { 
-            background: #f1f3f5; 
-            padding: 15px 20px; 
-            border-radius: 6px; 
-            border-left: 4px solid #0d6efd; 
-            margin-bottom: 30px; 
-        }
-        .toc ul { margin-bottom: 0; padding-left: 20px; }
-        .toc a { text-decoration: none; color: #0d6efd; font-weight: 500; }
-        .toc a:hover { text-decoration: underline; }
+</head>
+<body>
+    
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+        <a href="../index.html" class="btn btn-sm btn-outline-secondary">← Voltar à Página Inicial</a>
+        <div>
+            <button onclick="exportarPDF('2026-projeto-auditorios-gh.pdf')" class="btn btn-sm btn-outline-danger me-2">📄 Exportar PDF</button>
+            <button onclick="exportarWord('Proposta de rede na Reforma de recuperação dos auditórios Milton Santos e Nicolau Sevcenko', '2026-projeto-auditorios-gh.docx')" class="btn btn-sm btn-outline-primary">📝 Exportar Word (.docx)</button>
+        </div>
+    </div>
 
-        /* Estilo simplificado para impressão tradicional */
-        @media print {
-            .no-print { display: none !important; }
-            #header-timbrado-export { display: block !important; }
-            .toc { 
-                background: none !important; 
-                border: none !important; 
-                padding: 0 !important; 
-            }
-            .toc a { color: #000 !important; text-decoration: none !important; }
-        }
-    </style>
-                </head>
-                <body>
-                    <div class="container">
+    <div id="export-content">
+        <div id="header-timbrado-export" style="display: none; padding-bottom: 12px; margin-bottom: 25px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 110px; vertical-align: middle;">
                         
-                        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
-                            <a href="../index.html" class="btn btn-sm btn-outline-secondary">← Voltar à Página Inicial</a>
-                            <div>
-                                <button onclick="exportarPDF()" class="btn btn-sm btn-outline-danger me-2">📄 Exportar PDF</button>
-                                <button onclick="exportarWord()" class="btn btn-sm btn-outline-primary">📝 Exportar Word (.docx)</button>
-                            </div>
-                        </div>
-
-                        <div id="export-content">
-                            
-                            <div id="header-timbrado-export" style="display: none; padding-bottom: 12px; margin-bottom: 25px;">
-                                <table style="width: 100%; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="width: 110px; vertical-align: middle;">
-                                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAABQCAYAAAAwa2i1AAAAxnpUWHRSYXcgcHJvZmlsZSB0eXBlIGV4aWYAAHjabVBbDsMgDPvnFDsCJAGS49C1lXaDHX8G0qmtagnn4chAwvb97OHVQUmC5KrFSomAmBg1JBon2uAUZfDA3lxL137I3o+EFiPyLLX4/NFPf4MZGrJ8MtK3C8tVMHF/vRn5RdxfREhWNzI3YppCcoPmXyim9fyFZYtX6Dyhk1pc3Gxqt1oqtrdm3MNEGyeOYGaZM9xPCdyQKBhFH8RAw2gdXPwlWMjTng6EH7LMWfVO7Me2AAABhGlDQ1BJQ0MgcHJvZmlsZQAAeJx9kb9Lw0AcxV9TxSIVBTuIOmSoTnZREcdahSJUCLVCqw4ml/6CJg1Jiouj4Fpw8Mdi1cHFWVcHV0EQ/AHiHyBOii5S4veSQosYD4778O7e4+4dIDQqTLO64oCm22Y6mRCzuVWx5xUhjEDAAKIys4w5SUrBd3zdI8DXuxjP8j/35+hT8xYDAiJxnBmmTbxBPLNpG5z3iSOsJKvE58QTJl2Q+JHrisdvnIsuCzwzYmbS88QRYrHYwUoHs5KpEU8TR1VNp3wh67HKeYuzVqmx1j35C8N5fWWZ6zRHkcQiliBBhIIayqjARoxWnRQLadpP+PiHXb9ELoVcZTByLKAKDbLrB/+D391ahalJLymcALpfHOdjDOjZBZp1x/k+dpzmCRB8Bq70tr/aAGY/Sa+3tegR0L8NXFy3NWUPuNwBhp4M2ZRdKUhTKBSA9zP6phwweAv0rnm9tfZx+gBkqKvUDXBwCIwXKXvd592hzt7+PdPq7weBOHKsFJkKugAADXhpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDQuNC4wLUV4aXYyIj4KIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKICAgIHhtbG5zOkdJTVA9Imh0dHA6Ly93d3cuZ2ltcC5vcmcveG1wLyIKICAgIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIgogICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICB4bXBNTTpEb2N1bWVudElEPSJnaW1wOmRvY2lkOmdpbXA6NzI0NjQ0NjctYTU3Ny00ZTFhLWIzMDctYjIwYTMxMTM4ZTRlIgogICB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjgyNzJiNTc2LWM0NWMtNGViOC1iMGZlLWVjNDI1YWIxMDM2ZiIKICAgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOjg4MGMzMWZhLTcxMTMtNGVkZi1hZmQyLThlNjFiNzIyYjk3YiIKICAgZGM6Rm9ybWF0PSJpbWFnZS9wbmciCiAgIEdJTVA6QVBJPSIyLjAiCiAgIEdJTVA6UGxhdGZvcm09IkxpbnV4IgogICBHSU1QOlRpbWVTdGFtcD0iMTc4Nzc5NzAzNzc4NTY3NyIKICAgR0lNUDpWZXJzaW9uPSIyLjEwLjM0IgogICB0aWZmOk9yaWVudGF0aW9uPSIxIgogICB4bXA6Q3JlYXRvclRvb2w9IkdJTVAgMi4xMCIKICAgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyNjowODoyNlQyMzoxNzoxNi0wMzowMCIKICAgeG1wOk1vZGlmeURhdGU9IjIwMjY6MDg6MjZUMjM6MTc6MTYtMDM6MDAiPgogICA8eG1wTU06SGlzdG9yeT4KICAgIDxyZGY6U2VxPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJzYXZlZCIKICAgICAgc3RFdnQ6Y2hhbmdlZD0iLyIKICAgICAgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDplNTI4MDQ1ZC04NDI5LTQ4OTktODljYy00ZGZmOGEyNTc3ZWMiCiAgICAgIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkdpbXAgMi4xMCAoTGludXgpIgogICAgICBzdEV2dDp3aGVuPSIyMDI2LTA4LTI2VDIzOjE3OjE3LTAzOjAwIi8+CiAgICA8L3JkZjpTZXE+CiAgIDwveG1wTU06SGlzdG9yeT4KICA8L3JkZjpEZXNjcmlwdGlvbj4KIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0idyI/PkqLgrwAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAAFxIAABcSAWef0lIAAAAHdElNRQfqCBsCERH2jt6XAAASxElEQVR42u2de3gU5b3HP+9mdhMSIAqIioqiVOptAiIoclrrtV7wqVXr8YoeW/tYbxPUHo9tFWuP7fFUC2OPWqEVxbvWS6uIChavp3oEQkbxWgStIiBBE7Ik2Z2d9/zxTmSI2dnNJrvZ3byf55lnL/PuvDvzznfe2+/9/YRhWhJNLvzJdewfFSKjyjrLSEmmACcAk4FxwEjAAFLAemAl8BqwwHXs13uaR9S0dpBwInA4UAfsDgz1d8eB1UAD8KKAx5OOvUnfAqWDoS9B8eIL/LyU5KfA3mmSVQCj/O1oYCxwZtY3gGmNAWZK+FegKk2yGmB/fztbwhvApjTH2we4OyTLn7uOvajshWVaewP3hiSZ6Tr2Qi30gf4ENq09U5J7gSk9/Omfs0k0fOIM0Zz0LgR+6ws5W96vrhBvtqTfXwNMCvn9sAFShIMyXIfhukbX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" alt="Logo FFLCH" style="max-width: 100px; height: auto;">
-                                        </td>
-                                        <td style="vertical-align: middle; padding-left: 10px;">
-                                            <div style="color: #002B49; font-family: Arial, sans-serif; font-weight: bold; font-size: 15pt; line-height: 1.2;">UNIVERSIDADE DE SÃO PAULO</div>
-                                            <div style="color: #555; font-size: 10pt;">Faculdade de Filosofia, Letras e Ciências Humanas</div>
-                                            <div style="color: #002B49; font-weight: bold; font-size: 9.5pt; margin-top: 2px;">Seção de Informática</div>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <hr>
-                                São Paulo, 05/10/2026
-                            </div>
-                            <h1>Proposta de rede na Reforma de recuperação dos auditórios Milton Santos e Nicolau Sevcenko</h1>
-                            <hr>
-                            <div class="markdown-body">
-                                <div class="toc">
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAABQCAYAAAAwa2i1AAAAxnpUWHRSYXcgcHJvZmlsZSB0eXBlIGV4aWYAAHjabVBbDsMgDPvnFDsCJAGS49C1lXaDHX8G0qmtagnn4chAwvb97OHVQUmC5KrFSomAmBg1JBon2uAUZfDA3lxL137I3o+EFiPyLLX4/NFPf4MZGrJ8MtK3C8tVMHF/vRn5RdxfREhWNzI3YppCcoPmXyim9fyFZYtX6Dyhk1pc3Gxqt1oqtrdm3MNEGyeOYGaZM9xPCdyQKBhFH8RAw2gdXPwlWMjTng6EH7LMWfVO7Me2AAABhGlDQ1BJQ0MgcHJvZmlsZQAAeJx9kb9Lw0AcxV9TxSIVBTuIOmSoTnZREcdahSJUCLVCqw4ml/6CJg1Jiouj4Fpw8Mdi1cHFWVcHV0EQ/AHiHyBOii5S4veSQosYD4778O7e4+4dIDQqTLO64oCm22Y6mRCzuVWx5xUhjEDAAKIys4w5SUrBd3zdI8DXuxjP8j/35+hT8xYDAiJxnBmmTbxBPLNpG5z3iSOsJKvE58QTJl2Q+JHrisdvnIsuCzwzYmbS88QRYrHYwUoHs5KpEU8TR1VNp3wh67HKeYuzVqmx1j35C8N5fWWZ6zRHkcQiliBBhIIayqjARoxWnRQLadpP+PiHXb9ELoVcZTByLKAKDbLrB/+D391ahalJLymcALpfHOdjDOjZBZp1x/k+dpzmCRB8Bq70tr/aAGY/Sa+3tegR0L8NXFy3NWUPuNwBhp4M2ZRdKUhTKBSA9zP6phwweAv0rnm9tfZx+gBkqKvUDXBwCIwXKXvd592hzt7+PdPq7weBOHKsFJkKugAADXhpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDQuNC4wLUV4aXYyIj4KIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKICAgIHhtbG5zOkdJTVA9Imh0dHA6Ly93d3cuZ2ltcC5vcmcveG1wLyIKICAgIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIgogICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICB4bXBNTTpEb2N1bWVudElEPSJnaW1wOmRvY2lkOmdpbXA6NzI0NjQ0NjctYTU3Ny00ZTFhLWIzMDctYjIwYTMxMTM4ZTRlIgogICB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjgyNzJiNTc2LWM0NWMtNGViOC1iMGZlLWVjNDI1YWIxMDM2ZiIKICAgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOjg4MGMzMWZhLTcxMTMtNGVkZi1hZmQyLThlNjFiNzIyYjk3YiIKICAgZGM6Rm9ybWF0PSJpbWFnZS9wbmciCiAgIEdJTVA6QVBJPSIyLjAiCiAgIEdJTVA6UGxhdGZvcm09IkxpbnV4IgogICBHSU1QOlRpbWVTdGFtcD0iMTc4Nzc5NzAzNzc4NTY3NyIKICAgR0lNUDpWZXJzaW9uPSIyLjEwLjM0IgogICB0aWZmOk9yaWVudGF0aW9uPSIxIgogICB4bXA6Q3JlYXRvclRvb2w9IkdJTVAgMi4xMCIKICAgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyNjowODoyNlQyMzoxNzoxNi0wMzowMCIKICAgeG1wOk1vZGlmeURhdGU9IjIwMjY6MDg6MjZUMjM6MTc6MTYtMDM6MDAiPgogICA8eG1wTU06SGlzdG9yeT4KICAgIDxyZGY6U2VxPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJzYXZlZCIKICAgICAgc3RFdnQ6Y2hhbmdlZD0iLyIKICAgICAgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDplNTI4MDQ1ZC04NDI5LTQ4OTktODljYy00ZGZmOGEyNTc3ZWMiCiAgICAgIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkdpbXAgMi4xMCAoTGludXgpIgogICAgICBzdEV2dDp3aGVuPSIyMDI2LTA4LTI2VDIzOjE3OjE3LTAzOjAwIi8+CiAgICA8L3JkZjpTZXE+CiAgIDwveG1wTU06SGlzdG9yeT4KICA8L3JkZjpEZXNjcmlwdGlvbj4KIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0idyI/PkqLgrwAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAAFxIAABcSAWef0lIAAAAHdElNRQfqCBsCERH2jt6XAAASxElEQVR42u2de3gU5b3HP+9mdhMSIAqIioqiVOptAiIoclrrtV7wqVXr8YoeW/tYbxPUHo9tFWuP7fFUC2OPWqEVxbvWS6uIChavp3oEQkbxWgStIiBBE7Ik2Z2d9/zxTmSI2dnNJrvZ3byf55lnL/PuvDvzznfe2+/9/YRhWhJNLvzJdewfFSKjyjrLSEmmACcAk4FxwEjAAFLAemAl8BqwwHXs13uaR9S0dpBwInA4UAfsDgz1d8eB1UAD8KKAx5OOvUnfAqWDoS9B8eIL/LyU5KfA3mmSVQCj/O1oYCxwZtY3gGmNAWZK+FegKk2yGmB/fztbwhvApjTH2we4OyTLn7uOvajshWVaewP3hiSZ6Tr2Qi30gf4ENq09U5J7gSk9/Omfs0k0fOIM0Zz0LgR+6ws5W96vrhBvtqTfXwNMCvn9sAFShIMyXIfhukbX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" alt="Logo FFLCH" style="max-width: 100px; height: auto;">
+                        
+                    </td>
+                    <td style="vertical-align: middle; padding-left: 10px;">
+                        <div style="color: #002B49; font-family: Arial, sans-serif; font-weight: bold; font-size: 15pt; line-height: 1.2;">UNIVERSIDADE DE SÃO PAULO</div>
+                        <div style="color: #555; font-size: 10pt;">Faculdade de Filosofia, Letras e Ciências Humanas</div>
+                        <div style="color: #002B49; font-weight: bold; font-size: 9.5pt; margin-top: 2px;">Seção de Informática</div>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+            São Paulo, 14/10/2026
+        </div>
+        <h1>Proposta de rede na Reforma de recuperação dos auditórios Milton Santos e Nicolau Sevcenko</h1>
+        <hr>
+        <div class="markdown-body">
+            <div class="toc">
 <ul>
 <li><a href="#1-descricao-detalhada-da-legenda">1. Descrição Detalhada da Legenda</a></li>
 <li><a href="#2-quantificacao-de-caixas-pontos-e-cabos-cat6">2. Quantificação de Caixas, Pontos e Cabos Cat6</a></li>
@@ -152,94 +126,14 @@ A figura apresentada é um recorte da planta oficial e serve como representaçã
 <li><strong>Tipo:</strong> Perfurada, para favorecer a ventilação e proteção mecânica.</li>
 </ul>
 <p>Para acomodar o total de <strong>46 cabos Cat6</strong>, a dimensão de 100 x 50 mm atende às diretrizes da norma ABNT NBR 14565. Essa medida mantém a taxa de ocupação inicial em torno de <strong>30%</strong>, ficando abaixo do limite máximo permitido de 40%. Essa folga é indispensável para evitar o esmagamento dos cabos, acomodar as curvas de raio mínimo sem atrito e permitir futuras expansões de rede sem necessidade de troca da infraestrutura principal.</p>
-                            </div>
-                        </div>
+        </div>
+    </div>
+</div>
 
-                    </div>
 
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="../assets/js/report-export.js"></script>
 
-                    <script>
-                    function limparTOCParaExportacao(clone) {
-                        const toc = clone.querySelector('.toc');
-                        if (toc) {
-                            toc.style.background = 'none';
-                            toc.style.border = 'none';
-                            toc.style.padding = '0';
-                            toc.style.margin = '0 0 20px 0';
-
-                            const links = toc.querySelectorAll('a');
-                            links.forEach(a => {
-                                const span = document.createElement('span');
-                                span.textContent = a.textContent;
-                                span.style.color = '#000000';
-                                span.style.textDecoration = 'none';
-                                a.parentNode.replaceChild(span, a);
-                            });
-
-                            const uls = toc.querySelectorAll('ul');
-                            uls.forEach(ul => {
-                                ul.style.listStyleType = 'disc';
-                                ul.style.paddingLeft = '20px';
-                                ul.style.margin = '4px 0';
-                                ul.style.color = '#000000';
-                            });
-                        }
-                    }
-
-                    function exportarPDF() {
-                        const element = document.getElementById('export-content');
-                        const clone = element.cloneNode(true);
-                        
-                        const headerClone = clone.querySelector('#header-timbrado-export');
-                        if (headerClone) {
-                            headerClone.style.display = 'block';
-                        }
-
-                        limparTOCParaExportacao(clone);
-
-                        const opt = {
-                            margin:       [10, 10, 10, 10],
-                            filename:     '2026-projeto-auditorios-gh.pdf',
-                            image:        { type: 'jpeg', quality: 0.98 },
-                            html2canvas:  { scale: 2, useCORS: true, logging: false },
-                            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-                        };
-
-                        html2pdf().set(opt).from(clone).save();
-                    }
-
-                    function exportarWord() {
-                        const element = document.getElementById('export-content');
-                        const clone = element.cloneNode(true);
-                        
-                        const headerClone = clone.querySelector('#header-timbrado-export');
-                        if (headerClone) {
-                            headerClone.style.display = 'block';
-                        }
-
-                        limparTOCParaExportacao(clone);
-
-                        const headerHTML = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
-                            "xmlns:w='urn:schemas-microsoft-com:office:word' "+
-                            "xmlns='http://www.w3.org/TR/REC-html40'>"+
-                            "<head><meta charset='utf-8'><title>Proposta de rede na Reforma de recuperação dos auditórios Milton Santos e Nicolau Sevcenko</title>"+
-                            "<style>"+
-                            "body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; }"+
-                            "table { border-collapse: collapse; width: 100%; }"+
-                            "td, th { border: 1px solid #ddd; padding: 6px; }"+
-                            "ul { padding-left: 20px; }"+
-                            "li { margin-bottom: 3px; }"+
-                            "pre { background: #f4f4f4; padding: 10px; border-radius: 4px; font-family: Courier New; }"+
-                            "</style></head><body>";
-                            
-                        const footerHTML = "</body></html>";
-                        const sourceHTML = headerHTML + clone.innerHTML + footerHTML;
-
-                        const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
-                        saveAs(blob, '2026-projeto-auditorios-gh.docx');
-                    }
-                    </script>
-                </body>
-                </html>
+</body>
+</html>
