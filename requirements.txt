@@ -3,3 +3,4 @@ pandas
 markdown
 matplotlib
 requests
+jinja2

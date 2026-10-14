@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block extra_head %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/report.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+        <a href="{{ voltar_link | default('../index.html') }}" class="btn btn-sm btn-outline-secondary">{{ voltar_texto | default('← Voltar à Página Inicial') }}</a>
+        <div>
+            <button onclick="exportarPDF('{{ nome_base }}.pdf')" class="btn btn-sm btn-outline-danger me-2">📄 Exportar PDF</button>
+            <button onclick="exportarWord('{{ titulo | e }}', '{{ nome_base }}.docx')" class="btn btn-sm btn-outline-primary">📝 Exportar Word (.docx)</button>
+        </div>
+    </div>
+
+    <div id="export-content">
+        <div id="header-timbrado-export" style="display: none; padding-bottom: 12px; margin-bottom: 25px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 110px; vertical-align: middle;">
+                        {% if logo_base64 %}
+                        <img src="{{ logo_base64 }}" alt="Logo FFLCH" style="max-width: 100px; height: auto;">
+                        {% endif %}
+                    </td>
+                    <td style="vertical-align: middle; padding-left: 10px;">
+                        <div style="color: #002B49; font-family: Arial, sans-serif; font-weight: bold; font-size: 15pt; line-height: 1.2;">UNIVERSIDADE DE SÃO PAULO</div>
+                        <div style="color: #555; font-size: 10pt;">Faculdade de Filosofia, Letras e Ciências Humanas</div>
+                        <div style="color: #002B49; font-weight: bold; font-size: 9.5pt; margin-top: 2px;">Seção de Informática</div>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+            São Paulo, {{ data_hoje }}
+        </div>
+        <h1>{{ titulo }}</h1>
+        <hr>
+        <div class="markdown-body">
+            {{ html_corpo | safe }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="../assets/js/report-export.js"></script>
+{% endblock %}
+

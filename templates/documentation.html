@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Documentação - {{ codigo_task }}{% endblock %}
+
+{% block extra_head %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/tutorial.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a href="../index.html" class="btn btn-sm btn-outline-secondary mb-4">← Voltar ao Planejamento</a>
+    <div class="markdown-body">
+        {{ html_corpo | safe }}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+{% endblock %}
+

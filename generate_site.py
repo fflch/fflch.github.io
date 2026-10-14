@@ -8,7 +8,7 @@ import csv
 from pathlib import Path
 import markdown
 import base64
-
+from jinja2 import Environment, FileSystemLoader
 
 OUTPUT_DIR = "docs"
 TASKS_DIR = "tasks"
@@ -21,6 +21,7 @@ REPORTS_DIR = os.path.join("content", "reports")
 OUTPUT_REPORTS = os.path.join(OUTPUT_DIR, "reports")
 PAGES_DIR = os.path.join("content", "pages")
 OUTPUT_DOCS = "docs"
+TEMPLATES_DIR = "templates"
 
 # Mapeamento de extensões para linguagens do Prism.js
 EXT_TO_LANG = {
@@ -41,498 +42,6 @@ EXT_TO_LANG = {
     '.yaml': 'yaml'
 }
 
-def copy_assets():
-    destino = os.path.join(OUTPUT_DIR, "assets")
-
-    if os.path.exists(destino):
-        shutil.rmtree(destino)
-
-    if os.path.exists(ASSETS_DIR):
-        shutil.copytree(ASSETS_DIR, destino)
-
-def extrai_participantes_csv(caminho_csv):
-    nomes = []
-    if not os.path.exists(caminho_csv):
-        return ""
-    with open(caminho_csv, mode='r', encoding='utf-8') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            if row:  # Ignora linhas vazias
-                nomes.append(row[0].strip())
-    return ", ".join(nomes)
-
-def processar_relatorios():
-    """Lê a pasta content/reports, processa includes, converte para HTML e gera lista alfabética."""
-    if not os.path.exists(REPORTS_DIR):
-        return []
-
-    os.makedirs(OUTPUT_REPORTS, exist_ok=True)
-    relatorios = []
-
-    logo_base64 = ""
-    caminho_logo = os.path.join(ASSETS_DIR, "fflch.png")
-    if os.path.exists(caminho_logo):
-        with open(caminho_logo, "rb") as img_file:
-            logo_base64 = "data:image/png;base64," + base64.b64encode(img_file.read()).decode('utf-8')
-
-    css_style = """
-        body { padding: 40px; background: #f8f9fa; } 
-        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        pre { border-radius: 6px; }
-        
-        /* Estilo do Sumário na tela normal (com links azuis) */
-        .toc { 
-            background: #f1f3f5; 
-            padding: 15px 20px; 
-            border-radius: 6px; 
-            border-left: 4px solid #0d6efd; 
-            margin-bottom: 30px; 
-        }
-        .toc ul { margin-bottom: 0; padding-left: 20px; }
-        .toc a { text-decoration: none; color: #0d6efd; font-weight: 500; }
-        .toc a:hover { text-decoration: underline; }
-
-        /* Estilo simplificado para impressão tradicional */
-        @media print {
-            .no-print { display: none !important; }
-            #header-timbrado-export { display: block !important; }
-            .toc { 
-                background: none !important; 
-                border: none !important; 
-                padding: 0 !important; 
-            }
-            .toc a { color: #000 !important; text-decoration: none !important; }
-        }
-    """
-
-    for arquivo in sorted(os.listdir(REPORTS_DIR)):
-        if arquivo.endswith(".md"):
-            caminho_md = os.path.join(REPORTS_DIR, arquivo)
-            nome_base = os.path.splitext(arquivo)[0]
-            arquivo_html_nome = f"{nome_base}.html"
-            caminho_html_destino = os.path.join(OUTPUT_REPORTS, arquivo_html_nome)
-
-            with open(caminho_md, "r", encoding="utf-8") as f:
-                conteudo_md = f.read()
-
-            titulo = extrair_titulo_md(conteudo_md, nome_base)
-            
-            # Remove Front Matter
-            conteudo_md_limpo = re.sub(r"^---\s*\ntitle:.*?\n---\s*\n", "", conteudo_md, flags=re.MULTILINE | re.DOTALL)
-            
-            # Injeta TOC automático caso não exista
-            if "[TOC]" not in conteudo_md_limpo and "[toc]" not in conteudo_md_limpo:
-                conteudo_md_limpo = f"[TOC]\n\n" + conteudo_md_limpo
-
-            # Processa includes de assets/
-            conteudo_md_processado = resolver_includes_assets(conteudo_md_limpo)
-
-            # Converte Markdown para HTML
-            html_corpo = markdown.markdown(
-                conteudo_md_processado,
-                extensions=['extra', 'codehilite', 'fenced_code', 'nl2br', 'tables', 'toc']
-            )
-
-            img_tag_logo = f'<img src="{logo_base64}" alt="Logo FFLCH" style="max-width: 100px; height: auto;">' if logo_base64 else ''
-
-            html_completo = f"""<!DOCTYPE html>
-                <html lang="pt-br">
-                <head>
-                    <meta charset="UTF-8">
-                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-                    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-                    
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
-                    <title>{titulo}</title>
-                    <style>{css_style}</style>
-                </head>
-                <body>
-                    <div class="container">
-                        
-                        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
-                            <a href="../index.html" class="btn btn-sm btn-outline-secondary">← Voltar à Página Inicial</a>
-                            <div>
-                                <button onclick="exportarPDF()" class="btn btn-sm btn-outline-danger me-2">📄 Exportar PDF</button>
-                                <button onclick="exportarWord()" class="btn btn-sm btn-outline-primary">📝 Exportar Word (.docx)</button>
-                            </div>
-                        </div>
-
-                        <div id="export-content">
-                            
-                            <div id="header-timbrado-export" style="display: none; padding-bottom: 12px; margin-bottom: 25px;">
-                                <table style="width: 100%; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="width: 110px; vertical-align: middle;">
-                                            {img_tag_logo}
-                                        </td>
-                                        <td style="vertical-align: middle; padding-left: 10px;">
-                                            <div style="color: #002B49; font-family: Arial, sans-serif; font-weight: bold; font-size: 15pt; line-height: 1.2;">UNIVERSIDADE DE SÃO PAULO</div>
-                                            <div style="color: #555; font-size: 10pt;">Faculdade de Filosofia, Letras e Ciências Humanas</div>
-                                            <div style="color: #002B49; font-weight: bold; font-size: 9.5pt; margin-top: 2px;">Seção de Informática</div>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <hr>
-                                São Paulo, {datetime.now().strftime("%d/%m/%Y")}
-                            </div>
-                            <h1>{titulo}</h1>
-                            <hr>
-                            <div class="markdown-body">
-                                {html_corpo}
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-
-                    <script>
-                    // Função ajustada com sintaxe de JavaScript (function)
-                    function limparTOCParaExportacao(clone) {{
-                        const toc = clone.querySelector('.toc');
-                        if (toc) {{
-                            toc.style.background = 'none';
-                            toc.style.border = 'none';
-                            toc.style.padding = '0';
-                            toc.style.margin = '0 0 20px 0';
-
-                            const links = toc.querySelectorAll('a');
-                            links.forEach(a => {{
-                                const span = document.createElement('span');
-                                span.textContent = a.textContent;
-                                span.style.color = '#000000';
-                                span.style.textDecoration = 'none';
-                                a.parentNode.replaceChild(span, a);
-                            }});
-
-                            const uls = toc.querySelectorAll('ul');
-                            uls.forEach(ul => {{
-                                ul.style.listStyleType = 'disc';
-                                ul.style.paddingLeft = '20px';
-                                ul.style.margin = '4px 0';
-                                ul.style.color = '#000000';
-                            }});
-                        }}
-                    }}
-
-                    function exportarPDF() {{
-                        const element = document.getElementById('export-content');
-                        const clone = element.cloneNode(true);
-                        
-                        const headerClone = clone.querySelector('#header-timbrado-export');
-                        if (headerClone) {{
-                            headerClone.style.display = 'block';
-                        }}
-
-                        limparTOCParaExportacao(clone);
-
-                        const opt = {{
-                            margin:       [10, 10, 10, 10],
-                            filename:     '{nome_base}.pdf',
-                            image:        {{ type: 'jpeg', quality: 0.98 }},
-                            html2canvas:  {{ scale: 2, useCORS: true, logging: false }},
-                            jsPDF:        {{ unit: 'mm', format: 'a4', orientation: 'portrait' }},
-                            pagebreak:    {{ mode: ['avoid-all', 'css', 'legacy'] }}
-                        }};
-
-                        html2pdf().set(opt).from(clone).save();
-                    }}
-
-                    function exportarWord() {{
-                        const element = document.getElementById('export-content');
-                        const clone = element.cloneNode(true);
-                        
-                        const headerClone = clone.querySelector('#header-timbrado-export');
-                        if (headerClone) {{
-                            headerClone.style.display = 'block';
-                        }}
-
-                        limparTOCParaExportacao(clone);
-
-                        const headerHTML = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
-                            "xmlns:w='urn:schemas-microsoft-com:office:word' "+
-                            "xmlns='http://www.w3.org/TR/REC-html40'>"+
-                            "<head><meta charset='utf-8'><title>{titulo}</title>"+
-                            "<style>"+
-                            "body {{ font-family: Arial, sans-serif; font-size: 11pt; color: #000; }}"+
-                            "table {{ border-collapse: collapse; width: 100%; }}"+
-                            "td, th {{ border: 1px solid #ddd; padding: 6px; }}"+
-                            "ul {{ padding-left: 20px; }}"+
-                            "li {{ margin-bottom: 3px; }}"+
-                            "pre {{ background: #f4f4f4; padding: 10px; border-radius: 4px; font-family: Courier New; }}"+
-                            "</style></head><body>";
-                            
-                        const footerHTML = "</body></html>";
-                        const sourceHTML = headerHTML + clone.innerHTML + footerHTML;
-
-                        const blob = new Blob(['\\ufeff', sourceHTML], {{ type: 'application/msword' }});
-                        saveAs(blob, '{nome_base}.docx');
-                    }}
-                    </script>
-                </body>
-                </html>"""
-
-            with open(caminho_html_destino, "w", encoding="utf-8") as f:
-                f.write(html_completo)
-
-            relatorios.append({
-                "titulo": titulo,
-                "link": f"reports/{arquivo_html_nome}"
-            })
-
-    relatorios.sort(key=lambda x: x["titulo"].lower())
-    return relatorios
-
-import os
-import re
-import base64
-import markdown
-from datetime import datetime
-
-# Certifique-se de que estas variáveis estão definidas no seu script:
-# PAGES_DIR = os.path.join("content", "pages")
-# OUTPUT_DOCS = "docs"
-# ASSETS_DIR = "assets"
-
-def processar_paginas():
-    """
-    Lê os arquivos Markdown da pasta 'content/pages', processa includes,
-    converte para HTML e salva o resultado na pasta 'docs/'.
-    Não retorna lista e nem gera índice global.
-    """
-    if not os.path.exists(PAGES_DIR):
-        return
-
-    # Cria a pasta 'docs' (OUTPUT_DOCS) se ela não existir
-    os.makedirs(os.path.join(OUTPUT_DOCS, "pages"), exist_ok=True)
-
-    # Carrega a logo em base64 se disponível
-    logo_base64 = ""
-    caminho_logo = os.path.join(ASSETS_DIR, "fflch.png")
-    if os.path.exists(caminho_logo):
-        with open(caminho_logo, "rb") as img_file:
-            logo_base64 = "data:image/png;base64," + base64.b64encode(img_file.read()).decode('utf-8')
-
-    css_style = """
-        body { padding: 40px; background: #f8f9fa; } 
-        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        pre { border-radius: 6px; }
-        
-        /* Estilo do Sumário na tela normal (com links azuis) */
-        .toc { 
-            background: #f1f3f5; 
-            padding: 15px 20px; 
-            border-radius: 6px; 
-            border-left: 4px solid #0d6efd; 
-            margin-bottom: 30px; 
-        }
-        .toc ul { margin-bottom: 0; padding-left: 20px; }
-        .toc a { text-decoration: none; color: #0d6efd; font-weight: 500; }
-        .toc a:hover { text-decoration: underline; }
-
-        /* Estilo simplificado para impressão tradicional */
-        @media print {
-            .no-print { display: none !important; }
-            #header-timbrado-export { display: block !important; }
-            .toc { 
-                background: none !important; 
-                border: none !important; 
-                padding: 0 !important; 
-            }
-            .toc a { color: #000 !important; text-decoration: none !important; }
-        }
-    """
-
-    for arquivo in os.listdir(PAGES_DIR):
-        if arquivo.endswith(".md"):
-            caminho_md = os.path.join(PAGES_DIR, arquivo)
-            nome_base = os.path.splitext(arquivo)[0]
-            arquivo_html_nome = f"{nome_base}.html"
-            
-            caminho_html_destino = os.path.join(OUTPUT_DOCS, "pages", arquivo_html_nome)
-
-            with open(caminho_md, "r", encoding="utf-8") as f:
-                conteudo_md = f.read()
-
-            titulo = extrair_titulo_md(conteudo_md, nome_base)
-            
-            # Remove Front Matter
-            conteudo_md_limpo = re.sub(r"^---\s*\ntitle:.*?\n---\s*\n", "", conteudo_md, flags=re.MULTILINE | re.DOTALL)
-            
-            # Injeta TOC automático caso não exista
-            if "[TOC]" not in conteudo_md_limpo and "[toc]" not in conteudo_md_limpo:
-                conteudo_md_limpo = f"[TOC]\n\n" + conteudo_md_limpo
-
-            # Processa includes de assets/
-            conteudo_md_processado = resolver_includes_assets(conteudo_md_limpo)
-
-            # Converte Markdown para HTML
-            html_corpo = markdown.markdown(
-                conteudo_md_processado,
-                extensions=['extra', 'codehilite', 'fenced_code', 'nl2br', 'tables', 'toc']
-            )
-
-            img_tag_logo = f'<img src="{logo_base64}" alt="Logo FFLCH" style="max-width: 100px; height: auto;">' if logo_base64 else ''
-
-            html_completo = f"""<!DOCTYPE html>
-                <html lang="pt-br">
-                <head>
-                    <meta charset="UTF-8">
-                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-                    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-                    
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
-                    <title>{titulo}</title>
-                    <style>{css_style}</style>
-                </head>
-                <body>
-                    <div class="container">
-                        
-                        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
-                            <a href="../index.html" class="btn btn-sm btn-outline-secondary">← Voltar à Página Inicial</a>
-                            <div>
-                                <button onclick="exportarPDF()" class="btn btn-sm btn-outline-danger me-2">📄 Exportar PDF</button>
-                                <button onclick="exportarWord()" class="btn btn-sm btn-outline-primary">📝 Exportar Word (.docx)</button>
-                            </div>
-                        </div>
-
-                        <div id="export-content">
-                            
-                            <div id="header-timbrado-export" style="display: none; padding-bottom: 12px; margin-bottom: 25px;">
-                                <table style="width: 100%; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="width: 110px; vertical-align: middle;">
-                                            {img_tag_logo}
-                                        </td>
-                                        <td style="vertical-align: middle; padding-left: 10px;">
-                                            <div style="color: #002B49; font-family: Arial, sans-serif; font-weight: bold; font-size: 15pt; line-height: 1.2;">UNIVERSIDADE DE SÃO PAULO</div>
-                                            <div style="color: #555; font-size: 10pt;">Faculdade de Filosofia, Letras e Ciências Humanas</div>
-                                            <div style="color: #002B49; font-weight: bold; font-size: 9.5pt; margin-top: 2px;">Seção de Informática</div>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <hr>
-                                São Paulo, {datetime.now().strftime("%d/%m/%Y")}
-                            </div>
-                            <h1>{titulo}</h1>
-                            <hr>
-                            <div class="markdown-body">
-                                {html_corpo}
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-
-                    <script>
-                    function limparTOCParaExportacao(clone) {{
-                        const toc = clone.querySelector('.toc');
-                        if (toc) {{
-                            toc.style.background = 'none';
-                            toc.style.border = 'none';
-                            toc.style.padding = '0';
-                            toc.style.margin = '0 0 20px 0';
-
-                            const links = toc.querySelectorAll('a');
-                            links.forEach(a => {{
-                                const span = document.createElement('span');
-                                span.textContent = a.textContent;
-                                span.style.color = '#000000';
-                                span.style.textDecoration = 'none';
-                                a.parentNode.replaceChild(span, a);
-                            }});
-
-                            const uls = toc.querySelectorAll('ul');
-                            uls.forEach(ul => {{
-                                ul.style.listStyleType = 'disc';
-                                ul.style.paddingLeft = '20px';
-                                ul.style.margin = '4px 0';
-                                ul.style.color = '#000000';
-                            }});
-                        }}
-                    }}
-
-                    function exportarPDF() {{
-                        const element = document.getElementById('export-content');
-                        const clone = element.cloneNode(true);
-                        
-                        const headerClone = clone.querySelector('#header-timbrado-export');
-                        if (headerClone) {{
-                            headerClone.style.display = 'block';
-                        }}
-
-                        limparTOCParaExportacao(clone);
-
-                        const opt = {{
-                            margin:       [10, 10, 10, 10],
-                            filename:     '{nome_base}.pdf',
-                            image:        {{ type: 'jpeg', quality: 0.98 }},
-                            html2canvas:  {{ scale: 2, useCORS: true, logging: false }},
-                            jsPDF:        {{ unit: 'mm', format: 'a4', orientation: 'portrait' }},
-                            pagebreak:    {{ mode: ['avoid-all', 'css', 'legacy'] }}
-                        }};
-
-                        html2pdf().set(opt).from(clone).save();
-                    }}
-
-                    function exportarWord() {{
-                        const element = document.getElementById('export-content');
-                        const clone = element.cloneNode(true);
-                        
-                        const headerClone = clone.querySelector('#header-timbrado-export');
-                        if (headerClone) {{
-                            headerClone.style.display = 'block';
-                        }}
-
-                        limparTOCParaExportacao(clone);
-
-                        const headerHTML = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
-                            "xmlns:w='urn:schemas-microsoft-com:office:word' "+
-                            "xmlns='http://www.w3.org/TR/REC-html40'>"+
-                            "<head><meta charset='utf-8'><title>{titulo}</title>"+
-                            "<style>"+
-                            "body {{ font-family: Arial, sans-serif; font-size: 11pt; color: #000; }}"+
-                            "table {{ border-collapse: collapse; width: 100%; }}"+
-                            "td, th {{ border: 1px solid #ddd; padding: 6px; }}"+
-                            "ul {{ padding-left: 20px; }}"+
-                            "li {{ margin-bottom: 3px; }}"+
-                            "pre {{ background: #f4f4f4; padding: 10px; border-radius: 4px; font-family: Courier New; }}"+
-                            "</style></head><body>";
-                            
-                        const footerHTML = "</body></html>";
-                        const sourceHTML = headerHTML + clone.innerHTML + footerHTML;
-
-                        const blob = new Blob(['\\ufeff', sourceHTML], {{ type: 'application/msword' }});
-                        saveAs(blob, '{nome_base}.docx');
-                    }}
-                    </script>
-                </body>
-                </html>"""
-
-            with open(caminho_html_destino, "w", encoding="utf-8") as f:
-                f.write(html_completo)
-
-# ----------------------------------------
-# PROCESSAR TUTORIAIS
-# ----------------------------------------
-def extrair_titulo_md(conteudo_md, nome_arquivo_padrao):
-    """Extrai o título do Front Matter (--- title: Titulo ---) ou do primeiro header H1 (# Titulo)."""
-    match_yaml = re.search(r"^---\s*\ntitle:\s*(.*?)\n---", conteudo_md, re.MULTILINE | re.IGNORECASE)
-    if match_yaml:
-        return match_yaml.group(1).strip()
-    
-    match_h1 = re.search(r"^#\s+(.*)", conteudo_md, re.MULTILINE)
-    if match_h1:
-        return match_h1.group(1).strip()
-    
-    return nome_arquivo_padrao.replace("-", " ").replace("_", " ").title()
-
-
 # Mapeamento de nomes exatos de arquivos sem extensão (ou especiais)
 FILENAME_TO_LANG = {
     'dockerfile': 'dockerfile',
@@ -544,6 +53,74 @@ FILENAME_TO_LANG = {
     '.env.example': 'bash'
 }
 
+# Configuração do Jinja2
+jinja_env = Environment(
+    loader=FileSystemLoader(TEMPLATES_DIR),
+    autoescape=False
+)
+
+
+def latex_to_html(text):
+    if not text:
+        return ""
+
+    text = text.replace("\\bigskip", "<br><br>")
+    text = re.sub(r"\\textbf{([^}]*)}", r"<strong>\1</strong>", text)
+    text = re.sub(r"\\textit{([^}]*)}", r"<em>\1</em>", text)
+    text = text.replace("\\begin{itemize}", "<ul>")
+    text = text.replace("\\end{itemize}", "</ul>")
+    text = text.replace("\\item", "<li>")
+    text = re.sub(r"\\url{([^}]*)}", r'<a href="\1" target="_blank">\1</a>', text)
+
+    return text
+
+
+jinja_env.filters['latex_to_html'] = latex_to_html
+
+
+def copy_assets():
+    destino = os.path.join(OUTPUT_DIR, "assets")
+
+    if os.path.exists(destino):
+        shutil.rmtree(destino)
+
+    if os.path.exists(ASSETS_DIR):
+        shutil.copytree(ASSETS_DIR, destino)
+
+
+def carregar_logo_base64():
+    caminho_logo = os.path.join(ASSETS_DIR, "fflch.png")
+    if os.path.exists(caminho_logo):
+        with open(caminho_logo, "rb") as img_file:
+            return "data:image/png;base64," + base64.b64encode(img_file.read()).decode('utf-8')
+    return ""
+
+
+def extrai_participantes_csv(caminho_csv):
+    nomes = []
+    if not os.path.exists(caminho_csv):
+        return ""
+    with open(caminho_csv, mode='r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if row:
+                nomes.append(row[0].strip())
+    return ", ".join(nomes)
+
+
+def extrair_titulo_md(conteudo_md, nome_arquivo_padrao):
+    """Extrai o título do Front Matter (--- title: Titulo ---) ou do primeiro header H1 (# Titulo)."""
+    match_yaml = re.search(r"^---\s*\ntitle:\s*(.*?)\n---", conteudo_md, re.MULTILINE | re.IGNORECASE)
+    if match_yaml:
+        return match_yaml.group(1).strip()
+
+    match_h1 = re.search(r"^#\s+(.*)", conteudo_md, re.MULTILINE)
+    if match_h1:
+        return match_h1.group(1).strip()
+
+    return nome_arquivo_padrao.replace("-", " ").replace("_", " ").title()
+
+
 def resolver_includes_html(conteudo_md):
     """
     Substitui [[include_html:caminho/arquivo.html]] pelo conteúdo HTML bruto
@@ -552,20 +129,19 @@ def resolver_includes_html(conteudo_md):
     def substituidor(match):
         caminho_relativo = match.group(1).strip()
         caminho_asset = os.path.join(ASSETS_DIR, caminho_relativo)
-        
+
         if os.path.exists(caminho_asset):
             try:
                 with open(caminho_asset, 'r', encoding='utf-8') as f:
                     conteudo_html = f.read()
-                # Retorna o HTML diretamente, garantindo quebras de linha antes e depois
                 return f"\n\n{conteudo_html}\n\n"
             except Exception as e:
                 return f"\n*Erro ao ler include HTML {caminho_relativo}: {e}*\n"
         else:
             return f"\n*Arquivo HTML não encontrado: assets/{caminho_relativo}*\n"
 
-    # Procura pela sintaxe [[include_html: caminho/arquivo.html]]
     return re.sub(r"\[\[include_html:\s*(.*?)\s*\]\]", substituidor, conteudo_md)
+
 
 def resolver_includes_assets(conteudo_md):
     """
@@ -576,18 +152,15 @@ def resolver_includes_assets(conteudo_md):
     def substituidor(match):
         caminho_relativo = match.group(1).strip()
         caminho_asset = os.path.join(ASSETS_DIR, caminho_relativo)
-        
+
         if os.path.exists(caminho_asset):
             nome_arquivo = os.path.basename(caminho_relativo).lower()
             ext = os.path.splitext(nome_arquivo)[1].lower()
-            
-            # 1. Verifica se o nome exato do arquivo está no mapeamento especial (ex: Dockerfile)
+
             if nome_arquivo in FILENAME_TO_LANG:
                 lang = FILENAME_TO_LANG[nome_arquivo]
-            # 2. Verifica se a extensão está mapeada
             elif ext in EXT_TO_LANG:
                 lang = EXT_TO_LANG[ext]
-            # 3. Fallback: usa 'bash' se não conseguir identificar a linguagem
             else:
                 lang = 'bash'
 
@@ -602,30 +175,121 @@ def resolver_includes_assets(conteudo_md):
 
     return re.sub(r"\[\[include:\s*(.*?)\s*\]\]", substituidor, conteudo_md)
 
+
+def processar_relatorios():
+    """Lê a pasta content/reports, processa includes, converte para HTML e gera lista alfabética."""
+    if not os.path.exists(REPORTS_DIR):
+        return []
+
+    os.makedirs(OUTPUT_REPORTS, exist_ok=True)
+    relatorios = []
+    logo_base64 = carregar_logo_base64()
+    template = jinja_env.get_template("report.html")
+
+    for arquivo in sorted(os.listdir(REPORTS_DIR)):
+        if arquivo.endswith(".md"):
+            caminho_md = os.path.join(REPORTS_DIR, arquivo)
+            nome_base = os.path.splitext(arquivo)[0]
+            arquivo_html_nome = f"{nome_base}.html"
+            caminho_html_destino = os.path.join(OUTPUT_REPORTS, arquivo_html_nome)
+
+            with open(caminho_md, "r", encoding="utf-8") as f:
+                conteudo_md = f.read()
+
+            titulo = extrair_titulo_md(conteudo_md, nome_base)
+            conteudo_md_limpo = re.sub(r"^---\s*\ntitle:.*?\n---\s*\n", "", conteudo_md, flags=re.MULTILINE | re.DOTALL)
+
+            if "[TOC]" not in conteudo_md_limpo and "[toc]" not in conteudo_md_limpo:
+                conteudo_md_limpo = f"[TOC]\n\n" + conteudo_md_limpo
+
+            conteudo_md_processado = resolver_includes_assets(conteudo_md_limpo)
+
+            html_corpo = markdown.markdown(
+                conteudo_md_processado,
+                extensions=['extra', 'codehilite', 'fenced_code', 'nl2br', 'tables', 'toc']
+            )
+
+            html_completo = template.render(
+                titulo=titulo,
+                nome_base=nome_base,
+                logo_base64=logo_base64,
+                html_corpo=html_corpo,
+                data_hoje=datetime.now().strftime("%d/%m/%Y"),
+                voltar_link="../index.html",
+                voltar_texto="← Voltar à Página Inicial"
+            )
+
+            with open(caminho_html_destino, "w", encoding="utf-8") as f:
+                f.write(html_completo)
+
+            relatorios.append({
+                "titulo": titulo,
+                "link": f"reports/{arquivo_html_nome}"
+            })
+
+    relatorios.sort(key=lambda x: x["titulo"].lower())
+    return relatorios
+
+
+def processar_paginas():
+    """
+    Lê os arquivos Markdown da pasta 'content/pages', processa includes,
+    converte para HTML e salva o resultado na pasta 'docs/pages'.
+    Não retorna lista e nem gera índice global.
+    """
+    if not os.path.exists(PAGES_DIR):
+        return
+
+    destino_dir = os.path.join(OUTPUT_DOCS, "pages")
+    os.makedirs(destino_dir, exist_ok=True)
+    logo_base64 = carregar_logo_base64()
+    template = jinja_env.get_template("report.html")
+
+    for arquivo in os.listdir(PAGES_DIR):
+        if arquivo.endswith(".md"):
+            caminho_md = os.path.join(PAGES_DIR, arquivo)
+            nome_base = os.path.splitext(arquivo)[0]
+            arquivo_html_nome = f"{nome_base}.html"
+            caminho_html_destino = os.path.join(destino_dir, arquivo_html_nome)
+
+            with open(caminho_md, "r", encoding="utf-8") as f:
+                conteudo_md = f.read()
+
+            titulo = extrair_titulo_md(conteudo_md, nome_base)
+            conteudo_md_limpo = re.sub(r"^---\s*\ntitle:.*?\n---\s*\n", "", conteudo_md, flags=re.MULTILINE | re.DOTALL)
+
+            if "[TOC]" not in conteudo_md_limpo and "[toc]" not in conteudo_md_limpo:
+                conteudo_md_limpo = f"[TOC]\n\n" + conteudo_md_limpo
+
+            conteudo_md_processado = resolver_includes_assets(conteudo_md_limpo)
+
+            html_corpo = markdown.markdown(
+                conteudo_md_processado,
+                extensions=['extra', 'codehilite', 'fenced_code', 'nl2br', 'tables', 'toc']
+            )
+
+            html_completo = template.render(
+                titulo=titulo,
+                nome_base=nome_base,
+                logo_base64=logo_base64,
+                html_corpo=html_corpo,
+                data_hoje=datetime.now().strftime("%d/%m/%Y"),
+                voltar_link="../index.html",
+                voltar_texto="← Voltar à Página Inicial"
+            )
+
+            with open(caminho_html_destino, "w", encoding="utf-8") as f:
+                f.write(html_completo)
+
+
 def processar_tutoriais():
-    """Lê a pasta tutoriais, processa inclui, converte para HTML e gera lista alfabética."""
+    """Lê a pasta tutoriais, processa includes, converte para HTML e gera lista alfabética."""
     if not os.path.exists(TUTORIAIS_DIR):
         return []
 
     os.makedirs(OUTPUT_TUTORIAIS, exist_ok=True)
     tutoriais = []
-
-    css_style = """
-        body { padding: 40px; background: #f8f9fa; } 
-        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        pre { border-radius: 6px; }
-        /* Estilização elegante para o Sumário gerado automaticamente */
-        .toc { 
-            background: #f1f3f5; 
-            padding: 15px 20px; 
-            border-radius: 6px; 
-            border-left: 4px solid #0d6efd; 
-            margin-bottom: 30px; 
-        }
-        .toc ul { margin-bottom: 0; padding-left: 20px; }
-        .toc a { text-decoration: none; color: #0d6efd; font-weight: 500; }
-        .toc a:hover { text-decoration: underline; }
-    """
+    template = jinja_env.get_template("tutorial.html")
 
     for arquivo in sorted(os.listdir(TUTORIAIS_DIR)):
         if arquivo.endswith(".md"):
@@ -638,49 +302,25 @@ def processar_tutoriais():
                 conteudo_md = f.read()
 
             titulo = extrair_titulo_md(conteudo_md, nome_base)
-            
-            # Remove Front Matter antes de converter se existir
             conteudo_md_limpo = re.sub(r"^---\s*\ntitle:.*?\n---\s*\n", "", conteudo_md, flags=re.MULTILINE | re.DOTALL)
-            
-            # Se o usuário NÃO colocou [TOC] manualmente no markdown, inserimos automaticamente no topo
+
             if "[TOC]" not in conteudo_md_limpo and "[toc]" not in conteudo_md_limpo:
                 conteudo_md_limpo = f"[TOC]\n\n" + conteudo_md_limpo
 
-            # Processa includes de assets/
             conteudo_md_processado = resolver_includes_assets(conteudo_md_limpo)
             conteudo_md_processado = resolver_includes_html(conteudo_md_processado)
-            
-            # Converte Markdown para HTML com suporte a TOC automático e IDs nos headers
+
             html_corpo = markdown.markdown(
                 conteudo_md_processado,
                 extensions=['extra', 'codehilite', 'fenced_code', 'nl2br', 'tables', 'toc']
             )
 
-            # Template HTML individual do tutorial
-            html_completo = f"""<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Prism CSS para realce de sintaxe colorido -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    <title>{titulo}</title>
-    <style>{css_style}</style>
-</head>
-<body>
-    <div class="container">
-        <a href="../index.html" class="btn btn-sm btn-outline-secondary mb-4">← Voltar à Página Inicial</a>
-        <h1>{titulo}</h1>
-        <hr>
-        <div class="markdown-body">
-            {html_corpo}
-        </div>
-    </div>
-    <!-- Prism JS e Autoloader para linguagens -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-</body>
-</html>"""
+            html_completo = template.render(
+                titulo=titulo,
+                html_corpo=html_corpo,
+                voltar_link="../index.html",
+                voltar_texto="← Voltar à Página Inicial"
+            )
 
             with open(caminho_html_destino, "w", encoding="utf-8") as f:
                 f.write(html_completo)
@@ -690,150 +330,9 @@ def processar_tutoriais():
                 "link": f"tutorial/{arquivo_html_nome}"
             })
 
-    # Ordena alfabeticamente pelo título
     tutoriais.sort(key=lambda x: x["titulo"].lower())
     return tutoriais
 
-def generate_issues_cards(tasks, issues):
-    siglas = load_siglas()
-
-    grupos = defaultdict(list)
-    nao_atribuidos = []
-
-    for issue in issues:
-        if issue.get("status") is not True:
-            continue
-
-        responsavel = issue.get("responsavel")
-        codigo = issue["codigo"]
-        task_codigo = codigo.split("-")[0]
-
-        if not responsavel:
-            nao_atribuidos.append((task_codigo, issue))
-            continue
-
-        prefixo = re.match(r"([a-zA-Z]+)", task_codigo).group(1)
-        grupos[prefixo].append((task_codigo, issue))
-
-    prefixos = sorted(grupos.keys())
-
-    html = """
-<h2 id="pendencias" class="mt-5 text-danger"><u>Issues pendentes</u></h2>
-
-<div class="container-fluid">
-<div class="row">
-"""
-
-    for prefixo in prefixos:
-        grupos[prefixo].sort(key=lambda x: x[1].get("data", ""))
-
-        html += f"""
-            <div class="col-md-4 mb-4">
-            <div class="card border-danger shadow h-100">
-            <div class="card-header bg-danger text-white text-center fw-bold">
-            {prefixo} - {siglas.get(prefixo, "")}
-            </div>
-            <div class="card-body">
-            """
-
-        for task_codigo, issue in grupos[prefixo]:
-            task = next((t for t in tasks if t["codigo"] == task_codigo), None)
-            titulo = task.get("titulo", "") if task else "N/A"
-
-            responsavel = issue.get("responsavel", "")
-            safe_id = re.sub(r"\s+", "_", responsavel.lower())
-
-            responsaveis = task.get("responsaveis") if task else []
-            responsaveis_tarefa = ", ".join(map(str, responsaveis))
-
-            html += f"""
-                <div class="card mb-3 border-secondary shadow-sm">
-                <div class="card-body">
-
-                <strong>Atividade:</strong> {issue["codigo"].split('-')[0]} - {titulo}
-
-                <p class="mb-1"><strong>Responsáveis da atividade:</strong> {responsaveis_tarefa}</p>
-
-                <strong>Código da issue:</strong> {re.sub(r'^[a-zA-Z]+', '', issue["codigo"])}
-
-                <p class="mb-0">
-                <strong>Issue atribuída para:</strong>
-                <a href="#resp-{safe_id}" class="fw-bold text-decoration-none">
-                {responsavel}
-                </a>
-                </p>
-
-                <p class="mb-1"><strong>Descrição da issue:</strong><br>
-                {issue.get("descricao","")}
-                </p>
-
-                <p class="mb-1"><strong>Data:</strong> {issue.get("data","")}</p>
-
-                </div>
-                </div>
-                """
-
-        html += """
-            </div>
-            </div>
-            </div>
-            """
-
-    html += """
-        </div>
-        </div>
-        """
-
-    if nao_atribuidos:
-        nao_atribuidos.sort(key=lambda x: x[1].get("data", ""))
-
-        html += """
-            <h3 id="nao-atribuidos" class="mt-5 text-secondary"><u>Issues não atribuídas</u></h3>
-
-            <div class="container-fluid">
-            <div class="row">
-            """
-
-        for task_codigo, issue in nao_atribuidos:
-            task = next((t for t in tasks if t["codigo"] == task_codigo), None)
-            titulo = task.get("titulo", "") if task else "N/A"
-
-            responsaveis = task.get("responsaveis") if task else []
-            responsaveis_tarefa = ", ".join(map(str, responsaveis))
-
-            prefixo = re.match(r"([a-zA-Z]+)", task_codigo).group(1)
-
-            html += f"""
-                <div class="col-md-4 mb-4">
-                <div class="card border-secondary shadow h-100">
-                <div class="card-header bg-secondary text-white text-center fw-bold">
-                {prefixo} - {siglas.get(prefixo, "")}
-                </div>
-                <div class="card-body">
-
-                <strong>Atividade:</strong> {issue["codigo"].split('-')[0]} - {titulo}
-
-                <p class="mb-1"><strong>Responsáveis da atividade:</strong> {responsaveis_tarefa}</p>
-
-                <strong>Código da issue:</strong> {re.sub(r'^[a-zA-Z]+', '', issue["codigo"])}
-
-                <p class="mb-1"><strong>Descrição da issue:</strong><br>
-                {issue.get("descricao","")}
-                </p>
-
-                <p class="mb-1"><strong>Data:</strong> {issue.get("data","")}</p>
-
-                </div>
-                </div>
-                </div>
-                """
-
-        html += """
-            </div>
-            </div>
-            """
-
-    return html
 
 def load_siglas():
     siglas = {}
@@ -849,6 +348,7 @@ def load_siglas():
 
     return siglas
 
+
 def converter_md_para_html(codigo_task):
     origem_md = os.path.join("content", "documentation", f"{codigo_task}.md")
     dir_destino = os.path.join(OUTPUT_DIR, "documentation")
@@ -858,84 +358,36 @@ def converter_md_para_html(codigo_task):
         return False
 
     os.makedirs(dir_destino, exist_ok=True)
-
-    css_doc = """
-        body { padding: 40px; background: #f8f9fa; } 
-        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-        /* Estilização elegante para o Sumário (TOC) */
-        .toc { 
-            background: #f1f3f5; 
-            padding: 15px 20px; 
-            border-radius: 6px; 
-            border-left: 4px solid #0d6efd; 
-            margin-bottom: 30px; 
-        }
-        .toc ul { margin-bottom: 0; padding-left: 20px; }
-        .toc a { text-decoration: none; color: #0d6efd; font-weight: 500; }
-        .toc a:hover { text-decoration: underline; }
-    """
+    template = jinja_env.get_template("documentation.html")
 
     try:
         with open(origem_md, "r", encoding="utf-8") as f:
             conteudo_md = f.read()
 
-        # Injeta automaticamente a tag [TOC] no topo caso não esteja presente no markdown
         if "[TOC]" not in conteudo_md and "[toc]" not in conteudo_md:
             conteudo_md = "[TOC]\n\n" + conteudo_md
 
-        # Processa includes de assets/ caso existam
         conteudo_md_processado = resolver_includes_assets(conteudo_md)
         conteudo_md_processado = resolver_includes_html(conteudo_md_processado)
 
-        # Converte Markdown para HTML incluindo a extensão 'toc'
         html_corpo = markdown.markdown(
-            conteudo_md_processado, 
+            conteudo_md_processado,
             extensions=['extra', 'codehilite', 'fenced_code', 'nl2br', 'tables', 'toc']
         )
 
-        html_completo = f"""<!DOCTYPE html>
-            <html lang="pt-br">
-            <head>
-                <meta charset="UTF-8">
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-                <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-                <title>Documentação - {codigo_task}</title>
-                <style>{css_doc}</style>
-            </head>
-            <body>
-                <div class="container">
-                    <a href="../index.html" class="btn btn-sm btn-outline-secondary mb-4">← Voltar ao Planejamento</a>
-                    <div class="markdown-body">
-                        {html_corpo}
-                    </div>
-                </div>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-            </body>
-            </html>"""
+        html_completo = template.render(
+            codigo_task=codigo_task,
+            html_corpo=html_corpo
+        )
 
         with open(arquivo_destino, "w", encoding="utf-8") as f:
             f.write(html_completo)
-            
+
         return True
     except Exception as e:
         print(f"Erro ao converter documentação {codigo_task}.md: {e}")
         return False
-    
-def latex_to_html(text):
-    if not text:
-        return ""
 
-    text = text.replace("\\bigskip", "<br><br>")
-    text = re.sub(r"\\textbf{([^}]*)}", r"<strong>\1</strong>", text)
-    text = re.sub(r"\\textit{([^}]*)}", r"<em>\1</em>", text)
-    text = text.replace("\\begin{itemize}", "<ul>")
-    text = text.replace("\\end{itemize}", "</ul>")
-    text = text.replace("\\item", "<li>")
-    text = re.sub(r"\\url{([^}]*)}", r'<a href="\1" target="_blank">\1</a>', text)
-
-    return text
 
 def load_tasks():
     tasks = []
@@ -953,6 +405,7 @@ def load_tasks():
                 data["codigo"] = file.replace(".json", "")
                 tasks.append(data)
     return tasks
+
 
 def load_issues(tasks):
     issues = []
@@ -978,6 +431,7 @@ def load_issues(tasks):
 
     return issues
 
+
 def group_by_prefix(tasks):
     groups = defaultdict(list)
     for task in tasks:
@@ -986,11 +440,13 @@ def group_by_prefix(tasks):
         groups[prefix].append(task)
     return groups
 
+
 def sort_tasks(tasks):
     return sorted(
         tasks,
         key=lambda t: int(re.search(r"\d+", t["codigo"]).group())
     )
+
 
 def count_open_issues(task_codigo, issues):
     return len([
@@ -999,66 +455,11 @@ def count_open_issues(task_codigo, issues):
         and i.get("status") is True
     ])
 
-def generate_estagiario_summary(tasks, issues):
-    estagiarios = defaultdict(list)
-
-    for task in tasks:
-        lista_est = task.get("estagiarios", [])
-        if isinstance(lista_est, str):
-            lista_est = [lista_est]
-
-        for est in lista_est:
-            if not est or est == "Não Há":
-                continue
-            estagiarios[est].append(task)
-
-    nomes = sorted(estagiarios.keys())
-    html = ''
-
-    for nome in nomes:
-        tarefas = estagiarios[nome]
-        total_peso = sum(t.get("peso", 0) for t in tarefas)
-
-        html += f"""
-            <h3 class="mt-4">{nome}</h3>
-            <table class="table table-bordered table-sm">
-            <thead>
-            <tr>
-            <th style="width:120px;">Código</th>
-            <th>Título</th>
-            <th style="width:80px;">Peso</th>
-            </tr>
-            </thead>
-            <tbody>
-            """
-        for t in sorted(tarefas, key=lambda x: x["codigo"]):
-            html += f"""
-                <tr>
-                <td><a href="#{t["codigo"]}">{t["codigo"]}</a></td>
-                <td>{t.get("titulo","")}</td>
-                <td>{t.get("peso","")}</td>
-                </tr>
-                """
-
-        html += f"""
-            <tr class="table-secondary fw-bold">
-            <td colspan="2">Soma</td>
-            <td>{total_peso}</td>
-            </tr>
-            </tbody>
-            </table>
-            """
-
-    return html
-
-import os
-import json
-from datetime import datetime
 
 def buscar_proxima_reuniao_e_issues(tipo_reuniao, dicionario_siglas, tasks):
     meetings_dir = "meetings"
     if not os.path.exists(meetings_dir):
-        return "Nenhuma reunião agendada", ""
+        return "Nenhuma reunião agendada", {"pautas": [], "erro": False}
 
     hoje = datetime.now().date()
     reunioes_validas = []
@@ -1074,58 +475,195 @@ def buscar_proxima_reuniao_e_issues(tipo_reuniao, dicionario_siglas, tasks):
                 pass
 
     if not reunioes_validas:
-        return "Nenhuma reunião agendada", ""
+        return "Nenhuma reunião agendada", {"pautas": [], "erro": False}
 
     reunioes_validas.sort(key=lambda x: x[0])
     data_proxima, arquivo_proxima = reunioes_validas[0]
     data_formatada_br = data_proxima.strftime("%d/%m/%Y")
-    
-    html_issues = ""
+
+    pautas = []
     try:
         with open(os.path.join(meetings_dir, arquivo_proxima), 'r', encoding='utf-8') as file:
             dados_reuniao = json.load(file)
             lista_issues = dados_reuniao.get("issues", [])
-            lista_extra = dados_reuniao.get("extra", [])  # <--- Lê a lista extra
-            
-            # Verifica se existe algum item (issue ou extra)
-            if lista_issues or lista_extra:
-                html_issues += "<ul style='padding-left: 20px; margin-top: 5px; font-size: 0.9em;'>"
-                
-                # 1. Processa as issues registradas em arquivo
-                for iss_arq in lista_issues:
-                    caminho_issue_real = os.path.join("tasks", "issues", iss_arq)
-                    issue = {}
-                    if os.path.exists(caminho_issue_real):
-                        try:
-                            with open(caminho_issue_real, encoding="utf-8") as f_issue:
-                                issue = json.load(f_issue)
-                        except:
-                            pass
+            lista_extra = dados_reuniao.get("extra", [])
 
-                    task_codigo = iss_arq.split("-")[0]
-                    task_mae = next((t for t in tasks if t["codigo"] == task_codigo), None)
-                    titulo_task = task_mae.get("titulo", "N/A") if task_mae else "N/A"
-                    
-                    html_issues += f"""<li>
-                        <strong>{titulo_task}</strong> - {issue.get("descricao")}
-                        ({issue.get("responsavel", "Não atribuído")})<br>
-                    </li>"""
-                
-                # 2. Processa os itens extras (sem arquivo de issue)
-                for item_extra in lista_extra:
-                    html_issues += f"""<li>
-                        {item_extra}
-                    </li>"""
+            for iss_arq in lista_issues:
+                caminho_issue_real = os.path.join("tasks", "issues", iss_arq)
+                issue = {}
+                if os.path.exists(caminho_issue_real):
+                    try:
+                        with open(caminho_issue_real, encoding="utf-8") as f_issue:
+                            issue = json.load(f_issue)
+                    except:
+                        pass
 
-                html_issues += "</ul>"
-            else:
-                html_issues = "<br><span class='text-muted'>Nenhuma pauta associada.</span>"
+                task_codigo = iss_arq.split("-")[0]
+                task_mae = next((t for t in tasks if t["codigo"] == task_codigo), None)
+                titulo_task = task_mae.get("titulo", "N/A") if task_mae else "N/A"
+
+                pautas.append({
+                    "tipo": "issue",
+                    "titulo_task": titulo_task,
+                    "descricao": issue.get("descricao", ""),
+                    "responsavel": issue.get("responsavel", "Não atribuído")
+                })
+
+            for item_extra in lista_extra:
+                pautas.append({
+                    "tipo": "extra",
+                    "texto": item_extra
+                })
+
+        return data_formatada_br, {"pautas": pautas, "erro": False}
     except:
-        html_issues = "<br><span class='text-danger'>Erro ao carregar pautas.</span>"
+        return data_formatada_br, {"pautas": [], "erro": True}
 
-    return data_formatada_br, html_issues
-    
-def generate_responsavel_summary(tasks, issues):
+
+def obter_dados_reunioes(siglas, tasks):
+    arquivos_json = [
+        'meeting-ti.json',
+        'meeting-drupal.json',
+        'meeting-camada1.json',
+        'meeting-camada2.json',
+        'meeting-laravel.json',
+    ]
+    reunioes = []
+
+    for arquivo in arquivos_json:
+        caminho_json = f'content/{arquivo}'
+        if not os.path.exists(caminho_json):
+            continue
+
+        with open(caminho_json, 'r', encoding='utf-8') as f:
+            dados = json.load(f)
+
+        titulo = dados.get('título', '')
+        tipo_limpo = arquivo.replace('meeting-', '').replace('.json', '')
+        nome_base_csv = arquivo.replace('.json', '.csv')
+        string_participantes = extrai_participantes_csv(f'content/{nome_base_csv}')
+
+        data_reuniao_texto, pautas_dados = buscar_proxima_reuniao_e_issues(tipo_limpo, siglas, tasks)
+
+        reunioes.append({
+            'titulo': titulo,
+            'dia': dados.get('Dia da semana', ''),
+            'horario': dados.get('horário', ''),
+            'participantes': string_participantes,
+            'handson': dados.get('handons'),
+            'proxima_data': data_reuniao_texto,
+            'tem_pautas': bool(pautas_dados.get('pautas')),
+            'pautas': pautas_dados.get('pautas', []),
+            'erro_pautas': pautas_dados.get('erro', False)
+        })
+
+    return reunioes
+
+
+def obter_nomes_estagiarios(tasks):
+    estagiarios = set()
+    for task in tasks:
+        lista_est = task.get("estagiarios", [])
+        if isinstance(lista_est, str):
+            lista_est = [lista_est]
+        for est in lista_est:
+            if est and est != "Não Há":
+                estagiarios.add(est.strip())
+    return estagiarios
+
+
+def formatar_grupo_issues(grupos, tasks):
+    nomes = sorted(grupos.keys(), key=lambda x: (x == "Desativado", x.lower()))
+    resultado = []
+
+    for nome in nomes:
+        grupos[nome].sort(key=lambda x: (x[1].get("data") or "", x[1].get("codigo", "")))
+        issues_formatadas = []
+        for task_codigo, issue in grupos[nome]:
+            task = next((t for t in tasks if t["codigo"] == task_codigo), None)
+            titulo = task.get("titulo", "") if task else "N/A"
+            safe_id = re.sub(r"\s+", "_", nome.lower())
+            responsaveis = task.get("responsaveis") if task else []
+            responsaveis_tarefa = ", ".join(map(str, responsaveis))
+
+            issues_formatadas.append({
+                "task_codigo": task_codigo,
+                "titulo_task": titulo,
+                "responsaveis_tarefa": responsaveis_tarefa,
+                "codigo_issue": re.sub(r'^[a-zA-Z]+', '', issue["codigo"]),
+                "codigo_completo": issue["codigo"],
+                "responsavel": nome,
+                "safe_id": safe_id,
+                "descricao": issue.get("descricao", ""),
+                "data": issue.get("data", "")
+            })
+
+        resultado.append({
+            "nome": nome,
+            "safe_id": re.sub(r"\s+", "_", nome.lower()),
+            "total_issues": len(issues_formatadas),
+            "issues": issues_formatadas
+        })
+
+    return resultado
+
+
+def preparar_dados_issues(tasks, issues):
+    siglas = load_siglas()
+    nomes_estagiarios = obter_nomes_estagiarios(tasks)
+
+    grupos_func = defaultdict(list)
+    grupos_est = defaultdict(list)
+    nao_atribuidos = []
+
+    for issue in issues:
+        if issue.get("status") is not True:
+            continue
+
+        responsavel = issue.get("responsavel")
+        codigo = issue["codigo"]
+        task_codigo = codigo.split("-")[0]
+
+        if not responsavel or not str(responsavel).strip():
+            nao_atribuidos.append((task_codigo, issue))
+            continue
+
+        resp_str = str(responsavel).strip()
+        if resp_str in nomes_estagiarios:
+            grupos_est[resp_str].append((task_codigo, issue))
+        else:
+            grupos_func[resp_str].append((task_codigo, issue))
+
+    issues_por_funcionario = formatar_grupo_issues(grupos_func, tasks)
+    issues_por_estagiario = formatar_grupo_issues(grupos_est, tasks)
+
+    nao_atribuidos_formatados = []
+    if nao_atribuidos:
+        nao_atribuidos.sort(key=lambda x: (x[1].get("data") or "", x[1].get("codigo", "")))
+        for task_codigo, issue in nao_atribuidos:
+            task = next((t for t in tasks if t["codigo"] == task_codigo), None)
+            titulo = task.get("titulo", "") if task else "N/A"
+            responsaveis = task.get("responsaveis") if task else []
+            responsaveis_tarefa = ", ".join(map(str, responsaveis))
+            match_pref = re.match(r"([a-zA-Z]+)", task_codigo)
+            prefixo = match_pref.group(1) if match_pref else ""
+
+            nao_atribuidos_formatados.append({
+                "prefixo": prefixo,
+                "significado": siglas.get(prefixo, ""),
+                "task_codigo": task_codigo,
+                "titulo_task": titulo,
+                "responsaveis_tarefa": responsaveis_tarefa,
+                "codigo_issue": re.sub(r'^[a-zA-Z]+', '', issue["codigo"]),
+                "codigo_completo": issue["codigo"],
+                "descricao": issue.get("descricao", ""),
+                "data": issue.get("data", "")
+            })
+
+    return issues_por_funcionario, issues_por_estagiario, nao_atribuidos_formatados
+
+
+def preparar_responsavel_summary(tasks):
     responsaveis = defaultdict(list)
 
     for task in tasks:
@@ -1141,225 +679,89 @@ def generate_responsavel_summary(tasks, issues):
             responsaveis[resp].append(task)
 
     nomes = sorted(responsaveis.keys(), key=lambda x: (x == "Desativado", x))
-    html = ''
+    summary = []
 
     for nome in nomes:
         tarefas = responsaveis[nome]
         total_peso = sum(t.get("peso", 0) for t in tarefas)
         safe_id = re.sub(r"\s+", "_", nome.lower())
 
-        html += f"""
-            <h3 class="mt-4" id="resp-{safe_id}">{nome}</h3>
-            <table class="table table-bordered table-sm">
-            <thead>
-            <tr>
-            <th style="width:120px;">Código</th>
-            <th>Título</th>
-            <th style="width:80px;">Peso</th>
-            </tr>
-            </thead>
-            <tbody>
-            """
-        for t in sorted(tarefas, key=lambda x: x["codigo"]):
-            html += f"""
-                <tr>
-                <td><a href="#{t["codigo"]}">{t["codigo"]}</a></td>
-                <td>{t.get("titulo","")}</td>
-                <td>{t.get("peso","")}</td>
-                </tr>
-                """
+        tarefas_ordenadas = sorted(tarefas, key=lambda x: x["codigo"])
+        summary.append({
+            "nome": nome,
+            "safe_id": safe_id,
+            "total_peso": total_peso,
+            "tarefas": [
+                {
+                    "codigo": t["codigo"],
+                    "titulo": t.get("titulo", ""),
+                    "peso": t.get("peso", "")
+                }
+                for t in tarefas_ordenadas
+            ]
+        })
 
-        html += f"""
-            <tr class="table-secondary fw-bold">
-            <td colspan="2">Soma</td>
-            <td>{total_peso}</td>
-            </tr>
-            </tbody>
-            </table>
-            """
+    return summary
 
-    return html
 
-arquivos_json = [
-    'meeting-ti.json',
-    'meeting-drupal.json',
-    'meeting-camada1.json',
-    'meeting-camada2.json',
-    'meeting-laravel.json',
-]
+def preparar_estagiario_summary(tasks):
+    estagiarios = defaultdict(list)
 
-def generate_html(tasks, issues, tutoriais, relatorios):
+    for task in tasks:
+        lista_est = task.get("estagiarios", [])
+        if isinstance(lista_est, str):
+            lista_est = [lista_est]
+
+        for est in lista_est:
+            if not est or est == "Não Há":
+                continue
+            estagiarios[est].append(task)
+
+    nomes = sorted(estagiarios.keys())
+    summary = []
+
+    for nome in nomes:
+        tarefas = estagiarios[nome]
+        total_peso = sum(t.get("peso", 0) for t in tarefas)
+
+        tarefas_ordenadas = sorted(tarefas, key=lambda x: x["codigo"])
+        summary.append({
+            "nome": nome,
+            "safe_id": re.sub(r"\s+", "_", nome.lower()),
+            "total_peso": total_peso,
+            "tarefas": [
+                {
+                    "codigo": t["codigo"],
+                    "titulo": t.get("titulo", ""),
+                    "peso": t.get("peso", "")
+                }
+                for t in tarefas_ordenadas
+            ]
+        })
+
+    return summary
+
+
+def preparar_grupos_tarefas(tasks, issues):
     siglas = load_siglas()
     groups = group_by_prefix(tasks)
     sorted_prefixes = sorted(groups.keys())
 
-    css_index = """
-        body { padding: 40px; }
-        .card { margin-bottom: 20px; }
-        .prefix-title { margin-top: 80px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
-        .issue-item { font-size: 0.9rem; color: #555; margin-left:15px; }
-        .top-link { font-size: 0.85rem; }
-        .summary-box { background:#f8f9fa; padding:20px; border-radius:10px; margin-bottom:40px; }
-    """
-
-    html = f"""
-        <!DOCTYPE html>
-        <html lang="pt-br">
-        <head>
-        <meta charset="UTF-8">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>{css_index}</style>
-        </head>
-        <body>
-        <div class="container-fluid">
-
-        <a href="#top" class="top-link">(voltar ao topo)</a>
-        <div class="mb-4">
-        <h2>Sumário</h2>
-        <ul>
-            <li><a href="#tutoriais">Tutoriais</a></li>
-            <li><a href="#pendencias">Issues pendentes</a></li>
-            <li><a href="#nao-atribuidos">Issues não atribuídas</a></li>
-            <li><a href="#por-pessoa">Atividades por funcionário(a)</a></li>
-            <li><a href="#por-estagiario">Atividades por estagiário(a)</a></li>
-            <li><a href="#estrutura">Organização estrutural das atividades</a></li>
-            <li><a href="#reunioes">Reuniões Técnicas</a></li>
-            <li><a href="#relatorios">Relatórios</a></li>
-            
-        </ul>
-        </div>
-        <div class="mb-5">
-        <p>
-        A organização das demandas da TI-FFLCH está estruturada de forma hierárquica.
-        As atividades são agrupadas por áreas, como por exemplo <strong>Desenvolvimento (dev)</strong>.
-        Dentro de cada área existem atividades específicas, identificadas por códigos como <strong>dev010</strong>,
-        que representam uma unidade de trabalho, no caso, desenvolvimento do sistema de fechadura eletrônica. Por fim, cada atividade pode ter associada uma ou mais <strong>issues</strong>, que são tarefas menores ou pendências relacionadas àquela atividade, como por exemplo a implementação de um novo recurso no sistema de fechadura eletrônica, que teria código <strong>dev010-01</strong>.
-        <br><br>
-        Cada atividade pode possuir múltiplos responsáveis, enquanto as <strong>issues</strong> representam tarefas menores
-        ou pendências associadas a uma atividade e são atribuídas a apenas uma pessoa.
-        <br><br>
-        A estrutura geral segue o modelo:
-        <strong>Área → Atividade → Issue</strong>
-        </p>
-        </div>
-        """
-        
-    html += """
-        </div>
-
-        <h1 id="reunioes">Reuniões Técnicas</h1>
-
-        <p>
-            As reuniões técnicas têm três objetivos principais. O primeiro é funcionar como um espaço formativo, no qual dedicamos de 15 a 30 minutos iniciais para que membros da equipe apresentem tutoriais ou realizem demonstrações práticas (labs). Esse momento será rotativo, garantindo a participação de todos e apoio da equipe.
-            <br><br>
-            O segundo momento é voltado à discussão dos problemas que precisam ser resolvidos, e por fim, a reunião se encerra com a definição e o encaminhamento das tarefas entre os membros da equipe.
-        </p>
-
-        <div class="row">
-    """
-
-    for arquivo in arquivos_json:
-        caminho_json = f'content/{arquivo}'
-        
-        if os.path.exists(caminho_json):
-            with open(caminho_json, 'r', encoding='utf-8') as f:
-                dados = json.load(f)
-            
-            titulo = dados.get('título', '')
-            tipo_limpo = arquivo.replace('meeting-', '').replace('.json', '')
-            
-            nome_base_csv = arquivo.replace('.json', '.csv')
-            string_participantes = extrai_participantes_csv(f'content/{nome_base_csv}')
-            
-            hands_on_html = ""
-            if dados.get('handons'):
-                hands_on_html = f"<p><strong>Hands-on:</strong><br>{dados['handons']}</p>"
-                
-            data_reuniao_texto, pautas_html = buscar_proxima_reuniao_e_issues(tipo_limpo, siglas, tasks)
-            
-            bloco_proxima_reuniao = f"<p><strong>Próxima Reunião:</strong><br>{data_reuniao_texto}</p>"
-            if pautas_html:
-                bloco_proxima_reuniao += f"<p><strong>Pautas / Issues da Reunião:</strong>{pautas_html}</p>"
-
-            html += f"""
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow h-100 border-success">
-                        <div class="card-header bg-success text-white fw-bold text-center">
-                            {titulo}
-                        </div>
-                        <div class="card-body">
-
-                            <p><strong>Dia e horário:</strong><br>
-                            {dados['Dia da semana']}<br>{dados['horário']}</p>
-
-                            <p><strong>Participantes:</strong><br>
-                            {string_participantes}</p>
-
-                            {hands_on_html}
-                            
-                            <hr>
-                            {bloco_proxima_reuniao}
-                        </div>
-                    </div>
-                </div>
-            """
-
-    html += "\n</div>"
-
-    # --- NOVA SEÇÃO DE TUTORIAIS EM ORDEM ALFABÉTICA ---
-    html += """
-    <hr class="my-5">
-    <h1 id="tutoriais">Tutoriais Técnicos</h1>
-    <div class="card shadow-sm mb-5">
-        <div class="card-body">
-            <ul class="list-group list-group-flush">
-    """
-    if tutoriais:
-        for tut in tutoriais:
-            html += f"""
-                <li class="list-group-item">
-                    <a href="{tut['link']}" class="fw-bold text-primary text-decoration-none" target="_blank">
-                        📄 {tut['titulo']}
-                    </a>
-                </li>
-            """
-    else:
-        html += '<li class="list-group-item text-muted">Nenhum tutorial cadastrado até o momento.</li>'
-
-    html += """
-            </ul>
-        </div>
-    </div>
-    """
-
-    html += generate_issues_cards(tasks, issues)
-    html += '<h1 id="por-pessoa">Organização das atividades por pessoa</h1>'
-    html += generate_responsavel_summary(tasks, issues)
-    html += "<br><hr><h2 id='por-estagiario'><u>Estagiários(as)</u></h2>"
-    html += generate_estagiario_summary(tasks, issues)
-
-    html += '<div id="estrutura" class="summary-box">'
-    html += """
-        <h1>Organização estrutural das atividades</h1>
-        <div class="mb-5">
-        <img src="ti_fflch.jpg" class="img-fluid w-100" alt="TI FFLCH">
-        </div>
-        """
-    html += '<ul>'
-
+    prefixos_menu = []
     for prefix in sorted_prefixes:
         significado = siglas.get(prefix, "")
         label = f"{prefix} - {significado}" if significado else prefix
-        html += f'<li><a href="#{prefix}">{label}</a></li>'
+        prefixos_menu.append({
+            "prefix": prefix,
+            "label": label
+        })
 
-    html += '</ul></div>'
-
+    grupos_tarefas = []
     for prefix in sorted_prefixes:
-        html += f'<h2 class="prefix-title" id="{prefix}">{prefix} '
-        html += f'<a href="#top" class="top-link">(voltar ao topo)</a>'
-        html += '</h2>'
+        tasks_ordenadas = sort_tasks(groups[prefix])
+        tasks_formatadas = []
 
-        for task in sort_tasks(groups[prefix]):
+        for task in tasks_ordenadas:
             descricao = task.get("descricao", "")
             if descricao.endswith(".tex"):
                 path_tex = os.path.join(TASKS_DIR, f"{task['codigo']}.tex")
@@ -1372,82 +774,73 @@ def generate_html(tasks, issues, tutoriais, relatorios):
                 and i.get("status") is True
             ]
 
-            badge = f' <span class="badge bg-danger">{len(related)} pendência(s)</span>' if related else ""
-
+            badge = f"{len(related)} pendência(s)" if related else ""
             tem_documentacao = converter_md_para_html(task["codigo"])
-            if tem_documentacao:
-                link_doc = f" | <a href='documentation/{task['codigo']}.html' class='text-decoration-none fw-bold text-success' target='_blank'>Documentação</a>"
-            else:
-                link_doc = ""
 
-            html += f"""
-                <div class="card shadow-sm">
-                <div class="card-body">
-                <h5 id="{task["codigo"]}">{task["codigo"]} | {task["titulo"]}{link_doc} {badge}</h5>
+            pendencias_formatadas = [
+                {
+                    "codigo": issue.get("codigo"),
+                    "descricao_html": latex_to_html(issue.get("descricao", ""))
+                }
+                for issue in related
+            ]
 
-                <table class="table table-sm">
-                <tr><th style="width:120px;">Peso</th><td>{task.get("peso","")}</td></tr>
-                <tr><th>Responsável(is)</th><td>{"; ".join(task.get("responsaveis", [task.get("responsavel","")]))}</td></tr>
-                <tr><th>Estagiário(a)</th><td>{"; ".join(task.get("estagiarios", []))}</td></tr>
-                </table>
+            responsaveis_list = task.get("responsaveis", [task.get("responsavel", "")])
+            responsaveis_str = "; ".join(responsaveis_list)
+            estagiarios_str = "; ".join(task.get("estagiarios", []))
 
-                <div class="mt-3">
-                {latex_to_html(descricao)}
-                </div>
-                """
+            tasks_formatadas.append({
+                "codigo": task["codigo"],
+                "titulo": task.get("titulo", ""),
+                "peso": task.get("peso", ""),
+                "responsaveis_str": responsaveis_str,
+                "estagiarios_str": estagiarios_str,
+                "descricao_html": latex_to_html(descricao),
+                "badge": badge,
+                "tem_documentacao": tem_documentacao,
+                "pendencias": pendencias_formatadas
+            })
 
-            if related:
-                html += "<hr><strong>Pendências:</strong>"
-                for issue in related:
-                    html += f"""
-                        <div class="issue-item">
-                        <strong>{issue.get("codigo")}</strong><br>
-                        {latex_to_html(issue.get("descricao",""))}
-                        </div>
-                        """
+        grupos_tarefas.append({
+            "prefix": prefix,
+            "tasks": tasks_formatadas
+        })
 
-            html += "</div></div>"
+    return prefixos_menu, grupos_tarefas
 
-    # --- SEÇÃO DE RELATÓRIOS ---
-    html += """
-    <hr class="my-5">
-    <h1 id="relatorios">Relatórios</h1>
-    <div class="card shadow-sm mb-5">
-        <div class="card-body">
-            <ul class="list-group list-group-flush">
-    """
-    if relatorios:
-        for rel in relatorios:
-            html += f"""
-                <li class="list-group-item">
-                    <a href="{rel['link']}" class="fw-bold text-primary text-decoration-none" target="_blank">
-                        📊 {rel['titulo']}
-                    </a>
-                </li>
-            """
-    else:
-        html += '<li class="list-group-item text-muted">Nenhum relatório cadastrado até o momento.</li>'
 
-    html += """
-            </ul>
-        </div>
-    </div>
-    """
+def generate_html(tasks, issues, tutoriais, relatorios):
+    siglas = load_siglas()
+    reunioes = obter_dados_reunioes(siglas, tasks)
+    issues_por_funcionario, issues_por_estagiario, issues_nao_atribuidas = preparar_dados_issues(tasks, issues)
+    responsaveis_summary = preparar_responsavel_summary(tasks)
+    estagiarios_summary = preparar_estagiario_summary(tasks)
+    prefixos_menu, grupos_tarefas = preparar_grupos_tarefas(tasks, issues)
 
-    return html
+    template = jinja_env.get_template("index.html")
+    return template.render(
+        reunioes=reunioes,
+        tutoriais=tutoriais,
+        relatorios=relatorios,
+        issues_por_funcionario=issues_por_funcionario,
+        issues_por_estagiario=issues_por_estagiario,
+        issues_nao_atribuidas=issues_nao_atribuidas,
+        responsaveis_summary=responsaveis_summary,
+        estagiarios_summary=estagiarios_summary,
+        prefixos_menu=prefixos_menu,
+        grupos_tarefas=grupos_tarefas
+    )
+
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     processar_paginas()
-
     copy_assets()
 
     tasks = load_tasks()
     issues = load_issues(tasks)
     relatorios = processar_relatorios()
-    
-    # Processa os tutoriais da pasta tutoriais/
     tutoriais = processar_tutoriais()
 
     html = generate_html(tasks, issues, tutoriais, relatorios)
@@ -1456,6 +849,7 @@ def main():
         f.write(html)
 
     print("Site e tutoriais gerados com sucesso em:", OUTPUT_DIR)
+
 
 if __name__ == "__main__":
     main()

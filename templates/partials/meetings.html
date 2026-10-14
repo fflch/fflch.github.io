@@ -1,0 +1,57 @@
+<h1 id="reunioes">Reuniões Técnicas</h1>
+
+<p>
+    As reuniões técnicas têm três objetivos principais. O primeiro é funcionar como um espaço formativo, no qual dedicamos de 15 a 30 minutos iniciais para que membros da equipe apresentem tutoriais ou realizem demonstrações práticas (labs). Esse momento será rotativo, garantindo a participação de todos e apoio da equipe.
+    <br><br>
+    O segundo momento é voltado à discussão dos problemas que precisam ser resolvidos, e por fim, a reunião se encerra com a definição e o encaminhamento das tarefas entre os membros da equipe.
+</p>
+
+<div class="row">
+{% for reuniao in reunioes %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow h-100 border-success">
+            <div class="card-header bg-success text-white fw-bold text-center">
+                {{ reuniao.titulo }}
+            </div>
+            <div class="card-body">
+                <p><strong>Dia e horário:</strong><br>
+                {{ reuniao.dia }}<br>{{ reuniao.horario }}</p>
+
+                <p><strong>Participantes:</strong><br>
+                {{ reuniao.participantes }}</p>
+
+                {% if reuniao.handson %}
+                <p><strong>Hands-on:</strong><br>{{ reuniao.handson }}</p>
+                {% endif %}
+
+                <hr>
+                <p><strong>Próxima Reunião:</strong><br>{{ reuniao.proxima_data }}</p>
+
+                {% if reuniao.tem_pautas %}
+                <p><strong>Pautas / Issues da Reunião:</strong>
+                    <ul style="padding-left: 20px; margin-top: 5px; font-size: 0.9em;">
+                    {% for item in reuniao.pautas %}
+                        {% if item.tipo == 'issue' %}
+                        <li>
+                            <strong>{{ item.titulo_task }}</strong> - {{ item.descricao }}
+                            ({{ item.responsavel }})<br>
+                        </li>
+                        {% elif item.tipo == 'extra' %}
+                        <li>
+                            {{ item.texto }}
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    </ul>
+                </p>
+                {% elif reuniao.erro_pautas %}
+                <p><strong>Pautas / Issues da Reunião:</strong><br><span class="text-danger">Erro ao carregar pautas.</span></p>
+                {% else %}
+                <p><strong>Pautas / Issues da Reunião:</strong><br><span class="text-muted">Nenhuma pauta associada.</span></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+

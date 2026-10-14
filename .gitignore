@@ -41,3 +41,4 @@ venv
 *.swp*
 
 docs
+__pycache__/

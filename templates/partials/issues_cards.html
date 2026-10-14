@@ -1,0 +1,112 @@
+<h2 id="pendencias" class="mt-5 text-danger"><u>Issues pendentes por funcionário</u></h2>
+
+<div class="container-fluid">
+<div class="row">
+{% for func in issues_por_funcionario %}
+    <div class="col-md-4 mb-4">
+    <div class="card border-danger shadow h-100">
+    <div class="card-header bg-danger text-white text-center fw-bold">
+    <a href="#resp-{{ func.safe_id }}" class="text-white text-decoration-none">
+    {{ func.nome }} ({{ func.total_issues }})
+    </a>
+    </div>
+    <div class="card-body">
+    {% for item in func.issues %}
+        <div class="card mb-3 border-secondary shadow-sm">
+        <div class="card-body">
+
+        <strong>Atividade:</strong> {{ item.task_codigo }} - {{ item.titulo_task }}
+
+        <p class="mb-1"><strong>Responsáveis da atividade:</strong> {{ item.responsaveis_tarefa }}</p>
+
+        <strong>Código da issue:</strong> {{ item.codigo_issue }}
+
+        <p class="mb-1"><strong>Descrição da issue:</strong><br>
+        {{ item.descricao }}
+        </p>
+
+        <p class="mb-1"><strong>Data:</strong> {{ item.data }}</p>
+
+        </div>
+        </div>
+    {% endfor %}
+    </div>
+    </div>
+    </div>
+{% endfor %}
+</div>
+</div>
+
+{% if issues_por_estagiario %}
+<h2 id="pendencias-estagiarios" class="mt-5 text-danger"><u>Issues pendentes por estagiários</u></h2>
+
+<div class="container-fluid">
+<div class="row">
+{% for est in issues_por_estagiario %}
+    <div class="col-md-4 mb-4">
+    <div class="card border-danger shadow h-100">
+    <div class="card-header bg-danger text-white text-center fw-bold">
+    <a href="#est-{{ est.safe_id }}" class="text-white text-decoration-none">
+    {{ est.nome }} ({{ est.total_issues }})
+    </a>
+    </div>
+    <div class="card-body">
+    {% for item in est.issues %}
+        <div class="card mb-3 border-secondary shadow-sm">
+        <div class="card-body">
+
+        <strong>Atividade:</strong> {{ item.task_codigo }} - {{ item.titulo_task }}
+
+        <p class="mb-1"><strong>Responsáveis da atividade:</strong> {{ item.responsaveis_tarefa }}</p>
+
+        <strong>Código da issue:</strong> {{ item.codigo_issue }}
+
+        <p class="mb-1"><strong>Descrição da issue:</strong><br>
+        {{ item.descricao }}
+        </p>
+
+        <p class="mb-1"><strong>Data:</strong> {{ item.data }}</p>
+
+        </div>
+        </div>
+    {% endfor %}
+    </div>
+    </div>
+    </div>
+{% endfor %}
+</div>
+</div>
+{% endif %}
+
+{% if issues_nao_atribuidas %}
+<h3 id="nao-atribuidos" class="mt-5 text-secondary"><u>Issues não atribuídas</u></h3>
+
+<div class="container-fluid">
+<div class="row">
+{% for item in issues_nao_atribuidas %}
+    <div class="col-md-4 mb-4">
+    <div class="card border-secondary shadow h-100">
+    <div class="card-header bg-secondary text-white text-center fw-bold">
+    {{ item.prefixo }}{% if item.significado %} - {{ item.significado }}{% endif %}
+    </div>
+    <div class="card-body">
+
+    <strong>Atividade:</strong> {{ item.task_codigo }} - {{ item.titulo_task }}
+
+    <p class="mb-1"><strong>Responsáveis da atividade:</strong> {{ item.responsaveis_tarefa }}</p>
+
+    <strong>Código da issue:</strong> {{ item.codigo_issue }}
+
+    <p class="mb-1"><strong>Descrição da issue:</strong><br>
+        {{ item.descricao }}
+    </p>
+
+    <p class="mb-1"><strong>Data:</strong> {{ item.data }}</p>
+
+    </div>
+    </div>
+    </div>
+{% endfor %}
+</div>
+</div>
+{% endif %}

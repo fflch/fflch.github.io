@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Planejamento TI - FFLCH{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="assets/css/index.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+<a href="#top" class="top-link">(voltar ao topo)</a>
+<div class="mb-4">
+<h2>Sumário</h2>
+<ul>
+    <li><a href="#tutoriais">Tutoriais</a></li>
+    <li><a href="#pendencias">Issues pendentes por funcionário</a></li>
+    <li><a href="#pendencias-estagiarios">Issues pendentes por estagiários</a></li>
+    <li><a href="#nao-atribuidos">Issues não atribuídas</a></li>
+    <li><a href="#por-pessoa">Atividades por funcionário(a)</a></li>
+    <li><a href="#por-estagiario">Atividades por estagiário(a)</a></li>
+    <li><a href="#estrutura">Organização estrutural das atividades</a></li>
+    <li><a href="#reunioes">Reuniões Técnicas</a></li>
+    <li><a href="#relatorios">Relatórios</a></li>
+</ul>
+</div>
+<div class="mb-5">
+<p>
+A organização das demandas da TI-FFLCH está estruturada de forma hierárquica.
+As atividades são agrupadas por áreas, como por exemplo <strong>Desenvolvimento (dev)</strong>.
+Dentro de cada área existem atividades específicas, identificadas por códigos como <strong>dev010</strong>,
+que representam uma unidade de trabalho, no caso, desenvolvimento do sistema de fechadura eletrônica. Por fim, cada atividade pode ter associada uma ou mais <strong>issues</strong>, que são tarefas menores ou pendências relacionadas àquela atividade, como por exemplo a implementação de um novo recurso no sistema de fechadura eletrônica, que teria código <strong>dev010-01</strong>.
+<br><br>
+Cada atividade pode possuir múltiplos responsáveis, enquanto as <strong>issues</strong> representam tarefas menores
+ou pendências associadas a uma atividade e são atribuídas a apenas uma pessoa.
+<br><br>
+A estrutura geral segue o modelo:
+<strong>Área → Atividade → Issue</strong>
+</p>
+</div>
+
+</div>
+
+{% include "partials/meetings.html" %}
+
+<hr class="my-5">
+<h1 id="tutoriais">Tutoriais Técnicos</h1>
+<div class="card shadow-sm mb-5">
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+        {% if tutoriais %}
+            {% for tut in tutoriais %}
+            <li class="list-group-item">
+                <a href="{{ tut.link }}" class="fw-bold text-primary text-decoration-none" target="_blank">
+                    📄 {{ tut.titulo }}
+                </a>
+            </li>
+            {% endfor %}
+        {% else %}
+            <li class="list-group-item text-muted">Nenhum tutorial cadastrado até o momento.</li>
+        {% endif %}
+        </ul>
+    </div>
+</div>
+
+{% include "partials/issues_cards.html" %}
+
+<h1 id="por-pessoa">Organização das atividades por pessoa</h1>
+{% for resp in responsaveis_summary %}
+    <h3 class="mt-4" id="resp-{{ resp.safe_id }}">{{ resp.nome }}</h3>
+    <table class="table table-bordered table-sm">
+    <thead>
+    <tr>
+    <th style="width:120px;">Código</th>
+    <th>Título</th>
+    <th style="width:80px;">Peso</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for t in resp.tarefas %}
+        <tr>
+        <td><a href="#{{ t.codigo }}">{{ t.codigo }}</a></td>
+        <td>{{ t.titulo }}</td>
+        <td>{{ t.peso }}</td>
+        </tr>
+    {% endfor %}
+    <tr class="table-secondary fw-bold">
+    <td colspan="2">Soma</td>
+    <td>{{ resp.total_peso }}</td>
+    </tr>
+    </tbody>
+    </table>
+{% endfor %}
+
+<br><hr><h2 id="por-estagiario"><u>Estagiários(as)</u></h2>
+{% for est in estagiarios_summary %}
+    <h3 class="mt-4" id="est-{{ est.safe_id }}">{{ est.nome }}</h3>
+    <table class="table table-bordered table-sm">
+    <thead>
+    <tr>
+    <th style="width:120px;">Código</th>
+    <th>Título</th>
+    <th style="width:80px;">Peso</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for t in est.tarefas %}
+        <tr>
+        <td><a href="#{{ t.codigo }}">{{ t.codigo }}</a></td>
+        <td>{{ t.titulo }}</td>
+        <td>{{ t.peso }}</td>
+        </tr>
+    {% endfor %}
+    <tr class="table-secondary fw-bold">
+    <td colspan="2">Soma</td>
+    <td>{{ est.total_peso }}</td>
+    </tr>
+    </tbody>
+    </table>
+{% endfor %}
+
+<div id="estrutura" class="summary-box">
+    <h1>Organização estrutural das atividades</h1>
+    <div class="mb-5">
+    <img src="ti_fflch.jpg" class="img-fluid w-100" alt="TI FFLCH">
+    </div>
+    <ul>
+    {% for item in prefixos_menu %}
+        <li><a href="#{{ item.prefix }}">{{ item.label }}</a></li>
+    {% endfor %}
+    </ul>
+</div>
+
+{% include "partials/tasks_list.html" %}
+
+<hr class="my-5">
+<h1 id="relatorios">Relatórios</h1>
+<div class="card shadow-sm mb-5">
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+        {% if relatorios %}
+            {% for rel in relatorios %}
+            <li class="list-group-item">
+                <a href="{{ rel.link }}" class="fw-bold text-primary text-decoration-none" target="_blank">
+                    📊 {{ rel.titulo }}
+                </a>
+            </li>
+            {% endfor %}
+        {% else %}
+            <li class="list-group-item text-muted">Nenhum relatório cadastrado até o momento.</li>
+        {% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
