@@ -85,6 +85,8 @@ def latex_to_html(text):
 
 
 jinja_env.filters['latex_to_html'] = latex_to_html
+# Versão do build, usada como ?v= nos links de CSS para evitar CSS antigo em cache no navegador
+jinja_env.globals["build_id"] = datetime.now().strftime("%Y%m%d%H%M%S")
 
 
 def copy_assets():
