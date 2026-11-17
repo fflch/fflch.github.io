@@ -1,0 +1,7 @@
+services:
+  site:
+    build: .
+    image: fflch-site
+    ports:
+      - "8000:80"
+    restart: unless-stopped

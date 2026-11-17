@@ -1,0 +1,10 @@
+.git
+.github
+venv
+docs
+__pycache__
+**/__pycache__
+*.swp
+*~
+Dockerfile
+docker-compose.yml
