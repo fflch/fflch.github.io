@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Issues resolvidas - TI FFLCH</title>
+    
+<style>
+body { padding: 32px 16px; background: #fff; }
+.wrap { max-width: 1300px; margin: 0 auto; }
+.filtros { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 12px; }
+.filtros .form-control, .filtros .form-select { min-width: 160px; }
+table.res td, table.res th { font-size: .88rem; vertical-align: top; }
+table.res th { white-space: nowrap; cursor: pointer; user-select: none; }
+table.res th.asc::after { content: " ▲"; font-size: .7em; }
+table.res th.desc::after { content: " ▼"; font-size: .7em; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.data { white-space: nowrap; }
+@media print {
+    .no-print { display: none !important; }
+    body { padding: 0; }
+    table.res td, table.res th { font-size: .75rem; }
+}
+</style>
+
+</head>
+<body>
+    
+<div class="wrap">
+<p class="no-print"><a href="index.html">← Voltar ao planejamento</a> · <a href="dashboard.html">Dashboard</a></p>
+<h1>Issues resolvidas</h1>
+<p class="text-muted">Relatório gerado em 17/11/2026. Inclui issues de atividades já encerradas.</p>
+
+<div class="filtros no-print">
+    <div>
+        <label class="form-label small mb-0" for="f-texto">Buscar</label>
+        <input id="f-texto" class="form-control form-control-sm" type="search" placeholder="código, atividade, descrição...">
+    </div>
+    <div>
+        <label class="form-label small mb-0" for="f-pessoa">Responsável</label>
+        <select id="f-pessoa" class="form-select form-select-sm">
+            <option value="">Todos</option>
+            <option>Alan Neves Ribeiro</option><option>Augusto César Freire Santiago</option><option>Guilherme Frias de Oliveira Tavares</option><option>José Roberto Varconti de Souza</option><option>Mônica Colacique</option><option>Normando Peres Silva Moura</option><option>Não atribuído</option><option>Néli Maximino</option><option>Paulo Henrique de Araújo</option><option>Pedro Luis Borges de Souza Filho</option><option>Ricardo Fontoura</option><option>Thiago Gomes Veríssimo</option>
+        </select>
+    </div>
+    <div>
+        <label class="form-label small mb-0" for="f-ano">Ano de fechamento</label>
+        <select id="f-ano" class="form-select form-select-sm">
+            <option value="">Todos</option>
+            <option>2026</option>
+            <option value="sem-data">Sem data</option>
+        </select>
+    </div>
+    <div>
+        <label class="form-label small mb-0" for="f-de">Fechada de</label>
+        <input id="f-de" class="form-control form-control-sm" type="date">
+    </div>
+    <div>
+        <label class="form-label small mb-0" for="f-ate">até</label>
+        <input id="f-ate" class="form-control form-control-sm" type="date">
+    </div>
+    <div class="ms-auto d-flex gap-2">
+        <button id="btn-csv" class="btn btn-sm btn-outline-primary" type="button">Exportar CSV</button>
+        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+</div>
+
+<p><strong id="contador">26</strong> issue(s) <span id="tempo-medio" class="text-muted"></span></p>
+
+<div class="table-responsive">
+<table class="table table-sm table-striped res" id="tabela">
+<thead>
+<tr>
+    <th data-sort="text">Issue</th>
+    <th data-sort="text">Atividade</th>
+    <th data-sort="text">Responsável</th>
+    <th>Descrição</th>
+    <th data-sort="date">Abertura</th>
+    <th data-sort="date">Fechamento</th>
+    <th data-sort="num">Dias</th>
+</tr>
+</thead>
+<tbody>
+
+<tr data-pessoa="Mônica Colacique"
+    data-fech="2026-10-14"
+    data-dias="93">
+    <td class="data">pro010-3</td>
+    <td><a href="index.html#pro010">pro010</a> - Playbooks Ansible</td>
+    <td>Mônica Colacique</td>
+    <td>Adaptar fflch/gwmariadb para suportar postgresql, vamos renomear o projeto para gwdb</td>
+    <td class="data" data-v="2026-07-13">13/07/2026</td>
+    <td class="data" data-v="2026-10-14">14/10/2026</td>
+    <td class="num" data-v="93">93</td>
+</tr>
+
+<tr data-pessoa="Ricardo Fontoura"
+    data-fech="2026-10-14"
+    data-dias="0">
+    <td class="data">rat003-3</td>
+    <td><a href="index.html#rat003">rat003</a> - Camada 2</td>
+    <td>Ricardo Fontoura</td>
+    <td>teste</td>
+    <td class="data" data-v="2026-10-14">14/10/2026</td>
+    <td class="data" data-v="2026-10-14">14/10/2026</td>
+    <td class="num" data-v="0">0</td>
+</tr>
+
+<tr data-pessoa="Mônica Colacique"
+    data-fech="2026-08-11"
+    data-dias="168">
+    <td class="data">ccd001-1</td>
+    <td><a href="index.html#ccd001">ccd001</a> - Aplicações Web de Pesquisas Científicas</td>
+    <td>Mônica Colacique</td>
+    <td>Implementar o servidor do Laboratório de Climatologia e Biogeografia utilizando Ansible, com instalação e configuração dos softwares Grads e WRF para modelagem climática.</td>
+    <td class="data" data-v="2026-02-24">24/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="168">168</td>
+</tr>
+
+<tr data-pessoa="Normando Peres Silva Moura"
+    data-fech="2026-08-11"
+    data-dias="0">
+    <td class="data">com001-1</td>
+    <td><a href="index.html#com001">com001</a> - Compra de Equipamentos Técnicos para Uso Interno da Seção de TI</td>
+    <td>Normando Peres Silva Moura</td>
+    <td>Certificadora de ponto de rede  - fluke</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="0">0</td>
+</tr>
+
+<tr data-pessoa="Ricardo Fontoura"
+    data-fech="2026-08-11"
+    data-dias="173">
+    <td class="data">dev001-2</td>
+    <td><a href="index.html#dev001">dev001</a> - uspdev/copaco</td>
+    <td>Ricardo Fontoura</td>
+    <td>Remover o recurso de usuário local e usar usuário local da biblioteca senhaunica-socialite</td>
+    <td class="data" data-v="2026-02-19">19/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="173">173</td>
+</tr>
+
+<tr data-pessoa="Alan Neves Ribeiro"
+    data-fech="2026-08-11"
+    data-dias="172">
+    <td class="data">dev004-2</td>
+    <td>dev004 - fflch/equipamentos</td>
+    <td>Alan Neves Ribeiro</td>
+    <td>Converter esse sistema para controle de equipamentos nas portarias</td>
+    <td class="data" data-v="2026-02-20">20/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="172">172</td>
+</tr>
+
+<tr data-pessoa="Alan Neves Ribeiro"
+    data-fech="2026-08-11"
+    data-dias="172">
+    <td class="data">dev007-2</td>
+    <td><a href="index.html#dev007">dev007</a> - uspdev/impressoras</td>
+    <td>Alan Neves Ribeiro</td>
+    <td>Ao imprimir, retornar para a página anterior, e não para lista de impressoras</td>
+    <td class="data" data-v="2026-02-20">20/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="172">172</td>
+</tr>
+
+<tr data-pessoa="Não atribuído"
+    data-fech="2026-08-11"
+    data-dias="172">
+    <td class="data">dev008-2</td>
+    <td><a href="index.html#dev008">dev008</a> - uspdev/pessoas</td>
+    <td>Não atribuído</td>
+    <td>Nas consultas demoradas, usar mongodb, populado com replicado2mongodb</td>
+    <td class="data" data-v="2026-02-20">20/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="172">172</td>
+</tr>
+
+<tr data-pessoa="Pedro Luis Borges de Souza Filho"
+    data-fech="2026-08-11"
+    data-dias="172">
+    <td class="data">dev009-2</td>
+    <td><a href="index.html#dev009">dev009</a> - fflch/monitoring</td>
+    <td>Pedro Luis Borges de Souza Filho</td>
+    <td>Implementar api para recebimento de dados do computadores</td>
+    <td class="data" data-v="2026-02-20">20/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="172">172</td>
+</tr>
+
+<tr data-pessoa="Alan Neves Ribeiro"
+    data-fech="2026-08-11"
+    data-dias="172">
+    <td class="data">dev010-2</td>
+    <td><a href="index.html#dev010">dev010</a> - fflch/fechaduras</td>
+    <td>Alan Neves Ribeiro</td>
+    <td>Permitir que a própria pessoa suba foto e consulte as portas que tem acesso.</td>
+    <td class="data" data-v="2026-02-20">20/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="172">172</td>
+</tr>
+
+<tr data-pessoa="Alan Neves Ribeiro"
+    data-fech="2026-08-11"
+    data-dias="22">
+    <td class="data">dev010-3</td>
+    <td><a href="index.html#dev010">dev010</a> - fflch/fechaduras</td>
+    <td>Alan Neves Ribeiro</td>
+    <td>O botão Meu perfil está muito lento</td>
+    <td class="data" data-v="2026-07-20">20/07/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="22">22</td>
+</tr>
+
+<tr data-pessoa="Alan Neves Ribeiro"
+    data-fech="2026-08-11"
+    data-dias="22">
+    <td class="data">dev010-4</td>
+    <td><a href="index.html#dev010">dev010</a> - fflch/fechaduras</td>
+    <td>Alan Neves Ribeiro</td>
+    <td>Definir usuário Administradores das fechadura, senão a fechaduras ficam abertas (foi feito)?</td>
+    <td class="data" data-v="2026-07-20">20/07/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="22">22</td>
+</tr>
+
+<tr data-pessoa="Guilherme Frias de Oliveira Tavares"
+    data-fech="2026-08-11"
+    data-dias="22">
+    <td class="data">fed001-1</td>
+    <td>fed001 - uspdev/senhaunicapixelfed</td>
+    <td>Guilherme Frias de Oliveira Tavares</td>
+    <td>Documentar o funcionamento do plugin</td>
+    <td class="data" data-v="2026-07-20">20/07/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="22">22</td>
+</tr>
+
+<tr data-pessoa="Néli Maximino"
+    data-fech="2026-08-11"
+    data-dias="96">
+    <td class="data">pas006-1</td>
+    <td><a href="index.html#pas006">pas006</a> - Acompanhamento de Instalações de Cabeamento Estruturado</td>
+    <td>Néli Maximino</td>
+    <td>Quantificação e classificação dos patch cords óticos que temos disponíveis</td>
+    <td class="data" data-v="2026-05-07">07/05/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="96">96</td>
+</tr>
+
+<tr data-pessoa="José Roberto Varconti de Souza"
+    data-fech="2026-08-11"
+    data-dias="96">
+    <td class="data">pas006-2</td>
+    <td><a href="index.html#pas006">pas006</a> - Acompanhamento de Instalações de Cabeamento Estruturado</td>
+    <td>José Roberto Varconti de Souza</td>
+    <td>Quantificação e classificação dos transceivers que temos na seção</td>
+    <td class="data" data-v="2026-05-07">07/05/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="96">96</td>
+</tr>
+
+<tr data-pessoa="Paulo Henrique de Araújo"
+    data-fech="2026-08-11"
+    data-dias="96">
+    <td class="data">pas006-3</td>
+    <td><a href="index.html#pas006">pas006</a> - Acompanhamento de Instalações de Cabeamento Estruturado</td>
+    <td>Paulo Henrique de Araújo</td>
+    <td>mapeamentos das portas dos DIO de todos prédios da FFLCH</td>
+    <td class="data" data-v="2026-05-07">07/05/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="96">96</td>
+</tr>
+
+<tr data-pessoa="Thiago Gomes Veríssimo"
+    data-fech="2026-08-11"
+    data-dias="173">
+    <td class="data">pro009-1</td>
+    <td><a href="index.html#pro009">pro009</a> - fflch/ansible-cups</td>
+    <td>Thiago Gomes Veríssimo</td>
+    <td>Deixar a role cups mais simplista - usar o role cups do IME como modelo</td>
+    <td class="data" data-v="2026-02-19">19/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="173">173</td>
+</tr>
+
+<tr data-pessoa="Não atribuído"
+    data-fech="2026-08-11"
+    data-dias="172">
+    <td class="data">pro010-10</td>
+    <td><a href="index.html#pro010">pro010</a> - Playbooks Ansible</td>
+    <td>Não atribuído</td>
+    <td>Verificar se as chaves ssl do proxy reverso estão no backup e criar um rotina Ansible de como migrá-las de um servidor para outro servidor para atualizarmos o proxy reverso para um servidor com uma versão mais recente do Debian.</td>
+    <td class="data" data-v="2026-02-20">20/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="172">172</td>
+</tr>
+
+<tr data-pessoa="Não atribuído"
+    data-fech="2026-08-11"
+    data-dias="172">
+    <td class="data">pro010-5</td>
+    <td><a href="index.html#pro010">pro010</a> - Playbooks Ansible</td>
+    <td>Não atribuído</td>
+    <td>Migrar do sybase para o Microsoft SQL Server</td>
+    <td class="data" data-v="2026-02-20">20/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="172">172</td>
+</tr>
+
+<tr data-pessoa="Não atribuído"
+    data-fech="2026-08-11"
+    data-dias="172">
+    <td class="data">pro010-8</td>
+    <td><a href="index.html#pro010">pro010</a> - Playbooks Ansible</td>
+    <td>Não atribuído</td>
+    <td>Fazer uma simulação destruindo o domain controller no ambiente dev e recuperando o arquivo de backup para subir o samba novamente. Implementar a rotina de backup online com novo comando do samba: samba-tool domain backup, exemplo: \texttt{samba-tool domain backup online --targetdir=/home/vagrant/bkponline --server=vagrantsamba.smbdomain.local.br -UAdministrator --password='senha'}. Manter o backup offline, exemplo: \texttt{samba-tool domain backup offline --targetdir=/home/vagrant/bkpoffline}. Documentar o processo de recuperação do samba usando o backup, tanto para backup online quanto offline.</td>
+    <td class="data" data-v="2026-02-20">20/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="172">172</td>
+</tr>
+
+<tr data-pessoa="Não atribuído"
+    data-fech="2026-08-11"
+    data-dias="169">
+    <td class="data">rat003-1</td>
+    <td><a href="index.html#rat003">rat003</a> - Camada 2</td>
+    <td>Não atribuído</td>
+    <td>Realizar re-segmentação da topologia de rede com redivisão dos blocos IPv4 para otimização da infraestrutura.</td>
+    <td class="data" data-v="2026-02-23">23/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="169">169</td>
+</tr>
+
+<tr data-pessoa="Não atribuído"
+    data-fech="2026-08-11"
+    data-dias="169">
+    <td class="data">rsf001-1</td>
+    <td><a href="index.html#rsf001">rsf001</a> - Administração da Controladora SmartZone</td>
+    <td>Não atribuído</td>
+    <td>Habilitar captive portal para autenticação de visitantes na rede SSID FFLCH.</td>
+    <td class="data" data-v="2026-02-23">23/02/2026</td>
+    <td class="data" data-v="2026-08-11">11/08/2026</td>
+    <td class="num" data-v="169">169</td>
+</tr>
+
+<tr data-pessoa="Thiago Gomes Veríssimo"
+    data-fech="2026-05-02"
+    data-dias="71">
+    <td class="data">dev017-2</td>
+    <td><a href="index.html#dev017">dev017</a> - fflch/trabalhoacademico</td>
+    <td>Thiago Gomes Veríssimo</td>
+    <td>Deixar o campo nome e e-mail da banca livres. (remover relacionamento)</td>
+    <td class="data" data-v="2026-02-20">20/02/2026</td>
+    <td class="data" data-v="2026-05-02">02/05/2026</td>
+    <td class="num" data-v="71">71</td>
+</tr>
+
+<tr data-pessoa="Augusto César Freire Santiago"
+    data-fech=""
+    data-dias="">
+    <td class="data">cor001-4</td>
+    <td><a href="index.html#cor001">cor001</a> - Drupal</td>
+    <td>Augusto César Freire Santiago</td>
+    <td>Migrar todos sites do Aegir para servidor provisionado com Ansible</td>
+    <td class="data" data-v="2026-07-20">20/07/2026</td>
+    <td class="data" data-v="">—</td>
+    <td class="num" data-v="-1">—</td>
+</tr>
+
+<tr data-pessoa="Thiago Gomes Veríssimo"
+    data-fech=""
+    data-dias="">
+    <td class="data">dev024-1</td>
+    <td><a href="index.html#dev024">dev024</a> - uspdev/rede</td>
+    <td>Thiago Gomes Veríssimo</td>
+    <td>Ter a opção de subir o dwg da planta baixa do prédio e marcamos dinamicamente onde estão os pontos de rede</td>
+    <td class="data" data-v="2026-02-19">19/02/2026</td>
+    <td class="data" data-v="">—</td>
+    <td class="num" data-v="-1">—</td>
+</tr>
+
+<tr data-pessoa="Guilherme Frias de Oliveira Tavares"
+    data-fech=""
+    data-dias="">
+    <td class="data">dev025-1</td>
+    <td><a href="index.html#dev025">dev025</a> - uspdev/portarias</td>
+    <td>Guilherme Frias de Oliveira Tavares</td>
+    <td>Criação de CRUD para cadastrar portarias.</td>
+    <td class="data" data-v="2026-02-20">20/02/2026</td>
+    <td class="data" data-v="">—</td>
+    <td class="num" data-v="-1">—</td>
+</tr>
+
+</tbody>
+</table>
+</div>
+</div>
+
+
+    
+<script>
+(function () {
+    var tabela = document.getElementById('tabela');
+    var linhas = Array.prototype.slice.call(tabela.tBodies[0].rows);
+    var fTexto = document.getElementById('f-texto');
+    var fPessoa = document.getElementById('f-pessoa');
+    var fAno = document.getElementById('f-ano');
+    var fDe = document.getElementById('f-de');
+    var fAte = document.getElementById('f-ate');
+
+    function visiveis() { return linhas.filter(function (r) { return r.style.display !== 'none'; }); }
+
+    function filtrar() {
+        var texto = fTexto.value.trim().toLowerCase();
+        linhas.forEach(function (r) {
+            var fech = r.dataset.fech;
+            var ok = (!texto || r.textContent.toLowerCase().indexOf(texto) !== -1)
+                && (!fPessoa.value || r.dataset.pessoa === fPessoa.value)
+                && (!fAno.value || (fAno.value === 'sem-data' ? !fech : fech.slice(0, 4) === fAno.value))
+                && (!fDe.value || (fech && fech >= fDe.value))
+                && (!fAte.value || (fech && fech <= fAte.value));
+            r.style.display = ok ? '' : 'none';
+        });
+        var vis = visiveis();
+        document.getElementById('contador').textContent = vis.length;
+        var dias = vis.map(function (r) { return r.dataset.dias; }).filter(function (d) { return d !== ''; }).map(Number);
+        document.getElementById('tempo-medio').textContent = dias.length
+            ? '· tempo médio de resolução: ' + (dias.reduce(function (a, b) { return a + b; }, 0) / dias.length).toFixed(1)
+              + ' dias (' + dias.length + ' com datas)'
+            : '';
+    }
+    [fTexto, fPessoa, fAno, fDe, fAte].forEach(function (el) { el.addEventListener('input', filtrar); });
+    filtrar();
+
+    // Ordenação
+    tabela.querySelectorAll('th[data-sort]').forEach(function (th) {
+        th.addEventListener('click', function () {
+            var idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+            var asc = !th.classList.contains('asc');
+            tabela.querySelectorAll('th').forEach(function (h) { h.classList.remove('asc', 'desc'); });
+            th.classList.add(asc ? 'asc' : 'desc');
+            var tipo = th.dataset.sort;
+            linhas.sort(function (a, b) {
+                var ca = a.cells[idx], cb = b.cells[idx], r;
+                if (tipo === 'num') r = parseFloat(ca.dataset.v) - parseFloat(cb.dataset.v);
+                else if (tipo === 'date') r = (ca.dataset.v || '').localeCompare(cb.dataset.v || '');
+                else r = ca.textContent.localeCompare(cb.textContent, 'pt');
+                return asc ? r : -r;
+            });
+            linhas.forEach(function (r) { tabela.tBodies[0].appendChild(r); });
+        });
+    });
+
+    // Exportação CSV (apenas linhas visíveis)
+    document.getElementById('btn-csv').addEventListener('click', function () {
+        function esc(v) { return '"' + String(v).replace(/"/g, '""').trim() + '"'; }
+        var cab = Array.prototype.map.call(tabela.tHead.rows[0].cells, function (c) { return esc(c.textContent); });
+        var corpo = visiveis().map(function (r) {
+            return Array.prototype.map.call(r.cells, function (c) { return esc(c.textContent.replace(/\s+/g, ' ')); }).join(',');
+        });
+        var blob = new Blob(['﻿' + [cab.join(',')].concat(corpo).join('\n')], { type: 'text/csv;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'issues-resolvidas.csv';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    });
+})();
+</script>
+
+</body>
+</html>

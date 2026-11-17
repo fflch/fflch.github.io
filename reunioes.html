@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Reuniões técnicas - TI FFLCH</title>
+    
+<style>
+:root {
+    --surface: #ffffff; --surface-2: #f6f6f4; --border: #e0dfda;
+    --text-primary: #111; --text-secondary: #52514e; --text-muted: #7a7974;
+    --accent: #2a78d6; --accent-bg: #e8f0fb; --good-bg: #e6f4ea; --good-fg: #146c2e;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
+        --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f;
+        --accent: #3987e5; --accent-bg: #182c47; --good-bg: #173a22; --good-fg: #8fd6a2;
+    }
+}
+:root[data-theme="dark"] {
+    --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f;
+    --accent: #3987e5; --accent-bg: #182c47; --good-bg: #173a22; --good-fg: #8fd6a2;
+}
+body { background: var(--surface); color: var(--text-primary); padding: 28px 16px; }
+a { color: var(--accent); }
+.wrap { max-width: 1150px; margin: 0 auto; }
+.sub { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted) !important; }
+h2 { font-size: 1.25rem; margin: 32px 0 12px; }
+
+details.como { border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; margin: 12px 0 0; }
+details.como > summary { cursor: pointer; color: var(--text-secondary); }
+
+/* próximas */
+.proximas { display: flex; flex-direction: column; gap: 8px; }
+.prox { display: grid; grid-template-columns: 120px 120px 1fr auto; gap: 12px; align-items: center;
+        border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: inherit; }
+.prox:hover { border-color: var(--accent); background: var(--surface-2); }
+.prox .data { font-weight: 700; font-variant-numeric: tabular-nums; }
+.prox .quando { font-size: .82rem; color: var(--text-muted); }
+.prox .nome { font-weight: 600; }
+.prox.hoje { border-color: var(--accent); background: var(--accent-bg); }
+.etq { display: inline-block; font-size: .78rem; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); white-space: nowrap; }
+.etq.ok { background: var(--good-bg); color: var(--good-fg); }
+
+/* semana */
+.semana { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.dia { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 8px; min-height: 110px; }
+.dia.hoje { border-color: var(--accent); }
+.dia .nome-dia { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); margin-bottom: 6px; }
+.bloco { display: block; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+         border-radius: 6px; padding: 6px 8px; margin-bottom: 6px; font-size: .85rem; text-decoration: none; color: inherit; }
+.bloco:hover { border-color: var(--accent); }
+.bloco .h { color: var(--text-muted); font-size: .78rem; }
+
+/* cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+.rcard { border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; scroll-margin-top: 16px; }
+.rcard:target { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+.rcard h3 { font-size: 1.15rem; margin: 0; }
+.rcard .quando { color: var(--text-secondary); font-size: .9rem; }
+.rcard .rot { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chips .etq { font-size: .8rem; }
+.pauta { padding-left: 18px; margin: 0; font-size: .9rem; }
+.pauta li { margin-bottom: 6px; }
+.pauta li.resolvida { color: var(--text-muted); }
+.pauta .resp { color: var(--text-muted); }
+details.hist > summary { cursor: pointer; color: var(--text-secondary); font-size: .9rem; }
+details.hist .data-hist { font-weight: 600; font-size: .85rem; margin-top: 8px; }
+
+@media (max-width: 760px) {
+    .semana { grid-template-columns: 1fr; }
+    .dia { min-height: 0; }
+    .prox { grid-template-columns: 1fr; gap: 2px; }
+}
+</style>
+
+</head>
+<body>
+    
+<div class="wrap">
+<p><a href="index.html">← Planejamento</a></p>
+<h1>Reuniões técnicas</h1>
+<p class="sub mb-0">Atualizado em 17/11/2026.</p>
+<details class="como">
+    <summary>Como funcionam as reuniões</summary>
+    <p class="mt-2 mb-1">As reuniões técnicas têm três momentos:</p>
+    <ol class="mb-1">
+        <li><strong>Formação (15 a 30 min):</strong> um membro da equipe apresenta um tutorial ou faz uma demonstração prática (lab), em rodízio.</li>
+        <li><strong>Problemas:</strong> discussão do que precisa ser resolvido (a pauta).</li>
+        <li><strong>Encaminhamentos:</strong> definição e distribuição das tarefas.</li>
+    </ol>
+    <p class="text-muted small mb-1">Para montar a pauta: <code>python3 bin/create_meeting.py</code> · para convocar por e-mail: <code>python3 bin/prepare_email_meeting.py</code></p>
+</details>
+
+<h2>Próximas reuniões</h2>
+<div class="proximas">
+
+    <a class="prox " href="#r-ti">
+        <div><div class="data">qua 18/11</div>
+             <div class="quando">amanhã</div></div>
+        <div>10h às 11h00h</div>
+        <div><span class="nome">TI</span></div>
+        <div>
+            
+            <span class="etq" title="Calculada pelo dia da semana; ainda sem pauta registrada">prevista · sem pauta</span>
+            
+        </div>
+    </a>
+
+    <a class="prox " href="#r-drupal">
+        <div><div class="data">qua 18/11</div>
+             <div class="quando">amanhã</div></div>
+        <div>14h00 às 16h00</div>
+        <div><span class="nome">Drupal</span></div>
+        <div>
+            
+            <span class="etq" title="Calculada pelo dia da semana; ainda sem pauta registrada">prevista · sem pauta</span>
+            
+        </div>
+    </a>
+
+    <a class="prox " href="#r-camada1">
+        <div><div class="data">qui 19/11</div>
+             <div class="quando">em 2 dias</div></div>
+        <div>10h às 11h30h</div>
+        <div><span class="nome">Camada 1</span> <span class="text-muted small">(semanas alternadas — confirmar)</span></div>
+        <div>
+            
+            <span class="etq" title="Calculada pelo dia da semana; ainda sem pauta registrada">prevista · sem pauta</span>
+            
+        </div>
+    </a>
+
+    <a class="prox " href="#r-camada2">
+        <div><div class="data">qui 19/11</div>
+             <div class="quando">em 2 dias</div></div>
+        <div>10h às 11h30</div>
+        <div><span class="nome">Camada 2</span> <span class="text-muted small">(semanas alternadas — confirmar)</span></div>
+        <div>
+            
+            <span class="etq" title="Calculada pelo dia da semana; ainda sem pauta registrada">prevista · sem pauta</span>
+            
+        </div>
+    </a>
+
+    <a class="prox " href="#r-laravel">
+        <div><div class="data">sex 20/11</div>
+             <div class="quando">em 3 dias</div></div>
+        <div>10h às 12h</div>
+        <div><span class="nome">Laravel</span></div>
+        <div>
+            
+            <span class="etq" title="Calculada pelo dia da semana; ainda sem pauta registrada">prevista · sem pauta</span>
+            
+        </div>
+    </a>
+
+</div>
+
+<h2>Semana típica</h2>
+<div class="semana">
+
+    <div class="dia ">
+        <div class="nome-dia">Segunda</div>
+        
+    </div>
+
+    <div class="dia hoje">
+        <div class="nome-dia">Terça · hoje</div>
+        
+    </div>
+
+    <div class="dia ">
+        <div class="nome-dia">Quarta</div>
+        
+        <a class="bloco" href="#r-ti"><strong>TI</strong><div class="h">10h às 11h00h</div></a>
+        
+        <a class="bloco" href="#r-drupal"><strong>Drupal</strong><div class="h">14h00 às 16h00</div></a>
+        
+    </div>
+
+    <div class="dia ">
+        <div class="nome-dia">Quinta</div>
+        
+        <a class="bloco" href="#r-camada1"><strong>Camada 1</strong><div class="h">10h às 11h30h · alternada</div></a>
+        
+        <a class="bloco" href="#r-camada2"><strong>Camada 2</strong><div class="h">10h às 11h30 · alternada</div></a>
+        
+    </div>
+
+    <div class="dia ">
+        <div class="nome-dia">Sexta</div>
+        
+        <a class="bloco" href="#r-laravel"><strong>Laravel</strong><div class="h">10h às 12h</div></a>
+        
+    </div>
+
+</div>
+
+<h2>Reuniões</h2>
+<div class="cards">
+
+    <div class="rcard" id="r-ti">
+        <div>
+            <h3>TI</h3>
+            <div class="quando">Quartas-feiras · 10h às 11h00h</div>
+        </div>
+
+        <div>
+            <div class="rot">Participantes (13)</div>
+            <div class="chips"><span class="etq" title="Augusto César Freire Santiago">Augusto Santiago</span><span class="etq" title="José Roberto Varconti de Souza">José Souza</span><span class="etq" title="Mônica Colacique">Mônica Colacique</span><span class="etq" title="Néli Maximino">Néli Maximino</span><span class="etq" title="Felipe dos Santos Ribeiro">Felipe Ribeiro</span><span class="etq" title="Ricardo Fontoura">Ricardo Fontoura</span><span class="etq" title="Thiago Gomes Veríssimo">Thiago Veríssimo</span><span class="etq" title="Celio Aparecido da Silva">Celio Silva</span><span class="etq" title="Normando Peres Silva Moura">Normando Moura</span><span class="etq" title="Paulo Henrique de Araújo">Paulo Araújo</span><span class="etq" title="Wellington da Silva Moura">Wellington Moura</span><span class="etq" title="Gilberto Vargas">Gilberto Vargas</span><span class="etq" title="Marco Antonio Rocha">Marco Rocha</span></div>
+        </div>
+
+        
+
+        <div>
+            <div class="rot">Próxima reunião · 18/11/2026</div>
+            
+                <p class="text-muted small mb-0">Ainda sem pauta registrada.</p>
+            
+        </div>
+
+        
+        <details class="hist">
+            <summary>Reuniões anteriores (1)</summary>
+            
+                <div class="data-hist">12/08/2026</div>
+                <ul class="pauta">
+
+    
+    <li class="">
+        <a href="index.html#pro010"><strong>pro010-2</strong></a>
+        <span class="text-muted">· Playbooks Ansible</span><br>
+        Demonstração do provisionamento do cluster com nodes de Docker Swarm na Nuvem USP <span class="resp">(Augusto César Freire Santiago)</span>
+        
+    </li>
+    
+
+    
+    <li class="resolvida">
+        <a href="index.html#pro010"><strong>pro010-3</strong></a>
+        <span class="text-muted">· Playbooks Ansible</span><br>
+        Adaptar fflch/gwmariadb para suportar postgresql, vamos renomear o projeto para gwdb <span class="resp">(Mônica Colacique)</span>
+        <span class="badge text-bg-success">✓ resolvida</span>
+    </li>
+    
+
+    
+    <li class="">
+        <a href="index.html#pro010"><strong>pro010-4</strong></a>
+        <span class="text-muted">· Playbooks Ansible</span><br>
+        Subior o Garage S3 na produção <span class="resp">(Ricardo Fontoura)</span>
+        
+    </li>
+    
+
+    
+    <li class="">
+        <a href="index.html#vms001"><strong>vms001-1</strong></a>
+        <span class="text-muted">· VMs de Backups</span><br>
+        Melhorar script de backup tornando possível a restauração de arquivos individuais <span class="resp">(José Roberto Varconti de Souza)</span>
+        
+    </li>
+    
+
+    
+    <li class="">
+        <a href="index.html#hos001"><strong>hos001-1</strong></a>
+        <span class="text-muted">· Sistemas operacionais Hosts: VMware, EqualLogic e Proxmox</span><br>
+        Instalação do proxmox nos dois servidores Dell que desceram da FCS. Reinstalação do Equallogic no storage que desceu da FCS, que será o storage dos proxmox. <span class="resp">(Ricardo Fontoura)</span>
+        
+    </li>
+    
+
+</ul>
+            
+        </details>
+        
+    </div>
+
+    <div class="rcard" id="r-drupal">
+        <div>
+            <h3>Drupal</h3>
+            <div class="quando">Quartas-feiras · 14h00 às 16h00</div>
+        </div>
+
+        <div>
+            <div class="rot">Participantes (6)</div>
+            <div class="chips"><span class="etq" title="Augusto César Freire Santiago">Augusto Santiago</span><span class="etq" title="Mônica Colacique">Mônica Colacique</span><span class="etq" title="Anderson Lima dos Santos">Anderson Santos</span><span class="etq" title="Camila Moraes de Lima">Camila Lima</span><span class="etq" title="Isaac Retiro Libera Martins">Isaac Martins</span><span class="etq" title="João Victor Melo de Lima">João Lima</span></div>
+        </div>
+
+        
+        <div><div class="rot">Hands-on</div><div class="small"><a href="https://www.theweeklydrop.com/archive" target="_blank">The Weekly Drop</a><br>ou<br><a href="https://askathena.brynmawr.edu/help/drupal" target="_blank">Ask Athena - Drupal</a></div></div>
+        
+
+        <div>
+            <div class="rot">Próxima reunião · 18/11/2026</div>
+            
+                <p class="text-muted small mb-0">Ainda sem pauta registrada.</p>
+            
+        </div>
+
+        
+    </div>
+
+    <div class="rcard" id="r-camada1">
+        <div>
+            <h3>Camada 1</h3>
+            <div class="quando">Quintas-feiras (alternadas) · 10h às 11h30h</div>
+        </div>
+
+        <div>
+            <div class="rot">Participantes (4)</div>
+            <div class="chips"><span class="etq" title="José Roberto Varconti de Souza">José Souza</span><span class="etq" title="Néli Maximino">Néli Maximino</span><span class="etq" title="Celio Aparecido da Silva">Celio Silva</span><span class="etq" title="Paulo Henrique de Araújo">Paulo Araújo</span></div>
+        </div>
+
+        
+        <div><div class="rot">Hands-on</div><div class="small">Material do Curso do SENAC</div></div>
+        
+
+        <div>
+            <div class="rot">Próxima reunião · 19/11/2026</div>
+            
+                <p class="text-muted small mb-0">Ainda sem pauta registrada.</p>
+            
+        </div>
+
+        
+        <details class="hist">
+            <summary>Reuniões anteriores (1)</summary>
+            
+                <div class="data-hist">13/08/2026</div>
+                <ul class="pauta">
+
+    
+    <li>Como gerar e onde colocar os diagramas</li>
+    
+
+    
+    <li>desativação do netmiko e switches.fflch.usp.br</li>
+    
+
+    
+    <li>Onde estão as configurações L2</li>
+    
+
+    
+    <li>Cadastro de switches no rede.fflch.usp.br</li>
+    
+
+    
+    <li>Patrimônios dos switches</li>
+    
+
+</ul>
+            
+        </details>
+        
+    </div>
+
+    <div class="rcard" id="r-camada2">
+        <div>
+            <h3>Camada 2</h3>
+            <div class="quando">Quintas-feiras (alternadas) · 10h às 11h30</div>
+        </div>
+
+        <div>
+            <div class="rot">Participantes (4)</div>
+            <div class="chips"><span class="etq" title="Augusto César Freire Santiago">Augusto Santiago</span><span class="etq" title="Felipe dos Santos Ribeiro">Felipe Ribeiro</span><span class="etq" title="Ricardo Fontoura">Ricardo Fontoura</span><span class="etq" title="Wellington da Silva Moura">Wellington Moura</span></div>
+        </div>
+
+        
+        <div><div class="rot">Hands-on</div><div class="small">Material Huawei</div></div>
+        
+
+        <div>
+            <div class="rot">Próxima reunião · 19/11/2026</div>
+            
+                <p class="text-muted small mb-0">Ainda sem pauta registrada.</p>
+            
+        </div>
+
+        
+    </div>
+
+    <div class="rcard" id="r-laravel">
+        <div>
+            <h3>Laravel</h3>
+            <div class="quando">Sextas-feiras · 10h às 12h</div>
+        </div>
+
+        <div>
+            <div class="rot">Participantes (7)</div>
+            <div class="chips"><span class="etq" title="Mônica Colacique">Mônica Colacique</span><span class="etq" title="Ricardo Fontoura">Ricardo Fontoura</span><span class="etq" title="Alan Neves Ribeiro">Alan Ribeiro</span><span class="etq" title="Guilherme Frias de Oliveira Tavares">Guilherme Tavares</span><span class="etq" title="Lucas Martihis de Araujo">Lucas Araujo</span><span class="etq" title="Pedro Luis Borges de Souza Filho">Pedro Souza Filho</span><span class="etq" title="Welke Cristhian Carneiro Lima">Welke Lima</span></div>
+        </div>
+
+        
+        <div><div class="rot">Hands-on</div><div class="small"><a href="https://laravel-news.com/category/tutorials" target="_blank">Laravel News - Tutorials</a></div></div>
+        
+
+        <div>
+            <div class="rot">Próxima reunião · 20/11/2026</div>
+            
+                <p class="text-muted small mb-0">Ainda sem pauta registrada.</p>
+            
+        </div>
+
+        
+    </div>
+
+</div>
+</div>
+
+
+    
+</body>
+</html>

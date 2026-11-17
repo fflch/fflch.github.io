@@ -29,3 +29,38 @@ body {
     margin-bottom: 40px;
 }
 
+
+/* Tarefas e pessoas colapsáveis */
+.task-card { margin-bottom: 8px; }
+.task-summary { cursor: pointer; list-style-position: inside; }
+.task-summary:hover { background: #eef2f6; }
+.task-meta { font-size: 0.85rem; margin-left: 6px; }
+.task-card[open] > .task-summary { border-bottom: 1px solid #ddd; }
+
+.pessoa-box { border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px; margin-bottom: 8px; }
+.pessoa-box > summary { cursor: pointer; }
+.pessoa-box > summary .h5 { margin: 0; }
+
+/* Organograma interativo */
+.org-controles { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+.org-controles input { max-width: 380px; }
+.organograma { background: #fff; border: 1px solid #e0dfda; border-radius: 10px; overflow-x: auto; }
+.organograma svg { display: block; font: 13px system-ui, -apple-system, "Segoe UI", sans-serif; }
+.organograma .link { fill: none; stroke: #c9c8c2; stroke-width: 1.5px; }
+.organograma .no { cursor: pointer; }
+.organograma .no rect { stroke: #8c8b85; stroke-width: 1px; }
+.organograma .no.tarefa rect { fill: #fff; }
+.organograma .no.tarefa:hover rect, .organograma .no.sigla:hover rect, .organograma .no.area:hover rect { stroke: #2a78d6; stroke-width: 2px; }
+.organograma .no.achado rect { stroke: #e0a800; stroke-width: 3px; fill: #fff4d6; }
+.organograma .no text { fill: #111; }
+.organograma .no .cod { font-weight: 700; }
+.organograma .no .seta { fill: #7a7974; font-size: 11px; }
+.organograma .no .pend { fill: #a11b1b; font-size: 11px; font-weight: 700; }
+.org-tip { position: fixed; z-index: 30; display: none; max-width: 420px; background: #111; color: #fff; padding: 10px 12px; border-radius: 8px; font-size: .85rem; line-height: 1.4; pointer-events: none; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+.org-tip .t { font-weight: 700; margin-bottom: 4px; }
+.org-tip .m { color: #c3c2b7; margin-bottom: 6px; }
+.org-tip .d { color: #f0efec; }
+
+/* Comentários nas pendências */
+.issue-item .comentarios { list-style: none; padding-left: 12px; margin: 4px 0 8px; border-left: 2px solid #e0dfda; }
+.issue-item .comentarios li { margin: 2px 0; white-space: pre-line; }

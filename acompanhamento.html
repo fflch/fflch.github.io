@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Acompanhamento - TI FFLCH</title>
+    
+<style>
+:root {
+    --surface: #ffffff;
+    --surface-2: #f6f6f4;
+    --border: #e0dfda;
+    --text-primary: #111;
+    --text-secondary: #52514e;
+    --text-muted: #7a7974;
+    --accent: #2a78d6;
+    --good-bg: #e6f4ea;     --good-fg: #146c2e;     --good-line: #2e9d4f;
+    --warning-bg: #fff4d6;  --warning-fg: #7a5200;  --warning-line: #e0a800;
+    --critical-bg: #fde3e3; --critical-fg: #a11b1b; --critical-line: #d93a3a;
+    --info-bg: #e8f0fb;     --info-fg: #1d4f91;     --info-line: #2a78d6;
+    --change-bg: #fff8e1;   --change-border: #e0a800;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
+        --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f; --accent: #3987e5;
+        --good-bg: #173a22; --good-fg: #8fd6a2; --good-line: #3fb466;
+        --warning-bg: #3d3010; --warning-fg: #f2c95c; --warning-line: #c98500;
+        --critical-bg: #4a1a1a; --critical-fg: #f29b9b; --critical-line: #e66767;
+        --info-bg: #182c47; --info-fg: #9cc2f2; --info-line: #3987e5;
+        --change-bg: #352c10; --change-border: #c98500;
+    }
+}
+:root[data-theme="dark"] {
+    --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f; --accent: #3987e5;
+    --good-bg: #173a22; --good-fg: #8fd6a2; --good-line: #3fb466;
+    --warning-bg: #3d3010; --warning-fg: #f2c95c; --warning-line: #c98500;
+    --critical-bg: #4a1a1a; --critical-fg: #f29b9b; --critical-line: #e66767;
+    --info-bg: #182c47; --info-fg: #9cc2f2; --info-line: #3987e5;
+    --change-bg: #352c10; --change-border: #c98500;
+}
+body { background: var(--surface); color: var(--text-primary); }
+a { color: var(--accent); }
+.layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+nav.lateral { background: var(--surface-2); border-right: 1px solid var(--border); padding: 16px 12px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+nav.lateral a.item { display: flex; justify-content: space-between; gap: 6px; padding: 5px 10px; border-radius: 6px; color: var(--text-primary); text-decoration: none; font-size: .9rem; border: 2px solid transparent; }
+nav.lateral a.item:hover { background: var(--border); }
+nav.lateral a.item.ativo { background: var(--accent); color: #fff; }
+nav.lateral a.item.alvo { border: 2px dashed var(--accent); }
+nav.lateral a.item.alvo-sobre { background: var(--info-bg); color: var(--info-fg); }
+nav.lateral .grupo { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin: 14px 10px 4px; }
+nav.lateral .cont { font-variant-numeric: tabular-nums; opacity: .85; }
+nav.lateral .cont.mudou::before { content: "● "; color: var(--change-border); }
+.painel-mudancas { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+.painel-mudancas .btn { width: 100%; }
+.painel-mudancas .status { font-size: .8rem; color: var(--text-secondary); margin-bottom: 6px; }
+main { padding: 28px 32px; max-width: 1200px; }
+.sub { color: var(--text-secondary); font-size: .9rem; }
+
+/* cabeçalho enxuto da pessoa */
+.cab { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin-bottom: 6px; }
+.cab h1 { margin: 0; }
+.numeros { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--text-secondary); font-size: .9rem; margin: 6px 0 4px; }
+.numeros b { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 18px; }
+
+.pill { display: inline-block; font-size: .78rem; padding: 2px 9px; border-radius: 999px; white-space: nowrap; background: var(--surface-2); color: var(--text-secondary); }
+.p-good { background: var(--good-bg); color: var(--good-fg); }
+.p-warning { background: var(--warning-bg); color: var(--warning-fg); }
+.p-critical { background: var(--critical-bg); color: var(--critical-fg); }
+.p-info { background: var(--info-bg); color: var(--info-fg); }
+.mud { background: var(--change-bg); color: var(--text-primary); border: 1px solid var(--change-border); }
+
+/* barra de ferramentas + zona de fechar */
+.barra { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; margin-bottom: 14px; position: sticky; top: 0; background: var(--surface); padding: 8px 0; z-index: 5; }
+.zona-fechar { flex: 1; min-width: 220px; border: 2px dashed var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: .9rem; padding: 8px; transition: all .15s; }
+.zona-fechar.ativa { border-color: var(--good-line); color: var(--good-fg); background: var(--good-bg); }
+.zona-fechar.sobre { background: var(--good-line); color: #fff; }
+
+/* cards */
+.grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.card-issue { background: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.05); cursor: grab; }
+.card-issue:active { cursor: grabbing; }
+.card-issue.arrastando { opacity: .45; }
+.card-issue.f-recente { border-left-color: var(--good-line); }
+.card-issue.f-andamento { border-left-color: var(--info-line); }
+.card-issue.f-atencao { border-left-color: var(--warning-line); }
+.card-issue.f-parada { border-left-color: var(--critical-line); }
+.card-issue.alterada { background: var(--change-bg); }
+.card-issue.fechada { opacity: .6; }
+.card-issue.fechada .desc { text-decoration: line-through; }
+.card-issue .topo { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.card-issue .cod { font-weight: 700; }
+.card-issue .tarefa { font-size: .82rem; color: var(--text-secondary); }
+.card-issue .desc { font-size: .93rem; line-height: 1.4; }
+.card-issue .antes { color: var(--text-muted); text-decoration: line-through; font-size: .82rem; }
+.card-issue .rodape { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: auto; flex-wrap: wrap; }
+.card-issue .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.botoes { display: flex; gap: 2px; }
+.botoes button { border: 1px solid transparent; background: none; border-radius: 6px; padding: 2px 7px; color: var(--text-secondary); font-size: .95rem; line-height: 1.4; }
+.botoes button:hover { border-color: var(--border); background: var(--surface-2); color: var(--text-primary); }
+.editor { border-top: 1px dashed var(--border); padding-top: 8px; cursor: default; }
+.link-btn { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; font-size: .8rem; cursor: pointer; }
+.ultimo-coment { font-size: .82rem; color: var(--text-secondary); border-left: 2px solid var(--border); padding-left: 8px; }
+.lista-coment { list-style: none; padding: 0; margin: 0 0 8px; font-size: .85rem; max-height: 220px; overflow-y: auto; }
+.lista-coment li { padding: 4px 0; border-bottom: 1px dashed var(--border); white-space: pre-line; }
+.secao { margin: 26px 0 10px; font-size: 1rem; font-weight: 600; color: var(--text-secondary); }
+
+table.t { width: 100%; border-collapse: collapse; font-size: .9rem; }
+table.t th, table.t td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+table.t th { color: var(--text-secondary); font-weight: 600; white-space: nowrap; }
+table.t td.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.t tr.clicavel { cursor: pointer; }
+table.t tr.clicavel:hover td { background: var(--surface-2); }
+.zero { color: var(--text-muted); }
+.cel-atencao { color: var(--warning-fg); font-weight: 600; }
+.cel-parada { color: var(--critical-fg); font-weight: 600; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 16px 0; }
+.kpi { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.kpi .v { font-size: 1.6rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.kpi .l { font-size: .8rem; color: var(--text-secondary); }
+details.bloco { border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; margin: 10px 0; }
+details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
+.form-control, .form-select { background-color: var(--surface); color: var(--text-primary); border-color: var(--border); }
+#toast { position: fixed; bottom: 20px; right: 20px; background: var(--text-primary); color: var(--surface); padding: 8px 14px; border-radius: 8px; display: none; z-index: 20; }
+
+@media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.lateral { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+    main { padding: 20px 16px; }
+}
+@media print {
+    nav.lateral, .no-print, .barra { display: none !important; }
+    .layout { display: block; }
+    main { padding: 0; max-width: none; }
+}
+</style>
+
+</head>
+<body>
+    
+<div class="layout">
+<nav class="lateral" aria-label="Navegação">
+    <a href="index.html" class="item mb-2">← Planejamento</a>
+
+    <div class="painel-mudancas">
+        <div class="status" id="status-mudancas"></div>
+        <button type="button" class="btn btn-sm btn-primary mb-1" id="btn-baixar"></button>
+        <button type="button" class="btn btn-sm btn-outline-danger" id="btn-limpar">Limpar mudanças</button>
+    </div>
+
+    <label class="form-label small mb-1" for="filtro-vinculo">Mostrar</label>
+    <select class="form-select form-select-sm" id="filtro-vinculo">
+        <option value="servidor">Funcionários</option>
+        <option value="estagiario">Estagiários</option>
+        <option value="todos">Todos</option>
+    </select>
+
+    <div class="grupo">Gestão</div>
+    <a href="#equipe" class="item" data-vista="equipe">Visão da equipe <span class="cont" id="cont-equipe"></span></a>
+    <a href="#triagem" class="item" data-vista="triagem" data-drop-pessoa="">Sem responsável <span class="cont" id="cont-triagem"></span></a>
+    <a href="#mudancas" class="item" data-vista="mudancas">Mudanças pendentes <span class="cont" id="cont-mudancas"></span></a>
+    <div class="grupo">Pessoas (por prioridade)</div>
+    <div id="lista-pessoas"></div>
+    <div class="grupo">Outros</div>
+    <a href="dashboard.html" class="item">Dashboard</a>
+    <a href="issues-resolvidas.html" class="item">Issues resolvidas</a>
+</nav>
+<main id="main"></main>
+</div>
+<div id="toast"></div>
+<script type="application/json" id="dados">{"hoje": "2026-11-17", "ultimo": {"adm001": 5, "bib001": 1, "bib003": 1, "bib009": 1, "ccd001": 3, "cci002": 1, "cht003": 1, "cht004": 1, "com001": 1, "cor001": 4, "cor002": 1, "dev001": 2, "dev003": 1, "dev004": 2, "dev007": 3, "dev008": 2, "dev009": 3, "dev010": 4, "dev017": 2, "dev022": 4, "dev024": 1, "dev025": 1, "dev027": 2, "dev032": 1, "dev033": 1, "dev034": 1, "dev035": 1, "fed001": 1, "hos001": 1, "hos002": 1, "mod001": 1, "mod003": 1, "mod004": 1, "mod006": 1, "mod008": 1, "mod009": 1, "pas006": 3, "pro006": 1, "pro008": 1, "pro009": 1, "pro010": 15, "rat003": 3, "rsf001": 1, "vms001": 1}, "media_peso": 29.8, "pessoas": [{"nome": "Alan Neves Ribeiro", "id": "alan-neves-ribeiro", "vinculo": "estagiario", "local": "", "peso": 0, "unicas": 0, "resolvidas_total": 5, "atividades": [{"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev007", "titulo": "uspdev/impressoras", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev010", "titulo": "fflch/fechaduras", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev024", "titulo": "uspdev/rede", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev029", "titulo": "fflch/ranqueamento", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev035", "titulo": "fflch/controleportarias", "peso": 1, "unico": false, "papel": "estagiário(a)"}], "resolvidas90": []}, {"nome": "Anderson Lima dos Santos", "id": "anderson-lima-dos-santos", "vinculo": "estagiario", "local": "", "peso": 0, "unicas": 0, "resolvidas_total": 0, "atividades": [{"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "cht004", "titulo": "Chamados Técnicos Relacionados ao Drupal", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "cor002", "titulo": "fflch/wordpress", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "mod001", "titulo": "uspdev/webform_senhaunica", "peso": 2, "unico": false, "papel": "estagiário(a)"}], "resolvidas90": []}, {"nome": "Augusto César Freire Santiago", "id": "augusto-cesar-freire-santiago", "vinculo": "servidor", "local": "Prédio de Administração - Sala 2", "peso": 55, "unicas": 7, "resolvidas_total": 1, "atividades": [{"codigo": "bib019", "titulo": "fflch/pragmatica-drupal-module", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "cht003", "titulo": "Cursos e Tutoriais Drupal", "peso": 8, "unico": true, "papel": "responsável"}, {"codigo": "cht004", "titulo": "Chamados Técnicos Relacionados ao Drupal", "peso": 8, "unico": true, "papel": "responsável"}, {"codigo": "cor001", "titulo": "Drupal", "peso": 13, "unico": true, "papel": "responsável"}, {"codigo": "cor002", "titulo": "fflch/wordpress", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "mod004", "titulo": "webform_captcha_mandatory no drupal.org", "peso": 2, "unico": false, "papel": "responsável"}, {"codigo": "pro001", "titulo": "fflch/ansible-role-sambadc", "peso": 5, "unico": true, "papel": "responsável"}, {"codigo": "pro008", "titulo": "fflch/ansible-role-fsecure", "peso": 3, "unico": true, "papel": "responsável"}, {"codigo": "pro010", "titulo": "Playbooks Ansible", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "rat003", "titulo": "Camada 2", "peso": 3, "unico": false, "papel": "responsável"}, {"codigo": "rat004", "titulo": "Camada 3/4", "peso": 3, "unico": false, "papel": "responsável"}], "resolvidas90": []}, {"nome": "Camila Moraes de Lima", "id": "camila-moraes-de-lima", "vinculo": "estagiario", "local": "", "peso": 0, "unicas": 0, "resolvidas_total": 0, "atividades": [{"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "cht004", "titulo": "Chamados Técnicos Relacionados ao Drupal", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "mod008", "titulo": "uspdev/webform_replicado", "peso": 2, "unico": false, "papel": "estagiário(a)"}, {"codigo": "mod010", "titulo": "fflch/compras", "peso": 1, "unico": false, "papel": "estagiário(a)"}], "resolvidas90": []}, {"nome": "Celio Aparecido da Silva", "id": "celio-aparecido-da-silva", "vinculo": "servidor", "local": "Prédio Letras - Sala 26 do 1. andar", "peso": 21, "unicas": 0, "resolvidas_total": 0, "atividades": [{"codigo": "cht001", "titulo": "Atendimento de Chamados Técnicos", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "pas001", "titulo": "Organização e Manutenção das Salas de Rack", "peso": 5, "unico": false, "papel": "responsável"}, {"codigo": "pas006", "titulo": "Acompanhamento de Instalações de Cabeamento Estruturado", "peso": 8, "unico": false, "papel": "responsável"}], "resolvidas90": []}, {"nome": "Felipe dos Santos Ribeiro", "id": "felipe-dos-santos-ribeiro", "vinculo": "servidor", "local": "Prédio de Administração - Sala 2", "peso": 21, "unicas": 0, "resolvidas_total": 0, "atividades": [{"codigo": "cht001", "titulo": "Atendimento de Chamados Técnicos", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "pas001", "titulo": "Organização e Manutenção das Salas de Rack", "peso": 5, "unico": false, "papel": "responsável"}, {"codigo": "rat002", "titulo": "Configuração de switches", "peso": 5, "unico": false, "papel": "responsável"}, {"codigo": "rat003", "titulo": "Camada 2", "peso": 3, "unico": false, "papel": "responsável"}], "resolvidas90": []}, {"nome": "Gilberto Vargas", "id": "gilberto-vargas", "vinculo": "servidor", "local": "Prédio Biblioteca", "peso": 3, "unicas": 3, "resolvidas_total": 0, "atividades": [{"codigo": "dev014", "titulo": "fflch/gembib", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev015", "titulo": "fflch/cdd", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev034", "titulo": "fflch/wifi", "peso": 1, "unico": true, "papel": "responsável"}], "resolvidas90": []}, {"nome": "Guilherme Frias de Oliveira Tavares", "id": "guilherme-frias-de-oliveira-tavares", "vinculo": "estagiario", "local": "", "peso": 0, "unicas": 0, "resolvidas_total": 2, "atividades": [{"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev011", "titulo": "fflch/orcamento", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev017", "titulo": "fflch/trabalhoacademico", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev018", "titulo": "fflch/intercambio", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev020", "titulo": "uspdev/estagios", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev025", "titulo": "uspdev/portarias", "peso": 1, "unico": false, "papel": "estagiário(a)"}], "resolvidas90": []}, {"nome": "Isaac Retiro Libera Martins", "id": "isaac-retiro-libera-martins", "vinculo": "estagiario", "local": "", "peso": 0, "unicas": 0, "resolvidas_total": 0, "atividades": [{"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "cht004", "titulo": "Chamados Técnicos Relacionados ao Drupal", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "mod006", "titulo": "uspdev/webform_pagamentos", "peso": 2, "unico": false, "papel": "estagiário(a)"}], "resolvidas90": []}, {"nome": "José Roberto Varconti de Souza", "id": "jose-roberto-varconti-de-souza", "vinculo": "servidor", "local": "Prédio de Administração - Sala 2", "peso": 23, "unicas": 7, "resolvidas_total": 1, "atividades": [{"codigo": "hos001", "titulo": "Sistemas operacionais Hosts: VMware, EqualLogic e Proxmox", "peso": 1, "unico": false, "papel": "responsável"}, {"codigo": "hos002", "titulo": "Manutenção física dos Hosts e Storages", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "iot007", "titulo": "Nobreaks", "peso": 2, "unico": true, "papel": "responsável"}, {"codigo": "pas006", "titulo": "Acompanhamento de Instalações de Cabeamento Estruturado", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "per003", "titulo": "Aplicação de DAEs e Atualização do ReplicadoDev", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "rsf001", "titulo": "Administração da Controladora SmartZone", "peso": 5, "unico": true, "papel": "responsável"}, {"codigo": "rsf002", "titulo": "Gestão e Qualidade dos Access Points", "peso": 3, "unico": true, "papel": "responsável"}, {"codigo": "vms001", "titulo": "VMs de Backups", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "vms003", "titulo": "VM Virtual SmartZone", "peso": 1, "unico": true, "papel": "responsável"}], "resolvidas90": []}, {"nome": "João Victor Melo de Lima", "id": "joao-victor-melo-de-lima", "vinculo": "estagiario", "local": "", "peso": 0, "unicas": 0, "resolvidas_total": 0, "atividades": [{"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "cht003", "titulo": "Cursos e Tutoriais Drupal", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "cht004", "titulo": "Chamados Técnicos Relacionados ao Drupal", "peso": 8, "unico": false, "papel": "estagiário(a)"}], "resolvidas90": []}, {"nome": "Lucas Martihis de Araujo", "id": "lucas-martihis-de-araujo", "vinculo": "estagiario", "local": "", "peso": 0, "unicas": 0, "resolvidas_total": 0, "atividades": [{"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev003", "titulo": "fflch/sites", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev019", "titulo": "uspdev/salas", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev021", "titulo": "fflch/listas", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev026", "titulo": "uspdev/web-ldap-admin", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev027", "titulo": "uspdev/chamados", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev032", "titulo": "fflch/webapps", "peso": 1, "unico": false, "papel": "estagiário(a)"}], "resolvidas90": []}, {"nome": "Marco Antonio Rocha", "id": "marco-antonio-rocha", "vinculo": "servidor", "local": "Departamento de Geografia", "peso": 0, "unicas": 0, "resolvidas_total": 0, "atividades": [], "resolvidas90": []}, {"nome": "Mônica Colacique", "id": "monica-colacique", "vinculo": "servidor", "local": "Prédio de Administração - Sala 2", "peso": 55, "unicas": 33, "resolvidas_total": 2, "atividades": [{"codigo": "bib001", "titulo": "uspdev/replicado", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib005", "titulo": "uspdev/boleto", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib011", "titulo": "fflch/laravel-comet-theme", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib017", "titulo": "uspdev/replicado2mongodb", "peso": 3, "unico": true, "papel": "responsável"}, {"codigo": "ccd001", "titulo": "Aplicações Web de Pesquisas Científicas", "peso": 1, "unico": false, "papel": "responsável"}, {"codigo": "cci001", "titulo": "Aplicações Científicas Não Web", "peso": 1, "unico": false, "papel": "responsável"}, {"codigo": "dev003", "titulo": "fflch/sites", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev006", "titulo": "uspdev/empresta", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev007", "titulo": "uspdev/impressoras", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev009", "titulo": "fflch/monitoring", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev011", "titulo": "fflch/orcamento", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev012", "titulo": "fflch/minibib", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev013", "titulo": "fflch/cortec", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev016", "titulo": "fflch/bibfiles", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev017", "titulo": "fflch/trabalhoacademico", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev018", "titulo": "fflch/intercambio", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev019", "titulo": "uspdev/salas", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev020", "titulo": "uspdev/estagios", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev022", "titulo": "fflch/dados", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev025", "titulo": "uspdev/portarias", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev029", "titulo": "fflch/ranqueamento", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev033", "titulo": "fflch/delpo", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "mod001", "titulo": "uspdev/webform_senhaunica", "peso": 2, "unico": true, "papel": "responsável"}, {"codigo": "mod002", "titulo": "fflch/fflch-theme", "peso": 2, "unico": true, "papel": "responsável"}, {"codigo": "mod003", "titulo": "fflch/boletim", "peso": 2, "unico": true, "papel": "responsável"}, {"codigo": "mod004", "titulo": "webform_captcha_mandatory no drupal.org", "peso": 2, "unico": false, "papel": "responsável"}, {"codigo": "mod005", "titulo": "fflch/webform_ficha_catalografica", "peso": 2, "unico": true, "papel": "responsável"}, {"codigo": "mod006", "titulo": "uspdev/webform_pagamentos", "peso": 2, "unico": true, "papel": "responsável"}, {"codigo": "mod007", "titulo": "Pull Requests – Centro da Metrópole", "peso": 3, "unico": true, "papel": "responsável"}, {"codigo": "mod008", "titulo": "uspdev/webform_replicado", "peso": 2, "unico": true, "papel": "responsável"}, {"codigo": "mod009", "titulo": "fflch/wp-fflch-theme", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "mod010", "titulo": "fflch/compras", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "pro003", "titulo": "fflch/ansible-role-sap-ase", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "pro005", "titulo": "fflch/ansible-role-proaluno", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "pro006", "titulo": "fflch/playbooks-proaluno-fflch", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "pro007", "titulo": "fflch/ansible-role-django e fflch/template-django", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "pro010", "titulo": "Playbooks Ansible", "peso": 8, "unico": false, "papel": "responsável"}], "resolvidas90": [{"codigo": "pro010-3", "descricao": "Adaptar fflch/gwmariadb para suportar postgresql, vamos renomear o projeto para gwdb", "data_fechamento": "14/10/2026", "dias": 93}]}, {"nome": "Normando Peres Silva Moura", "id": "normando-peres-silva-moura", "vinculo": "servidor", "local": "Prédio de Filosofia e Ciências Sociais - Sala anexa a sala pró-aluno", "peso": 21, "unicas": 1, "resolvidas_total": 1, "atividades": [{"codigo": "cht001", "titulo": "Atendimento de Chamados Técnicos", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "com001", "titulo": "Compra de Equipamentos Técnicos para Uso Interno da Seção de TI", "peso": 8, "unico": true, "papel": "responsável"}, {"codigo": "pas001", "titulo": "Organização e Manutenção das Salas de Rack", "peso": 5, "unico": false, "papel": "responsável"}], "resolvidas90": []}, {"nome": "Néli Maximino", "id": "neli-maximino", "vinculo": "servidor", "local": "Prédio de Administração - Sala 2", "peso": 43, "unicas": 8, "resolvidas_total": 1, "atividades": [{"codigo": "adm001", "titulo": "Gestão Administrativa", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "adm003", "titulo": "Verificação de E-mails", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "peso": 8, "unico": true, "papel": "responsável"}, {"codigo": "imp001", "titulo": "Servidor de Impressão Windows", "peso": 3, "unico": true, "papel": "responsável"}, {"codigo": "imp002", "titulo": "Configuração das Impressoras", "peso": 3, "unico": true, "papel": "responsável"}, {"codigo": "iot001", "titulo": "Aparelhos VoIP", "peso": 5, "unico": true, "papel": "responsável"}, {"codigo": "pas006", "titulo": "Acompanhamento de Instalações de Cabeamento Estruturado", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "per001", "titulo": "Gestão de Acessos Estagiários TI", "peso": 3, "unico": true, "papel": "responsável"}, {"codigo": "per002", "titulo": "Administração de Sistemas Locais", "peso": 3, "unico": true, "papel": "responsável"}, {"codigo": "sti001", "titulo": "Sistemas da Superintendência de Tecnologia da Informação", "peso": 1, "unico": true, "papel": "responsável"}], "resolvidas90": []}, {"nome": "Paulo Henrique de Araújo", "id": "paulo-henrique-de-araujo", "vinculo": "servidor", "local": "Prédio de Geografia e História - Sala de Informática 1. andar", "peso": 29, "unicas": 1, "resolvidas_total": 1, "atividades": [{"codigo": "cht001", "titulo": "Atendimento de Chamados Técnicos", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "pas001", "titulo": "Organização e Manutenção das Salas de Rack", "peso": 5, "unico": false, "papel": "responsável"}, {"codigo": "pas006", "titulo": "Acompanhamento de Instalações de Cabeamento Estruturado", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "pas007", "titulo": "Diagramas", "peso": 8, "unico": true, "papel": "responsável"}], "resolvidas90": []}, {"nome": "Pedro Luis Borges de Souza Filho", "id": "pedro-luis-borges-de-souza-filho", "vinculo": "estagiario", "local": "", "peso": 1, "unicas": 1, "resolvidas_total": 1, "atividades": [{"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev001", "titulo": "uspdev/copaco", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev005", "titulo": "uspdev/grafica", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev006", "titulo": "uspdev/empresta", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev008", "titulo": "uspdev/pessoas", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev009", "titulo": "fflch/monitoring", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev013", "titulo": "fflch/cortec", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev016", "titulo": "fflch/bibfiles", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev036", "titulo": "fflch/memorianegra", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "pro006", "titulo": "fflch/playbooks-proaluno-fflch", "peso": 1, "unico": false, "papel": "estagiário(a)"}], "resolvidas90": []}, {"nome": "Ricardo Fontoura", "id": "ricardo-fontoura", "vinculo": "servidor", "local": "Prédio de Administração - Sala 2", "peso": 32, "unicas": 17, "resolvidas_total": 2, "atividades": [{"codigo": "bib002", "titulo": "uspdev/laravel-usp-theme", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib003", "titulo": "uspdev/senhaunica-socialite", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib013", "titulo": "fflch/laravel-fflch-pdf", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib014", "titulo": "fflch/phppimaco", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib016", "titulo": "fflch/laravel-fflch-stepper", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev001", "titulo": "uspdev/copaco", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev002", "titulo": "fflch/etiquetas", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev008", "titulo": "uspdev/pessoas", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev010", "titulo": "fflch/fechaduras", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev021", "titulo": "fflch/listas", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev024", "titulo": "uspdev/rede", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev026", "titulo": "uspdev/web-ldap-admin", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev027", "titulo": "uspdev/chamados", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev028", "titulo": "uspdev/defesas", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev032", "titulo": "fflch/webapps", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "dev035", "titulo": "fflch/controleportarias", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "hos001", "titulo": "Sistemas operacionais Hosts: VMware, EqualLogic e Proxmox", "peso": 1, "unico": false, "papel": "responsável"}, {"codigo": "pro002", "titulo": "fflch/ansible-role-deploy-laravel", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "pro010", "titulo": "Playbooks Ansible", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "rat003", "titulo": "Camada 2", "peso": 3, "unico": false, "papel": "responsável"}, {"codigo": "rat004", "titulo": "Camada 3/4", "peso": 3, "unico": false, "papel": "responsável"}], "resolvidas90": [{"codigo": "rat003-3", "descricao": "teste", "data_fechamento": "14/10/2026", "dias": 0}]}, {"nome": "Thiago Gomes Veríssimo", "id": "thiago-gomes-verissimo", "vinculo": "servidor", "local": "Prédio de Administração - Sala 2", "peso": 33, "unicas": 11, "resolvidas_total": 3, "atividades": [{"codigo": "adm001", "titulo": "Gestão Administrativa", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "bib004", "titulo": "uspdev/utils", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib006", "titulo": "uspdev/laravel-usp-validators", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib009", "titulo": "uspdev/simple-crud-generator", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib010", "titulo": "uspdev/wsfoto", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib012", "titulo": "fflch/mailmanAPI", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "bib018", "titulo": "uspdev/starter-ng", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "ccd001", "titulo": "Aplicações Web de Pesquisas Científicas", "peso": 1, "unico": false, "papel": "responsável"}, {"codigo": "cci001", "titulo": "Aplicações Científicas Não Web", "peso": 1, "unico": false, "papel": "responsável"}, {"codigo": "dev036", "titulo": "fflch/memorianegra", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "doc001", "titulo": "Documentação Técnica", "peso": 3, "unico": true, "papel": "responsável"}, {"codigo": "prc001", "titulo": "Moodles USP", "peso": 3, "unico": true, "papel": "responsável"}, {"codigo": "pro004", "titulo": "uspdev/ansible-role-sssd-ldap", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "pro009", "titulo": "fflch/ansible-cups", "peso": 1, "unico": true, "papel": "responsável"}, {"codigo": "pro010", "titulo": "Playbooks Ansible", "peso": 8, "unico": false, "papel": "responsável"}], "resolvidas90": []}, {"nome": "Welke Cristhian Carneiro Lima", "id": "welke-cristhian-carneiro-lima", "vinculo": "estagiario", "local": "", "peso": 0, "unicas": 0, "resolvidas_total": 0, "atividades": [{"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "peso": 8, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev002", "titulo": "fflch/etiquetas", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev012", "titulo": "fflch/minibib", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev028", "titulo": "uspdev/defesas", "peso": 1, "unico": false, "papel": "estagiário(a)"}, {"codigo": "dev033", "titulo": "fflch/delpo", "peso": 1, "unico": false, "papel": "estagiário(a)"}], "resolvidas90": []}, {"nome": "Wellington da Silva Moura", "id": "wellington-da-silva-moura", "vinculo": "servidor", "local": "Prédio de Geografia e História - Sala de Informática 1. andar", "peso": 21, "unicas": 0, "resolvidas_total": 0, "atividades": [{"codigo": "cht001", "titulo": "Atendimento de Chamados Técnicos", "peso": 8, "unico": false, "papel": "responsável"}, {"codigo": "pas001", "titulo": "Organização e Manutenção das Salas de Rack", "peso": 5, "unico": false, "papel": "responsável"}, {"codigo": "rat002", "titulo": "Configuração de switches", "peso": 5, "unico": false, "papel": "responsável"}, {"codigo": "rat003", "titulo": "Camada 2", "peso": 3, "unico": false, "papel": "responsável"}], "resolvidas90": []}], "tarefas": [{"codigo": "adm001", "titulo": "Gestão Administrativa", "pessoas": ["Néli Maximino", "Thiago Gomes Veríssimo"]}, {"codigo": "adm003", "titulo": "Verificação de E-mails", "pessoas": ["Néli Maximino"]}, {"codigo": "bib001", "titulo": "uspdev/replicado", "pessoas": ["Mônica Colacique"]}, {"codigo": "bib002", "titulo": "uspdev/laravel-usp-theme", "pessoas": ["Ricardo Fontoura"]}, {"codigo": "bib003", "titulo": "uspdev/senhaunica-socialite", "pessoas": ["Ricardo Fontoura"]}, {"codigo": "bib004", "titulo": "uspdev/utils", "pessoas": ["Thiago Gomes Veríssimo"]}, {"codigo": "bib005", "titulo": "uspdev/boleto", "pessoas": ["Mônica Colacique"]}, {"codigo": "bib006", "titulo": "uspdev/laravel-usp-validators", "pessoas": ["Thiago Gomes Veríssimo"]}, {"codigo": "bib009", "titulo": "uspdev/simple-crud-generator", "pessoas": ["Thiago Gomes Veríssimo"]}, {"codigo": "bib010", "titulo": "uspdev/wsfoto", "pessoas": ["Thiago Gomes Veríssimo"]}, {"codigo": "bib011", "titulo": "fflch/laravel-comet-theme", "pessoas": ["Mônica Colacique"]}, {"codigo": "bib012", "titulo": "fflch/mailmanAPI", "pessoas": ["Thiago Gomes Veríssimo"]}, {"codigo": "bib013", "titulo": "fflch/laravel-fflch-pdf", "pessoas": ["Ricardo Fontoura"]}, {"codigo": "bib014", "titulo": "fflch/phppimaco", "pessoas": ["Ricardo Fontoura"]}, {"codigo": "bib016", "titulo": "fflch/laravel-fflch-stepper", "pessoas": ["Ricardo Fontoura"]}, {"codigo": "bib017", "titulo": "uspdev/replicado2mongodb", "pessoas": ["Mônica Colacique"]}, {"codigo": "bib018", "titulo": "uspdev/starter-ng", "pessoas": ["Thiago Gomes Veríssimo"]}, {"codigo": "bib019", "titulo": "fflch/pragmatica-drupal-module", "pessoas": ["Augusto César Freire Santiago"]}, {"codigo": "ccd001", "titulo": "Aplicações Web de Pesquisas Científicas", "pessoas": ["Mônica Colacique", "Thiago Gomes Veríssimo"]}, {"codigo": "cci001", "titulo": "Aplicações Científicas Não Web", "pessoas": ["Mônica Colacique", "Thiago Gomes Veríssimo"]}, {"codigo": "cht001", "titulo": "Atendimento de Chamados Técnicos", "pessoas": ["Felipe dos Santos Ribeiro", "Wellington da Silva Moura", "Paulo Henrique de Araújo", "Celio Aparecido da Silva", "Normando Peres Silva Moura"]}, {"codigo": "cht002", "titulo": "Atendimento Prédio de Administração", "pessoas": ["Néli Maximino", "Pedro Luis Borges de Souza Filho", "Alan Neves Ribeiro", "Anderson Lima dos Santos", "Camila Moraes de Lima", "Guilherme Frias de Oliveira Tavares", "Isaac Retiro Libera Martins", "João Victor Melo de Lima", "Lucas Martihis de Araujo", "Welke Cristhian Carneiro Lima"]}, {"codigo": "cht003", "titulo": "Cursos e Tutoriais Drupal", "pessoas": ["Augusto César Freire Santiago", "João Victor Melo de Lima"]}, {"codigo": "cht004", "titulo": "Chamados Técnicos Relacionados ao Drupal", "pessoas": ["Augusto César Freire Santiago", "Anderson Lima dos Santos", "Camila Moraes de Lima", "Isaac Retiro Libera Martins", "João Victor Melo de Lima"]}, {"codigo": "com001", "titulo": "Compra de Equipamentos Técnicos para Uso Interno da Seção de TI", "pessoas": ["Normando Peres Silva Moura"]}, {"codigo": "cor001", "titulo": "Drupal", "pessoas": ["Augusto César Freire Santiago"]}, {"codigo": "cor002", "titulo": "fflch/wordpress", "pessoas": ["Augusto César Freire Santiago", "Anderson Lima dos Santos"]}, {"codigo": "dev001", "titulo": "uspdev/copaco", "pessoas": ["Ricardo Fontoura", "Pedro Luis Borges de Souza Filho"]}, {"codigo": "dev002", "titulo": "fflch/etiquetas", "pessoas": ["Ricardo Fontoura", "Welke Cristhian Carneiro Lima"]}, {"codigo": "dev003", "titulo": "fflch/sites", "pessoas": ["Mônica Colacique", "Lucas Martihis de Araujo"]}, {"codigo": "dev005", "titulo": "uspdev/grafica", "pessoas": ["Pedro Luis Borges de Souza Filho"]}, {"codigo": "dev006", "titulo": "uspdev/empresta", "pessoas": ["Mônica Colacique", "Pedro Luis Borges de Souza Filho"]}, {"codigo": "dev007", "titulo": "uspdev/impressoras", "pessoas": ["Mônica Colacique", "Alan Neves Ribeiro"]}, {"codigo": "dev008", "titulo": "uspdev/pessoas", "pessoas": ["Ricardo Fontoura", "Pedro Luis Borges de Souza Filho"]}, {"codigo": "dev009", "titulo": "fflch/monitoring", "pessoas": ["Mônica Colacique", "Pedro Luis Borges de Souza Filho"]}, {"codigo": "dev010", "titulo": "fflch/fechaduras", "pessoas": ["Ricardo Fontoura", "Alan Neves Ribeiro"]}, {"codigo": "dev011", "titulo": "fflch/orcamento", "pessoas": ["Mônica Colacique", "Guilherme Frias de Oliveira Tavares"]}, {"codigo": "dev012", "titulo": "fflch/minibib", "pessoas": ["Mônica Colacique", "Welke Cristhian Carneiro Lima"]}, {"codigo": "dev013", "titulo": "fflch/cortec", "pessoas": ["Mônica Colacique", "Pedro Luis Borges de Souza Filho"]}, {"codigo": "dev014", "titulo": "fflch/gembib", "pessoas": ["Gilberto Vargas"]}, {"codigo": "dev015", "titulo": "fflch/cdd", "pessoas": ["Gilberto Vargas"]}, {"codigo": "dev016", "titulo": "fflch/bibfiles", "pessoas": ["Mônica Colacique", "Pedro Luis Borges de Souza Filho"]}, {"codigo": "dev017", "titulo": "fflch/trabalhoacademico", "pessoas": ["Mônica Colacique", "Guilherme Frias de Oliveira Tavares"]}, {"codigo": "dev018", "titulo": "fflch/intercambio", "pessoas": ["Mônica Colacique", "Guilherme Frias de Oliveira Tavares"]}, {"codigo": "dev019", "titulo": "uspdev/salas", "pessoas": ["Mônica Colacique", "Lucas Martihis de Araujo"]}, {"codigo": "dev020", "titulo": "uspdev/estagios", "pessoas": ["Mônica Colacique", "Guilherme Frias de Oliveira Tavares"]}, {"codigo": "dev021", "titulo": "fflch/listas", "pessoas": ["Ricardo Fontoura", "Lucas Martihis de Araujo"]}, {"codigo": "dev022", "titulo": "fflch/dados", "pessoas": ["Mônica Colacique"]}, {"codigo": "dev024", "titulo": "uspdev/rede", "pessoas": ["Ricardo Fontoura", "Alan Neves Ribeiro"]}, {"codigo": "dev025", "titulo": "uspdev/portarias", "pessoas": ["Mônica Colacique", "Guilherme Frias de Oliveira Tavares"]}, {"codigo": "dev026", "titulo": "uspdev/web-ldap-admin", "pessoas": ["Ricardo Fontoura", "Lucas Martihis de Araujo"]}, {"codigo": "dev027", "titulo": "uspdev/chamados", "pessoas": ["Ricardo Fontoura", "Lucas Martihis de Araujo"]}, {"codigo": "dev028", "titulo": "uspdev/defesas", "pessoas": ["Ricardo Fontoura", "Welke Cristhian Carneiro Lima"]}, {"codigo": "dev029", "titulo": "fflch/ranqueamento", "pessoas": ["Mônica Colacique", "Alan Neves Ribeiro"]}, {"codigo": "dev032", "titulo": "fflch/webapps", "pessoas": ["Ricardo Fontoura", "Lucas Martihis de Araujo"]}, {"codigo": "dev033", "titulo": "fflch/delpo", "pessoas": ["Mônica Colacique", "Welke Cristhian Carneiro Lima"]}, {"codigo": "dev034", "titulo": "fflch/wifi", "pessoas": ["Gilberto Vargas"]}, {"codigo": "dev035", "titulo": "fflch/controleportarias", "pessoas": ["Ricardo Fontoura", "Alan Neves Ribeiro"]}, {"codigo": "dev036", "titulo": "fflch/memorianegra", "pessoas": ["Thiago Gomes Veríssimo", "Pedro Luis Borges de Souza Filho"]}, {"codigo": "doc001", "titulo": "Documentação Técnica", "pessoas": ["Thiago Gomes Veríssimo"]}, {"codigo": "hos001", "titulo": "Sistemas operacionais Hosts: VMware, EqualLogic e Proxmox", "pessoas": ["Ricardo Fontoura", "José Roberto Varconti de Souza"]}, {"codigo": "hos002", "titulo": "Manutenção física dos Hosts e Storages", "pessoas": ["José Roberto Varconti de Souza"]}, {"codigo": "imp001", "titulo": "Servidor de Impressão Windows", "pessoas": ["Néli Maximino"]}, {"codigo": "imp002", "titulo": "Configuração das Impressoras", "pessoas": ["Néli Maximino"]}, {"codigo": "iot001", "titulo": "Aparelhos VoIP", "pessoas": ["Néli Maximino"]}, {"codigo": "iot002", "titulo": "Fechaduras Eletrônicas (ControlID)", "pessoas": []}, {"codigo": "iot003", "titulo": "Câmeras PTZ", "pessoas": []}, {"codigo": "iot004", "titulo": "Alarmes", "pessoas": []}, {"codigo": "iot005", "titulo": "Câmeras de Segurança (Intelbras)", "pessoas": []}, {"codigo": "iot006", "titulo": "Projetores (Datashow) com interface de rede", "pessoas": []}, {"codigo": "iot007", "titulo": "Nobreaks", "pessoas": ["José Roberto Varconti de Souza"]}, {"codigo": "mod001", "titulo": "uspdev/webform_senhaunica", "pessoas": ["Mônica Colacique", "Anderson Lima dos Santos"]}, {"codigo": "mod002", "titulo": "fflch/fflch-theme", "pessoas": ["Mônica Colacique"]}, {"codigo": "mod003", "titulo": "fflch/boletim", "pessoas": ["Mônica Colacique"]}, {"codigo": "mod004", "titulo": "webform_captcha_mandatory no drupal.org", "pessoas": ["Mônica Colacique", "Augusto César Freire Santiago"]}, {"codigo": "mod005", "titulo": "fflch/webform_ficha_catalografica", "pessoas": ["Mônica Colacique"]}, {"codigo": "mod006", "titulo": "uspdev/webform_pagamentos", "pessoas": ["Mônica Colacique", "Isaac Retiro Libera Martins"]}, {"codigo": "mod007", "titulo": "Pull Requests – Centro da Metrópole", "pessoas": ["Mônica Colacique"]}, {"codigo": "mod008", "titulo": "uspdev/webform_replicado", "pessoas": ["Mônica Colacique", "Camila Moraes de Lima"]}, {"codigo": "mod009", "titulo": "fflch/wp-fflch-theme", "pessoas": ["Mônica Colacique"]}, {"codigo": "mod010", "titulo": "fflch/compras", "pessoas": ["Mônica Colacique", "Camila Moraes de Lima"]}, {"codigo": "pas001", "titulo": "Organização e Manutenção das Salas de Rack", "pessoas": ["Felipe dos Santos Ribeiro", "Wellington da Silva Moura", "Paulo Henrique de Araújo", "Celio Aparecido da Silva", "Normando Peres Silva Moura"]}, {"codigo": "pas006", "titulo": "Acompanhamento de Instalações de Cabeamento Estruturado", "pessoas": ["Néli Maximino", "Paulo Henrique de Araújo", "Celio Aparecido da Silva", "José Roberto Varconti de Souza"]}, {"codigo": "pas007", "titulo": "Diagramas", "pessoas": ["Paulo Henrique de Araújo"]}, {"codigo": "per001", "titulo": "Gestão de Acessos Estagiários TI", "pessoas": ["Néli Maximino"]}, {"codigo": "per002", "titulo": "Administração de Sistemas Locais", "pessoas": ["Néli Maximino"]}, {"codigo": "per003", "titulo": "Aplicação de DAEs e Atualização do ReplicadoDev", "pessoas": ["José Roberto Varconti de Souza"]}, {"codigo": "prc001", "titulo": "Moodles USP", "pessoas": ["Thiago Gomes Veríssimo"]}, {"codigo": "pro001", "titulo": "fflch/ansible-role-sambadc", "pessoas": ["Augusto César Freire Santiago"]}, {"codigo": "pro002", "titulo": "fflch/ansible-role-deploy-laravel", "pessoas": ["Ricardo Fontoura"]}, {"codigo": "pro003", "titulo": "fflch/ansible-role-sap-ase", "pessoas": ["Mônica Colacique"]}, {"codigo": "pro004", "titulo": "uspdev/ansible-role-sssd-ldap", "pessoas": ["Thiago Gomes Veríssimo"]}, {"codigo": "pro005", "titulo": "fflch/ansible-role-proaluno", "pessoas": ["Mônica Colacique"]}, {"codigo": "pro006", "titulo": "fflch/playbooks-proaluno-fflch", "pessoas": ["Mônica Colacique", "Pedro Luis Borges de Souza Filho"]}, {"codigo": "pro007", "titulo": "fflch/ansible-role-django e fflch/template-django", "pessoas": ["Mônica Colacique"]}, {"codigo": "pro008", "titulo": "fflch/ansible-role-fsecure", "pessoas": ["Augusto César Freire Santiago"]}, {"codigo": "pro009", "titulo": "fflch/ansible-cups", "pessoas": ["Thiago Gomes Veríssimo"]}, {"codigo": "pro010", "titulo": "Playbooks Ansible", "pessoas": ["Ricardo Fontoura", "Augusto César Freire Santiago", "Mônica Colacique", "Thiago Gomes Veríssimo"]}, {"codigo": "rat002", "titulo": "Configuração de switches", "pessoas": ["Wellington da Silva Moura", "Felipe dos Santos Ribeiro"]}, {"codigo": "rat003", "titulo": "Camada 2", "pessoas": ["Ricardo Fontoura", "Felipe dos Santos Ribeiro", "Wellington da Silva Moura", "Augusto César Freire Santiago"]}, {"codigo": "rat004", "titulo": "Camada 3/4", "pessoas": ["Ricardo Fontoura", "Augusto César Freire Santiago"]}, {"codigo": "rsf001", "titulo": "Administração da Controladora SmartZone", "pessoas": ["José Roberto Varconti de Souza"]}, {"codigo": "rsf002", "titulo": "Gestão e Qualidade dos Access Points", "pessoas": ["José Roberto Varconti de Souza"]}, {"codigo": "sti001", "titulo": "Sistemas da Superintendência de Tecnologia da Informação", "pessoas": ["Néli Maximino"]}, {"codigo": "vms001", "titulo": "VMs de Backups", "pessoas": ["José Roberto Varconti de Souza"]}, {"codigo": "vms002", "titulo": "Administração de Windows Server do Servidor de Impressão", "pessoas": []}, {"codigo": "vms003", "titulo": "VM Virtual SmartZone", "pessoas": ["José Roberto Varconti de Souza"]}, {"codigo": "vms004", "titulo": "Monitoramento de Infraestrutura", "pessoas": []}], "issues": [{"codigo": "adm001-1", "tarefa": "adm001", "descricao": "Realização do inventário de bens comuns", "responsavel": "Néli Maximino", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "adm001-2", "tarefa": "adm001", "descricao": "Solicitar cota de material de rede de outras unidades e realizar a compra na FFLCH", "responsavel": "Néli Maximino", "data": "17/10/2026", "idade": 31, "comentarios": []}, {"codigo": "adm001-3", "tarefa": "adm001", "descricao": "Dashboard para computadores auxiliar na compras de equipamento", "responsavel": "Thiago Gomes Veríssimo", "data": "16/11/2026", "idade": 1, "comentarios": [{"data": "16/11/2026", "texto": "Faltam: arquivos replicado dos desktop (só peguei laptop)"}]}, {"codigo": "adm001-4", "tarefa": "adm001", "descricao": "pegar  logs swicthes e enviar para sistema alertas - ou ler syslog", "responsavel": "Thiago Gomes Veríssimo", "data": "16/11/2026", "idade": 1, "comentarios": []}, {"codigo": "adm001-5", "tarefa": "adm001", "descricao": "Colocar no sistemas repositórios: incidentes,fixfflch, ncidentes-swarm, cis, webapps, wp-fflch-theme, controleportarias, dashboard-computadores, plantas, compras, stou-monitoring, portarias, wordpress, memorianegra, pragmatica-drupal-module", "responsavel": "Thiago Gomes Veríssimo", "data": "16/11/2026", "idade": 1, "comentarios": []}, {"codigo": "bib001-1", "tarefa": "bib001", "descricao": "Garantir 100% de cobertura dos métodos fakes", "responsavel": "Mônica Colacique", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "bib003-1", "tarefa": "bib003", "descricao": "Usuário local não está funcionando.", "responsavel": "Ricardo Fontoura", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "bib009-1", "tarefa": "bib009", "descricao": "Melhorar a forma de escrita das definições nos arquivos de rotas gerados pelo uspdev/simple-crud-generator.", "responsavel": "Thiago Gomes Veríssimo", "data": "16/11/2026", "idade": 1, "comentarios": []}, {"codigo": "ccd001-2", "tarefa": "ccd001", "descricao": "Subir aplicações do CEM no nuvem FFLCH", "responsavel": "Mônica Colacique", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "ccd001-3", "tarefa": "ccd001", "descricao": "Acompanhar desenvolvimento do CIS em Laravel", "responsavel": "Mônica Colacique", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "cht003-1", "tarefa": "cht003", "descricao": "Gravação de vídeo sobre hcaptcha e webform_prepopulate", "responsavel": "Augusto César Freire Santiago", "data": "11/08/2026", "idade": 98, "comentarios": []}, {"codigo": "cht004-1", "tarefa": "cht004", "descricao": "Galeria de imagens - photoswipe", "responsavel": "Augusto César Freire Santiago", "data": "20/07/2026", "idade": 120, "comentarios": []}, {"codigo": "cor001-1", "tarefa": "cor001", "descricao": "Realizar migração dos sites hospedados no Aegir para a nova infraestrutura utilizando Ansible.", "responsavel": "Augusto César Freire Santiago", "data": "23/02/2026", "idade": 267, "comentarios": []}, {"codigo": "cor001-2", "tarefa": "cor001", "descricao": "Implementar o módulo trash do Drupal para permitir a recuperação de conteúdo excluído, garantindo que os usuários possam restaurar itens acidentalmente deletados sem a necessidade de intervenção técnica.", "responsavel": "Augusto César Freire Santiago", "data": "23/02/2026", "idade": 267, "comentarios": []}, {"codigo": "cor001-3", "tarefa": "cor001", "descricao": "Subir o core do drupal para 9.5, php para 8.1 e drush para 10/11 ainda usando ansible", "responsavel": "Augusto César Freire Santiago", "data": "20/07/2026", "idade": 120, "comentarios": []}, {"codigo": "cor002-1", "tarefa": "cor002", "descricao": "Criar blueprint.json com plugins e configurações selecionados para o wordpress que será nossa instalação default", "responsavel": "Augusto César Freire Santiago", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "dev001-1", "tarefa": "dev001", "descricao": "Gerar o arquivo kea-dhcp4.conf, substituto do dhcpd.conf, do isc-dhcp-server. - Trocar o servidor dhcp na produção", "responsavel": "Ricardo Fontoura", "data": "19/02/2026", "idade": 271, "comentarios": []}, {"codigo": "dev003-1", "tarefa": "dev003", "descricao": "Criar a opção de escolher se o site será em wordpress ou em drupal", "responsavel": "Mônica Colacique", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "dev007-3", "tarefa": "dev007", "descricao": "Ter uma opção de bloquear usuários de imprimir em uma impressora e colocar o motivo do bloqueio", "responsavel": "Mônica Colacique", "data": "20/07/2026", "idade": 120, "comentarios": []}, {"codigo": "dev009-3", "tarefa": "dev009", "descricao": "Fazer uma versão mínima para ir para o ar e colocar no ar", "responsavel": "Mônica Colacique", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "dev022-2", "tarefa": "dev022", "descricao": "Reconstruir a API que disponibiliza docentes, funcionários, chefes e estagiários. Porém usando nome social", "responsavel": "Mônica Colacique", "data": "20/02/2026", "idade": 270, "comentarios": []}, {"codigo": "dev022-3", "tarefa": "dev022", "descricao": "Implementar queries de listagem do replicado para mongodb.", "responsavel": "Mônica Colacique", "data": "20/02/2026", "idade": 270, "comentarios": []}, {"codigo": "dev022-4", "tarefa": "dev022", "descricao": "Implementação do fluxo de requisição de dados (reunião com Rosângela)", "responsavel": "Mônica Colacique", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "dev027-2", "tarefa": "dev027", "descricao": "Ter a possibilidade de fechar dois chamados simultaneamente.", "responsavel": "Ricardo Fontoura", "data": "20/02/2026", "idade": 270, "comentarios": []}, {"codigo": "dev032-1", "tarefa": "dev032", "descricao": "Colocar versão mínima no ar com S3, db e swarm funcionando", "responsavel": "Ricardo Fontoura", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "dev033-1", "tarefa": "dev033", "descricao": "criar CRUD para ‘obras’ e fazer a importação das obras - marcar com o professor", "responsavel": "Mônica Colacique", "data": "20/07/2026", "idade": 120, "comentarios": []}, {"codigo": "dev034-1", "tarefa": "dev034", "descricao": "Implementar freeradius no sistema wifi mac-authorization - Gilberto", "responsavel": "Thiago Gomes Veríssimo", "data": "16/11/2026", "idade": 1, "comentarios": []}, {"codigo": "dev035-1", "tarefa": "dev035", "descricao": "Colocar versão mínima no ar para começar a registrar entrada de equipamento desde já nas portarias", "responsavel": "Ricardo Fontoura", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "hos001-1", "tarefa": "hos001", "descricao": "Instalação do proxmox nos dois servidores Dell que desceram da FCS. Reinstalação do Equallogic no storage que desceu da FCS, que será o storage dos proxmox.", "responsavel": "Ricardo Fontoura", "data": "19/02/2026", "idade": 271, "comentarios": []}, {"codigo": "hos002-1", "tarefa": "hos002", "descricao": "Fazer um diagrama da ligação dos servidores/storages nos nobreaks", "responsavel": "José Roberto Varconti de Souza", "data": "11/08/2026", "idade": 98, "comentarios": []}, {"codigo": "mod001-1", "tarefa": "mod001", "descricao": "Implementar a opção de habilitar senha única em um webform para exigir autenticação no preenchimento do formulário (deve funcionar no drupal 9). Colocar na produção", "responsavel": "Mônica Colacique", "data": "24/02/2026", "idade": 266, "comentarios": []}, {"codigo": "mod003-1", "tarefa": "mod003", "descricao": "Criar opção para pessoas de fora da FFLCH se inscreverem no boletim.", "responsavel": "Mônica Colacique", "data": "19/02/2026", "idade": 271, "comentarios": []}, {"codigo": "mod004-1", "tarefa": "mod004", "descricao": "Tornar obrigatório o preenchimento do captcha antes do webform for renderizado", "responsavel": "Augusto César Freire Santiago", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "mod006-1", "tarefa": "mod006", "descricao": "Implementar a opção de habilitar a geração de boleto ou pix nas configurações do webform e colocar na produção", "responsavel": "Mônica Colacique", "data": "24/02/2026", "idade": 266, "comentarios": []}, {"codigo": "mod008-1", "tarefa": "mod008", "descricao": "Implementar elementos no webform: Número USP Docente, Número USP discente de graduação, Número USP discente de Pós-Graduação, Número USP de funcionário, Lista de Departamentos, Programas de Pós-Graduação, Cursos de Graduação, Habilitações Graduação, Número USP de aluno estrangeiro intercambista. Colocar na produção.", "responsavel": "Mônica Colacique", "data": "27/05/2026", "idade": 174, "comentarios": []}, {"codigo": "mod009-1", "tarefa": "mod009", "descricao": "Fazer template wordpress com identidade visual da FFLCH", "responsavel": "Mônica Colacique", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "pro006-1", "tarefa": "pro006", "descricao": "Atualizar ambiente (roles;playbook) e máquinas físicas para debian 13", "responsavel": "Mônica Colacique", "data": "05/10/2026", "idade": 43, "comentarios": []}, {"codigo": "pro008-1", "tarefa": "pro008", "descricao": "Atualizar role para nova versão do debian e nova versão do withsecure", "responsavel": "Augusto César Freire Santiago", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "pro010-1", "tarefa": "pro010", "descricao": "Atualização da VM do bind para Debian 13. Documentar o processo de atualização e o que deve ser copiado de uma máquina para outra.", "responsavel": "Ricardo Fontoura", "data": "19/02/2026", "idade": 271, "comentarios": []}, {"codigo": "pro010-11", "tarefa": "pro010", "descricao": "Atualização do samba para última versão estável que está no Debian 13. Documentar o processo de atualização e o que deve ser copiado de uma máquina para outra.", "responsavel": "Augusto César Freire Santiago", "data": "20/02/2026", "idade": 270, "comentarios": []}, {"codigo": "pro010-12", "tarefa": "pro010", "descricao": "Criar playbook do mongodb no provisioner-dev e depois na produção com provisioner", "responsavel": "Mônica Colacique", "data": "20/07/2026", "idade": 120, "comentarios": []}, {"codigo": "pro010-13", "tarefa": "pro010", "descricao": "Implementação do dusk em 100% das rotas dos sistemas que é responsável e atualizar para laraval 13", "responsavel": "Mônica Colacique", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "pro010-14", "tarefa": "pro010", "descricao": "Implementação do dusk em 100% das rotas dos sistemas que é responsável e atualizar para laravel 13", "responsavel": "Ricardo Fontoura", "data": "14/10/2026", "idade": 34, "comentarios": []}, {"codigo": "pro010-15", "tarefa": "pro010", "descricao": "Criação do playbook do wazuh no dev. Depois subir para produção gerar agente e passar aos técnicos.", "responsavel": "Mônica Colacique", "data": "19/10/2026", "idade": 29, "comentarios": []}, {"codigo": "pro010-2", "tarefa": "pro010", "descricao": "Demonstração do provisionamento do cluster com nodes de Docker Swarm na Nuvem USP", "responsavel": "Augusto César Freire Santiago", "data": "13/07/2026", "idade": 127, "comentarios": []}, {"codigo": "pro010-4", "tarefa": "pro010", "descricao": "Subior o Garage S3 na produção", "responsavel": "Ricardo Fontoura", "data": "13/07/2026", "idade": 127, "comentarios": []}, {"codigo": "pro010-6", "tarefa": "pro010", "descricao": "Implementação de política de backup dos dumps dos PostgreSQL para o entrypoint, assim como é feito com mariadb. Atualmente não há backup do PostgreSQL.", "responsavel": "", "data": "20/02/2026", "idade": 270, "comentarios": []}, {"codigo": "pro010-7", "tarefa": "pro010", "descricao": "Implementação do servidor OCS inventory", "responsavel": "Mônica Colacique", "data": "20/02/2026", "idade": 270, "comentarios": []}, {"codigo": "pro010-9", "tarefa": "pro010", "descricao": "Criar mais Domain Controllers. Simular (nesse reunião) o cenário de desastre e restaruração", "responsavel": "Augusto César Freire Santiago", "data": "20/02/2026", "idade": 270, "comentarios": []}, {"codigo": "rat003-2", "tarefa": "rat003", "descricao": "Separar a vlan da eduroam da vlan dos SSID de eventos.", "responsavel": "", "data": "19/02/2026", "idade": 271, "comentarios": []}, {"codigo": "vms001-1", "tarefa": "vms001", "descricao": "Melhorar script de backup tornando possível a restauração de arquivos individuais", "responsavel": "José Roberto Varconti de Souza", "data": "19/02/2026", "idade": 271, "comentarios": []}]}</script>
+
+
+    
+<script>
+(function () {
+    "use strict";
+    var D = JSON.parse(document.getElementById("dados").textContent);
+    var CHAVE = "acomp:mudancas:v1";
+    var CHAVE_FILTRO = "acomp:filtro:v2";
+    var VINCULO = { servidor: "Funcionário(a)", estagiario: "Estagiário(a)" };
+
+    var issuesBase = {};
+    D.issues.forEach(function (i) { issuesBase[i.codigo] = i; });
+    var tarefas = {};
+    D.tarefas.forEach(function (t) { tarefas[t.codigo] = t; });
+    var nomesPessoas = D.pessoas.map(function (p) { return p.nome; });
+
+    var editor = null;   // {issue, acao} — editor aberto dentro de um card
+    var arrastando = null;
+
+    // ---------------- armazenamento (somente neste navegador) ----------------
+    function lerStorage(k, padrao) {
+        try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : padrao; } catch (e) { return padrao; }
+    }
+    function gravarStorage(k, v) {
+        try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast("Não foi possível salvar no navegador"); }
+    }
+
+    // mudancas[codigo] = {antes, depois, em}   (issue existente)
+    // mudancas["nova-…"] = {nova: true, depois: {tarefa, descricao, responsavel}, em}
+    var mudancas = lerStorage(CHAVE, {});
+
+    // remove do navegador o que já foi aplicado no repositório
+    (function limparAplicadas() {
+        var removidas = 0;
+        Object.keys(mudancas).forEach(function (cod) {
+            var m = mudancas[cod], d = m.depois || {}, aplicada;
+            if (m.nova) {
+                aplicada = D.issues.some(function (i) {
+                    return i.tarefa === d.tarefa && i.descricao === d.descricao && i.responsavel === (d.responsavel || "");
+                });
+            } else {
+                var b = issuesBase[cod];
+                aplicada = !b || (!d.fechar && !d.tarefa
+                    && (d.responsavel === undefined || d.responsavel === b.responsavel)
+                    && (d.descricao === undefined || d.descricao === b.descricao)
+                    && (d.comentarios || []).every(function (t) {
+                        return (b.comentarios || []).some(function (c) { return c.texto === t; });
+                    }));
+            }
+            if (aplicada) { delete mudancas[cod]; removidas++; }
+        });
+        if (removidas) {
+            gravarStorage(CHAVE, mudancas);
+            setTimeout(function () { toast(removidas + " mudança(s) já aplicada(s) removida(s) do navegador"); }, 300);
+        }
+    })();
+
+    function salvar() { gravarStorage(CHAVE, mudancas); }
+    function totalMudancas() { return Object.keys(mudancas).length; }
+
+    function registrar(cod, campo, valor) {
+        var m = mudancas[cod];
+        if (m && m.nova) {                      // issue nova: edita direto
+            if (campo === "fechar") { delete mudancas[cod]; salvar(); return; }
+            m.depois[campo] = valor === undefined ? (campo === "responsavel" ? "" : m.depois[campo]) : valor;
+            salvar();
+            return;
+        }
+        var base = issuesBase[cod];
+        m = m || { antes: { responsavel: base.responsavel, descricao: base.descricao, tarefa: base.tarefa }, depois: {} };
+        var igualBase = campo === "fechar" ? !valor : valor === base[campo];
+        if (valor === undefined || igualBase) delete m.depois[campo]; else m.depois[campo] = valor;
+        m.em = D.hoje;
+        if (Object.keys(m.depois).length) mudancas[cod] = m; else delete mudancas[cod];
+        salvar();
+    }
+    function desfazer(cod) { delete mudancas[cod]; salvar(); }
+
+    // comentários: ficam em depois.comentarios (lista de textos) até serem aplicados no terminal
+    function adicionarComentario(cod, texto) {
+        var m = mudancas[cod];
+        if (!m) {
+            var base = issuesBase[cod];
+            m = { antes: { responsavel: base.responsavel, descricao: base.descricao, tarefa: base.tarefa }, depois: {} };
+        }
+        m.depois.comentarios = (m.depois.comentarios || []).concat([texto]);
+        if (!m.nova) m.em = D.hoje;
+        mudancas[cod] = m;
+        salvar();
+    }
+    function removerComentario(cod, idx) {
+        var m = mudancas[cod];
+        if (!m || !m.depois.comentarios) return;
+        m.depois.comentarios.splice(idx, 1);
+        if (!m.depois.comentarios.length) delete m.depois.comentarios;
+        if (!m.nova && !Object.keys(m.depois).length) delete mudancas[cod];
+        salvar();
+    }
+
+    function novaIssue(tarefa, descricao, responsavel) {
+        var cod = "nova-" + Date.now();
+        mudancas[cod] = { nova: true, depois: { tarefa: tarefa, descricao: descricao, responsavel: responsavel || "" }, em: D.hoje };
+        salvar();
+        return cod;
+    }
+
+    // ---------------- estado efetivo ----------------
+    // Códigos que as issues novas/movidas vão receber: próximo número livre da tarefa
+    // (maior número já usado + 1). Mesma ordem do bin/aplicar_mudancas.py:
+    // primeiro as movidas, depois as novas, cada grupo na ordem do arquivo baixado.
+    var PREVISTOS = {};
+    function codigosPrevistos() {
+        var usados = {}, out = {};
+        Object.keys(D.ultimo || {}).forEach(function (t) { usados[t] = D.ultimo[t]; });
+        function reservar(t) { usados[t] = (usados[t] || 0) + 1; return t + "-" + usados[t]; }
+        var chaves = Object.keys(mudancas).sort();
+        chaves.forEach(function (k) {
+            var m = mudancas[k];
+            if (!m.nova && issuesBase[k] && m.depois.tarefa) out[k] = reservar(m.depois.tarefa);
+        });
+        chaves.forEach(function (k) {
+            var m = mudancas[k];
+            if (m.nova && tarefas[m.depois.tarefa]) out[k] = reservar(m.depois.tarefa);
+        });
+        return out;
+    }
+
+    function efetiva(cod) {
+        var m = mudancas[cod] || {}, d = m.depois || {};
+        if (m.nova) {
+            return { codigo: cod, nova: true, base: { tarefa: d.tarefa, descricao: d.descricao, responsavel: "" },
+                     responsavel: d.responsavel || "", descricao: d.descricao, tarefa: d.tarefa, fechar: false,
+                     idade: 0, data: D.hoje.split("-").reverse().join("/"), alterada: true, depois: {},
+                     comentarios: [], novosComentarios: d.comentarios || [] };
+        }
+        var b = issuesBase[cod];
+        return {
+            codigo: cod, base: b,
+            responsavel: d.responsavel !== undefined ? d.responsavel : b.responsavel,
+            descricao: d.descricao !== undefined ? d.descricao : b.descricao,
+            tarefa: d.tarefa || b.tarefa,
+            fechar: !!d.fechar, idade: b.idade, data: b.data,
+            alterada: !!mudancas[cod], depois: d,
+            comentarios: b.comentarios || [], novosComentarios: d.comentarios || []
+        };
+    }
+    function todas() {
+        var lista = D.issues.map(function (i) { return efetiva(i.codigo); });
+        Object.keys(mudancas).forEach(function (c) { if (mudancas[c].nova) lista.push(efetiva(c)); });
+        return lista;
+    }
+    function porIdade(a, b) {
+        if (!!a.nova !== !!b.nova) return a.nova ? -1 : 1;   // issues novas primeiro
+        return (b.idade === null ? -1 : b.idade) - (a.idade === null ? -1 : a.idade);
+    }
+
+    function faixa(idade) {
+        if (idade === null || idade === undefined) return "sem";
+        if (idade <= 30) return "recente";
+        if (idade <= 90) return "andamento";
+        if (idade <= 180) return "atencao";
+        return "parada";
+    }
+
+    function resumoPessoa(nome) {
+        var lista = todas().filter(function (i) { return i.responsavel === nome; });
+        var abertas = lista.filter(function (i) { return !i.fechar; });
+        var c = { recente: 0, andamento: 0, atencao: 0, parada: 0, sem: 0 };
+        abertas.forEach(function (i) { c[faixa(i.idade)]++; });
+        var maisAntiga = abertas.reduce(function (m, i) { return i.idade !== null && i.idade > m ? i.idade : m; }, -1);
+        return {
+            lista: lista.sort(porIdade), abertas: abertas, c: c,
+            maisAntiga: maisAntiga >= 0 ? maisAntiga : null,
+            alteradas: lista.filter(function (i) { return i.alterada; }).length,
+            prioridade: c.parada * 3 + c.atencao * 2 + abertas.length
+        };
+    }
+
+    function pessoasFiltradas() {
+        var f = document.getElementById("filtro-vinculo").value;
+        return D.pessoas.filter(function (p) { return f === "todos" || p.vinculo === f; });
+    }
+
+    // ---------------- utilidades ----------------
+    function esc(s) {
+        return String(s === null || s === undefined ? "" : s).replace(/[&<>"']/g, function (c) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+    }
+    function toast(msg) {
+        var t = document.getElementById("toast");
+        t.textContent = msg; t.style.display = "block";
+        clearTimeout(t._h); t._h = setTimeout(function () { t.style.display = "none"; }, 2400);
+    }
+    function pillIdade(i) {
+        if (i.nova) return '<span class="pill p-info">nova</span>';
+        var f = faixa(i.idade);
+        if (f === "sem") return '<span class="pill">sem data</span>';
+        var cls = { recente: "p-good", andamento: "p-info", atencao: "p-warning", parada: "p-critical" }[f];
+        var txt = { recente: "✓ " + i.idade + " dias", andamento: i.idade + " dias",
+                    atencao: "⚠ " + i.idade + " dias", parada: "⛔ " + i.idade + " dias" }[f];
+        return '<span class="pill ' + cls + '" title="Aberta em ' + esc(i.data) + '">' + txt + "</span>";
+    }
+    function tituloTarefa(cod) { return tarefas[cod] ? tarefas[cod].titulo : ""; }
+    // ---------------- card de issue ----------------
+    function card(i, mostrarResp) {
+        var b = i.base, d = i.depois;
+        var cls = ["card-issue", "f-" + faixa(i.idade), i.alterada ? "alterada" : "", i.fechar ? "fechada" : ""].join(" ");
+        var h = '<div class="' + cls + '" draggable="true" data-card="' + esc(i.codigo) + '">';
+
+        var prev = PREVISTOS[i.codigo];
+        var codHtml = i.nova
+            ? esc(prev || "nova") + ' <small class="zero">(nova)</small>'
+            : (prev ? '<span class="antes">' + esc(i.codigo) + "</span> → " + esc(prev) : esc(i.codigo));
+        h += '<div class="topo"><div><span class="cod" title="' + (prev ? "Código previsto; confirmado ao aplicar no terminal" : "") + '">'
+            + codHtml + "</span></div>" + pillIdade(i) + "</div>";
+        h += '<div class="tarefa">' + (d.tarefa ? '<span class="antes">' + esc(b.tarefa) + "</span> → " : "")
+            + '<a href="index.html#' + esc(i.tarefa) + '">' + esc(i.tarefa) + "</a> · " + esc(tituloTarefa(i.tarefa)) + "</div>";
+        h += '<div class="desc">' + esc(i.descricao) + "</div>";
+        if (d.descricao !== undefined) h += '<div class="antes">' + esc(b.descricao) + "</div>";
+        if (mostrarResp) h += '<div class="tarefa">👤 ' + esc(i.responsavel || "sem responsável") + "</div>";
+        var ultimo = i.novosComentarios.length ? { data: "novo", texto: i.novosComentarios[i.novosComentarios.length - 1] }
+                   : i.comentarios[i.comentarios.length - 1];
+        if (ultimo && !(editor && editor.issue === i.codigo)) {
+            h += '<div class="ultimo-coment" title="Último comentário">💬 <span class="zero">' + esc(ultimo.data) + "</span> " + esc(corta(ultimo.texto, 110)) + "</div>";
+        }
+
+        if (editor && editor.issue === i.codigo) {
+            h += editorHtml(i);
+        } else {
+            var tags = [];
+            if (i.nova) tags.push("será criada");
+            if (d.responsavel !== undefined) tags.push((b.responsavel ? "de " + b.responsavel.split(" ")[0] + " " : "") + "→ " + (d.responsavel ? d.responsavel.split(" ")[0] : "ninguém"));
+            if (d.descricao !== undefined) tags.push("descrição editada");
+            if (d.tarefa) tags.push("mudou de tarefa");
+            if (d.fechar) tags.push("✓ será fechada");
+            if (i.novosComentarios.length) tags.push("💬 " + i.novosComentarios.length + " comentário(s) novo(s)");
+            h += '<div class="rodape"><div class="tags">'
+                + tags.map(function (t) { return '<span class="pill mud">' + esc(t) + "</span>"; }).join("")
+                + (i.alterada ? ' <button type="button" class="link-btn" data-desfazer="' + esc(i.codigo) + '">desfazer</button>' : "")
+                + '</div><div class="botoes no-print">'
+                + '<button type="button" data-acao="comentar" data-issue="' + esc(i.codigo) + '" title="Comentários">💬'
+                + ((i.comentarios.length + i.novosComentarios.length) ? '<small> ' + (i.comentarios.length + i.novosComentarios.length) + "</small>" : "") + "</button>"
+                + '<button type="button" data-acao="editar" data-issue="' + esc(i.codigo) + '" title="Editar issue">✎</button>'
+                + '<button type="button" data-acao="atribuir" data-issue="' + esc(i.codigo) + '" title="Atribuir a outra pessoa">👤</button>'
+                + '<button type="button" data-acao="mover" data-issue="' + esc(i.codigo) + '" title="Mudar de tarefa">⇄</button>'
+                + '<button type="button" data-acao="' + (i.fechar ? "reabrir" : "fechar") + '" data-issue="' + esc(i.codigo) + '" title="'
+                + (i.fechar ? "Não fechar" : "Fechar issue") + '">' + (i.fechar ? "↺" : "✓") + "</button>"
+                + "</div></div>";
+        }
+        return h + "</div>";
+    }
+
+    // ---------------- autocomplete (datalist nativo) ----------------
+    function campoTarefa(id, valor, preferidas, rotulo) {
+        var pref = (preferidas || []).filter(function (c) { return tarefas[c]; });
+        var ordem = pref.concat(D.tarefas.map(function (t) { return t.codigo; }).filter(function (c) { return pref.indexOf(c) < 0; }));
+        return '<label class="small" for="' + id + '">' + rotulo + "</label>"
+            + '<input class="form-control form-control-sm" id="' + id + '" list="' + id + '-dl" autocomplete="off" value="' + esc(valor || "")
+            + '" placeholder="digite o código ou parte do título (ex: dev005, grafica)">'
+            + '<datalist id="' + id + '-dl">' + ordem.map(function (c) { return '<option value="' + esc(c + " - " + tituloTarefa(c)) + '">'; }).join("") + "</datalist>";
+    }
+    function campoPessoa(id, valor, tarefa, rotulo) {
+        var sug = (tarefas[tarefa] || { pessoas: [] }).pessoas;
+        var ordem = sug.concat(nomesPessoas.filter(function (n) { return sug.indexOf(n) < 0; }));
+        return '<label class="small" for="' + id + '">' + rotulo + "</label>"
+            + '<input class="form-control form-control-sm" id="' + id + '" list="' + id + '-dl" autocomplete="off" value="' + esc(valor || "")
+            + '" placeholder="digite parte do nome (vazio = sem responsável)">'
+            + '<datalist id="' + id + '-dl">' + ordem.map(function (n) { return '<option value="' + esc(n) + '">'; }).join("") + "</datalist>";
+    }
+    // devolve o código da tarefa a partir do texto digitado, ou null
+    function resolverTarefa(txt) {
+        txt = (txt || "").trim();
+        if (!txt) return null;
+        var cod = txt.split(" - ")[0].trim().toLowerCase();
+        if (tarefas[cod]) return cod;
+        var achadas = D.tarefas.filter(function (x) { return (x.codigo + " " + x.titulo).toLowerCase().indexOf(txt.toLowerCase()) >= 0; });
+        return achadas.length === 1 ? achadas[0].codigo : null;
+    }
+    // devolve o nome completo ("" = sem responsável), ou null se não reconhecido
+    function resolverPessoa(txt) {
+        txt = (txt || "").trim();
+        if (!txt) return "";
+        if (nomesPessoas.indexOf(txt) >= 0) return txt;
+        var achados = nomesPessoas.filter(function (n) { return n.toLowerCase().indexOf(txt.toLowerCase()) >= 0; });
+        return achados.length === 1 ? achados[0] : null;
+    }
+
+    function corta(s, n) { s = String(s || ""); return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+
+    function editorComentarios(i) {
+        var h = '<div class="editor"><div class="small fw-bold mb-1">Comentários</div>';
+        if (!i.comentarios.length && !i.novosComentarios.length) h += '<div class="zero small mb-2">Nenhum comentário ainda.</div>';
+        h += '<ul class="lista-coment">';
+        i.comentarios.forEach(function (c) {
+            h += '<li><span class="zero">' + esc(c.data) + "</span> " + esc(c.texto) + "</li>";
+        });
+        i.novosComentarios.forEach(function (t, idx) {
+            h += '<li class="novo"><span class="pill mud">novo</span> ' + esc(t)
+               + ' <button type="button" class="link-btn" data-rmcom="' + idx + '" data-issue="' + esc(i.codigo) + '">remover</button></li>';
+        });
+        h += "</ul>"
+           + '<textarea class="form-control form-control-sm" id="ed-valor" rows="3" placeholder="Escreva um comentário…"></textarea>'
+           + '<div class="mt-2 d-flex gap-2"><button type="button" class="btn btn-sm btn-primary" data-ed="comentar">Adicionar comentário</button>'
+           + '<button type="button" class="btn btn-sm btn-outline-secondary" data-ed="cancelar">Fechar</button></div></div>';
+        return h;
+    }
+
+    function editorHtml(i) {
+        if (editor.acao === "comentar") return editorComentarios(i);
+        var h = '<div class="editor">';
+        if (editor.acao === "atribuir") {
+            h += campoPessoa("ed-valor", "", i.tarefa, "Atribuir a" + (i.responsavel ? " (hoje: " + esc(i.responsavel) + ")" : ""));
+        } else if (editor.acao === "editar") {
+            h += '<label class="small">Descrição</label><textarea class="form-control form-control-sm" id="ed-valor" rows="4">' + esc(i.descricao) + "</textarea>";
+        } else if (editor.acao === "mover") {
+            var pref = [];
+            D.pessoas.forEach(function (p) { if (p.nome === i.responsavel) pref = p.atividades.map(function (a) { return a.codigo; }); });
+            h += campoTarefa("ed-valor", "", pref.filter(function (c) { return c !== i.tarefa; }), "Mudar para a tarefa (hoje: " + esc(i.tarefa) + ")");
+        }
+        return h + '<div class="mt-2 d-flex gap-2"><button type="button" class="btn btn-sm btn-primary" data-ed="ok">Confirmar</button>'
+            + '<button type="button" class="btn btn-sm btn-outline-secondary" data-ed="cancelar">Cancelar</button></div></div>';
+    }
+
+    function grade(lista, mostrarResp) {
+        if (!lista.length) return '<p class="sub">Nenhuma issue.</p>';
+        return '<div class="grade">' + lista.map(function (i) { return card(i, mostrarResp); }).join("") + "</div>";
+    }
+
+    function barra(comNova) {
+        return '<div class="barra no-print">'
+            + (comNova ? '<button type="button" class="btn btn-sm btn-success" data-nova="1">+ Nova issue</button>' : "")
+            + '<div class="zona-fechar" id="zona-fechar">✓ Arraste um card para cá para fechar · solte sobre um nome no menu para reatribuir</div></div>';
+    }
+
+    function formNova(p) {
+        if (!editor || editor.acao !== "nova") return "";
+        var pref = p ? p.atividades.map(function (a) { return a.codigo; }) : [];
+        return '<div class="card-issue alterada mb-3" style="cursor:default;max-width:560px">'
+            + "<strong>Nova issue</strong>"
+            + campoTarefa("nova-tarefa", "", pref, "Tarefa")
+            + '<label class="small" for="nova-desc">Descrição</label><textarea class="form-control form-control-sm" id="nova-desc" rows="3" placeholder="O que precisa ser feito?"></textarea>'
+            + campoPessoa("nova-resp", p ? p.nome : "", null, "Responsável")
+            + '<div class="d-flex gap-2"><button type="button" class="btn btn-sm btn-primary" data-ed="criar">Criar</button>'
+            + '<button type="button" class="btn btn-sm btn-outline-secondary" data-ed="cancelar">Cancelar</button></div></div>';
+    }
+
+    // ---------------- vistas ----------------
+    function vistaEquipe() {
+        var lista = pessoasFiltradas().map(function (p) { return { p: p, r: resumoPessoa(p.nome) }; })
+            .sort(function (a, b) { return b.r.prioridade - a.r.prioridade || a.p.nome.localeCompare(b.p.nome); });
+        var tot = { abertas: 0, atencao: 0, parada: 0 };
+        lista.forEach(function (x) { tot.abertas += x.r.abertas.length; tot.atencao += x.r.c.atencao; tot.parada += x.r.c.parada; });
+        var semResp = todas().filter(function (i) { return !i.responsavel && !i.fechar; }).length;
+        var filtro = document.getElementById("filtro-vinculo");
+
+        var h = "<h1>Acompanhamento da equipe</h1>"
+            + '<p class="sub">Atualizado em 17/11/2026 · mostrando: <strong>' + esc(filtro.options[filtro.selectedIndex].text) + "</strong>. "
+            + "Tudo o que você muda fica salvo neste navegador até baixar e aplicar no terminal.</p>"
+            + '<div class="kpis">'
+            + '<div class="kpi"><div class="v">' + tot.abertas + '</div><div class="l">Issues abertas</div></div>'
+            + '<div class="kpi"><div class="v">' + tot.atencao + '</div><div class="l">⚠ 91–180 dias</div></div>'
+            + '<div class="kpi"><div class="v">' + tot.parada + '</div><div class="l">⛔ &gt; 180 dias</div></div>'
+            + '<div class="kpi"><div class="v">' + semResp + '</div><div class="l">Sem responsável</div></div>'
+            + "</div>";
+        h += '<div class="table-responsive"><table class="t"><thead><tr><th>Pessoa</th><th class="text-end">Abertas</th>'
+            + '<th class="text-end">Resolvidas</th><th class="text-end">Mais antiga</th></tr></thead><tbody>';
+        lista.forEach(function (x) {
+            h += '<tr class="clicavel" data-ir="p-' + esc(x.p.id) + '"><td><a href="#p-' + esc(x.p.id) + '">' + esc(x.p.nome) + "</a>"
+                + (x.r.alteradas ? ' <span class="pill mud">' + x.r.alteradas + " mudança(s)</span>" : "")
+                + ' <small class="zero">' + esc(VINCULO[x.p.vinculo] || "") + "</small></td>"
+                + '<td class="num">' + x.r.abertas.length + "</td>"
+                + '<td class="num">' + x.p.resolvidas_total + "</td>"
+                + '<td class="num">' + (x.r.maisAntiga !== null ? x.r.maisAntiga + " d" : "—") + "</td></tr>";
+        });
+        return h + "</tbody></table></div>";
+    }
+
+    function vistaTriagem() {
+        var lista = todas().filter(function (i) { return !i.responsavel; }).sort(porIdade);
+        return "<h1>Sem responsável</h1>"
+            + '<p class="sub">Arraste um card para o nome de alguém no menu, ou use 👤.</p>'
+            + barra(false) + grade(lista, false);
+    }
+
+    function vistaMudancas() {
+        var lista = Object.keys(mudancas).sort().filter(function (c) { return mudancas[c].nova || issuesBase[c]; }).map(efetiva);
+        return "<h1>Mudanças pendentes</h1>"
+            + '<p class="sub">Revise antes de baixar. Depois: <code>python3 bin/aplicar_mudancas.py ~/Downloads/mudancas-….json</code></p>'
+            + (lista.length ? grade(lista, true) : "<p>Nenhuma mudança feita ainda.</p>");
+    }
+
+    function chips(p, r) {
+        var s = [];
+        var velhas = r.c.atencao + r.c.parada;
+        if (velhas) s.push(["p-critical", "⛔ " + velhas + " há mais de 90 dias"]);
+        if (D.media_peso && p.vinculo === "servidor" && p.peso >= 1.5 * D.media_peso)
+            s.push(["p-warning", "⚠ carga " + (p.peso / D.media_peso).toFixed(1) + "× a média"]);
+        if (p.unicas >= 5) s.push(["p-warning", "⚠ único responsável em " + p.unicas + " tarefas"]);
+        if (p.resolvidas90.length) s.push(["p-good", "✓ " + p.resolvidas90.length + " resolvida(s) em 90 dias"]);
+        else if (r.abertas.length) s.push(["p-info", "nenhuma resolvida em 90 dias"]);
+        return s.map(function (x) { return '<span class="pill ' + x[0] + '">' + esc(x[1]) + "</span>"; }).join("");
+    }
+
+    function vistaPessoa(p) {
+        var r = resumoPessoa(p.nome);
+        var abertas = r.lista.filter(function (i) { return !i.fechar; });
+        var fechadas = r.lista.filter(function (i) { return i.fechar; });
+
+        var h = '<div class="cab"><h1>' + esc(p.nome) + '</h1><span class="sub">' + esc(VINCULO[p.vinculo] || "") + "</span></div>"
+            + '<div class="numeros"><span><b>' + abertas.length + "</b> abertas</span><span><b>" + p.atividades.length
+            + "</b> tarefas</span><span>peso <b>" + p.peso + "</b> (média " + D.media_peso + ")</span></div>"
+            + '<div class="chips">' + chips(p, r) + "</div>";
+
+        h += barra(true) + formNova(p) + grade(abertas, false);
+        if (fechadas.length) h += '<div class="secao">Serão fechadas (' + fechadas.length + ")</div>" + grade(fechadas, false);
+
+        h += '<details class="bloco mt-4"><summary>Tarefas (' + p.atividades.length + ")</summary>"
+            + '<table class="t mt-2"><tbody>' + p.atividades.map(function (a) {
+                return '<tr><td><a href="index.html#' + esc(a.codigo) + '">' + esc(a.codigo) + "</a></td><td>" + esc(a.titulo)
+                    + (a.unico ? ' <span class="pill p-warning">único resp.</span>' : "") + '</td><td class="zero">' + esc(a.papel)
+                    + '</td><td class="num">peso ' + a.peso + "</td></tr>";
+            }).join("") + "</tbody></table></details>";
+        h += '<details class="bloco"><summary>Resolvidas nos últimos 90 dias (' + p.resolvidas90.length + ")</summary>"
+            + (p.resolvidas90.length ? '<ul class="mt-2">' + p.resolvidas90.map(function (i) {
+                return "<li><strong>" + esc(i.codigo) + "</strong> — " + esc(i.descricao) + ' <small class="zero">(' + esc(i.data_fechamento) + ")</small></li>";
+            }).join("") + "</ul>" : '<p class="sub mt-2">Nenhuma.</p>') + "</details>";
+        return h;
+    }
+
+    // ---------------- render ----------------
+    function vistaAtual() { return (location.hash || "#equipe").slice(1); }
+    function pessoaAtual() {
+        var v = vistaAtual();
+        return D.pessoas.filter(function (x) { return "p-" + x.id === v; })[0] || null;
+    }
+
+    function renderLateral() {
+        var n = totalMudancas();
+        var btn = document.getElementById("btn-baixar");
+        btn.disabled = !n;
+        btn.textContent = n ? "⬇ Baixar mudanças (" + n + ")" : "Sem mudanças para baixar";
+        btn.className = "btn btn-sm mb-1 " + (n ? "btn-primary" : "btn-outline-secondary");
+        document.getElementById("btn-limpar").disabled = !n;
+        document.getElementById("status-mudancas").textContent = n
+            ? n + " mudança(s) salvas neste navegador" : "Nenhuma mudança pendente";
+
+        var ts = todas();
+        document.getElementById("cont-equipe").textContent = ts.filter(function (i) { return !i.fechar; }).length;
+        document.getElementById("cont-triagem").textContent = ts.filter(function (i) { return !i.responsavel && !i.fechar; }).length;
+        var cm = document.getElementById("cont-mudancas");
+        cm.textContent = n; cm.classList.toggle("mudou", !!n);
+
+        var lista = pessoasFiltradas().map(function (p) { return { p: p, r: resumoPessoa(p.nome) }; })
+            .sort(function (a, b) { return b.r.prioridade - a.r.prioridade || a.p.nome.localeCompare(b.p.nome); });
+        document.getElementById("lista-pessoas").innerHTML = lista.map(function (x) {
+            return '<a href="#p-' + esc(x.p.id) + '" class="item" data-vista="p-' + esc(x.p.id) + '" data-drop-pessoa="' + esc(x.p.nome) + '">'
+                + esc(x.p.nome) + ' <span class="cont' + (x.r.alteradas ? " mudou" : "") + '">' + x.r.abertas.length + "</span></a>";
+        }).join("") || '<div class="sub px-2">Ninguém neste filtro.</div>';
+
+        var v = vistaAtual();
+        document.querySelectorAll("nav.lateral a.item[data-vista]").forEach(function (a) {
+            a.classList.toggle("ativo", a.dataset.vista === v);
+        });
+    }
+
+    function render(manterScroll) {
+        PREVISTOS = codigosPrevistos();
+        var y = window.scrollY, v = vistaAtual(), html;
+        if (v === "triagem") html = vistaTriagem();
+        else if (v === "mudancas") html = vistaMudancas();
+        else if (pessoaAtual()) html = vistaPessoa(pessoaAtual());
+        else html = vistaEquipe();
+        document.getElementById("main").innerHTML = html;
+        renderLateral();
+        window.scrollTo(0, manterScroll ? y : 0);
+        var foco = document.getElementById("ed-valor") || document.getElementById("nova-tarefa");
+        if (foco) foco.focus();
+    }
+
+    // ---------------- ações ----------------
+    function fechar(cod) { registrar(cod, "fechar", true); editor = null; toast("✓ " + (cod.indexOf("nova-") === 0 ? "Nova issue descartada" : cod + " será fechada")); }
+    function atribuir(cod, nome) {
+        var i = efetiva(cod);
+        if (i.responsavel === nome) return;
+        registrar(cod, "responsavel", i.nova ? nome : (nome === issuesBase[cod].responsavel ? undefined : nome));
+        toast((i.nova ? "Nova issue" : cod) + " → " + (nome || "sem responsável"));
+    }
+
+    var main = document.getElementById("main");
+    main.addEventListener("click", function (e) {
+        var t = e.target.closest("button, tr[data-ir]");
+        if (!t) return;
+        if (t.dataset.desfazer) { desfazer(t.dataset.desfazer); editor = null; render(true); toast("Mudança desfeita"); return; }
+        if (t.dataset.nova) { editor = { acao: "nova" }; render(true); return; }
+        if (t.dataset.acao) {
+            var cod = t.dataset.issue;
+            if (t.dataset.acao === "fechar") fechar(cod);
+            else if (t.dataset.acao === "reabrir") { registrar(cod, "fechar", undefined); editor = null; }
+            else editor = { issue: cod, acao: t.dataset.acao };
+            render(true);
+            return;
+        }
+        if (t.dataset.ed === "cancelar") { editor = null; render(true); return; }
+        if (t.dataset.ed === "comentar" && editor) {
+            var txt = document.getElementById("ed-valor").value.trim();
+            if (!txt) { toast("Escreva o comentário"); return; }
+            adicionarComentario(editor.issue, txt);
+            render(true); toast("Comentário adicionado às mudanças");
+            return;
+        }
+        if (t.dataset.rmcom !== undefined) {
+            removerComentario(t.dataset.issue, parseInt(t.dataset.rmcom, 10));
+            render(true); toast("Comentário removido");
+            return;
+        }
+        if (t.dataset.ed === "criar") {
+            var codTarefa = resolverTarefa(document.getElementById("nova-tarefa").value);
+            if (!codTarefa) { toast("Tarefa não encontrada ou ambígua — escolha na lista"); document.getElementById("nova-tarefa").focus(); return; }
+            var desc = document.getElementById("nova-desc").value.trim();
+            if (!desc) { toast("Escreva a descrição"); document.getElementById("nova-desc").focus(); return; }
+            var resp = resolverPessoa(document.getElementById("nova-resp").value);
+            if (resp === null) { toast("Responsável não encontrado ou ambíguo — escolha na lista"); document.getElementById("nova-resp").focus(); return; }
+            novaIssue(codTarefa, desc, resp);
+            editor = null; render(true); toast("Nova issue adicionada às mudanças");
+            return;
+        }
+        if (t.dataset.ed === "ok" && editor) {
+            var valor = document.getElementById("ed-valor").value, c = editor.issue, i = efetiva(c);
+            if (editor.acao === "atribuir") {
+                var nome = resolverPessoa(valor);
+                if (nome === null) { toast("Pessoa não encontrada ou ambígua — escolha na lista"); return; }
+                atribuir(c, nome);
+            }
+            else if (editor.acao === "editar") {
+                valor = valor.trim();
+                if (!valor) { toast("A descrição não pode ficar vazia"); return; }
+                registrar(c, "descricao", !i.nova && valor === issuesBase[c].descricao ? undefined : valor);
+                toast("Descrição alterada");
+            } else if (editor.acao === "mover") {
+                valor = resolverTarefa(valor);
+                if (!valor) { toast("Tarefa não encontrada ou ambígua — escolha na lista"); return; }
+                registrar(c, "tarefa", !i.nova && valor === issuesBase[c].tarefa ? undefined : valor);
+                toast("Movida para " + valor);
+            }
+            editor = null; render(true);
+            return;
+        }
+        if (t.dataset.ir && e.target.tagName !== "A") location.hash = t.dataset.ir;
+    });
+
+    // Enter num campo de autocomplete confirma o editor aberto
+    main.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" || e.target.tagName !== "INPUT") return;
+        var b = main.querySelector('[data-ed="ok"], [data-ed="criar"]');
+        if (b && e.target.id !== "nova-tarefa") { e.preventDefault(); b.click(); }
+    });
+
+    // ---------------- arrastar e soltar ----------------
+    function alvos() { return document.querySelectorAll("#zona-fechar, nav.lateral [data-drop-pessoa]"); }
+    main.addEventListener("dragstart", function (e) {
+        var c = e.target.closest && e.target.closest("[data-card]");
+        if (!c || (editor && editor.issue === c.dataset.card)) { e.preventDefault(); return; }
+        arrastando = c.dataset.card;
+        e.dataTransfer.setData("text/plain", arrastando);
+        e.dataTransfer.effectAllowed = "move";
+        c.classList.add("arrastando");
+        alvos().forEach(function (a) { a.classList.add(a.id === "zona-fechar" ? "ativa" : "alvo"); });
+    });
+    document.addEventListener("dragend", function () {
+        arrastando = null;
+        document.querySelectorAll(".arrastando").forEach(function (c) { c.classList.remove("arrastando"); });
+        alvos().forEach(function (a) { a.classList.remove("ativa", "alvo", "sobre", "alvo-sobre"); });
+    });
+    document.addEventListener("dragover", function (e) {
+        if (!arrastando) return;
+        var a = e.target.closest && e.target.closest("#zona-fechar, [data-drop-pessoa]");
+        alvos().forEach(function (x) { x.classList.remove("sobre", "alvo-sobre"); });
+        if (!a) return;
+        e.preventDefault();
+        a.classList.add(a.id === "zona-fechar" ? "sobre" : "alvo-sobre");
+    });
+    document.addEventListener("drop", function (e) {
+        if (!arrastando) return;
+        var a = e.target.closest && e.target.closest("#zona-fechar, [data-drop-pessoa]");
+        if (!a) return;
+        e.preventDefault();
+        var cod = arrastando;
+        arrastando = null;
+        if (a.id === "zona-fechar") fechar(cod);
+        else atribuir(cod, a.dataset.dropPessoa);
+        editor = null;
+        render(true);
+    });
+
+    // ---------------- painel de mudanças ----------------
+    document.getElementById("filtro-vinculo").addEventListener("change", function (e) {
+        gravarStorage(CHAVE_FILTRO, e.target.value);
+        render(false);
+    });
+
+    document.getElementById("btn-baixar").addEventListener("click", function () {
+        var lista = Object.keys(mudancas).sort().map(function (cod) {
+            var m = mudancas[cod];
+            return m.nova ? { issue: null, nova: true, depois: m.depois, em: m.em }
+                          : { issue: cod, antes: m.antes, depois: m.depois, em: m.em };
+        });
+        var agora = new Date();
+        var obj = { tipo: "mudancas-acompanhamento", versao: 1, gerado_em: agora.toISOString(), mudancas: lista };
+        var blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "mudancas-" + D.hoje + "-" + String(agora.getHours()).padStart(2, "0") + String(agora.getMinutes()).padStart(2, "0") + ".json";
+        a.click();
+        URL.revokeObjectURL(a.href);
+        toast("Arquivo baixado. As mudanças continuam aqui até você aplicar ou limpar.");
+    });
+
+    document.getElementById("btn-limpar").addEventListener("click", function () {
+        var n = totalMudancas();
+        if (!n) return;
+        if (!confirm("Apagar as " + n + " mudança(s) pendente(s) deste navegador?\n\nIsso não pode ser desfeito. Se ainda não aplicou, baixe o arquivo antes.")) return;
+        mudancas = {};
+        salvar();
+        editor = null;
+        render(true);
+        toast("Mudanças apagadas");
+    });
+
+    window.addEventListener("hashchange", function () { editor = null; render(false); });
+    window.addEventListener("storage", function (e) {
+        if (e.key === CHAVE) { mudancas = lerStorage(CHAVE, {}); render(true); }
+    });
+
+    document.getElementById("filtro-vinculo").value =
+        ["servidor", "estagiario", "todos"].indexOf(lerStorage(CHAVE_FILTRO, "")) >= 0 ? lerStorage(CHAVE_FILTRO, "") : "servidor";
+    render(false);
+})();
+</script>
+
+</body>
+</html>
