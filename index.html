@@ -6,7 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Planejamento TI - FFLCH</title>
     
-<link rel="stylesheet" href="assets/css/index.css?v=20261117010844">
+<link rel="stylesheet" href="assets/css/index.css?v=20261117011827">
 
 </head>
 <body>
@@ -1690,18 +1690,8 @@ E outras atividades administrativas do setor.
 <hr><strong>Pendências:</strong>
 
 <div class="issue-item">
-<strong>adm001-3</strong> <span class="text-muted">· Thiago Gomes Veríssimo</span><br>
-Dashboard para computadores auxiliar na compras de equipamento
-
-<ul class="comentarios">
-<li><span class="text-muted">💬 16/11/2026</span> Faltam: arquivos replicado dos desktop (só peguei laptop)</li>
-</ul>
-
-</div>
-
-<div class="issue-item">
-<strong>adm001-2</strong> <span class="text-muted">· Néli Maximino</span><br>
-Solicitar cota de material de rede de outras unidades e realizar a compra na FFLCH
+<strong>adm001-4</strong> <span class="text-muted">· Thiago Gomes Veríssimo</span><br>
+pegar  logs swicthes e enviar para sistema alertas - ou ler syslog
 
 </div>
 
@@ -1712,14 +1702,24 @@ Colocar no sistemas repositórios: incidentes,fixfflch, ncidentes-swarm, cis, we
 </div>
 
 <div class="issue-item">
-<strong>adm001-4</strong> <span class="text-muted">· Thiago Gomes Veríssimo</span><br>
-pegar  logs swicthes e enviar para sistema alertas - ou ler syslog
+<strong>adm001-2</strong> <span class="text-muted">· Néli Maximino</span><br>
+Solicitar cota de material de rede de outras unidades e realizar a compra na FFLCH
 
 </div>
 
 <div class="issue-item">
 <strong>adm001-1</strong> <span class="text-muted">· Néli Maximino</span><br>
 Realização do inventário de bens comuns
+
+</div>
+
+<div class="issue-item">
+<strong>adm001-3</strong> <span class="text-muted">· Thiago Gomes Veríssimo</span><br>
+Dashboard para computadores auxiliar na compras de equipamento
+
+<ul class="comentarios">
+<li><span class="text-muted">💬 16/11/2026</span> Faltam: arquivos replicado dos desktop (só peguei laptop)</li>
+</ul>
 
 </div>
 
@@ -2441,8 +2441,8 @@ Esta tarefa versa sobre a manutenção da nossa distribuição Drupal e compreen
 <hr><strong>Pendências:</strong>
 
 <div class="issue-item">
-<strong>cor001-1</strong> <span class="text-muted">· Augusto César Freire Santiago</span><br>
-Realizar migração dos sites hospedados no Aegir para a nova infraestrutura utilizando Ansible.
+<strong>cor001-3</strong> <span class="text-muted">· Augusto César Freire Santiago</span><br>
+Subir o core do drupal para 9.5, php para 8.1 e drush para 10/11 ainda usando ansible
 
 </div>
 
@@ -2453,8 +2453,8 @@ Implementar o módulo trash do Drupal para permitir a recuperação de conteúdo
 </div>
 
 <div class="issue-item">
-<strong>cor001-3</strong> <span class="text-muted">· Augusto César Freire Santiago</span><br>
-Subir o core do drupal para 9.5, php para 8.1 e drush para 10/11 ainda usando ansible
+<strong>cor001-1</strong> <span class="text-muted">· Augusto César Freire Santiago</span><br>
+Realizar migração dos sites hospedados no Aegir para a nova infraestrutura utilizando Ansible.
 
 </div>
 
@@ -3044,8 +3044,8 @@ O sistema fflch/dados pretende ser um portal de transparência e análises de da
 <hr><strong>Pendências:</strong>
 
 <div class="issue-item">
-<strong>dev022-2</strong> <span class="text-muted">· Mônica Colacique</span><br>
-Reconstruir a API que disponibiliza docentes, funcionários, chefes e estagiários. Porém usando nome social
+<strong>dev022-3</strong> <span class="text-muted">· Mônica Colacique</span><br>
+Implementar queries de listagem do replicado para mongodb.
 
 </div>
 
@@ -3056,8 +3056,8 @@ Implementação do fluxo de requisição de dados (reunião com Rosângela)
 </div>
 
 <div class="issue-item">
-<strong>dev022-3</strong> <span class="text-muted">· Mônica Colacique</span><br>
-Implementar queries de listagem do replicado para mongodb.
+<strong>dev022-2</strong> <span class="text-muted">· Mônica Colacique</span><br>
+Reconstruir a API que disponibiliza docentes, funcionários, chefes e estagiários. Porém usando nome social
 
 </div>
 
@@ -4483,50 +4483,8 @@ Essa tarefa envolve três repositórios git, além das máquinas virtuais da pro
 <hr><strong>Pendências:</strong>
 
 <div class="issue-item">
-<strong>pro010-15</strong> <span class="text-muted">· Mônica Colacique</span><br>
-Criação do playbook do wazuh no dev. Depois subir para produção gerar agente e passar aos técnicos.
-
-</div>
-
-<div class="issue-item">
-<strong>pro010-1</strong> <span class="text-muted">· Ricardo Fontoura</span><br>
-Atualização da VM do bind para Debian 13. Documentar o processo de atualização e o que deve ser copiado de uma máquina para outra.
-
-</div>
-
-<div class="issue-item">
-<strong>pro010-6</strong><br>
-Implementação de política de backup dos dumps dos PostgreSQL para o entrypoint, assim como é feito com mariadb. Atualmente não há backup do PostgreSQL.
-
-</div>
-
-<div class="issue-item">
-<strong>pro010-13</strong> <span class="text-muted">· Mônica Colacique</span><br>
-Implementação do dusk em 100% das rotas dos sistemas que é responsável e atualizar para laraval 13
-
-</div>
-
-<div class="issue-item">
-<strong>pro010-7</strong> <span class="text-muted">· Mônica Colacique</span><br>
-Implementação do servidor OCS inventory
-
-</div>
-
-<div class="issue-item">
-<strong>pro010-2</strong> <span class="text-muted">· Augusto César Freire Santiago</span><br>
-Demonstração do provisionamento do cluster com nodes de Docker Swarm na Nuvem USP
-
-</div>
-
-<div class="issue-item">
 <strong>pro010-4</strong> <span class="text-muted">· Ricardo Fontoura</span><br>
 Subior o Garage S3 na produção
-
-</div>
-
-<div class="issue-item">
-<strong>pro010-14</strong> <span class="text-muted">· Ricardo Fontoura</span><br>
-Implementação do dusk em 100% das rotas dos sistemas que é responsável e atualizar para laravel 13
 
 </div>
 
@@ -4537,14 +4495,56 @@ Criar mais Domain Controllers. Simular (nesse reunião) o cenário de desastre e
 </div>
 
 <div class="issue-item">
+<strong>pro010-7</strong> <span class="text-muted">· Mônica Colacique</span><br>
+Implementação do servidor OCS inventory
+
+</div>
+
+<div class="issue-item">
+<strong>pro010-14</strong> <span class="text-muted">· Ricardo Fontoura</span><br>
+Implementação do dusk em 100% das rotas dos sistemas que é responsável e atualizar para laravel 13
+
+</div>
+
+<div class="issue-item">
 <strong>pro010-12</strong> <span class="text-muted">· Mônica Colacique</span><br>
 Criar playbook do mongodb no provisioner-dev e depois na produção com provisioner
 
 </div>
 
 <div class="issue-item">
+<strong>pro010-6</strong><br>
+Implementação de política de backup dos dumps dos PostgreSQL para o entrypoint, assim como é feito com mariadb. Atualmente não há backup do PostgreSQL.
+
+</div>
+
+<div class="issue-item">
+<strong>pro010-1</strong> <span class="text-muted">· Ricardo Fontoura</span><br>
+Atualização da VM do bind para Debian 13. Documentar o processo de atualização e o que deve ser copiado de uma máquina para outra.
+
+</div>
+
+<div class="issue-item">
+<strong>pro010-2</strong> <span class="text-muted">· Augusto César Freire Santiago</span><br>
+Demonstração do provisionamento do cluster com nodes de Docker Swarm na Nuvem USP
+
+</div>
+
+<div class="issue-item">
 <strong>pro010-11</strong> <span class="text-muted">· Augusto César Freire Santiago</span><br>
 Atualização do samba para última versão estável que está no Debian 13. Documentar o processo de atualização e o que deve ser copiado de uma máquina para outra.
+
+</div>
+
+<div class="issue-item">
+<strong>pro010-15</strong> <span class="text-muted">· Mônica Colacique</span><br>
+Criação do playbook do wazuh no dev. Depois subir para produção gerar agente e passar aos técnicos.
+
+</div>
+
+<div class="issue-item">
+<strong>pro010-13</strong> <span class="text-muted">· Mônica Colacique</span><br>
+Implementação do dusk em 100% das rotas dos sistemas que é responsável e atualizar para laraval 13
 
 </div>
 
