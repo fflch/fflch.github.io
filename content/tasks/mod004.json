@@ -1,13 +1,11 @@
 {
   "peso": 2,
-  "titulo": "fflch/webform-captcha-mandatory",
-  "estagiarios": [
-    "Não Há"
-  ],
-  "descricao": "O módulo fflch/webform-captcha-mandatory garante a obrigatoriedade do uso de CAPTCHA em formulários Webform do Drupal, com o objetivo de mitigar spam e submissões automatizadas. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Atualização de compatibilidade com o módulo Webform; \\item Adequação a novas versões do Drupal; \\item Monitoramento de falhas na validação de CAPTCHA; \\end{itemize}",
+  "titulo": "webform_captcha_mandatory no drupal.org",
+  "estagiarios": [],
+  "descricao": "O módulo webform-captcha-mandatory garante a obrigatoriedade do uso de CAPTCHA em formulários Webform do Drupal, com o objetivo de mitigar spam e submissões automatizadas. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Atualização de compatibilidade com o módulo Webform; \\item Adequação a novas versões do Drupal; \\item Monitoramento de falhas na validação de CAPTCHA; \\end{itemize}",
   "responsaveis": [
-    "Mônica",
-    "Augusto"
+    "Mônica Colacique",
+    "Augusto César Freire Santiago"
   ],
   "status": true
 }

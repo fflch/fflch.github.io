@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - TI FFLCH{% endblock %}
+
+{% block extra_head %}
+<style>
+:root {
+    --surface: #fcfcfb;
+    --surface-2: #f2f2f0;
+    --border: #deddd8;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #7a7974;
+    --grid: #e6e5e1;
+    --series-1: #2a78d6;   /* abertas / criadas */
+    --series-2: #eb6834;   /* resolvidas */
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --surface: #1a1a19;
+        --surface-2: #242423;
+        --border: #3a3a38;
+        --text-primary: #f0efec;
+        --text-secondary: #c3c2b7;
+        --text-muted: #9a998f;
+        --grid: #2e2e2c;
+        --series-1: #3987e5;
+        --series-2: #d95926;
+    }
+}
+:root[data-theme="dark"] {
+    --surface: #1a1a19;
+    --surface-2: #242423;
+    --border: #3a3a38;
+    --text-primary: #f0efec;
+    --text-secondary: #c3c2b7;
+    --text-muted: #9a998f;
+    --grid: #2e2e2c;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+}
+body { background: var(--surface); color: var(--text-primary); padding: 32px 16px; }
+.wrap { max-width: 1200px; margin: 0 auto; }
+a { color: var(--series-1); }
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.25rem; margin-top: 2.5rem; margin-bottom: .25rem; }
+.sub { color: var(--text-secondary); font-size: .9rem; margin-bottom: 1rem; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.kpi { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.kpi .v { font-size: 2rem; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi .l { color: var(--text-secondary); font-size: .85rem; }
+.kpi .n { color: var(--text-muted); font-size: .75rem; }
+
+.legend { display: flex; gap: 16px; font-size: .85rem; color: var(--text-secondary); margin: 6px 0 10px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.c1 { background: var(--series-1); }
+.c2 { background: var(--series-2); }
+
+/* colunas mensais */
+.cols { display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; align-items: end;
+        height: 220px; border-bottom: 1px solid var(--text-muted);
+        background: repeating-linear-gradient(to top, transparent 0 54px, var(--grid) 54px 55px); }
+.col { display: flex; gap: 2px; align-items: end; justify-content: center; height: 100%; cursor: default; }
+.col .b { width: min(16px, 40%); border-radius: 4px 4px 0 0; min-height: 0; }
+.col .b.zero { height: 2px !important; opacity: .35; border-radius: 1px; }
+.cols-x { display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; font-size: .75rem; color: var(--text-muted); text-align: center; margin-top: 4px; }
+
+/* barras horizontais empilhadas */
+.hbar { display: flex; gap: 2px; height: 12px; min-width: 120px; }
+.hbar span { display: block; height: 100%; }
+.hbar span:first-child { border-radius: 4px 0 0 4px; }
+.hbar span:last-child { border-radius: 0 4px 4px 0; }
+.hbar span:only-child { border-radius: 4px; }
+
+table.dash { width: 100%; border-collapse: collapse; font-size: .9rem; }
+table.dash th, table.dash td { padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: middle; }
+table.dash th { color: var(--text-secondary); font-weight: 600; white-space: nowrap; cursor: pointer; user-select: none;
+                border-bottom: 1px solid var(--border); }
+table.dash th[data-sort]:hover { color: var(--text-primary); }
+table.dash th.asc::after { content: " ▲"; font-size: .7em; }
+table.dash th.desc::after { content: " ▼"; font-size: .7em; }
+table.dash td.nome { white-space: nowrap; }
+table.dash td.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.dash tr:hover td { background: var(--surface-2); }
+.muted { color: var(--text-muted); }
+.scroll { overflow-x: auto; }
+.filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; font-size: .9rem; }
+.filters select { background: var(--surface); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; }
+
+#tip { position: fixed; pointer-events: none; background: var(--text-primary); color: var(--surface);
+       font-size: .8rem; padding: 6px 9px; border-radius: 6px; display: none; z-index: 10; white-space: pre; }
+.tip-target { cursor: default; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<p><a href="index.html">← Voltar ao planejamento</a> · <a href="issues-resolvidas.html">Issues resolvidas</a></p>
+<h1>Dashboard da TI-FFLCH</h1>
+<div class="sub">Atualizado em {{ data_hoje }}. Issues abertas contam apenas atividades ativas; resolvidas incluem todo o histórico.</div>
+
+<div class="kpis">
+    <div class="kpi"><div class="v">{{ kpis.atividades }}</div><div class="l">Atividades ativas</div></div>
+    <div class="kpi"><div class="v">{{ kpis.abertas }}</div><div class="l">Issues abertas</div>
+        <div class="n">{{ kpis.nao_atribuidas }} sem responsável</div></div>
+    <div class="kpi"><div class="v">{{ kpis.resolvidas }}</div><div class="l">Issues resolvidas</div>
+        <div class="n">{{ kpis.resolvidas_30d }} nos últimos 30 dias</div></div>
+    <div class="kpi"><div class="v">{{ kpis.tempo_mediano if kpis.tempo_mediano is not none else "—" }}<small style="font-size:1rem"> dias</small></div>
+        <div class="l">Tempo mediano de resolução</div>
+        <div class="n">média {{ kpis.tempo_medio if kpis.tempo_medio is not none else "—" }} dias · {{ kpis.n_tempos }} issues com datas</div></div>
+</div>
+
+<h2>Issues criadas e resolvidas por mês</h2>
+<div class="sub">Últimos 12 meses.</div>
+<div class="legend"><span><i class="c1"></i>Criadas</span><span><i class="c2"></i>Resolvidas</span></div>
+<div class="cols" role="img" aria-label="Issues criadas e resolvidas por mês">
+{% for m in por_mes %}
+    <div class="col tip-target" data-tip="{{ m.rotulo }}&#10;Criadas: {{ m.criadas }}&#10;Resolvidas: {{ m.resolvidas }}">
+        <div class="b c1{% if not m.criadas %} zero{% endif %}" style="height: {{ m.h_criadas }}%"></div>
+        <div class="b c2{% if not m.resolvidas %} zero{% endif %}" style="height: {{ m.h_resolvidas }}%"></div>
+    </div>
+{% endfor %}
+</div>
+<div class="cols-x">{% for m in por_mes %}<div>{{ m.rotulo }}</div>{% endfor %}</div>
+<details class="mt-2"><summary class="muted" style="font-size:.85rem">Ver tabela</summary>
+<table class="dash" style="max-width:420px">
+<thead><tr><th>Mês</th><th class="num">Criadas</th><th class="num">Resolvidas</th></tr></thead>
+<tbody>{% for m in por_mes %}<tr><td>{{ m.rotulo }}</td><td class="num">{{ m.criadas }}</td><td class="num">{{ m.resolvidas }}</td></tr>{% endfor %}</tbody>
+</table>
+</details>
+
+<h2>Por pessoa</h2>
+<div class="sub">Clique nos cabeçalhos para ordenar. Tempo de resolução = data de fechamento − data de abertura (só issues com as duas datas).</div>
+<div class="filters">
+    <label>Vínculo:
+        <select id="filtro-vinculo">
+            <option value="">Todos</option>
+            <option>Servidor(a)</option>
+            <option>Estagiário(a)</option>
+        </select>
+    </label>
+    <div class="legend" style="margin:0"><span><i class="c1"></i>Abertas</span><span><i class="c2"></i>Resolvidas</span></div>
+</div>
+<div class="scroll">
+<table class="dash sortable" id="tabela-pessoas">
+<thead>
+<tr>
+    <th data-sort="text">Pessoa</th>
+    <th data-sort="text">Vínculo</th>
+    <th data-sort="num" class="num">Atividades</th>
+    <th data-sort="num" class="num">Peso</th>
+    <th data-sort="num" class="num">Abertas</th>
+    <th data-sort="num" class="num">Resolvidas</th>
+    <th>Issues</th>
+    <th data-sort="num" class="num">% resolvidas</th>
+    <th data-sort="num" class="num">Tempo médio (dias)</th>
+    <th data-sort="num" class="num">Mediana (dias)</th>
+    <th data-sort="num" class="num">Aberta mais antiga (dias)</th>
+</tr>
+</thead>
+<tbody>
+{% for p in por_pessoa %}
+<tr data-vinculo="{{ p.vinculo }}">
+    <td class="nome">{{ p.nome }}</td>
+    <td class="muted">{{ p.vinculo }}</td>
+    <td class="num" data-v="{{ p.atividades + p.atividades_estagio }}">{{ p.atividades }}{% if p.atividades_estagio %} <span class="muted">+{{ p.atividades_estagio }} est.</span>{% endif %}</td>
+    <td class="num">{{ p.peso }}</td>
+    <td class="num">{{ p.abertas }}</td>
+    <td class="num">{{ p.resolvidas }}</td>
+    <td>
+        {% if p.total_issues %}
+        <div class="hbar tip-target" data-tip="{{ p.nome }}&#10;Abertas: {{ p.abertas }}&#10;Resolvidas: {{ p.resolvidas }}">
+            {% if p.abertas %}<span class="c1" style="width: {{ p.pct_abertas }}%"></span>{% endif %}
+            {% if p.resolvidas %}<span class="c2" style="width: {{ p.pct_resolvidas }}%"></span>{% endif %}
+        </div>
+        {% else %}<span class="muted">—</span>{% endif %}
+    </td>
+    <td class="num" data-v="{{ p.taxa if p.taxa is not none else -1 }}">{{ p.taxa ~ "%" if p.taxa is not none else "—" }}</td>
+    <td class="num" data-v="{{ p.tempo_medio if p.tempo_medio is not none else -1 }}">{{ p.tempo_medio if p.tempo_medio is not none else "—" }}</td>
+    <td class="num" data-v="{{ p.tempo_mediano if p.tempo_mediano is not none else -1 }}">{{ p.tempo_mediano if p.tempo_mediano is not none else "—" }}</td>
+    <td class="num" data-v="{{ p.mais_antiga if p.mais_antiga is not none else -1 }}">{{ p.mais_antiga if p.mais_antiga is not none else "—" }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<h2>Por área</h2>
+<div class="legend"><span><i class="c1"></i>Abertas</span><span><i class="c2"></i>Resolvidas</span></div>
+<div class="scroll">
+<table class="dash sortable">
+<thead>
+<tr>
+    <th data-sort="text">Sigla</th>
+    <th data-sort="text">Área</th>
+    <th data-sort="num" class="num">Atividades ativas</th>
+    <th data-sort="num" class="num">Abertas</th>
+    <th data-sort="num" class="num">Resolvidas</th>
+    <th>Issues</th>
+</tr>
+</thead>
+<tbody>
+{% for a in por_area %}
+<tr>
+    <td><a href="index.html#{{ a.prefixo }}">{{ a.prefixo }}</a></td>
+    <td>{{ a.significado }}</td>
+    <td class="num">{{ a.atividades }}</td>
+    <td class="num">{{ a.abertas }}</td>
+    <td class="num">{{ a.resolvidas }}</td>
+    <td>
+        {% if a.abertas or a.resolvidas %}
+        <div class="hbar tip-target" data-tip="{{ a.prefixo }} - {{ a.significado }}&#10;Abertas: {{ a.abertas }}&#10;Resolvidas: {{ a.resolvidas }}">
+            {% if a.abertas %}<span class="c1" style="width: {{ a.pct_abertas }}%"></span>{% endif %}
+            {% if a.resolvidas %}<span class="c2" style="width: {{ a.pct_resolvidas }}%"></span>{% endif %}
+        </div>
+        {% else %}<span class="muted">—</span>{% endif %}
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+<div id="tip"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Tooltip
+(function () {
+    var tip = document.getElementById('tip');
+    document.querySelectorAll('.tip-target').forEach(function (el) {
+        el.addEventListener('mousemove', function (e) {
+            tip.textContent = el.dataset.tip;
+            tip.style.display = 'block';
+            var x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+            tip.style.left = x + 'px';
+            tip.style.top = (e.clientY + 14) + 'px';
+        });
+        el.addEventListener('mouseleave', function () { tip.style.display = 'none'; });
+    });
+})();
+
+// Ordenação das tabelas
+document.querySelectorAll('table.sortable').forEach(function (table) {
+    table.querySelectorAll('th[data-sort]').forEach(function (th) {
+        th.addEventListener('click', function () {
+            var idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+            var asc = !th.classList.contains('asc');
+            table.querySelectorAll('th').forEach(function (h) { h.classList.remove('asc', 'desc'); });
+            th.classList.add(asc ? 'asc' : 'desc');
+            var tbody = table.tBodies[0];
+            var rows = Array.prototype.slice.call(tbody.rows);
+            rows.sort(function (a, b) {
+                var ca = a.cells[idx], cb = b.cells[idx];
+                if (th.dataset.sort === 'num') {
+                    var va = parseFloat(ca.dataset.v !== undefined ? ca.dataset.v : ca.textContent) || 0;
+                    var vb = parseFloat(cb.dataset.v !== undefined ? cb.dataset.v : cb.textContent) || 0;
+                    return asc ? va - vb : vb - va;
+                }
+                return asc ? ca.textContent.localeCompare(cb.textContent, 'pt')
+                           : cb.textContent.localeCompare(ca.textContent, 'pt');
+            });
+            rows.forEach(function (r) { tbody.appendChild(r); });
+        });
+    });
+});
+
+// Filtro por vínculo
+document.getElementById('filtro-vinculo').addEventListener('change', function (e) {
+    var v = e.target.value;
+    document.querySelectorAll('#tabela-pessoas tbody tr').forEach(function (tr) {
+        tr.style.display = !v || tr.dataset.vinculo === v ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}

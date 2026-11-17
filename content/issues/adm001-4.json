@@ -1,0 +1,6 @@
+{
+  "status": true,
+  "descricao": "pegar  logs swicthes e enviar para sistema alertas - ou ler syslog",
+  "data": "16/11/2026",
+  "responsavel": "Thiago Gomes Veríssimo"
+}

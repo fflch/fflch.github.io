@@ -1,23 +1,36 @@
 import os
+import sys
 import json
 import re
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, BASE_DIR)
+
+from fflch_common import (  # noqa: E402
+    responsaveis_da_tarefa, estagiarios_da_tarefa, redigir_descricao,
+    oferecer_aviso_email, aviso_issue,
+)
 
 TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
 ISSUES_DIR = os.path.join(BASE_DIR, "content", "issues")
 
 
 # ----------------------------------------
-# Lista tasks
+# Lista tasks (somente ativas)
 # ----------------------------------------
 def listar_tasks():
     tasks = []
-    for f in os.listdir(TASKS_DIR):
-        if f.endswith(".json"):
-            tasks.append(f)
-    tasks.sort()
+    for f in sorted(os.listdir(TASKS_DIR)):
+        if not f.endswith(".json"):
+            continue
+        try:
+            with open(os.path.join(TASKS_DIR, f), encoding="utf-8") as fh:
+                if json.load(fh).get("status") is not True:
+                    continue
+        except Exception:
+            pass
+        tasks.append(f)
     return tasks
 
 
@@ -34,7 +47,7 @@ def escolher_task(tasks):
             with open(caminho, encoding="utf-8") as f:
                 data = json.load(f)
                 titulo = data.get("titulo", "Sem título")
-        except:
+        except Exception:
             titulo = "Erro ao ler"
 
         print(f"{i:03d} - {t} → {titulo}")
@@ -47,52 +60,27 @@ def escolher_task(tasks):
             if 0 <= idx < len(tasks):
                 return tasks[idx]
 
+        if not escolha.endswith(".json"):
+            escolha += ".json"
         if escolha in tasks:
             return escolha
 
         print("Entrada inválida.")
 
 
-# ----------------------------------------
-# Carrega task
-# ----------------------------------------
 def carregar_task(nome_arquivo):
     caminho = os.path.join(TASKS_DIR, nome_arquivo)
     with open(caminho, encoding="utf-8") as f:
         return json.load(f)
 
 
-# ----------------------------------------
-# Extrai responsáveis (NOVO MODELO)
-# ----------------------------------------
 def extrair_responsaveis(task_data):
-
-    resp = task_data.get("responsaveis")
-
-    # compatibilidade com legado
-    if not resp:
-        antigo = task_data.get("responsavel")
-        resp = [antigo] if antigo else []
-
-    if isinstance(resp, str):
-        resp = [resp]
-
-    est = task_data.get("estagiarios", [])
-    if isinstance(est, str):
-        est = [est]
-
-    est = [e for e in est if e and e != "Não Há"]
-
-    # união sem duplicar
-    return list(dict.fromkeys(resp + est))
+    """Funcionários + estagiários ativos da tarefa, sem duplicar."""
+    return list(dict.fromkeys(responsaveis_da_tarefa(task_data) + estagiarios_da_tarefa(task_data)))
 
 
-# ----------------------------------------
-# Escolhe responsável
-# ----------------------------------------
 def escolher_responsavel(lista):
-
-    print("\nResponsáveis disponíveis (funcionários + estagiários):\n")
+    print("\nResponsáveis disponíveis (funcionários + estagiários ativos):\n")
 
     for i, nome in enumerate(lista, 1):
         print(f"{i} - {nome}")
@@ -111,9 +99,6 @@ def escolher_responsavel(lista):
         print("Entrada inválida.")
 
 
-# ----------------------------------------
-# Próximo número da issue
-# ----------------------------------------
 def proximo_numero_issue(prefixo):
     pattern = re.compile(rf"^{prefixo}-(\d+)\.json$")
     numeros = []
@@ -128,9 +113,13 @@ def proximo_numero_issue(prefixo):
     return max(numeros) + 1 if numeros else 1
 
 
-# ----------------------------------------
-# MAIN
-# ----------------------------------------
+def contexto_da_task(prefixo, task_data):
+    descricao = task_data.get("descricao", "")
+    if descricao.endswith(".tex"):
+        descricao = ""
+    return f"{prefixo} - {task_data.get('titulo', '')}\n{descricao}".strip()
+
+
 def main():
     tasks = listar_tasks()
     task_file = escolher_task(tasks)
@@ -143,18 +132,21 @@ def main():
     responsaveis = extrair_responsaveis(task_data)
 
     if not responsaveis:
-        print("⚠ Task não possui responsáveis ou estagiários.")
+        print("⚠ Task não possui responsáveis ou estagiários ativos.")
         return
 
     print(f"\nTask selecionada: {prefixo} → {titulo}")
 
     responsavel = escolher_responsavel(responsaveis)
 
-    numero = proximo_numero_issue(prefixo)
-    filename = f"{prefixo}-{numero}.json"
-    path = os.path.join(ISSUES_DIR, filename)
+    descricao = redigir_descricao(contexto=contexto_da_task(prefixo, task_data))
+    if not descricao:
+        print("\nIssue não criada.")
+        return
 
-    descricao = input("\nDescrição da issue: ").strip()
+    numero = proximo_numero_issue(prefixo)
+    codigo = f"{prefixo}-{numero}"
+    path = os.path.join(ISSUES_DIR, f"{codigo}.json")
     data_hoje = datetime.now().strftime("%d/%m/%Y")
 
     issue = {
@@ -166,8 +158,14 @@ def main():
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(issue, f, indent=2, ensure_ascii=False)
+        f.write("\n")
 
     print(f"\n✔ Issue criada: {path}")
+
+    oferecer_aviso_email(
+        [responsavel],
+        lambda n: aviso_issue(n, prefixo, titulo, codigo, descricao, data_hoje),
+    )
 
 
 if __name__ == "__main__":

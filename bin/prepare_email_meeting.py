@@ -6,6 +6,7 @@ import subprocess
 from datetime import datetime
 import tempfile
 import base64
+import sys
 
 # Configuração de Caminhos Base
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -14,6 +15,9 @@ TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
 ISSUES_DIR = os.path.join(BASE_DIR, "content", "issues")
 MEETINGS_DIR = os.path.join(BASE_DIR, "content", "meetings")
 SIGLAS_PATH = os.path.join(FILES_DIR, "siglas.csv")
+
+sys.path.insert(0, BASE_DIR)
+from fflch_common import participantes_reuniao  # noqa: E402
 
 
 # ----------------------------------------
@@ -117,40 +121,15 @@ def buscar_proxima_reuniao_dados(tipo_reuniao):
 
 
 # ----------------------------------------
-# Extrai os e-mails da segunda coluna do CSV correspondente
+# Participantes: meeting-<tipo>.csv ou, para a reunião TI, os servidores de pessoas.csv
 # ----------------------------------------
 def extrair_emails_csv(tipo_reuniao):
-    caminho_csv = os.path.join(FILES_DIR, f"meeting-{tipo_reuniao}.csv")
-    if not os.path.exists(caminho_csv):
-        return []
-    
-    emails = []
-    with open(caminho_csv, mode='r', encoding='utf-8') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            if row and len(row) >= 2:
-                email = row[1].strip()
-                if email:
-                    emails.append(email)
-    return emails
+    return [email for _, email in participantes_reuniao(tipo_reuniao) if email]
 
-# ----------------------------------------
-# Extrai os nomes do CSV correspondentes
-# ----------------------------------------
+
 def extrair_nomes_csv(tipo_reuniao):
-    caminho_csv = os.path.join(FILES_DIR, f"meeting-{tipo_reuniao}.csv")
-    if not os.path.exists(caminho_csv):
-        return []
-    
-    nomes = []
-    with open(caminho_csv, mode='r', encoding='utf-8') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            if row and len(row) >= 2:
-                nome = row[0].strip()
-                if nome:
-                    nomes.append(nome)
-    return nomes
+    return [nome for nome, _ in participantes_reuniao(tipo_reuniao)]
+
 
 def get_meeting(tipo):
     # Caminho para a pasta onde estão os arquivos
@@ -200,7 +179,7 @@ def main():
     # 2. Extrai os destinatários do CSV correspondente
     lista_emails = extrair_emails_csv(tipo_reuniao)
     if not lista_emails:
-        print(f"⚠ Nenhum e-mail encontrado em files/meeting-{tipo_reuniao}.csv.")
+        print(f"⚠ Nenhum participante com e-mail para a reunião {tipo_reuniao}.")
         return
     
     destinatarios = ", ".join(lista_emails)

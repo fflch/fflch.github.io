@@ -196,6 +196,19 @@ end
 ------------------------------------------------------
 -- Função 2: Ler tarefa pelo nome (sem id no JSON)
 ------------------------------------------------------
+-- Estagiários: lista de {nome, ativo}; inativos não são exibidos.
+function estagiarios_ativos(lista)
+  local nomes = {}
+  for _, e in ipairs(lista or {}) do
+    if type(e) == "table" then
+      if e.ativo ~= false then table.insert(nomes, e.nome) end
+    elseif e ~= "Não Há" then
+      table.insert(nomes, e)
+    end
+  end
+  return table.concat(nomes, "; ")
+end
+
 function read_task(nome)
 
   local caminho = "tasks/" .. nome .. ".json"
@@ -220,7 +233,7 @@ function read_task(nome)
     " \\\\ \\hline")
 
   tex.sprint("\\multicolumn{2}{|p{0.2\\textwidth}|}{\\textbf{Estagiários(as):}} & " ..
-    table.concat(data.estagiarios, "; ") ..
+    estagiarios_ativos(data.estagiarios) ..
     " \\\\ \\hline")
 
   tex.sprint("\\multicolumn{3}{|p{0.8\\textwidth}|}{" ..

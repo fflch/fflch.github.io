@@ -1,13 +1,11 @@
 {
   "peso": 8,
   "titulo": "Gestão Administrativa",
-  "estagiarios": [
-    "Não Há"
-  ],
+  "estagiarios": [],
   "descricao": "adm001.tex",
   "responsaveis": [
-    "Néli",
-    "Thiago"
+    "Néli Maximino",
+    "Thiago Gomes Veríssimo"
   ],
   "status": true
 }

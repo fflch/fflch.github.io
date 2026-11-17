@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Reuniões técnicas - TI FFLCH{% endblock %}
+
+{% macro lista_pauta(pautas) -%}
+<ul class="pauta">
+{% for item in pautas %}
+    {% if item.tipo == "issue" %}
+    <li class="{{ 'resolvida' if item.resolvida else '' }}">
+        <a href="index.html#{{ item.task_codigo }}"><strong>{{ item.codigo }}</strong></a>
+        <span class="text-muted">· {{ item.titulo_task }}</span><br>
+        {{ item.descricao }} <span class="resp">({{ item.responsavel }})</span>
+        {% if item.resolvida %}<span class="badge text-bg-success">✓ resolvida</span>{% endif %}
+    </li>
+    {% else %}
+    <li>{{ item.texto }}</li>
+    {% endif %}
+{% endfor %}
+</ul>
+{%- endmacro %}
+
+{% block extra_head %}
+<style>
+:root {
+    --surface: #ffffff; --surface-2: #f6f6f4; --border: #e0dfda;
+    --text-primary: #111; --text-secondary: #52514e; --text-muted: #7a7974;
+    --accent: #2a78d6; --accent-bg: #e8f0fb; --good-bg: #e6f4ea; --good-fg: #146c2e;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
+        --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f;
+        --accent: #3987e5; --accent-bg: #182c47; --good-bg: #173a22; --good-fg: #8fd6a2;
+    }
+}
+:root[data-theme="dark"] {
+    --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f;
+    --accent: #3987e5; --accent-bg: #182c47; --good-bg: #173a22; --good-fg: #8fd6a2;
+}
+body { background: var(--surface); color: var(--text-primary); padding: 28px 16px; }
+a { color: var(--accent); }
+.wrap { max-width: 1150px; margin: 0 auto; }
+.sub { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted) !important; }
+h2 { font-size: 1.25rem; margin: 32px 0 12px; }
+
+details.como { border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; margin: 12px 0 0; }
+details.como > summary { cursor: pointer; color: var(--text-secondary); }
+
+/* próximas */
+.proximas { display: flex; flex-direction: column; gap: 8px; }
+.prox { display: grid; grid-template-columns: 120px 120px 1fr auto; gap: 12px; align-items: center;
+        border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: inherit; }
+.prox:hover { border-color: var(--accent); background: var(--surface-2); }
+.prox .data { font-weight: 700; font-variant-numeric: tabular-nums; }
+.prox .quando { font-size: .82rem; color: var(--text-muted); }
+.prox .nome { font-weight: 600; }
+.prox.hoje { border-color: var(--accent); background: var(--accent-bg); }
+.etq { display: inline-block; font-size: .78rem; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); white-space: nowrap; }
+.etq.ok { background: var(--good-bg); color: var(--good-fg); }
+
+/* semana */
+.semana { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.dia { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 8px; min-height: 110px; }
+.dia.hoje { border-color: var(--accent); }
+.dia .nome-dia { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); margin-bottom: 6px; }
+.bloco { display: block; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+         border-radius: 6px; padding: 6px 8px; margin-bottom: 6px; font-size: .85rem; text-decoration: none; color: inherit; }
+.bloco:hover { border-color: var(--accent); }
+.bloco .h { color: var(--text-muted); font-size: .78rem; }
+
+/* cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+.rcard { border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; scroll-margin-top: 16px; }
+.rcard:target { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+.rcard h3 { font-size: 1.15rem; margin: 0; }
+.rcard .quando { color: var(--text-secondary); font-size: .9rem; }
+.rcard .rot { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chips .etq { font-size: .8rem; }
+.pauta { padding-left: 18px; margin: 0; font-size: .9rem; }
+.pauta li { margin-bottom: 6px; }
+.pauta li.resolvida { color: var(--text-muted); }
+.pauta .resp { color: var(--text-muted); }
+details.hist > summary { cursor: pointer; color: var(--text-secondary); font-size: .9rem; }
+details.hist .data-hist { font-weight: 600; font-size: .85rem; margin-top: 8px; }
+
+@media (max-width: 760px) {
+    .semana { grid-template-columns: 1fr; }
+    .dia { min-height: 0; }
+    .prox { grid-template-columns: 1fr; gap: 2px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<p><a href="index.html">← Planejamento</a></p>
+<h1>Reuniões técnicas</h1>
+<p class="sub mb-0">Atualizado em {{ data_hoje }}.</p>
+<details class="como">
+    <summary>Como funcionam as reuniões</summary>
+    <p class="mt-2 mb-1">As reuniões técnicas têm três momentos:</p>
+    <ol class="mb-1">
+        <li><strong>Formação (15 a 30 min):</strong> um membro da equipe apresenta um tutorial ou faz uma demonstração prática (lab), em rodízio.</li>
+        <li><strong>Problemas:</strong> discussão do que precisa ser resolvido (a pauta).</li>
+        <li><strong>Encaminhamentos:</strong> definição e distribuição das tarefas.</li>
+    </ol>
+    <p class="text-muted small mb-1">Para montar a pauta: <code>python3 bin/create_meeting.py</code> · para convocar por e-mail: <code>python3 bin/prepare_email_meeting.py</code></p>
+</details>
+
+<h2>Próximas reuniões</h2>
+<div class="proximas">
+{% for r in reunioes if r.proxima %}
+    <a class="prox {{ 'hoje' if r.dias_ate == 0 else '' }}" href="#{{ r.id }}">
+        <div><div class="data">{{ r.proxima_curta }}</div>
+             <div class="quando">{% if r.dias_ate == 0 %}hoje{% elif r.dias_ate == 1 %}amanhã{% else %}em {{ r.dias_ate }} dias{% endif %}</div></div>
+        <div>{{ r.horario }}</div>
+        <div><span class="nome">{{ r.titulo }}</span>{% if r.alternada and not r.agendada %} <span class="text-muted small">(semanas alternadas — confirmar)</span>{% endif %}</div>
+        <div>
+            {% if r.agendada %}
+            <span class="etq ok">pauta: {{ r.pautas|length }} item(ns)</span>
+            {% else %}
+            <span class="etq" title="Calculada pelo dia da semana; ainda sem pauta registrada">prevista · sem pauta</span>
+            {% endif %}
+        </div>
+    </a>
+{% endfor %}
+</div>
+
+<h2>Semana típica</h2>
+<div class="semana">
+{% for d in semana %}
+    <div class="dia {{ 'hoje' if d.hoje else '' }}">
+        <div class="nome-dia">{{ d.nome }}{% if d.hoje %} · hoje{% endif %}</div>
+        {% for r in d.reunioes %}
+        <a class="bloco" href="#{{ r.id }}"><strong>{{ r.titulo }}</strong><div class="h">{{ r.horario }}{% if r.alternada %} · alternada{% endif %}</div></a>
+        {% endfor %}
+    </div>
+{% endfor %}
+</div>
+
+<h2>Reuniões</h2>
+<div class="cards">
+{% for r in reunioes %}
+    <div class="rcard" id="{{ r.id }}">
+        <div>
+            <h3>{{ r.titulo }}</h3>
+            <div class="quando">{{ r.dia }} · {{ r.horario }}</div>
+        </div>
+
+        <div>
+            <div class="rot">Participantes ({{ r.participantes|length }})</div>
+            <div class="chips">{% for p in r.participantes %}<span class="etq" title="{{ p.nome }}">{{ p.curto }}</span>{% endfor %}</div>
+        </div>
+
+        {% if r.handson %}
+        <div><div class="rot">Hands-on</div><div class="small">{{ r.handson }}</div></div>
+        {% endif %}
+
+        <div>
+            <div class="rot">Próxima reunião{% if r.proxima_br %} · {{ r.proxima_br }}{% endif %}</div>
+            {% if r.agendada and r.pautas %}
+                {{ lista_pauta(r.pautas) }}
+            {% elif r.agendada %}
+                <p class="text-muted small mb-0">Agendada, sem pauta.</p>
+            {% else %}
+                <p class="text-muted small mb-0">Ainda sem pauta registrada.</p>
+            {% endif %}
+        </div>
+
+        {% if r.anteriores %}
+        <details class="hist">
+            <summary>Reuniões anteriores ({{ r.anteriores|length }})</summary>
+            {% for a in r.anteriores %}
+                <div class="data-hist">{{ a.data_br }}</div>
+                {% if a.pautas %}{{ lista_pauta(a.pautas) }}{% else %}<p class="text-muted small">Sem pauta.</p>{% endif %}
+            {% endfor %}
+        </details>
+        {% endif %}
+    </div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}

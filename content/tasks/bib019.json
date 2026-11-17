@@ -3,10 +3,8 @@
   "peso": 1,
   "titulo": "fflch/pragmatica-drupal-module",
   "responsaveis": [
-    "Augusto"
+    "Augusto César Freire Santiago"
   ],
-  "estagiarios": [
-    "Não Há"
-  ],
+  "estagiarios": [],
   "descricao": "Avaliar e colocar na produção Pull Requests desse módulo Drupal"
 }

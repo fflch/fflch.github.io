@@ -1,10 +1,22 @@
 {% for grupo in grupos_tarefas %}
-<h2 class="prefix-title" id="{{ grupo.prefix }}">{{ grupo.prefix }} <a href="#top" class="top-link">(voltar ao topo)</a></h2>
+<h2 class="prefix-title" id="{{ grupo.prefix }}">{{ grupo.prefix }}{% if grupo.significado %} <small class="text-muted fs-5">- {{ grupo.significado }}</small>{% endif %} <a href="#top" class="top-link">(voltar ao topo)</a></h2>
+
+<div class="mb-2">
+    <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle-group="{{ grupo.prefix }}" data-open="1">Expandir todas</button>
+    <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle-group="{{ grupo.prefix }}" data-open="0">Recolher todas</button>
+</div>
 
 {% for task in grupo.tasks %}
-<div class="card shadow-sm">
+<details class="card shadow-sm task-card" id="{{ task.codigo }}" data-group="{{ grupo.prefix }}">
+<summary class="card-header task-summary">
+    <span class="fw-bold">{{ task.codigo }}</span> | {{ task.titulo }}
+    {% if task.badge %} <span class="badge bg-danger">{{ task.badge }}</span>{% endif %}
+    <span class="task-meta text-muted">{{ task.responsaveis_str }}{% if task.estagiarios_str %} · {{ task.estagiarios_str }}{% endif %}</span>
+</summary>
 <div class="card-body">
-<h5 id="{{ task.codigo }}">{{ task.codigo }} | {{ task.titulo }}{% if task.tem_documentacao %} | <a href="documentation/{{ task.codigo }}.html" class="text-decoration-none fw-bold text-success" target="_blank">Documentação</a>{% endif %}{% if task.badge %} <span class="badge bg-danger">{{ task.badge }}</span>{% endif %}</h5>
+{% if task.tem_documentacao %}
+<p><a href="documentation/{{ task.codigo }}.html" class="text-decoration-none fw-bold text-success" target="_blank">📘 Documentação</a></p>
+{% endif %}
 
 <table class="table table-sm">
 <tr><th style="width:120px;">Peso</th><td>{{ task.peso }}</td></tr>
@@ -20,13 +32,18 @@
 <hr><strong>Pendências:</strong>
 {% for issue in task.pendencias %}
 <div class="issue-item">
-<strong>{{ issue.codigo }}</strong><br>
+<strong>{{ issue.codigo }}</strong>{% if issue.responsavel %} <span class="text-muted">· {{ issue.responsavel }}</span>{% endif %}<br>
 {{ issue.descricao_html | safe }}
+{% if issue.comentarios %}
+<ul class="comentarios">
+{% for c in issue.comentarios %}<li><span class="text-muted">💬 {{ c.data }}</span> {{ c.texto }}</li>{% endfor %}
+</ul>
+{% endif %}
 </div>
 {% endfor %}
 {% endif %}
 
-</div></div>
+</div>
+</details>
 {% endfor %}
 {% endfor %}
-

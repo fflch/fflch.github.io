@@ -3,10 +3,8 @@
   "peso": 1,
   "titulo": "fflch/wifi",
   "responsaveis": [
-    "Gilberto"
+    "Gilberto Vargas"
   ],
-  "estagiarios": [
-    "Não Há"
-  ],
+  "estagiarios": [],
   "descricao": "Sistema web para gerenciamento de acesso à rede Wi-Fi de visitantes da FFLCH-USP"
 }

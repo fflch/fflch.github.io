@@ -3,10 +3,13 @@
   "peso": 1,
   "titulo": "fflch/controleportarias",
   "responsaveis": [
-    "Ricardo"
+    "Ricardo Fontoura"
   ],
   "estagiarios": [
-    "Alan"
+    {
+      "nome": "Alan Neves Ribeiro",
+      "ativo": true
+    }
   ],
   "descricao": "Controle de entrada e saída de equipamentos nas portarias da fflch"
 }

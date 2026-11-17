@@ -3,10 +3,8 @@
   "peso": 1,
   "titulo": "uspdev/starter-ng",
   "responsaveis": [
-    "Thiago"
+    "Thiago Gomes Veríssimo"
   ],
-  "estagiarios": [
-    "Não Há"
-  ],
+  "estagiarios": [],
   "descricao": "Gerador de projetos laravel no padrão USPdev"
 }

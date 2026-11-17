@@ -2,8 +2,10 @@ import os
 import pandas as pd
 from graphviz import Digraph
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 def generate_topology():
-    csv_path = 'assets/camada2/camada2.csv'
+    csv_path = os.path.join(BASE_DIR, 'assets', 'camada2', 'camada2.csv')
 
     if not os.path.exists(csv_path):
         print(f"Aviso: Certifique-se de que o arquivo existe no caminho {csv_path}")
@@ -86,12 +88,12 @@ def generate_topology():
             # Caso não haja VLANs
             dot.edge('CORE', building_node_id, label="Sem VLANs dedicadas", color='#B0BEC5', fontcolor='#78909C')
 
-    output_filename = dot.render('docs/topologia', format='png', cleanup=True)
+    output_filename = dot.render(os.path.join(BASE_DIR, 'docs', 'topologia'), format='png', cleanup=True)
     print(f"Topologia gerada com sucesso: {output_filename}")
 
 def generate_html_table():
-    csv_path = 'assets/camada2/camada2.csv'
-    output_html_path = 'docs/vlans.html'
+    csv_path = os.path.join(BASE_DIR, 'assets', 'camada2', 'camada2.csv')
+    output_html_path = os.path.join(BASE_DIR, 'docs', 'vlans.html')
 
     if not os.path.exists(csv_path):
         print(f"Aviso: Certifique-se de que o arquivo existe no caminho {csv_path}")
@@ -153,6 +155,10 @@ def generate_html_table():
 
     print(f"Tabela HTML gerada com sucesso em: {output_html_path}")
     
-if __name__ == '__main__':
+def main():
     generate_topology()
     generate_html_table()
+
+
+if __name__ == '__main__':
+    main()

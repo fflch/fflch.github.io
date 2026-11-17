@@ -3,10 +3,13 @@
   "peso": 1,
   "titulo": "fflch/wordpress",
   "responsaveis": [
-    "Augusto"
+    "Augusto César Freire Santiago"
   ],
   "estagiarios": [
-    "Anderson"
+    {
+      "nome": "Anderson Lima dos Santos",
+      "ativo": true
+    }
   ],
   "descricao": "Instância Wordpress similar ao Drupal na FFLCH"
 }

@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Issues resolvidas - TI FFLCH{% endblock %}
+
+{% block extra_head %}
+<style>
+body { padding: 32px 16px; background: #fff; }
+.wrap { max-width: 1300px; margin: 0 auto; }
+.filtros { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 12px; }
+.filtros .form-control, .filtros .form-select { min-width: 160px; }
+table.res td, table.res th { font-size: .88rem; vertical-align: top; }
+table.res th { white-space: nowrap; cursor: pointer; user-select: none; }
+table.res th.asc::after { content: " ▲"; font-size: .7em; }
+table.res th.desc::after { content: " ▼"; font-size: .7em; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.data { white-space: nowrap; }
+@media print {
+    .no-print { display: none !important; }
+    body { padding: 0; }
+    table.res td, table.res th { font-size: .75rem; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<p class="no-print"><a href="index.html">← Voltar ao planejamento</a> · <a href="dashboard.html">Dashboard</a></p>
+<h1>Issues resolvidas</h1>
+<p class="text-muted">Relatório gerado em {{ data_hoje }}. Inclui issues de atividades já encerradas.</p>
+
+<div class="filtros no-print">
+    <div>
+        <label class="form-label small mb-0" for="f-texto">Buscar</label>
+        <input id="f-texto" class="form-control form-control-sm" type="search" placeholder="código, atividade, descrição...">
+    </div>
+    <div>
+        <label class="form-label small mb-0" for="f-pessoa">Responsável</label>
+        <select id="f-pessoa" class="form-select form-select-sm">
+            <option value="">Todos</option>
+            {% for p in pessoas %}<option>{{ p }}</option>{% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="form-label small mb-0" for="f-ano">Ano de fechamento</label>
+        <select id="f-ano" class="form-select form-select-sm">
+            <option value="">Todos</option>
+            {% for a in anos %}<option>{{ a }}</option>{% endfor %}
+            <option value="sem-data">Sem data</option>
+        </select>
+    </div>
+    <div>
+        <label class="form-label small mb-0" for="f-de">Fechada de</label>
+        <input id="f-de" class="form-control form-control-sm" type="date">
+    </div>
+    <div>
+        <label class="form-label small mb-0" for="f-ate">até</label>
+        <input id="f-ate" class="form-control form-control-sm" type="date">
+    </div>
+    <div class="ms-auto d-flex gap-2">
+        <button id="btn-csv" class="btn btn-sm btn-outline-primary" type="button">Exportar CSV</button>
+        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+</div>
+
+<p><strong id="contador">{{ issues|length }}</strong> issue(s) <span id="tempo-medio" class="text-muted"></span></p>
+
+<div class="table-responsive">
+<table class="table table-sm table-striped res" id="tabela">
+<thead>
+<tr>
+    <th data-sort="text">Issue</th>
+    <th data-sort="text">Atividade</th>
+    <th data-sort="text">Responsável</th>
+    <th>Descrição</th>
+    <th data-sort="date">Abertura</th>
+    <th data-sort="date">Fechamento</th>
+    <th data-sort="num">Dias</th>
+</tr>
+</thead>
+<tbody>
+{% for i in issues %}
+<tr data-pessoa="{{ i.responsavel or 'Não atribuído' }}"
+    data-fech="{{ i.fechamento.isoformat() if i.fechamento else '' }}"
+    data-dias="{{ i.dias if i.dias is not none else '' }}">
+    <td class="data">{{ i.codigo }}</td>
+    <td>{% if i.task_ativa %}<a href="index.html#{{ i.task_codigo }}">{{ i.task_codigo }}</a>{% else %}{{ i.task_codigo }}{% endif %} - {{ i.titulo_task }}</td>
+    <td>{{ i.responsavel or "Não atribuído" }}</td>
+    <td>{{ i.descricao }}</td>
+    <td class="data" data-v="{{ i.abertura.isoformat() if i.abertura else '' }}">{{ i.data }}</td>
+    <td class="data" data-v="{{ i.fechamento.isoformat() if i.fechamento else '' }}">{{ i.data_fechamento or "—" }}</td>
+    <td class="num" data-v="{{ i.dias if i.dias is not none else -1 }}">{{ i.dias if i.dias is not none else "—" }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function () {
+    var tabela = document.getElementById('tabela');
+    var linhas = Array.prototype.slice.call(tabela.tBodies[0].rows);
+    var fTexto = document.getElementById('f-texto');
+    var fPessoa = document.getElementById('f-pessoa');
+    var fAno = document.getElementById('f-ano');
+    var fDe = document.getElementById('f-de');
+    var fAte = document.getElementById('f-ate');
+
+    function visiveis() { return linhas.filter(function (r) { return r.style.display !== 'none'; }); }
+
+    function filtrar() {
+        var texto = fTexto.value.trim().toLowerCase();
+        linhas.forEach(function (r) {
+            var fech = r.dataset.fech;
+            var ok = (!texto || r.textContent.toLowerCase().indexOf(texto) !== -1)
+                && (!fPessoa.value || r.dataset.pessoa === fPessoa.value)
+                && (!fAno.value || (fAno.value === 'sem-data' ? !fech : fech.slice(0, 4) === fAno.value))
+                && (!fDe.value || (fech && fech >= fDe.value))
+                && (!fAte.value || (fech && fech <= fAte.value));
+            r.style.display = ok ? '' : 'none';
+        });
+        var vis = visiveis();
+        document.getElementById('contador').textContent = vis.length;
+        var dias = vis.map(function (r) { return r.dataset.dias; }).filter(function (d) { return d !== ''; }).map(Number);
+        document.getElementById('tempo-medio').textContent = dias.length
+            ? '· tempo médio de resolução: ' + (dias.reduce(function (a, b) { return a + b; }, 0) / dias.length).toFixed(1)
+              + ' dias (' + dias.length + ' com datas)'
+            : '';
+    }
+    [fTexto, fPessoa, fAno, fDe, fAte].forEach(function (el) { el.addEventListener('input', filtrar); });
+    filtrar();
+
+    // Ordenação
+    tabela.querySelectorAll('th[data-sort]').forEach(function (th) {
+        th.addEventListener('click', function () {
+            var idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+            var asc = !th.classList.contains('asc');
+            tabela.querySelectorAll('th').forEach(function (h) { h.classList.remove('asc', 'desc'); });
+            th.classList.add(asc ? 'asc' : 'desc');
+            var tipo = th.dataset.sort;
+            linhas.sort(function (a, b) {
+                var ca = a.cells[idx], cb = b.cells[idx], r;
+                if (tipo === 'num') r = parseFloat(ca.dataset.v) - parseFloat(cb.dataset.v);
+                else if (tipo === 'date') r = (ca.dataset.v || '').localeCompare(cb.dataset.v || '');
+                else r = ca.textContent.localeCompare(cb.textContent, 'pt');
+                return asc ? r : -r;
+            });
+            linhas.forEach(function (r) { tabela.tBodies[0].appendChild(r); });
+        });
+    });
+
+    // Exportação CSV (apenas linhas visíveis)
+    document.getElementById('btn-csv').addEventListener('click', function () {
+        function esc(v) { return '"' + String(v).replace(/"/g, '""').trim() + '"'; }
+        var cab = Array.prototype.map.call(tabela.tHead.rows[0].cells, function (c) { return esc(c.textContent); });
+        var corpo = visiveis().map(function (r) {
+            return Array.prototype.map.call(r.cells, function (c) { return esc(c.textContent.replace(/\s+/g, ' ')); }).join(',');
+        });
+        var blob = new Blob(['﻿' + [cab.join(',')].concat(corpo).join('\n')], { type: 'text/csv;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'issues-resolvidas.csv';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    });
+})();
+</script>
+{% endblock %}

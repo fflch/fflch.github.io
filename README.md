@@ -6,8 +6,29 @@ Figuras:
 
 Generate:
 
-    python3 estrutura.py
-    python3 generate_site.py
+    python3 generate_site.py   # também gera dio.png, topologia.png e vlans.html
+
+Gestão de tarefas e issues (`bin/`):
+
+    python3 bin/create_task.py     # nova atividade (pessoas escolhidas de content/pessoas.csv)
+    python3 bin/edit_task.py       # responsáveis/estagiários; marcar estagiário como inativo
+    python3 bin/create_issue.py    # nova issue (ajuda opcional do Claude na redação)
+    python3 bin/edit_issue.py      # editar descrição/responsável de uma issue
+    python3 bin/close_issue.py     # fechar issue (grava data_fechamento)
+    python3 bin/comment_issue.py [codigo]  # comentar numa issue (comentário sem autor, com data)
+    python3 bin/repos_sem_tarefa.py        # repos públicos (não arquivados) de fflch/uspdev sem tarefa
+    python3 bin/aplicar_mudancas.py mudancas.json  # aplica o arquivo "Baixar mudanças" de docs/acompanhamento.html
+
+Ao atribuir tarefa ou issue, os scripts perguntam se devem avisar a pessoa por
+e-mail (via `msmtp -a sti`, remetente fflchsti@usp.br).
+
+- `content/pessoas.csv`: cadastro de servidores e estagiários (nome completo, e-mail, vínculo).
+  A reunião TI usa todos os servidores ativos daqui como participantes.
+- Comentários de issue ficam no próprio JSON: `"comentarios": [{"data": "dd/mm/aaaa", "texto": "..."}]`.
+  Podem ser feitos pelo terminal (`comment_issue.py`) ou pelo 💬 da página de acompanhamento (vão no arquivo de mudanças).
+- Estagiários nas tarefas: `{"nome": "...", "ativo": true}`; com `"ativo": false` não aparecem no site.
+- `content/siglas.csv`: sigla, significado e área (código de `AREAS` em generate_site.py); o organograma interativo da home mostra só siglas com atividade ativa.
+- Páginas geradas: `docs/dashboard.html` (estatísticas por pessoa) e `docs/issues-resolvidas.html` (relatório).
 
 
 

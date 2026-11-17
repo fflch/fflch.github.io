@@ -2,13 +2,21 @@ import os
 import json
 import re
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 import shutil
 import csv
 from pathlib import Path
 import markdown
 import base64
+import unicodedata
 from jinja2 import Environment, FileSystemLoader
+
+from fflch_common import (
+    load_pessoas,
+    participantes_reuniao,
+    responsaveis_da_tarefa,
+    estagiarios_da_tarefa,
+)
 
 OUTPUT_DIR = "docs"
 TASKS_DIR = os.path.join("content", "tasks")
@@ -95,18 +103,6 @@ def carregar_logo_base64():
         with open(caminho_logo, "rb") as img_file:
             return "data:image/png;base64," + base64.b64encode(img_file.read()).decode('utf-8')
     return ""
-
-
-def extrai_participantes_csv(caminho_csv):
-    nomes = []
-    if not os.path.exists(caminho_csv):
-        return ""
-    with open(caminho_csv, mode='r', encoding='utf-8') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            if row:
-                nomes.append(row[0].strip())
-    return ", ".join(nomes)
 
 
 def extrair_titulo_md(conteudo_md, nome_arquivo_padrao):
@@ -457,224 +453,145 @@ def count_open_issues(task_codigo, issues):
     ])
 
 
-def buscar_proxima_reuniao_e_issues(tipo_reuniao, dicionario_siglas, tasks):
-    meetings_dir = MEETINGS_DIR
-    if not os.path.exists(meetings_dir):
-        return "Nenhuma reunião agendada", {"pautas": [], "erro": False}
+# ----------------------------------------------------------------------
+# Reuniões técnicas (página docs/reunioes.html)
+# ----------------------------------------------------------------------
+DIAS_SEMANA = ["segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo"]
+DIAS_CURTOS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"]
 
-    hoje = datetime.now().date()
-    reunioes_validas = []
 
-    for f in os.listdir(meetings_dir):
-        if f.startswith(f"{tipo_reuniao}-") and f.endswith(".json"):
-            data_str = f.replace(f"{tipo_reuniao}-", "").replace(".json", "")
-            try:
-                data_reuniao = datetime.strptime(data_str, "%Y-%m-%d").date()
-                if data_reuniao >= hoje:
-                    reunioes_validas.append((data_reuniao, f))
-            except ValueError:
-                pass
+def _dia_semana(texto):
+    """'Quartas-feiras' → 2 (segunda = 0); None se não reconhecer."""
+    t = (texto or "").lower()
+    for i, d in enumerate(DIAS_SEMANA):
+        if d in t or d.replace("ç", "c") in t:
+            return i
+    return None
 
-    if not reunioes_validas:
-        return "Nenhuma reunião agendada", {"pautas": [], "erro": False}
 
-    reunioes_validas.sort(key=lambda x: x[0])
-    data_proxima, arquivo_proxima = reunioes_validas[0]
-    data_formatada_br = data_proxima.strftime("%d/%m/%Y")
+def _hora_inicio(texto):
+    """'10h às 11h30' → (10, 0); '14h00 às 16h00' → (14, 0)."""
+    m = re.search(r"(\d{1,2})\s*h\s*(\d{2})?", texto or "")
+    return (int(m.group(1)), int(m.group(2) or 0)) if m else (0, 0)
 
+
+def _carregar_pauta(caminho, tasks_por_codigo):
+    with open(caminho, encoding="utf-8") as f:
+        dados = json.load(f)
     pautas = []
-    try:
-        with open(os.path.join(meetings_dir, arquivo_proxima), 'r', encoding='utf-8') as file:
-            dados_reuniao = json.load(file)
-            lista_issues = dados_reuniao.get("issues", [])
-            lista_extra = dados_reuniao.get("extra", [])
-
-            for iss_arq in lista_issues:
-                caminho_issue_real = os.path.join(ISSUES_DIR, iss_arq)
-                issue = {}
-                if os.path.exists(caminho_issue_real):
-                    try:
-                        with open(caminho_issue_real, encoding="utf-8") as f_issue:
-                            issue = json.load(f_issue)
-                    except:
-                        pass
-
-                task_codigo = iss_arq.split("-")[0]
-                task_mae = next((t for t in tasks if t["codigo"] == task_codigo), None)
-                titulo_task = task_mae.get("titulo", "N/A") if task_mae else "N/A"
-
-                pautas.append({
-                    "tipo": "issue",
-                    "titulo_task": titulo_task,
-                    "descricao": issue.get("descricao", ""),
-                    "responsavel": issue.get("responsavel", "Não atribuído")
-                })
-
-            for item_extra in lista_extra:
-                pautas.append({
-                    "tipo": "extra",
-                    "texto": item_extra
-                })
-
-        return data_formatada_br, {"pautas": pautas, "erro": False}
-    except:
-        return data_formatada_br, {"pautas": [], "erro": True}
+    for arq in dados.get("issues", []):
+        codigo = arq.replace(".json", "")
+        task_codigo = codigo.split("-")[0]
+        issue = {}
+        caminho_issue = os.path.join(ISSUES_DIR, arq)
+        if os.path.exists(caminho_issue):
+            with open(caminho_issue, encoding="utf-8") as f:
+                issue = json.load(f)
+        task = tasks_por_codigo.get(task_codigo, {})
+        pautas.append({
+            "tipo": "issue",
+            "codigo": codigo,
+            "task_codigo": task_codigo,
+            "titulo_task": task.get("titulo", ""),
+            "descricao": issue.get("descricao", ""),
+            "responsavel": issue.get("responsavel") or "sem responsável",
+            "resolvida": issue.get("status") is False,
+        })
+    for extra in dados.get("extra", []):
+        pautas.append({"tipo": "extra", "texto": extra})
+    return pautas
 
 
-def obter_dados_reunioes(siglas, tasks):
-    arquivos_json = [
-        'meeting-ti.json',
-        'meeting-drupal.json',
-        'meeting-camada1.json',
-        'meeting-camada2.json',
-        'meeting-laravel.json',
-    ]
+def nome_curto(nome):
+    """'Pedro Luis Borges de Souza Filho' → 'Pedro Souza Filho'; 'Mônica Colacique' → igual."""
+    partes = nome.split()
+    if len(partes) <= 2:
+        return nome
+    if partes[-1].lower() in ("filho", "júnior", "junior", "neto", "sobrinho") and len(partes) >= 3:
+        return f"{partes[0]} {partes[-2]} {partes[-1]}"
+    return f"{partes[0]} {partes[-1]}"
+
+
+def preparar_reunioes(all_tasks):
+    hoje = datetime.now().date()
+    tasks_por_codigo = all_tasks
     reunioes = []
 
-    for arquivo in arquivos_json:
-        caminho_json = f'content/{arquivo}'
-        if not os.path.exists(caminho_json):
+    for arquivo in sorted(os.listdir("content")):
+        if not (arquivo.startswith("meeting-") and arquivo.endswith(".json")):
             continue
+        tipo = arquivo[len("meeting-"):-len(".json")]
+        with open(os.path.join("content", arquivo), encoding="utf-8") as f:
+            cfg = json.load(f)
 
-        with open(caminho_json, 'r', encoding='utf-8') as f:
-            dados = json.load(f)
+        dia_txt, horario = cfg.get("Dia da semana", ""), cfg.get("horário", "")
+        dia_idx = _dia_semana(dia_txt)
+        hora = _hora_inicio(horario)
 
-        titulo = dados.get('título', '')
-        tipo_limpo = arquivo.replace('meeting-', '').replace('.json', '')
-        nome_base_csv = arquivo.replace('.json', '.csv')
-        string_participantes = extrai_participantes_csv(f'content/{nome_base_csv}')
+        # reuniões registradas (content/meetings/<tipo>-AAAA-MM-DD.json)
+        registradas = []
+        if os.path.isdir(MEETINGS_DIR):
+            for f in os.listdir(MEETINGS_DIR):
+                m = re.match(rf"^{re.escape(tipo)}-(\d{{4}}-\d{{2}}-\d{{2}})\.json$", f)
+                if m:
+                    data = datetime.strptime(m.group(1), "%Y-%m-%d").date()
+                    registradas.append((data, _carregar_pauta(os.path.join(MEETINGS_DIR, f), tasks_por_codigo)))
+        registradas.sort(key=lambda x: x[0])
+        futuras = [r for r in registradas if r[0] >= hoje]
+        anteriores = [r for r in registradas if r[0] < hoje][::-1]
 
-        data_reuniao_texto, pautas_dados = buscar_proxima_reuniao_e_issues(tipo_limpo, siglas, tasks)
-
-        reunioes.append({
-            'titulo': titulo,
-            'dia': dados.get('Dia da semana', ''),
-            'horario': dados.get('horário', ''),
-            'participantes': string_participantes,
-            'handson': dados.get('handons'),
-            'proxima_data': data_reuniao_texto,
-            'tem_pautas': bool(pautas_dados.get('pautas')),
-            'pautas': pautas_dados.get('pautas', []),
-            'erro_pautas': pautas_dados.get('erro', False)
-        })
-
-    return reunioes
-
-
-def obter_nomes_estagiarios(tasks):
-    estagiarios = set()
-    for task in tasks:
-        lista_est = task.get("estagiarios", [])
-        if isinstance(lista_est, str):
-            lista_est = [lista_est]
-        for est in lista_est:
-            if est and est != "Não Há":
-                estagiarios.add(est.strip())
-    return estagiarios
-
-
-def formatar_grupo_issues(grupos, tasks):
-    nomes = sorted(grupos.keys(), key=lambda x: (x == "Desativado", x.lower()))
-    resultado = []
-
-    for nome in nomes:
-        grupos[nome].sort(key=lambda x: (x[1].get("data") or "", x[1].get("codigo", "")))
-        issues_formatadas = []
-        for task_codigo, issue in grupos[nome]:
-            task = next((t for t in tasks if t["codigo"] == task_codigo), None)
-            titulo = task.get("titulo", "") if task else "N/A"
-            safe_id = re.sub(r"\s+", "_", nome.lower())
-            responsaveis = task.get("responsaveis") if task else []
-            responsaveis_tarefa = ", ".join(map(str, responsaveis))
-
-            issues_formatadas.append({
-                "task_codigo": task_codigo,
-                "titulo_task": titulo,
-                "responsaveis_tarefa": responsaveis_tarefa,
-                "codigo_issue": re.sub(r'^[a-zA-Z]+', '', issue["codigo"]),
-                "codigo_completo": issue["codigo"],
-                "responsavel": nome,
-                "safe_id": safe_id,
-                "descricao": issue.get("descricao", ""),
-                "data": issue.get("data", "")
-            })
-
-        resultado.append({
-            "nome": nome,
-            "safe_id": re.sub(r"\s+", "_", nome.lower()),
-            "total_issues": len(issues_formatadas),
-            "issues": issues_formatadas
-        })
-
-    return resultado
-
-
-def preparar_dados_issues(tasks, issues):
-    siglas = load_siglas()
-    nomes_estagiarios = obter_nomes_estagiarios(tasks)
-
-    grupos_func = defaultdict(list)
-    grupos_est = defaultdict(list)
-    nao_atribuidos = []
-
-    for issue in issues:
-        if issue.get("status") is not True:
-            continue
-
-        responsavel = issue.get("responsavel")
-        codigo = issue["codigo"]
-        task_codigo = codigo.split("-")[0]
-
-        if not responsavel or not str(responsavel).strip():
-            nao_atribuidos.append((task_codigo, issue))
-            continue
-
-        resp_str = str(responsavel).strip()
-        if resp_str in nomes_estagiarios:
-            grupos_est[resp_str].append((task_codigo, issue))
+        if futuras:
+            proxima, pautas, agendada = futuras[0][0], futuras[0][1], True
+        elif dia_idx is not None:
+            proxima = hoje + timedelta(days=(dia_idx - hoje.weekday()) % 7)
+            pautas, agendada = [], False
         else:
-            grupos_func[resp_str].append((task_codigo, issue))
+            proxima, pautas, agendada = None, [], False
 
-    issues_por_funcionario = formatar_grupo_issues(grupos_func, tasks)
-    issues_por_estagiario = formatar_grupo_issues(grupos_est, tasks)
+        participantes = [{"nome": nome, "curto": nome_curto(nome)} for nome, _ in participantes_reuniao(tipo)]
+        reunioes.append({
+            "tipo": tipo,
+            "id": f"r-{slug(tipo)}",
+            "titulo": cfg.get("título", tipo),
+            "dia": dia_txt,
+            "dia_idx": dia_idx,
+            "alternada": "altern" in dia_txt.lower(),
+            "horario": horario,
+            "hora": hora,
+            "participantes": participantes,
+            "handson": cfg.get("handons"),
+            "proxima": proxima,
+            "proxima_br": proxima.strftime("%d/%m/%Y") if proxima else "",
+            "proxima_curta": f"{DIAS_CURTOS[proxima.weekday()]} {proxima.strftime('%d/%m')}" if proxima else "",
+            "dias_ate": (proxima - hoje).days if proxima else None,
+            "agendada": agendada,
+            "pautas": pautas,
+            "anteriores": [{"data_br": d.strftime("%d/%m/%Y"), "pautas": p} for d, p in anteriores],
+        })
 
-    nao_atribuidos_formatados = []
-    if nao_atribuidos:
-        nao_atribuidos.sort(key=lambda x: (x[1].get("data") or "", x[1].get("codigo", "")))
-        for task_codigo, issue in nao_atribuidos:
-            task = next((t for t in tasks if t["codigo"] == task_codigo), None)
-            titulo = task.get("titulo", "") if task else "N/A"
-            responsaveis = task.get("responsaveis") if task else []
-            responsaveis_tarefa = ", ".join(map(str, responsaveis))
-            match_pref = re.match(r"([a-zA-Z]+)", task_codigo)
-            prefixo = match_pref.group(1) if match_pref else ""
+    reunioes.sort(key=lambda r: (r["proxima"] is None, r["proxima"] or hoje, r["hora"]))
 
-            nao_atribuidos_formatados.append({
-                "prefixo": prefixo,
-                "significado": siglas.get(prefixo, ""),
-                "task_codigo": task_codigo,
-                "titulo_task": titulo,
-                "responsaveis_tarefa": responsaveis_tarefa,
-                "codigo_issue": re.sub(r'^[a-zA-Z]+', '', issue["codigo"]),
-                "codigo_completo": issue["codigo"],
-                "descricao": issue.get("descricao", ""),
-                "data": issue.get("data", "")
-            })
+    # grade da semana (segunda a sexta)
+    semana = []
+    for i in range(5):
+        do_dia = sorted([r for r in reunioes if r["dia_idx"] == i], key=lambda r: r["hora"])
+        semana.append({"nome": DIAS_SEMANA[i].capitalize(), "reunioes": do_dia, "hoje": hoje.weekday() == i})
+    return reunioes, semana
 
-    return issues_por_funcionario, issues_por_estagiario, nao_atribuidos_formatados
+
+def gerar_pagina_reunioes(all_tasks):
+    reunioes, semana = preparar_reunioes(all_tasks)
+    html = jinja_env.get_template("reunioes.html").render(
+        reunioes=reunioes, semana=semana, data_hoje=datetime.now().strftime("%d/%m/%Y"))
+    with open(os.path.join(OUTPUT_DIR, "reunioes.html"), "w", encoding="utf-8") as f:
+        f.write(html)
 
 
 def preparar_responsavel_summary(tasks):
     responsaveis = defaultdict(list)
 
     for task in tasks:
-        lista_resp = task.get("responsaveis")
-        if not lista_resp:
-            antigo = task.get("responsavel")
-            lista_resp = [antigo] if antigo else ["Não definido"]
-
-        if isinstance(lista_resp, str):
-            lista_resp = [lista_resp]
+        lista_resp = responsaveis_da_tarefa(task) or ["Não definido"]
 
         for resp in lista_resp:
             responsaveis[resp].append(task)
@@ -709,13 +626,8 @@ def preparar_estagiario_summary(tasks):
     estagiarios = defaultdict(list)
 
     for task in tasks:
-        lista_est = task.get("estagiarios", [])
-        if isinstance(lista_est, str):
-            lista_est = [lista_est]
-
-        for est in lista_est:
-            if not est or est == "Não Há":
-                continue
+        # estagiários marcados como inativos na tarefa não aparecem no site
+        for est in estagiarios_da_tarefa(task):
             estagiarios[est].append(task)
 
     nomes = sorted(estagiarios.keys())
@@ -748,15 +660,6 @@ def preparar_grupos_tarefas(tasks, issues):
     groups = group_by_prefix(tasks)
     sorted_prefixes = sorted(groups.keys())
 
-    prefixos_menu = []
-    for prefix in sorted_prefixes:
-        significado = siglas.get(prefix, "")
-        label = f"{prefix} - {significado}" if significado else prefix
-        prefixos_menu.append({
-            "prefix": prefix,
-            "label": label
-        })
-
     grupos_tarefas = []
     for prefix in sorted_prefixes:
         tasks_ordenadas = sort_tasks(groups[prefix])
@@ -781,14 +684,15 @@ def preparar_grupos_tarefas(tasks, issues):
             pendencias_formatadas = [
                 {
                     "codigo": issue.get("codigo"),
-                    "descricao_html": latex_to_html(issue.get("descricao", ""))
+                    "descricao_html": latex_to_html(issue.get("descricao", "")),
+                    "responsavel": issue.get("responsavel") or "",
+                    "comentarios": issue.get("comentarios", []),
                 }
                 for issue in related
             ]
 
-            responsaveis_list = task.get("responsaveis", [task.get("responsavel", "")])
-            responsaveis_str = "; ".join(responsaveis_list)
-            estagiarios_str = "; ".join(task.get("estagiarios", []))
+            responsaveis_str = "; ".join(responsaveis_da_tarefa(task))
+            estagiarios_str = "; ".join(estagiarios_da_tarefa(task))
 
             tasks_formatadas.append({
                 "codigo": task["codigo"],
@@ -804,37 +708,467 @@ def preparar_grupos_tarefas(tasks, issues):
 
         grupos_tarefas.append({
             "prefix": prefix,
+            "significado": siglas.get(prefix, ""),
             "tasks": tasks_formatadas
         })
 
-    return prefixos_menu, grupos_tarefas
+    return grupos_tarefas
 
 
-def generate_html(tasks, issues, tutoriais, relatorios):
+# ----------------------------------------------------------------------
+# Dashboard e relatório de issues resolvidas
+# ----------------------------------------------------------------------
+NAO_PESSOAS = {"", "Vago", "Não definido", "Desativado"}
+MESES_PT = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"]
+
+
+def parse_data_br(valor):
+    try:
+        return datetime.strptime(str(valor).strip(), "%d/%m/%Y").date()
+    except (TypeError, ValueError):
+        return None
+
+
+def load_all_tasks():
+    """Todas as tarefas (ativas e inativas), por código."""
+    tasks = {}
+    if not os.path.exists(TASKS_DIR):
+        return tasks
+    for file in os.listdir(TASKS_DIR):
+        if file.endswith(".json"):
+            with open(os.path.join(TASKS_DIR, file), encoding="utf-8") as f:
+                data = json.load(f)
+            data["codigo"] = file.replace(".json", "")
+            tasks[data["codigo"]] = data
+    return tasks
+
+
+def load_all_issues(all_tasks):
+    """Todas as issues, enriquecidas com tarefa, datas e tempo de resolução."""
     siglas = load_siglas()
-    reunioes = obter_dados_reunioes(siglas, tasks)
-    issues_por_funcionario, issues_por_estagiario, issues_nao_atribuidas = preparar_dados_issues(tasks, issues)
+    issues = []
+    if not os.path.exists(ISSUES_DIR):
+        return issues
+    for file in sorted(os.listdir(ISSUES_DIR)):
+        if not file.endswith(".json"):
+            continue
+        with open(os.path.join(ISSUES_DIR, file), encoding="utf-8") as f:
+            data = json.load(f)
+        codigo = file.replace(".json", "")
+        task_codigo = codigo.split("-")[0]
+        task = all_tasks.get(task_codigo, {})
+        prefixo = re.match(r"([a-zA-Z]+)", task_codigo).group(1)
+        abertura = parse_data_br(data.get("data"))
+        fechamento = parse_data_br(data.get("data_fechamento"))
+        dias = (fechamento - abertura).days if abertura and fechamento else None
+        issues.append({
+            "codigo": codigo,
+            "task_codigo": task_codigo,
+            "task_ativa": task.get("status") is True,
+            "titulo_task": task.get("titulo", "N/A"),
+            "prefixo": prefixo,
+            "area": siglas.get(prefixo, ""),
+            "responsavel": (data.get("responsavel") or "").strip(),
+            "descricao": data.get("descricao", ""),
+            "aberta": data.get("status") is True,
+            "data": data.get("data", ""),
+            "data_fechamento": data.get("data_fechamento", ""),
+            "abertura": abertura,
+            "fechamento": fechamento,
+            "dias": dias,
+            "comentarios": data.get("comentarios", []),
+        })
+    return issues
+
+
+def _media(valores):
+    return round(sum(valores) / len(valores), 1) if valores else None
+
+
+def _mediana(valores):
+    if not valores:
+        return None
+    v = sorted(valores)
+    meio = len(v) // 2
+    return v[meio] if len(v) % 2 else round((v[meio - 1] + v[meio]) / 2, 1)
+
+
+def preparar_dashboard(tasks, all_issues):
+    hoje = datetime.now().date()
+    pessoas = load_pessoas()
+    abertas = [i for i in all_issues if i["aberta"] and i["task_ativa"]]
+    resolvidas = [i for i in all_issues if not i["aberta"]]
+    tempos = [i["dias"] for i in resolvidas if i["dias"] is not None]
+
+    # ---- por pessoa ----
+    stats = {}
+
+    def pessoa(nome):
+        if nome not in stats:
+            p = pessoas.get(nome, {})
+            stats[nome] = {
+                "nome": nome,
+                "vinculo": {"servidor": "Servidor(a)", "estagiario": "Estagiário(a)"}.get(p.get("vinculo"), "—"),
+                "atividades": 0, "peso": 0, "atividades_estagio": 0,
+                "abertas": 0, "resolvidas": 0, "tempos": [], "idades_abertas": [],
+            }
+        return stats[nome]
+
+    for nome, p in pessoas.items():
+        if p["ativo"]:
+            pessoa(nome)
+    for t in tasks:
+        for r in responsaveis_da_tarefa(t):
+            if r not in NAO_PESSOAS:
+                s = pessoa(r)
+                s["atividades"] += 1
+                s["peso"] += t.get("peso", 0) or 0
+        for e in estagiarios_da_tarefa(t):
+            pessoa(e)["atividades_estagio"] += 1
+    for i in abertas:
+        if i["responsavel"] not in NAO_PESSOAS:
+            s = pessoa(i["responsavel"])
+            s["abertas"] += 1
+            if i["abertura"]:
+                s["idades_abertas"].append((hoje - i["abertura"]).days)
+    for i in resolvidas:
+        if i["responsavel"] not in NAO_PESSOAS:
+            s = pessoa(i["responsavel"])
+            s["resolvidas"] += 1
+            if i["dias"] is not None:
+                s["tempos"].append(i["dias"])
+
+    max_issues = max([s["abertas"] + s["resolvidas"] for s in stats.values()] + [1])
+    por_pessoa = []
+    for s in stats.values():
+        total = s["abertas"] + s["resolvidas"]
+        por_pessoa.append({
+            **{k: v for k, v in s.items() if k not in ("tempos", "idades_abertas")},
+            "total_issues": total,
+            "taxa": round(100 * s["resolvidas"] / total) if total else None,
+            "tempo_medio": _media(s["tempos"]),
+            "tempo_mediano": _mediana(s["tempos"]),
+            "n_tempos": len(s["tempos"]),
+            "mais_antiga": max(s["idades_abertas"]) if s["idades_abertas"] else None,
+            "pct_abertas": round(100 * s["abertas"] / max_issues, 1),
+            "pct_resolvidas": round(100 * s["resolvidas"] / max_issues, 1),
+            "safe_id": re.sub(r"\s+", "_", s["nome"].lower()),
+        })
+    por_pessoa.sort(key=lambda x: (-x["abertas"], -x["atividades"], x["nome"]))
+
+    # ---- por mês (últimos 12) ----
+    meses = []
+    ano, mes = hoje.year, hoje.month
+    for _ in range(12):
+        meses.append((ano, mes))
+        ano, mes = (ano, mes - 1) if mes > 1 else (ano - 1, 12)
+    meses.reverse()
+    por_mes = []
+    for ano, mes in meses:
+        criadas = sum(1 for i in all_issues if i["abertura"] and (i["abertura"].year, i["abertura"].month) == (ano, mes))
+        fechadas = sum(1 for i in resolvidas if i["fechamento"] and (i["fechamento"].year, i["fechamento"].month) == (ano, mes))
+        por_mes.append({"rotulo": f"{MESES_PT[mes - 1]}/{str(ano)[2:]}", "criadas": criadas, "resolvidas": fechadas})
+    max_mes = max([max(m["criadas"], m["resolvidas"]) for m in por_mes] + [1])
+    for m in por_mes:
+        m["h_criadas"] = round(100 * m["criadas"] / max_mes, 1)
+        m["h_resolvidas"] = round(100 * m["resolvidas"] / max_mes, 1)
+
+    # ---- por área (sigla) ----
+    siglas = load_siglas()
+    areas = defaultdict(lambda: {"abertas": 0, "resolvidas": 0, "atividades": 0})
+    for t in tasks:
+        areas[re.match(r"([a-zA-Z]+)", t["codigo"]).group(1)]["atividades"] += 1
+    for i in abertas:
+        areas[i["prefixo"]]["abertas"] += 1
+    for i in resolvidas:
+        areas[i["prefixo"]]["resolvidas"] += 1
+    max_area = max([a["abertas"] + a["resolvidas"] for a in areas.values()] + [1])
+    por_area = sorted(
+        [{"prefixo": k, "significado": siglas.get(k, ""), **v,
+          "pct_abertas": round(100 * v["abertas"] / max_area, 1),
+          "pct_resolvidas": round(100 * v["resolvidas"] / max_area, 1)}
+         for k, v in areas.items() if v["atividades"] or v["abertas"] or v["resolvidas"]],
+        key=lambda a: (-(a["abertas"] + a["resolvidas"]), a["prefixo"]))
+
+    kpis = {
+        "atividades": len(tasks),
+        "abertas": len(abertas),
+        "nao_atribuidas": sum(1 for i in abertas if i["responsavel"] in NAO_PESSOAS),
+        "resolvidas": len(resolvidas),
+        "tempo_medio": _media(tempos),
+        "tempo_mediano": _mediana(tempos),
+        "n_tempos": len(tempos),
+        "resolvidas_30d": sum(1 for i in resolvidas if i["fechamento"] and (hoje - i["fechamento"]).days <= 30),
+    }
+    return {"kpis": kpis, "por_pessoa": por_pessoa, "por_mes": por_mes, "por_area": por_area}
+
+
+def preparar_resolvidas(all_issues):
+    resolvidas = [i for i in all_issues if not i["aberta"]]
+    resolvidas.sort(key=lambda i: (i["fechamento"] is None, -(i["fechamento"].toordinal() if i["fechamento"] else 0), i["codigo"]))
+    anos = sorted({i["fechamento"].year for i in resolvidas if i["fechamento"]}, reverse=True)
+    pessoas = sorted({i["responsavel"] or "Não atribuído" for i in resolvidas})
+    return resolvidas, anos, pessoas
+
+
+def gerar_paginas_dashboard(tasks, all_issues):
+    data_hoje = datetime.now().strftime("%d/%m/%Y")
+
+    dados = preparar_dashboard(tasks, all_issues)
+    html = jinja_env.get_template("dashboard.html").render(data_hoje=data_hoje, **dados)
+    with open(os.path.join(OUTPUT_DIR, "dashboard.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+
+    resolvidas, anos, pessoas = preparar_resolvidas(all_issues)
+    html = jinja_env.get_template("resolvidas.html").render(
+        data_hoje=data_hoje, issues=resolvidas, anos=anos, pessoas=pessoas)
+    with open(os.path.join(OUTPUT_DIR, "issues-resolvidas.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+
+
+# ----------------------------------------------------------------------
+# Acompanhamento (conversas 1:1 do gestor)
+# ----------------------------------------------------------------------
+FAIXAS_IDADE = [
+    # (chave, rótulo, limite superior em dias)
+    ("recente", "≤ 30 dias", 30),
+    ("andamento", "31–90 dias", 90),
+    ("atencao", "91–180 dias", 180),
+    ("parada", "> 180 dias", None),
+]
+
+
+def slug(texto):
+    sem_acento = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", "-", sem_acento.lower()).strip("-")
+
+
+def faixa_idade(dias):
+    if dias is None:
+        return "sem_data"
+    for chave, _, limite in FAIXAS_IDADE:
+        if limite is None or dias <= limite:
+            return chave
+    return "parada"
+
+
+def preparar_acompanhamento(tasks, all_issues):
+    """
+    Dados da página de acompanhamento. A página é renderizada no navegador (JS) a partir
+    deste JSON, para que as mudanças feitas na reunião apareçam na hora.
+    """
+    hoje = datetime.now().date()
+    pessoas = load_pessoas()
+
+    abertas = [i for i in all_issues if i["aberta"] and i["task_ativa"]]
+    resolvidas = [i for i in all_issues if not i["aberta"]]
+    for i in abertas:
+        i["idade"] = (hoje - i["abertura"]).days if i["abertura"] else None
+        i["faixa"] = faixa_idade(i["idade"])
+
+    atividades = defaultdict(list)
+    for t in tasks:
+        resp = responsaveis_da_tarefa(t)
+        for r in resp:
+            if r not in NAO_PESSOAS:
+                atividades[r].append({"codigo": t["codigo"], "titulo": t.get("titulo", ""),
+                                      "peso": t.get("peso", 0) or 0, "unico": len(resp) == 1,
+                                      "papel": "responsável"})
+        for e in estagiarios_da_tarefa(t):
+            atividades[e].append({"codigo": t["codigo"], "titulo": t.get("titulo", ""),
+                                  "peso": t.get("peso", 0) or 0, "unico": False,
+                                  "papel": "estagiário(a)"})
+
+    nomes = [n for n, p in pessoas.items() if p["ativo"]]
+    for n in list(atividades) + [i["responsavel"] for i in abertas]:
+        if n not in NAO_PESSOAS and n not in nomes:
+            nomes.append(n)
+
+    lista_pessoas = []
+    for nome in nomes:
+        p = pessoas.get(nome, {})
+        ativs = sorted(atividades.get(nome, []), key=lambda a: a["codigo"])
+        res90 = sorted(
+            [i for i in resolvidas if i["responsavel"] == nome and i["fechamento"]
+             and (hoje - i["fechamento"]).days <= 90],
+            key=lambda i: i["fechamento"], reverse=True)
+        lista_pessoas.append({
+            "nome": nome,
+            "id": slug(nome),
+            "vinculo": p.get("vinculo", ""),
+            "local": p.get("local", ""),
+            "peso": sum(a["peso"] for a in ativs if a["papel"] == "responsável"),
+            "unicas": sum(1 for a in ativs if a["unico"]),
+            "resolvidas_total": sum(1 for i in resolvidas if i["responsavel"] == nome),
+            "atividades": ativs,
+            "resolvidas90": [{"codigo": i["codigo"], "descricao": i["descricao"],
+                              "data_fechamento": i["data_fechamento"], "dias": i["dias"]} for i in res90],
+        })
+    lista_pessoas.sort(key=lambda x: x["nome"])
+
+    pesos = [x["peso"] for x in lista_pessoas if x["vinculo"] == "servidor" and x["peso"]]
+    media_peso = (sum(pesos) / len(pesos)) if pesos else 0
+
+    # maior número de issue já usado em cada tarefa (abertas e fechadas), para prever códigos novos
+    ultimo = {}
+    for i in all_issues:
+        tarefa, _, num = i["codigo"].rpartition("-")
+        if num.isdigit():
+            ultimo[tarefa] = max(ultimo.get(tarefa, 0), int(num))
+
+    dados = {
+        "hoje": hoje.isoformat(),
+        "ultimo": ultimo,
+        "media_peso": round(media_peso, 1),
+        "pessoas": lista_pessoas,
+        "tarefas": [{"codigo": t["codigo"], "titulo": t.get("titulo", ""),
+                     "pessoas": [n for n in responsaveis_da_tarefa(t) + estagiarios_da_tarefa(t)
+                                 if n not in NAO_PESSOAS]}
+                    for t in sorted(tasks, key=lambda t: t["codigo"])],
+        "issues": [{"codigo": i["codigo"], "tarefa": i["task_codigo"], "descricao": i["descricao"],
+                    "responsavel": "" if i["responsavel"] in NAO_PESSOAS else i["responsavel"],
+                    "data": i["data"], "idade": i["idade"], "comentarios": i["comentarios"]}
+                   for i in sorted(abertas, key=lambda i: i["codigo"])],
+    }
+
+    # resumo para o cartão da home
+    resumo_faixas = [{"chave": c, "rotulo": r, "total": sum(1 for i in abertas if i["faixa"] == c)}
+                     for c, r, _ in FAIXAS_IDADE]
+    return {
+        "dados": dados,
+        "total_abertas": len(abertas),
+        "resumo_faixas": resumo_faixas,
+        "nao_atribuidas": [i for i in abertas if i["responsavel"] in NAO_PESSOAS],
+    }
+
+
+def gerar_pagina_acompanhamento(tasks, all_issues):
+    acomp = preparar_acompanhamento(tasks, all_issues)
+    dados_json = json.dumps(acomp["dados"], ensure_ascii=False).replace("</", "<\\/")
+    html = jinja_env.get_template("acompanhamento.html").render(
+        data_hoje=datetime.now().strftime("%d/%m/%Y"), dados_json=dados_json)
+    with open(os.path.join(OUTPUT_DIR, "acompanhamento.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+    return acomp
+
+
+def _modulo_script(nome):
+    """Importa um módulo de scripts/ (ex: dio, topologia)."""
+    import importlib
+    import sys
+    pasta = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts")
+    if pasta not in sys.path:
+        sys.path.insert(0, pasta)
+    return importlib.import_module(nome)
+
+
+def texto_puro(descricao, limite=420):
+    """Descrição (LaTeX simplificado) → texto curto, para o tooltip do organograma."""
+    html = latex_to_html(descricao or "")
+    texto = re.sub(r"<li>", " • ", html)
+    texto = re.sub(r"<[^>]+>", " ", texto)
+    texto = re.sub(r"\\[a-zA-Z]+(\{[^}]*\})?", " ", texto)
+    texto = re.sub(r"\s+", " ", texto).strip()
+    return texto if len(texto) <= limite else texto[: limite - 1].rstrip() + "…"
+
+
+# Áreas do organograma (código usado na coluna "area" de content/siglas.csv): nome e cor.
+AREAS = {
+    "DE": ("Desenvolvimento", "lightpink"),
+    "SE": ("Servidores", "honeydew"),
+    "SU": ("Suporte", "lightblue"),
+    "RE": ("Rede", "lavender"),
+    "SI": ("Sites", "lightgray"),
+    "AS": ("Administração de Sistemas", "#eedd82"),
+    "GE": ("Gestão", "lightcoral"),
+    "CC": ("Computação Científica", "aliceblue"),
+    "PU": ("Projetos USP", "beige"),
+}
+
+
+def preparar_organograma(tasks, issues):
+    """Árvore TI FFLCH → áreas → siglas → tarefas, para o organograma interativo da home."""
+    areas = AREAS
+    siglas_area = {}
+    path = os.path.join("content", "siglas.csv")
+    with open(path, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            siglas_area[row["sigla"]] = (row.get("area", ""), row["significado"])
+
+    abertas = defaultdict(int)
+    for i in issues:
+        if i.get("status") is True:
+            abertas[i["codigo"].split("-")[0]] += 1
+
+    groups = group_by_prefix(tasks)
+    filhos_area = defaultdict(list)
+    for prefix in sorted(groups):
+        area, significado = siglas_area.get(prefix, ("", ""))
+        tarefas = []
+        for t in sort_tasks(groups[prefix]):
+            descricao = t.get("descricao", "")
+            if descricao.endswith(".tex"):
+                path_tex = os.path.join(TASKS_DIR, f"{t['codigo']}.tex")
+                descricao = Path(path_tex).read_text(encoding="utf-8") if os.path.exists(path_tex) else ""
+            tarefas.append({
+                "tipo": "tarefa",
+                "nome": t["codigo"],
+                "titulo": t.get("titulo", ""),
+                "responsaveis": responsaveis_da_tarefa(t),
+                "estagiarios": estagiarios_da_tarefa(t),
+                "peso": t.get("peso", ""),
+                "pendencias": abertas.get(t["codigo"], 0),
+                "descricao": texto_puro(descricao),
+                "documentacao": os.path.exists(os.path.join("content", "documentation", f"{t['codigo']}.md")),
+            })
+        filhos_area[area].append({
+            "tipo": "sigla", "nome": prefix, "titulo": significado,
+            "pendencias": sum(x["pendencias"] for x in tarefas), "children": tarefas,
+        })
+
+    raiz = {"tipo": "raiz", "nome": "TI FFLCH", "children": []}
+    for codigo, (nome, cor) in areas.items():
+        if filhos_area.get(codigo):
+            raiz["children"].append({"tipo": "area", "nome": nome, "codigo": codigo, "cor": cor,
+                                     "children": filhos_area[codigo]})
+    sem_area = [x for k, v in filhos_area.items() if k not in areas for x in v]
+    if sem_area:
+        raiz["children"].append({"tipo": "area", "nome": "Outros", "codigo": "", "cor": "lightyellow",
+                                 "children": sem_area})
+    return json.dumps(raiz, ensure_ascii=False).replace("</", "<\\/")
+
+
+def generate_html(tasks, issues, tutoriais, relatorios, acomp):
+    siglas = load_siglas()
     responsaveis_summary = preparar_responsavel_summary(tasks)
     estagiarios_summary = preparar_estagiario_summary(tasks)
-    prefixos_menu, grupos_tarefas = preparar_grupos_tarefas(tasks, issues)
+    grupos_tarefas = preparar_grupos_tarefas(tasks, issues)
 
     template = jinja_env.get_template("index.html")
     return template.render(
-        reunioes=reunioes,
         tutoriais=tutoriais,
         relatorios=relatorios,
-        issues_por_funcionario=issues_por_funcionario,
-        issues_por_estagiario=issues_por_estagiario,
-        issues_nao_atribuidas=issues_nao_atribuidas,
+        acomp=acomp,
         responsaveis_summary=responsaveis_summary,
         estagiarios_summary=estagiarios_summary,
-        prefixos_menu=prefixos_menu,
-        grupos_tarefas=grupos_tarefas
+        grupos_tarefas=grupos_tarefas,
+        organograma_json=preparar_organograma(tasks, issues),
     )
+
+
+def gerar_figuras():
+    """
+    Figuras e tabelas derivadas dos dados (antes ficavam em passos separados do deploy):
+    - scripts/dio.py       → docs/files/dio.png
+    - scripts/topologia.py → docs/topologia.png e docs/vlans.html (incluído na documentação rat002)
+    """
+    for nome in ("dio", "topologia"):
+        _modulo_script(nome).main()
 
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
+    gerar_figuras()
 
     processar_paginas()
     copy_assets()
@@ -844,7 +1178,13 @@ def main():
     relatorios = processar_relatorios()
     tutoriais = processar_tutoriais()
 
-    html = generate_html(tasks, issues, tutoriais, relatorios)
+    all_tasks = load_all_tasks()
+    all_issues = load_all_issues(all_tasks)
+    gerar_pagina_reunioes(all_tasks)
+    gerar_paginas_dashboard(tasks, all_issues)
+    acomp = gerar_pagina_acompanhamento(tasks, all_issues)
+
+    html = generate_html(tasks, issues, tutoriais, relatorios, acomp)
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)

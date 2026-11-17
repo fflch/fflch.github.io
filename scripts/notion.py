@@ -56,7 +56,11 @@ def build_description_rich_text(data, task_id):
   """Monta a lista de objetos rich_text do Notion, aplicando link clicável na URL."""
   desc_clean = clean_latex_text(data.get("descricao", ""))
   responsaveis = ", ".join(data.get("responsaveis", []))
-  estagiarios = ", ".join(data.get("estagiarios", []))
+  estagiarios = ", ".join(
+    e.get("nome", "") if isinstance(e, dict) else e
+    for e in data.get("estagiarios", [])
+    if (e.get("ativo", True) if isinstance(e, dict) else e != "Não Há")
+  )
 
   parts = [desc_clean]
 

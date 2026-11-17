@@ -1,15 +1,13 @@
 {
   "peso": 3,
   "titulo": "Camada 2",
-  "estagiarios": [
-    "Não Há"
-  ],
+  "estagiarios": [],
   "descricao": "rat003.tex",
   "responsaveis": [
-    "Ricardo",
-    "Felipe",
-    "Wellington",
-    "Augusto"
+    "Ricardo Fontoura",
+    "Felipe dos Santos Ribeiro",
+    "Wellington da Silva Moura",
+    "Augusto César Freire Santiago"
   ],
   "status": true
 }

@@ -1,0 +1,12 @@
+{
+  "status": true,
+  "descricao": "Dashboard para computadores auxiliar na compras de equipamento",
+  "data": "16/11/2026",
+  "responsavel": "Thiago Gomes Veríssimo",
+  "comentarios": [
+    {
+      "data": "16/11/2026",
+      "texto": "Faltam: arquivos replicado dos desktop (só peguei laptop)"
+    }
+  ]
+}

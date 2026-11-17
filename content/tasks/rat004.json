@@ -1,13 +1,11 @@
 {
   "peso": 3,
   "titulo": "Camada 3/4",
-  "estagiarios": [
-    "Não Há"
-  ],
+  "estagiarios": [],
   "descricao": "rat004.tex",
   "responsaveis": [
-    "Ricardo",
-    "Augusto"
+    "Ricardo Fontoura",
+    "Augusto César Freire Santiago"
   ],
   "status": true
 }
