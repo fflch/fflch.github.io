@@ -1,0 +1,17 @@
+{
+  "tipo": "mudancas-acompanhamento",
+  "versao": 1,
+  "gerado_em": "2026-11-21T21:41:15.529Z",
+  "mudancas": [
+    {
+      "issue": null,
+      "nova": true,
+      "depois": {
+        "tarefa": "rat003",
+        "descricao": "Configuração do NAT no firewall FortGate. Demostração na reunião.",
+        "responsavel": "Wellington da Silva Moura"
+      },
+      "em": "2026-11-21"
+    }
+  ]
+}
