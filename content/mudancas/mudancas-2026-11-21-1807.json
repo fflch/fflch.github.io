@@ -1,0 +1,19 @@
+{
+  "tipo": "mudancas-acompanhamento",
+  "versao": 1,
+  "gerado_em": "2026-11-21T21:07:32.843Z",
+  "mudancas": [
+    {
+      "issue": "mod003-1",
+      "antes": {
+        "responsavel": "Mônica Colacique",
+        "descricao": "Criar opção para pessoas de fora da FFLCH se inscreverem no boletim.",
+        "tarefa": "mod003"
+      },
+      "depois": {
+        "descricao": "Criar opção para pessoas de fora da FFLCH se inscreverem no boletim. Porém temos que jogar o email na lista do mailmain, por questão dos limites de envio do google"
+      },
+      "em": "2026-11-21"
+    }
+  ]
+}

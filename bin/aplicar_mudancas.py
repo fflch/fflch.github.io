@@ -2,7 +2,12 @@
 Aplica no repositório as mudanças feitas na página de acompanhamento
 (docs/acompanhamento.html → botão "Baixar mudanças").
 
-    python3 bin/aplicar_mudancas.py ~/Downloads/mudancas-2026-11-16-1530.json
+    python3 bin/aplicar_mudancas.py            # aplica os arquivos pendentes de content/mudancas/
+    python3 bin/aplicar_mudancas.py arquivo.json   # copia o arquivo para content/mudancas/ e aplica os pendentes
+
+Os arquivos baixados ficam versionados em content/mudancas/ e o controle do que já foi
+aplicado (e quando) fica em content/mudancas/aplicadas.json, também versionado. Se houver
+mudancas-*.json em ~/Downloads, o script oferece movê-los para a pasta antes.
 
 Para cada issue do arquivo, pode haver uma ou mais destas mudanças:
 - responsavel : atribui a outra pessoa ("" = sem responsável)
@@ -21,6 +26,8 @@ import os
 import re
 import sys
 import json
+import shutil
+import glob
 from collections import defaultdict
 from datetime import datetime
 
@@ -34,6 +41,9 @@ from fflch_common import (  # noqa: E402
 ISSUES_DIR = os.path.join(BASE_DIR, "content", "issues")
 TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
 MEETINGS_DIR = os.path.join(BASE_DIR, "content", "meetings")
+MUDANCAS_DIR = os.path.join(BASE_DIR, "content", "mudancas")
+CONTROLE = os.path.join(MUDANCAS_DIR, "aplicadas.json")
+DOWNLOADS = os.path.expanduser("~/Downloads")
 
 
 def carregar(caminho):
@@ -86,15 +96,12 @@ def atualizar_reunioes(antigo, novo):
             salvar(caminho, dados)
 
 
-def main():
-    if len(sys.argv) != 2:
-        print(__doc__)
-        sys.exit(1)
-
-    arquivo = carregar(sys.argv[1])
+def aplicar_arquivo(caminho_arquivo):
+    """Aplica um arquivo de mudanças. Retorna "aplicado", "nada", "recusado" ou "invalido"."""
+    arquivo = carregar(caminho_arquivo)
     if arquivo.get("tipo") != "mudancas-acompanhamento":
         print("⚠ Este arquivo não parece ter sido baixado da página de acompanhamento.")
-        sys.exit(1)
+        return "invalido"
 
     pessoas = load_pessoas()
     tarefas_existentes = {f[:-5] for f in os.listdir(TASKS_DIR) if f.endswith(".json")}
@@ -144,8 +151,8 @@ def main():
             plano.append((cod, caminho, issue, depois, m.get("em")))
 
     if not plano and not novas:
-        print("\nNada a aplicar.")
-        return
+        print("\nNada a aplicar (mudanças já presentes no repositório).")
+        return "nada"
 
     # códigos novos para issues que mudam de tarefa e para as issues novas
     reservados = []
@@ -186,7 +193,7 @@ def main():
 
     if not perguntar_sim_nao("\nAplicar todas?", padrao=True):
         print("Nada foi alterado.")
-        return
+        return "recusado"
 
     atribuicoes = defaultdict(list)  # nome -> [(codigo_final, task, descricao, data)]
     comentados = defaultdict(list)   # nome -> [(codigo, task, titulo, descricao, [textos])]
@@ -264,8 +271,91 @@ def main():
             assunto, corpo = aviso_comentarios(nome, comentados[nome])
             enviar_email([(nome, email_de(nome, pessoas))], assunto, corpo)
 
-    print("\nPronto. Regenere o site (python3 generate_site.py) e faça commit/push.")
-    print("Ao reabrir a página, o navegador remove sozinho as mudanças já aplicadas.")
+    return "aplicado"
+
+
+# ----------------------------------------------------------------------
+# Pasta de mudanças e controle do que já foi aplicado
+# ----------------------------------------------------------------------
+def carregar_controle():
+    return carregar(CONTROLE) if os.path.exists(CONTROLE) else {}
+
+
+def trazer_para_pasta(origem):
+    destino = os.path.join(MUDANCAS_DIR, os.path.basename(origem))
+    if os.path.abspath(origem) == os.path.abspath(destino):
+        return
+    if os.path.exists(destino):
+        print(f"ℹ {os.path.basename(origem)} já está em content/mudancas/.")
+        return
+    shutil.copy2(origem, destino)
+    print(f"✔ {os.path.basename(origem)} copiado para content/mudancas/")
+
+
+def oferecer_downloads(controle):
+    if not os.path.isdir(DOWNLOADS):
+        return
+    achados = sorted(f for f in glob.glob(os.path.join(DOWNLOADS, "mudancas-*.json"))
+                     if not os.path.exists(os.path.join(MUDANCAS_DIR, os.path.basename(f)))
+                     and os.path.basename(f) not in controle)
+    if not achados:
+        return
+    print(f"Encontrei {len(achados)} arquivo(s) de mudanças em ~/Downloads:")
+    for f in achados:
+        print(f"  {os.path.basename(f)}")
+    if perguntar_sim_nao("Mover para content/mudancas/?", padrao=True):
+        for f in achados:
+            shutil.move(f, os.path.join(MUDANCAS_DIR, os.path.basename(f)))
+        print("✔ Movidos.")
+
+
+def ordem_arquivo(caminho):
+    try:
+        return (carregar(caminho).get("gerado_em") or "", os.path.basename(caminho))
+    except (OSError, ValueError):
+        return ("", os.path.basename(caminho))
+
+
+def main():
+    os.makedirs(MUDANCAS_DIR, exist_ok=True)
+    controle = carregar_controle()
+
+    for origem in sys.argv[1:]:
+        if not os.path.exists(origem):
+            sys.exit(f"⚠ {origem} não existe.")
+        trazer_para_pasta(origem)
+    oferecer_downloads(controle)
+
+    pendentes = sorted((f for f in glob.glob(os.path.join(MUDANCAS_DIR, "*.json"))
+                        if os.path.basename(f) != os.path.basename(CONTROLE)
+                        and os.path.basename(f) not in controle), key=ordem_arquivo)
+    if not pendentes:
+        print("Nenhum arquivo de mudanças pendente em content/mudancas/.")
+        return
+
+    print(f"\n{len(pendentes)} arquivo(s) pendente(s): " + ", ".join(os.path.basename(f) for f in pendentes))
+    aplicou_algo = False
+    for caminho in pendentes:
+        nome = os.path.basename(caminho)
+        print("\n" + "=" * 70 + f"\n{nome}\n" + "=" * 70)
+        status = aplicar_arquivo(caminho)
+        if status == "recusado":
+            if perguntar_sim_nao(f"Descartar {nome} (marcar como tratado sem aplicar)?"):
+                status = "descartado"
+            else:
+                print(f"{nome} continua pendente.")
+                continue
+        if status == "invalido":
+            print(f"{nome} continua pendente (remova-o da pasta se não for um arquivo de mudanças).")
+            continue
+        controle[nome] = {"aplicado_em": datetime.now().strftime("%d/%m/%Y %H:%M"), "resultado": status}
+        salvar(CONTROLE, dict(sorted(controle.items())))
+        aplicou_algo = aplicou_algo or status == "aplicado"
+
+    if aplicou_algo:
+        print("\nPronto. Regenere o site (python3 generate_site.py) e faça commit/push"
+              " (inclua content/mudancas/).")
+        print("Ao reabrir a página, o navegador remove sozinho as mudanças já aplicadas.")
 
 
 if __name__ == "__main__":

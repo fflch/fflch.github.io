@@ -7,79 +7,123 @@
 :root {
     --surface: #fcfcfb;
     --surface-2: #f2f2f0;
+    --surface-3: #f7f7f5;
     --border: #deddd8;
     --text-primary: #0b0b0b;
     --text-secondary: #52514e;
     --text-muted: #7a7974;
-    --grid: #e6e5e1;
+    --grid: #ebeae6;
     --accent: #2a78d6;
-    --ok-bg: #e3f0e6;  --ok-fg: #1f6b35;
-    --warn-bg: #fbeee2; --warn-fg: #9a4a12;
+    --accent-bg: #e6f0fb;
+    --ok-bg: #e3f0e6;  --ok-fg: #1f6b35;  --ok-dot: #2f9e55;
+    --warn-bg: #fbeee2; --warn-fg: #9a4a12; --warn-dot: #e0a020;
+    --bad-dot: #d9534f;
     --gray-bg: #ecebe8; --gray-fg: #5d5c58;
     --priv-bg: #ece6f7; --priv-fg: #5b3d99;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04);
 }
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-        --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
-        --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f; --grid: #2e2e2c;
-        --accent: #3987e5;
-        --ok-bg: #1e3326; --ok-fg: #8fd1a2;
-        --warn-bg: #3a2a1c; --warn-fg: #f0b07c;
+        --surface: #1a1a19; --surface-2: #242423; --surface-3: #1f1f1e; --border: #3a3a38;
+        --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f; --grid: #2c2c2a;
+        --accent: #5a9cec; --accent-bg: #1f2d3f;
+        --ok-bg: #1e3326; --ok-fg: #8fd1a2; --ok-dot: #4cc271;
+        --warn-bg: #3a2a1c; --warn-fg: #f0b07c; --warn-dot: #e8b440;
+        --bad-dot: #e5675f;
         --gray-bg: #2c2c2a; --gray-fg: #b5b4ab;
         --priv-bg: #2e2840; --priv-fg: #c2b0ec;
+        --shadow: none;
     }
 }
 :root[data-theme="dark"] {
-    --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
-    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f; --grid: #2e2e2c;
-    --accent: #3987e5;
-    --ok-bg: #1e3326; --ok-fg: #8fd1a2;
-    --warn-bg: #3a2a1c; --warn-fg: #f0b07c;
+    --surface: #1a1a19; --surface-2: #242423; --surface-3: #1f1f1e; --border: #3a3a38;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f; --grid: #2c2c2a;
+    --accent: #5a9cec; --accent-bg: #1f2d3f;
+    --ok-bg: #1e3326; --ok-fg: #8fd1a2; --ok-dot: #4cc271;
+    --warn-bg: #3a2a1c; --warn-fg: #f0b07c; --warn-dot: #e8b440;
+    --bad-dot: #e5675f;
     --gray-bg: #2c2c2a; --gray-fg: #b5b4ab;
     --priv-bg: #2e2840; --priv-fg: #c2b0ec;
+    --shadow: none;
 }
 body { background: var(--surface); color: var(--text-primary); padding: 32px 16px; }
 .wrap { max-width: 1400px; margin: 0 auto; }
-a { color: var(--accent); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
 h1 { font-size: 1.8rem; }
-.sub { color: var(--text-secondary); font-size: .9rem; margin-bottom: 1rem; }
+.sub { color: var(--text-secondary); font-size: .9rem; margin-bottom: 1.25rem; }
 
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
-.kpi { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.kpi { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; }
 .kpi .v { font-size: 2rem; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.kpi .l { color: var(--text-secondary); font-size: .85rem; }
-.kpi .n { color: var(--text-muted); font-size: .75rem; }
+.kpi .l { color: var(--text-secondary); font-size: .9rem; font-weight: 600; }
+.kpi .n { color: var(--text-muted); font-size: .78rem; margin-top: 2px; }
 
-.filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; font-size: .9rem; }
+/* filtros */
+.filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; font-size: .88rem; }
 .filters select, .filters input { background: var(--surface); color: var(--text-primary); border: 1px solid var(--border);
-                                  border-radius: 6px; padding: 3px 8px; }
-.filters input { min-width: 220px; }
-#contador { color: var(--text-muted); margin-left: auto; }
+                                  border-radius: 8px; padding: 6px 10px; font-size: .88rem; }
+.filters input { min-width: 260px; flex: 1; max-width: 380px; }
+.filters select:focus, .filters input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+#contador { color: var(--text-muted); margin-left: auto; font-variant-numeric: tabular-nums; }
 
-table.dash { width: 100%; border-collapse: collapse; font-size: .88rem; }
-table.dash th, table.dash td { padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
-table.dash th { color: var(--text-secondary); font-weight: 600; white-space: nowrap; cursor: pointer; user-select: none;
-                border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); }
-table.dash th:hover { color: var(--text-primary); }
-table.dash th.asc::after { content: " ▲"; font-size: .7em; }
-table.dash th.desc::after { content: " ▼"; font-size: .7em; }
-table.dash td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-table.dash td.nowrap { white-space: nowrap; }
-table.dash tr:hover td { background: var(--surface-2); }
-tr.sep td { background: var(--surface-2); color: var(--text-secondary); font-weight: 600; font-size: .8rem;
-            text-transform: uppercase; letter-spacing: .03em; }
-.muted { color: var(--text-muted); }
+/* tabela */
+.card-table { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
 .scroll { overflow-x: auto; }
+table.repos { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .875rem; }
+table.repos th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); color: var(--text-muted);
+                 font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
+                 padding: 10px 14px; border-bottom: 1px solid var(--border); white-space: nowrap;
+                 cursor: pointer; user-select: none; text-align: left; }
+table.repos th:hover { color: var(--text-primary); }
+table.repos th.asc::after { content: " ▲"; font-size: .8em; }
+table.repos th.desc::after { content: " ▼"; font-size: .8em; }
+table.repos td { padding: 12px 14px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+table.repos tbody tr:last-child td { border-bottom: 0; }
+table.repos tbody tr.repo:hover td { background: var(--surface-3); }
 
-.tag { display: inline-block; font-size: .72rem; font-weight: 600; padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+tr.sep td { background: var(--surface-2); padding: 8px 14px; border-bottom: 1px solid var(--border);
+            border-top: 1px solid var(--border); }
+tr.sep:first-child td { border-top: 0; }
+tr.sep .g-org { font-weight: 700; color: var(--text-primary); }
+tr.sep .g-n { color: var(--text-muted); font-size: .8rem; margin-left: 6px; }
+
+.repo-nome { font-weight: 600; white-space: nowrap; }
+.repo-nome .org { color: var(--text-muted); font-weight: 400; }
+.repo-meta { margin-top: 4px; display: flex; gap: 6px; align-items: center; }
+
+.tag { display: inline-block; font-size: .7rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
 .tag.publico { background: var(--ok-bg); color: var(--ok-fg); }
 .tag.arquivado { background: var(--gray-bg); color: var(--gray-fg); }
 .tag.privado { background: var(--priv-bg); color: var(--priv-fg); }
-.semtarefa { background: var(--warn-bg); color: var(--warn-fg); }
-.task-inativa { opacity: .6; }
-.commiters span { white-space: nowrap; }
-.commiters b { font-weight: 600; font-variant-numeric: tabular-nums; }
-.velho { color: var(--warn-fg); }
+.tag.semtarefa { background: var(--warn-bg); color: var(--warn-fg); }
+.branch { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .72rem; color: var(--text-secondary);
+          background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+
+.task { display: flex; gap: 8px; align-items: baseline; line-height: 1.35; }
+.task + .task { margin-top: 6px; }
+.task .cod { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .75rem; font-weight: 600;
+             background: var(--accent-bg); color: var(--accent); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
+.task .tit { color: var(--text-secondary); }
+.task.inativa { opacity: .55; }
+
+.pessoas div { white-space: nowrap; line-height: 1.5; }
+
+.commiters { min-width: 210px; }
+.commiter { display: flex; align-items: center; gap: 8px; line-height: 1.2; }
+.commiter + .commiter { margin-top: 5px; }
+.commiter img { width: 20px; height: 20px; border-radius: 50%; background: var(--surface-2); flex: none; }
+.commiter a { color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.commiter .n { margin-left: auto; color: var(--text-muted); font-size: .78rem; font-variant-numeric: tabular-nums; padding-left: 10px; }
+
+.idade { white-space: nowrap; display: flex; align-items: center; gap: 7px; }
+.idade .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--border); }
+.idade.recente .dot { background: var(--ok-dot); }
+.idade.medio .dot { background: var(--warn-dot); }
+.idade.antigo .dot { background: var(--bad-dot); }
+.idade-data { color: var(--text-muted); font-size: .75rem; margin-left: 15px; }
+.muted { color: var(--text-muted); }
+.vazio { padding: 40px; text-align: center; color: var(--text-muted); display: none; }
 </style>
 {% endblock %}
 
@@ -87,77 +131,81 @@ tr.sep td { background: var(--surface-2); color: var(--text-secondary); font-wei
 <div class="wrap">
 <p><a href="index.html">← Voltar ao planejamento</a></p>
 <h1>Repositórios no GitHub</h1>
-<div class="sub">Organizações fflch e uspdev. Dados coletados em {{ gerado_em }} (<code>bin/claude_housekeeping_github.py</code>).
-Um repositório tem tarefa quando o título ou a descrição de uma tarefa cita <code>org/repo</code>.</div>
+<div class="sub">Organizações fflch e uspdev. Dados coletados em {{ gerado_em }}</div>
 
 <div class="kpis">
 {% for k in kpis %}
     <div class="kpi"><div class="v">{{ k.total }}</div><div class="l">{{ k.org }}</div>
-        <div class="n">{{ k.publicos }} públicos ativos · {{ k.sem_tarefa }} sem tarefa<br>{{ k.arquivados }} arquivados · {{ k.privados }} privados</div></div>
+        <div class="n">{{ k.publicos }} públicos ativos · {{ k.sem_tarefa }} {{ k.sem_tarefa_rotulo }}</div>
+        <div class="n">{{ k.arquivados }} arquivados · {{ k.privados }} privados</div></div>
 {% endfor %}
 </div>
 
 <div class="filters">
-    <label>Organização:
-        <select id="f-org"><option value="">Todas</option>{% for k in kpis %}<option>{{ k.org }}</option>{% endfor %}</select>
-    </label>
-    <label>Situação:
-        <select id="f-sit">
-            <option value="">Todas</option>
-            <option value="publico">Público</option>
-            <option value="arquivado">Arquivado</option>
-            <option value="privado">Privado</option>
-        </select>
-    </label>
-    <label>Tarefa:
-        <select id="f-task">
-            <option value="">Todas</option>
-            <option value="sim">Com tarefa</option>
-            <option value="nao">Sem tarefa</option>
-        </select>
-    </label>
-    <input id="f-busca" type="search" placeholder="Buscar repositório, pessoa, tarefa...">
+    <select id="f-org" aria-label="Organização"><option value="">Todas as organizações</option>{% for k in kpis %}<option>{{ k.org }}</option>{% endfor %}</select>
+    <select id="f-sit" aria-label="Situação">
+        <option value="">Todas as situações</option>
+        <option value="publico">Público</option>
+        <option value="arquivado">Arquivado</option>
+        <option value="privado">Privado</option>
+    </select>
+    <select id="f-task" aria-label="Tarefa">
+        <option value="">Com e sem tarefa</option>
+        <option value="sim">Com tarefa</option>
+        <option value="nao">Sem tarefa</option>
+    </select>
+    <input id="f-busca" type="search" placeholder="Buscar repositório, pessoa, tarefa…">
     <span id="contador"></span>
 </div>
 
+<div class="card-table">
 <div class="scroll">
-<table class="dash" id="tabela">
+<table class="repos" id="tabela">
 <thead>
 <tr>
     <th data-sort="text">Repositório</th>
-    <th data-sort="text">Situação</th>
     <th data-sort="text">Tarefa</th>
     <th data-sort="text">Responsáveis</th>
-    <th data-sort="num">Top 3 commits</th>
+    <th data-sort="num">Top 3 commiters</th>
     <th data-sort="num">Último commit</th>
-    <th data-sort="text">Branch</th>
 </tr>
 </thead>
 <tbody>
 {% for r in repos %}
 {% if loop.first or r.grupo != loop.previtem.grupo %}
-<tr class="sep" data-grupo="1"><td colspan="7">{{ r.grupo }}</td></tr>
+<tr class="sep" data-grupo="1"><td colspan="5"><span class="g-org">{{ r.org }}</span> · {{ r.situacao_rotulo }}<span class="g-n">{{ r.grupo_total }}</span></td></tr>
 {% endif %}
-<tr data-org="{{ r.org }}" data-sit="{{ r.situacao }}" data-task="{{ 'sim' if r.tarefas else 'nao' }}">
-    <td class="nowrap"><a href="{{ r.url }}" target="_blank" rel="noopener">{{ r.nome }}</a></td>
-    <td><span class="tag {{ r.situacao }}">{{ r.situacao_rotulo }}</span></td>
+<tr class="repo" data-org="{{ r.org }}" data-sit="{{ r.situacao }}" data-task="{{ 'sim' if r.tarefas else 'nao' }}">
+    <td data-v="{{ r.nome }}">
+        <div class="repo-nome"><a href="{{ r.url }}" target="_blank" rel="noopener"><span class="org">{{ r.org }}/</span>{{ r.nome.split('/', 1)[1] }}</a></div>
+        <div class="repo-meta">
+            <span class="tag {{ r.situacao }}">{{ r.situacao_rotulo }}</span>
+            {% if r.branch %}<span class="branch" title="Branch principal">{{ r.branch }}</span>{% endif %}
+        </div>
+    </td>
     <td>
-    {% if r.tarefas %}
-        {% for t in r.tarefas %}<div class="{{ '' if t.ativa else 'task-inativa' }}"><a href="index.html#{{ t.codigo }}" target="_blank">{{ t.codigo }}</a> {{ t.titulo }}{% if not t.ativa %} <span class="muted">(inativa)</span>{% endif %}</div>{% endfor %}
+    {% for t in r.tarefas %}
+        <div class="task{{ '' if t.ativa else ' inativa' }}"><a class="cod" href="index.html#{{ t.codigo }}" target="_blank">{{ t.codigo }}</a><span class="tit">{{ t.titulo }}{% if not t.ativa %} (inativa){% endif %}</span></div>
     {% else %}
         <span class="tag semtarefa">{{ r.sem_tarefa_msg }}</span>
-    {% endif %}
+    {% endfor %}
     </td>
-    <td>{{ r.responsaveis | join(", ") }}</td>
+    <td class="pessoas">{% for p in r.responsaveis %}<div>{{ p }}</div>{% else %}<span class="muted">—</span>{% endfor %}</td>
     <td class="commiters" data-v="{{ r.total_commits }}">
-        {% for login, n in r.commiters %}<span><a href="https://github.com/{{ login }}" target="_blank" rel="noopener">{{ login }}</a> <b>{{ n }}</b></span>{% if not loop.last %}, {% endif %}{% else %}<span class="muted">—</span>{% endfor %}
+    {% for login, n in r.commiters %}
+        <div class="commiter"><img src="https://github.com/{{ login }}.png?size=40" alt="" loading="lazy"><a href="https://github.com/{{ login }}" target="_blank" rel="noopener">{{ login }}</a><span class="n">{{ n }}</span></div>
+    {% else %}<span class="muted">—</span>{% endfor %}
     </td>
-    <td class="num{{ ' velho' if r.dias is not none and r.dias > 365 else '' }}" data-v="{{ r.dias if r.dias is not none else 999999 }}" title="{{ r.ultimo_commit_data }}">{{ r.idade }}</td>
-    <td class="nowrap">{{ r.branch or "—" }}</td>
+    <td data-v="{{ r.dias if r.dias is not none else 999999 }}">
+        <div class="idade {{ r.recencia }}"><span class="dot"></span>{{ r.idade }}</div>
+        {% if r.ultimo_commit_data %}<div class="idade-data">{{ r.ultimo_commit_data }}</div>{% endif %}
+    </td>
 </tr>
 {% endfor %}
 </tbody>
 </table>
+<div class="vazio" id="vazio">Nenhum repositório com esses filtros.</div>
+</div>
 </div>
 </div>
 {% endblock %}
@@ -185,13 +233,15 @@ Um repositório tem tarefa quando o título ou a descrição de uma tarefa cita 
             tr.style.display = ok ? '' : 'none';
             if (ok) n++;
         });
-        // cabeçalhos de grupo: só aparecem na ordem original e se o grupo tiver linhas visíveis
+        // cabeçalhos de grupo: só na ordem original e se o grupo tiver linhas visíveis
         seps.forEach(function (sep) {
-            var vis = false, r = sep.nextElementSibling;
-            while (r && !r.dataset.grupo) { if (r.style.display !== 'none') { vis = true; break; } r = r.nextElementSibling; }
+            var vis = 0, r = sep.nextElementSibling;
+            while (r && !r.dataset.grupo) { if (r.style.display !== 'none') vis++; r = r.nextElementSibling; }
             sep.style.display = !ordenado && vis ? '' : 'none';
+            sep.querySelector('.g-n').textContent = vis;
         });
         document.getElementById('contador').textContent = n + ' de ' + linhas.length + ' repositórios';
+        document.getElementById('vazio').style.display = n ? 'none' : 'block';
     }
 
     ['f-org', 'f-sit', 'f-task'].forEach(function (id) { document.getElementById(id).addEventListener('change', filtrar); });
@@ -215,8 +265,8 @@ Um repositório tem tarefa quando o título ou a descrição de uma tarefa cita 
                         var va = parseFloat(ca.dataset.v) || 0, vb = parseFloat(cb.dataset.v) || 0;
                         return asc ? va - vb : vb - va;
                     }
-                    return asc ? ca.textContent.trim().localeCompare(cb.textContent.trim(), 'pt')
-                               : cb.textContent.trim().localeCompare(ca.textContent.trim(), 'pt');
+                    var ta = (ca.dataset.v || ca.textContent).trim(), tb = (cb.dataset.v || cb.textContent).trim();
+                    return asc ? ta.localeCompare(tb, 'pt') : tb.localeCompare(ta, 'pt');
                 }).forEach(function (r) { tbody.appendChild(r); });
             }
             filtrar();

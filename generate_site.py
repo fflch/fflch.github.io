@@ -1192,8 +1192,14 @@ def gerar_pagina_github():
             "situacao_rotulo": rotulos.get(r["situacao"], r["situacao"]),
             "sem_tarefa_msg": GITHUB_SEM_TAREFA.get(r["org"], "sem tarefa"),
             "grupo": f"{r['org']} · {rotulos.get(r['situacao'], r['situacao'])}",
+            "recencia": "" if dias is None else ("recente" if dias <= 90 else "medio" if dias <= 365 else "antigo"),
         })
     repos.sort(key=lambda r: (ordem_org.get(r["org"], 99), ordem_sit.get(r["situacao"], 99), r["nome"].lower()))
+    por_grupo = defaultdict(int)
+    for r in repos:
+        por_grupo[r["grupo"]] += 1
+    for r in repos:
+        r["grupo_total"] = por_grupo[r["grupo"]]
 
     kpis = []
     for org in GITHUB_ORGS:
@@ -1202,6 +1208,7 @@ def gerar_pagina_github():
         kpis.append({
             "org": org, "total": len(rs), "publicos": len(pub),
             "sem_tarefa": sum(1 for r in pub if not r["tarefas"]),
+            "sem_tarefa_rotulo": "não usados na fflch" if org == "uspdev" else "sem tarefa",
             "arquivados": sum(1 for r in rs if r["situacao"] == "arquivado"),
             "privados": sum(1 for r in rs if r["situacao"] == "privado"),
         })

@@ -557,7 +557,7 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
     function vistaMudancas() {
         var lista = Object.keys(mudancas).sort().filter(function (c) { return mudancas[c].nova || issuesBase[c]; }).map(efetiva);
         return "<h1>Mudanças pendentes</h1>"
-            + '<p class="sub">Revise antes de baixar. Depois: <code>python3 bin/aplicar_mudancas.py ~/Downloads/mudancas-….json</code></p>'
+            + '<p class="sub">Revise antes de baixar. Depois salve em <code>content/mudancas/</code> (ou deixe em ~/Downloads) e rode <code>python3 bin/aplicar_mudancas.py</code></p>'
             + (lista.length ? grade(lista, true) : "<p>Nenhuma mudança feita ainda.</p>");
     }
 
