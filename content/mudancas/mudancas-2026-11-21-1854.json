@@ -1,0 +1,17 @@
+{
+  "tipo": "mudancas-acompanhamento",
+  "versao": 1,
+  "gerado_em": "2026-11-21T21:54:59.429Z",
+  "mudancas": [
+    {
+      "issue": null,
+      "nova": true,
+      "depois": {
+        "tarefa": "pas006",
+        "descricao": "Terminar planta com conexões do DIO internos dos prédio e entre prédios",
+        "responsavel": "Paulo Henrique de Araújo"
+      },
+      "em": "2026-11-21"
+    }
+  ]
+}
