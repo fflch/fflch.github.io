@@ -1140,6 +1140,78 @@ def preparar_organograma(tasks, issues):
     return json.dumps(raiz, ensure_ascii=False).replace("</", "<\\/")
 
 
+# ----------------------------------------------------------------------
+# Página do GitHub (dados coletados por bin/claude_housekeeping_github.py)
+# ----------------------------------------------------------------------
+GITHUB_JSON = os.path.join("content", "github.json")
+GITHUB_ORGS = ["fflch", "uspdev"]
+GITHUB_SITUACOES = [("publico", "Público"), ("arquivado", "Arquivado"), ("privado", "Privado")]
+GITHUB_SEM_TAREFA = {"fflch": "sem tarefa para este repositório", "uspdev": "projeto não usado na FFLCH"}
+
+
+def _idade(dias):
+    if dias is None:
+        return "—"
+    if dias < 1:
+        return "hoje"
+    if dias < 60:
+        return f"{dias} dia{'s' if dias > 1 else ''}"
+    if dias < 730:
+        return f"{dias // 30} meses"
+    return f"{dias // 365} anos"
+
+
+def gerar_pagina_github():
+    """docs/github.html a partir de content/github.json (o JSON é gerado localmente e versionado)."""
+    if not os.path.exists(GITHUB_JSON):
+        print("ℹ content/github.json não existe; página do GitHub não gerada.")
+        return
+    with open(GITHUB_JSON, encoding="utf-8") as f:
+        dados = json.load(f)
+
+    agora = datetime.now().astimezone()
+    rotulos = dict(GITHUB_SITUACOES)
+    ordem_sit = {s: i for i, (s, _) in enumerate(GITHUB_SITUACOES)}
+    ordem_org = {o: i for i, o in enumerate(GITHUB_ORGS)}
+
+    repos = []
+    for r in dados["repos"]:
+        dias, data_commit = None, ""
+        if r.get("ultimo_commit"):
+            dt = datetime.fromisoformat(r["ultimo_commit"].replace("Z", "+00:00"))
+            dias = max((agora - dt).days, 0)
+            data_commit = dt.astimezone().strftime("%d/%m/%Y")
+        responsaveis = list(dict.fromkeys(p for t in r["tarefas"] for p in t.get("responsaveis", [])))
+        repos.append({
+            **r,
+            "dias": dias,
+            "idade": _idade(dias),
+            "ultimo_commit_data": data_commit,
+            "responsaveis": responsaveis,
+            "total_commits": sum(n for _, n in r.get("commiters", [])),
+            "situacao_rotulo": rotulos.get(r["situacao"], r["situacao"]),
+            "sem_tarefa_msg": GITHUB_SEM_TAREFA.get(r["org"], "sem tarefa"),
+            "grupo": f"{r['org']} · {rotulos.get(r['situacao'], r['situacao'])}",
+        })
+    repos.sort(key=lambda r: (ordem_org.get(r["org"], 99), ordem_sit.get(r["situacao"], 99), r["nome"].lower()))
+
+    kpis = []
+    for org in GITHUB_ORGS:
+        rs = [r for r in repos if r["org"] == org]
+        pub = [r for r in rs if r["situacao"] == "publico"]
+        kpis.append({
+            "org": org, "total": len(rs), "publicos": len(pub),
+            "sem_tarefa": sum(1 for r in pub if not r["tarefas"]),
+            "arquivados": sum(1 for r in rs if r["situacao"] == "arquivado"),
+            "privados": sum(1 for r in rs if r["situacao"] == "privado"),
+        })
+
+    gerado = datetime.fromisoformat(dados["gerado_em"]).strftime("%d/%m/%Y %H:%M")
+    html = jinja_env.get_template("github.html").render(repos=repos, kpis=kpis, gerado_em=gerado)
+    with open(os.path.join(OUTPUT_DIR, "github.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+
+
 def generate_html(tasks, issues, tutoriais, relatorios, acomp):
     siglas = load_siglas()
     responsaveis_summary = preparar_responsavel_summary(tasks)
@@ -1185,6 +1257,7 @@ def main():
     gerar_pagina_reunioes(all_tasks)
     gerar_paginas_dashboard(tasks, all_issues)
     acomp = gerar_pagina_acompanhamento(tasks, all_issues)
+    gerar_pagina_github()
 
     html = generate_html(tasks, issues, tutoriais, relatorios, acomp)
 

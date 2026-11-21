@@ -1,6 +1,6 @@
 {
   "status": true,
-  "descricao": "pegar  logs swicthes e enviar para sistema alertas - ou ler syslog",
+  "descricao": "Coletar os logs dos switches e enviá-los para o sistema de alertas, ou, alternativamente, ler as mensagens via rsyslog.",
   "data": "16/11/2026",
   "responsavel": "Thiago Gomes Veríssimo"
 }

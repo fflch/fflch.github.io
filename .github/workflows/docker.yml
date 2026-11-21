@@ -1,0 +1,100 @@
+name: Imagem e deploy
+
+# A cada push na main:
+#   1. gera a imagem (o Dockerfile roda o generate_site.py) e publica no GHCR com as tags
+#      latest e sha-<commit>;
+#   2. extrai o site (/usr/share/nginx/html) dessa mesma imagem e publica no GitHub Pages
+#      (sem branch gh-pages: o Pages deve estar configurado com Source = "GitHub Actions");
+#   3. apaga as versões antigas da imagem, mantendo as 20 mais recentes.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+  imagem:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          provenance: false  # sem manifestos extras de atestação: 1 versão no GHCR por commit
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:sha-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.description=Site de planejamento da TI-FFLCH
+
+  pages:
+    needs: imagem
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Usa a imagem deste commit (é a mesma que a latest, mas sem risco de pegar a de outro push)
+      - name: Extrair o site da imagem
+        run: |
+          docker pull "$IMAGE:sha-$GITHUB_SHA"
+          id=$(docker create "$IMAGE:sha-$GITHUB_SHA")
+          docker cp "$id:/usr/share/nginx/html" ./site
+          docker rm "$id"
+
+      - name: Upload do site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+      - name: Deploy no GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+  limpeza:
+    needs: imagem
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Manter só as 20 imagens mais recentes
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ github.event.repository.name }}
+          package-type: container
+          min-versions-to-keep: 20

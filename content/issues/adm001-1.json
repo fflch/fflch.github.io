@@ -1,6 +1,7 @@
 {
-  "status": true,
+  "status": false,
   "descricao": "Realização do inventário de bens comuns",
   "data": "14/10/2026",
-  "responsavel": "Néli Maximino"
+  "responsavel": "Néli Maximino",
+  "data_fechamento": "21/11/2026"
 }

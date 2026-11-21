@@ -1,6 +1,6 @@
 {
   "status": true,
-  "descricao": "Melhorar a forma de escrita das definições nos arquivos de rotas gerados pelo uspdev/simple-crud-generator.",
+  "descricao": "Aprimorar a forma de escrita das definições de rotas nos arquivos de rotas gerados pela biblioteca uspdev/simple-crud-generator.",
   "data": "16/11/2026",
   "responsavel": "Thiago Gomes Veríssimo"
 }

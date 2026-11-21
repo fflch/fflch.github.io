@@ -16,7 +16,8 @@ Gestão de tarefas e issues (`bin/`):
     python3 bin/edit_issue.py      # editar descrição/responsável de uma issue
     python3 bin/close_issue.py     # fechar issue (grava data_fechamento)
     python3 bin/comment_issue.py [codigo]  # comentar numa issue (comentário sem autor, com data)
-    python3 bin/repos_sem_tarefa.py        # repos públicos (não arquivados) de fflch/uspdev sem tarefa
+    python3 bin/claude_housekeeping_issues.py [prefixo]  # revisa as issues abertas uma a uma: fecha ou melhora o texto com o Claude
+    python3 bin/claude_housekeeping_github.py     # repos de fflch/uspdev (gh) → content/github.json (versionar!) → docs/github.html
     python3 bin/aplicar_mudancas.py mudancas.json  # aplica o arquivo "Baixar mudanças" de docs/acompanhamento.html
 
 Ao atribuir tarefa ou issue, os scripts perguntam se devem avisar a pessoa por

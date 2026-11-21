@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}GitHub - TI FFLCH{% endblock %}
+
+{% block extra_head %}
+<style>
+:root {
+    --surface: #fcfcfb;
+    --surface-2: #f2f2f0;
+    --border: #deddd8;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #7a7974;
+    --grid: #e6e5e1;
+    --accent: #2a78d6;
+    --ok-bg: #e3f0e6;  --ok-fg: #1f6b35;
+    --warn-bg: #fbeee2; --warn-fg: #9a4a12;
+    --gray-bg: #ecebe8; --gray-fg: #5d5c58;
+    --priv-bg: #ece6f7; --priv-fg: #5b3d99;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
+        --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f; --grid: #2e2e2c;
+        --accent: #3987e5;
+        --ok-bg: #1e3326; --ok-fg: #8fd1a2;
+        --warn-bg: #3a2a1c; --warn-fg: #f0b07c;
+        --gray-bg: #2c2c2a; --gray-fg: #b5b4ab;
+        --priv-bg: #2e2840; --priv-fg: #c2b0ec;
+    }
+}
+:root[data-theme="dark"] {
+    --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f; --grid: #2e2e2c;
+    --accent: #3987e5;
+    --ok-bg: #1e3326; --ok-fg: #8fd1a2;
+    --warn-bg: #3a2a1c; --warn-fg: #f0b07c;
+    --gray-bg: #2c2c2a; --gray-fg: #b5b4ab;
+    --priv-bg: #2e2840; --priv-fg: #c2b0ec;
+}
+body { background: var(--surface); color: var(--text-primary); padding: 32px 16px; }
+.wrap { max-width: 1400px; margin: 0 auto; }
+a { color: var(--accent); }
+h1 { font-size: 1.8rem; }
+.sub { color: var(--text-secondary); font-size: .9rem; margin-bottom: 1rem; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.kpi { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.kpi .v { font-size: 2rem; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi .l { color: var(--text-secondary); font-size: .85rem; }
+.kpi .n { color: var(--text-muted); font-size: .75rem; }
+
+.filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; font-size: .9rem; }
+.filters select, .filters input { background: var(--surface); color: var(--text-primary); border: 1px solid var(--border);
+                                  border-radius: 6px; padding: 3px 8px; }
+.filters input { min-width: 220px; }
+#contador { color: var(--text-muted); margin-left: auto; }
+
+table.dash { width: 100%; border-collapse: collapse; font-size: .88rem; }
+table.dash th, table.dash td { padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+table.dash th { color: var(--text-secondary); font-weight: 600; white-space: nowrap; cursor: pointer; user-select: none;
+                border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); }
+table.dash th:hover { color: var(--text-primary); }
+table.dash th.asc::after { content: " ▲"; font-size: .7em; }
+table.dash th.desc::after { content: " ▼"; font-size: .7em; }
+table.dash td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.dash td.nowrap { white-space: nowrap; }
+table.dash tr:hover td { background: var(--surface-2); }
+tr.sep td { background: var(--surface-2); color: var(--text-secondary); font-weight: 600; font-size: .8rem;
+            text-transform: uppercase; letter-spacing: .03em; }
+.muted { color: var(--text-muted); }
+.scroll { overflow-x: auto; }
+
+.tag { display: inline-block; font-size: .72rem; font-weight: 600; padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+.tag.publico { background: var(--ok-bg); color: var(--ok-fg); }
+.tag.arquivado { background: var(--gray-bg); color: var(--gray-fg); }
+.tag.privado { background: var(--priv-bg); color: var(--priv-fg); }
+.semtarefa { background: var(--warn-bg); color: var(--warn-fg); }
+.task-inativa { opacity: .6; }
+.commiters span { white-space: nowrap; }
+.commiters b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.velho { color: var(--warn-fg); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wrap">
+<p><a href="index.html">← Voltar ao planejamento</a></p>
+<h1>Repositórios no GitHub</h1>
+<div class="sub">Organizações fflch e uspdev. Dados coletados em {{ gerado_em }} (<code>bin/claude_housekeeping_github.py</code>).
+Um repositório tem tarefa quando o título ou a descrição de uma tarefa cita <code>org/repo</code>.</div>
+
+<div class="kpis">
+{% for k in kpis %}
+    <div class="kpi"><div class="v">{{ k.total }}</div><div class="l">{{ k.org }}</div>
+        <div class="n">{{ k.publicos }} públicos ativos · {{ k.sem_tarefa }} sem tarefa<br>{{ k.arquivados }} arquivados · {{ k.privados }} privados</div></div>
+{% endfor %}
+</div>
+
+<div class="filters">
+    <label>Organização:
+        <select id="f-org"><option value="">Todas</option>{% for k in kpis %}<option>{{ k.org }}</option>{% endfor %}</select>
+    </label>
+    <label>Situação:
+        <select id="f-sit">
+            <option value="">Todas</option>
+            <option value="publico">Público</option>
+            <option value="arquivado">Arquivado</option>
+            <option value="privado">Privado</option>
+        </select>
+    </label>
+    <label>Tarefa:
+        <select id="f-task">
+            <option value="">Todas</option>
+            <option value="sim">Com tarefa</option>
+            <option value="nao">Sem tarefa</option>
+        </select>
+    </label>
+    <input id="f-busca" type="search" placeholder="Buscar repositório, pessoa, tarefa...">
+    <span id="contador"></span>
+</div>
+
+<div class="scroll">
+<table class="dash" id="tabela">
+<thead>
+<tr>
+    <th data-sort="text">Repositório</th>
+    <th data-sort="text">Situação</th>
+    <th data-sort="text">Tarefa</th>
+    <th data-sort="text">Responsáveis</th>
+    <th data-sort="num">Top 3 commits</th>
+    <th data-sort="num">Último commit</th>
+    <th data-sort="text">Branch</th>
+</tr>
+</thead>
+<tbody>
+{% for r in repos %}
+{% if loop.first or r.grupo != loop.previtem.grupo %}
+<tr class="sep" data-grupo="1"><td colspan="7">{{ r.grupo }}</td></tr>
+{% endif %}
+<tr data-org="{{ r.org }}" data-sit="{{ r.situacao }}" data-task="{{ 'sim' if r.tarefas else 'nao' }}">
+    <td class="nowrap"><a href="{{ r.url }}" target="_blank" rel="noopener">{{ r.nome }}</a></td>
+    <td><span class="tag {{ r.situacao }}">{{ r.situacao_rotulo }}</span></td>
+    <td>
+    {% if r.tarefas %}
+        {% for t in r.tarefas %}<div class="{{ '' if t.ativa else 'task-inativa' }}"><a href="index.html#{{ t.codigo }}" target="_blank">{{ t.codigo }}</a> {{ t.titulo }}{% if not t.ativa %} <span class="muted">(inativa)</span>{% endif %}</div>{% endfor %}
+    {% else %}
+        <span class="tag semtarefa">{{ r.sem_tarefa_msg }}</span>
+    {% endif %}
+    </td>
+    <td>{{ r.responsaveis | join(", ") }}</td>
+    <td class="commiters" data-v="{{ r.total_commits }}">
+        {% for login, n in r.commiters %}<span><a href="https://github.com/{{ login }}" target="_blank" rel="noopener">{{ login }}</a> <b>{{ n }}</b></span>{% if not loop.last %}, {% endif %}{% else %}<span class="muted">—</span>{% endfor %}
+    </td>
+    <td class="num{{ ' velho' if r.dias is not none and r.dias > 365 else '' }}" data-v="{{ r.dias if r.dias is not none else 999999 }}" title="{{ r.ultimo_commit_data }}">{{ r.idade }}</td>
+    <td class="nowrap">{{ r.branch or "—" }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function () {
+    var table = document.getElementById('tabela');
+    var tbody = table.tBodies[0];
+    var seps = Array.prototype.filter.call(tbody.rows, function (r) { return r.dataset.grupo; });
+    var linhas = Array.prototype.filter.call(tbody.rows, function (r) { return !r.dataset.grupo; });
+    var ordemOriginal = Array.prototype.slice.call(tbody.rows);
+    var ordenado = false;
+
+    function filtrar() {
+        var org = document.getElementById('f-org').value;
+        var sit = document.getElementById('f-sit').value;
+        var task = document.getElementById('f-task').value;
+        var busca = document.getElementById('f-busca').value.trim().toLowerCase();
+        var n = 0;
+        linhas.forEach(function (tr) {
+            var ok = (!org || tr.dataset.org === org) && (!sit || tr.dataset.sit === sit) &&
+                     (!task || tr.dataset.task === task) &&
+                     (!busca || tr.textContent.toLowerCase().indexOf(busca) !== -1);
+            tr.style.display = ok ? '' : 'none';
+            if (ok) n++;
+        });
+        // cabeçalhos de grupo: só aparecem na ordem original e se o grupo tiver linhas visíveis
+        seps.forEach(function (sep) {
+            var vis = false, r = sep.nextElementSibling;
+            while (r && !r.dataset.grupo) { if (r.style.display !== 'none') { vis = true; break; } r = r.nextElementSibling; }
+            sep.style.display = !ordenado && vis ? '' : 'none';
+        });
+        document.getElementById('contador').textContent = n + ' de ' + linhas.length + ' repositórios';
+    }
+
+    ['f-org', 'f-sit', 'f-task'].forEach(function (id) { document.getElementById(id).addEventListener('change', filtrar); });
+    document.getElementById('f-busca').addEventListener('input', filtrar);
+
+    table.querySelectorAll('th[data-sort]').forEach(function (th) {
+        th.addEventListener('click', function () {
+            var idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+            var estado = th.classList.contains('asc') ? 'desc' : th.classList.contains('desc') ? 'none' : 'asc';
+            table.querySelectorAll('th').forEach(function (h) { h.classList.remove('asc', 'desc'); });
+            if (estado === 'none') {
+                ordenado = false;
+                ordemOriginal.forEach(function (r) { tbody.appendChild(r); });
+            } else {
+                ordenado = true;
+                th.classList.add(estado);
+                var asc = estado === 'asc';
+                linhas.slice().sort(function (a, b) {
+                    var ca = a.cells[idx], cb = b.cells[idx];
+                    if (th.dataset.sort === 'num') {
+                        var va = parseFloat(ca.dataset.v) || 0, vb = parseFloat(cb.dataset.v) || 0;
+                        return asc ? va - vb : vb - va;
+                    }
+                    return asc ? ca.textContent.trim().localeCompare(cb.textContent.trim(), 'pt')
+                               : cb.textContent.trim().localeCompare(ca.textContent.trim(), 'pt');
+                }).forEach(function (r) { tbody.appendChild(r); });
+            }
+            filtrar();
+        });
+    });
+    filtrar();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,5187 @@
+{
+  "gerado_em": "2026-11-21T17:43:27-03:00",
+  "repos": [
+    {
+      "org": "fflch",
+      "nome": "fflch/alertas",
+      "url": "https://github.com/fflch/alertas",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2024-09-23T13:08:53Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          17
+        ],
+        [
+          "GabrielTruzzi",
+          4
+        ],
+        [
+          "acesarfs",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/analytics",
+      "url": "https://github.com/fflch/analytics",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2023-05-18T14:55:41Z",
+      "commiters": [
+        [
+          "AndredeQueirozPatrinicola",
+          344
+        ],
+        [
+          "ricardfo",
+          24
+        ],
+        [
+          "thiagogomesverissimo",
+          10
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-cups",
+      "url": "https://github.com/fflch/ansible-cups",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2022-07-07T01:39:30Z",
+      "commiters": [
+        [
+          "HP41",
+          28
+        ],
+        [
+          "JonTheNiceGuy",
+          1
+        ],
+        [
+          "thiagogomesverissimo",
+          1
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro009",
+          "titulo": "fflch/ansible-cups",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-role-aegir",
+      "url": "https://github.com/fflch/ansible-role-aegir",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2022-06-10T04:16:17Z",
+      "commiters": [
+        [
+          "ergonlogic",
+          74
+        ],
+        [
+          "thiagogomesverissimo",
+          36
+        ],
+        [
+          "ricardfo",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-role-deploy-laravel",
+      "url": "https://github.com/fflch/ansible-role-deploy-laravel",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2023-03-28T13:22:14Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          51
+        ],
+        [
+          "ricardfo",
+          4
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro002",
+          "titulo": "fflch/ansible-role-deploy-laravel",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-role-django",
+      "url": "https://github.com/fflch/ansible-role-django",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-01-06T17:34:29Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          11
+        ],
+        [
+          "ricardfo",
+          1
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro007",
+          "titulo": "fflch/ansible-role-django e fflch/template-django",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-role-domain-member",
+      "url": "https://github.com/fflch/ansible-role-domain-member",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2023-04-10T23:18:56Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          35
+        ],
+        [
+          "martbhell",
+          24
+        ],
+        [
+          "ricardfo",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-role-fsecure",
+      "url": "https://github.com/fflch/ansible-role-fsecure",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-02-10T19:27:55Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          9
+        ],
+        [
+          "acesarfs",
+          1
+        ],
+        [
+          "ricardfo",
+          1
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro008",
+          "titulo": "fflch/ansible-role-fsecure",
+          "ativa": true,
+          "responsaveis": [
+            "Augusto César Freire Santiago"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-role-printer-server",
+      "url": "https://github.com/fflch/ansible-role-printer-server",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2023-12-18T18:01:06Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-role-proaluno",
+      "url": "https://github.com/fflch/ansible-role-proaluno",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-10-01T14:34:13Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          196
+        ],
+        [
+          "Potalej",
+          22
+        ],
+        [
+          "lima-emanuel",
+          15
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro005",
+          "titulo": "fflch/ansible-role-proaluno",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-role-sambadc",
+      "url": "https://github.com/fflch/ansible-role-sambadc",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-11-12T12:04:56Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          54
+        ],
+        [
+          "ricardfo",
+          1
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro001",
+          "titulo": "fflch/ansible-role-sambadc",
+          "ativa": true,
+          "responsaveis": [
+            "Augusto César Freire Santiago"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-role-sap-ase",
+      "url": "https://github.com/fflch/ansible-role-sap-ase",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-09-01T14:08:31Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          32
+        ],
+        [
+          "ricardfo",
+          4
+        ],
+        [
+          "andrewrothstein",
+          1
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro003",
+          "titulo": "fflch/ansible-role-sap-ase",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ansible-role-tasks",
+      "url": "https://github.com/fflch/ansible-role-tasks",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-10-30T18:49:29Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          130
+        ],
+        [
+          "ricardfo",
+          28
+        ],
+        [
+          "xcolacique",
+          21
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro010",
+          "titulo": "Playbooks Ansible",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura",
+            "Augusto César Freire Santiago",
+            "Mônica Colacique",
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/api",
+      "url": "https://github.com/fflch/api",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2024-06-13T20:33:30Z",
+      "commiters": [
+        [
+          "calimaco",
+          41
+        ],
+        [
+          "ricardfo",
+          5
+        ],
+        [
+          "thiagogomesverissimo",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/bibfc",
+      "url": "https://github.com/fflch/bibfc",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-02-26T23:48:59Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          104
+        ],
+        [
+          "oFandangos",
+          34
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/bibfiles",
+      "url": "https://github.com/fflch/bibfiles",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-08-28T13:18:47Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          21
+        ],
+        [
+          "ricardfo",
+          14
+        ],
+        [
+          "GabrielTruzzi",
+          10
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev016",
+          "titulo": "fflch/bibfiles",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/boletim",
+      "url": "https://github.com/fflch/boletim",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-10-29T23:37:57Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          18
+        ],
+        [
+          "ricardfo",
+          16
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod003",
+          "titulo": "fflch/boletim",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/cdd",
+      "url": "https://github.com/fflch/cdd",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-06-09T11:06:39Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          30
+        ],
+        [
+          "sa0tome",
+          29
+        ],
+        [
+          "ricardfo",
+          18
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev015",
+          "titulo": "fflch/cdd",
+          "ativa": true,
+          "responsaveis": [
+            "Gilberto Vargas"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/cem-theme",
+      "url": "https://github.com/fflch/cem-theme",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-19T18:28:42Z",
+      "commiters": [
+        [
+          "gustavom",
+          42
+        ],
+        [
+          "thiagogomesverissimo",
+          30
+        ],
+        [
+          "danielmme",
+          29
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod007",
+          "titulo": "Pull Requests – Centro da Metrópole",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/centrodametropole_breadcrumb",
+      "url": "https://github.com/fflch/centrodametropole_breadcrumb",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-18T02:09:44Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          5
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod007",
+          "titulo": "Pull Requests – Centro da Metrópole",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/cis",
+      "url": "https://github.com/fflch/cis",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "",
+      "ultimo_commit": "",
+      "commiters": [],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/comaprend",
+      "url": "https://github.com/fflch/comaprend",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2024-09-09T20:39:05Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/compras",
+      "url": "https://github.com/fflch/compras",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-09-08T16:02:03Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          10
+        ],
+        [
+          "camilaXP",
+          1
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod010",
+          "titulo": "fflch/compras",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/consultas",
+      "url": "https://github.com/fflch/consultas",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "master",
+      "ultimo_commit": "2026-03-12T21:01:59Z",
+      "commiters": [
+        [
+          "gabrielareisg",
+          233
+        ],
+        [
+          "xcolacique",
+          41
+        ],
+        [
+          "thiagogomesverissimo",
+          30
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/controleportarias",
+      "url": "https://github.com/fflch/controleportarias",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-09-25T14:25:27Z",
+      "commiters": [
+        [
+          "alan-neves",
+          5
+        ],
+        [
+          "thiagogomesverissimo",
+          3
+        ],
+        [
+          "ricardfo",
+          1
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev035",
+          "titulo": "fflch/controleportarias",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/cortec",
+      "url": "https://github.com/fflch/cortec",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-08-26T21:59:39Z",
+      "commiters": [
+        [
+          "Euak",
+          312
+        ],
+        [
+          "thiagogomesverissimo",
+          70
+        ],
+        [
+          "acesarfs",
+          7
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev013",
+          "titulo": "fflch/cortec",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/curso-moodle",
+      "url": "https://github.com/fflch/curso-moodle",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2023-05-24T21:15:56Z",
+      "commiters": [
+        [
+          "pmarsceill",
+          646
+        ],
+        [
+          "SgtSilvio",
+          120
+        ],
+        [
+          "mattxwang",
+          119
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "doc001",
+          "titulo": "Documentação Técnica",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/cursos",
+      "url": "https://github.com/fflch/cursos",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2022-09-14T17:04:45Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          43
+        ],
+        [
+          "sa0tome",
+          5
+        ],
+        [
+          "st-ricardof",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/dados",
+      "url": "https://github.com/fflch/dados",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-06T14:27:05Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          253
+        ],
+        [
+          "st-ricardof",
+          177
+        ],
+        [
+          "gabrielareisg",
+          143
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev022",
+          "titulo": "fflch/dados",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/dashboard-computadores",
+      "url": "https://github.com/fflch/dashboard-computadores",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-09-20T00:43:46Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/delpo",
+      "url": "https://github.com/fflch/delpo",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-06T14:51:22Z",
+      "commiters": [
+        [
+          "xcolacique",
+          11
+        ],
+        [
+          "oFandangos",
+          10
+        ],
+        [
+          "thiagogomesverissimo",
+          3
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev033",
+          "titulo": "fflch/delpo",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/dicbio",
+      "url": "https://github.com/fflch/dicbio",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-03-17T13:09:38Z",
+      "commiters": [
+        [
+          "brunomaroneze",
+          575
+        ],
+        [
+          "ricardfo",
+          64
+        ],
+        [
+          "rodrigodca",
+          27
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/drupal",
+      "url": "https://github.com/fflch/drupal",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-18T02:27:07Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          404
+        ],
+        [
+          "ricardfo",
+          45
+        ],
+        [
+          "acesarfs",
+          39
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/drupal-indicadores",
+      "url": "https://github.com/fflch/drupal-indicadores",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-12-19T18:00:40Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          16
+        ],
+        [
+          "Valim19",
+          3
+        ],
+        [
+          "MariaTameirao",
+          2
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "abc001",
+          "titulo": "Indicadores das Bibliotecas USP",
+          "ativa": false,
+          "responsaveis": []
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/equipamentos",
+      "url": "https://github.com/fflch/equipamentos",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-06-09T12:26:54Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          43
+        ],
+        [
+          "ricardfo",
+          11
+        ],
+        [
+          "MarcosFRatte",
+          9
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev004",
+          "titulo": "fflch/equipamentos",
+          "ativa": false,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/etiquetas",
+      "url": "https://github.com/fflch/etiquetas",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-21T19:45:04Z",
+      "commiters": [
+        [
+          "ricardfo",
+          17
+        ],
+        [
+          "oFandangos",
+          10
+        ],
+        [
+          "thiagogomesverissimo",
+          5
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev002",
+          "titulo": "fflch/etiquetas",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/etl",
+      "url": "https://github.com/fflch/etl",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2024-09-02T11:06:44Z",
+      "commiters": [
+        [
+          "calimaco",
+          150
+        ],
+        [
+          "ricardfo",
+          24
+        ],
+        [
+          "thiagogomesverissimo",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/fac",
+      "url": "https://github.com/fflch/fac",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2024-09-23T12:47:53Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          30
+        ],
+        [
+          "sa0tome",
+          26
+        ],
+        [
+          "ricardfo",
+          16
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev023",
+          "titulo": "fflch/fac",
+          "ativa": false,
+          "responsaveis": []
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/fechaduras",
+      "url": "https://github.com/fflch/fechaduras",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-18T13:52:30Z",
+      "commiters": [
+        [
+          "ricardfo",
+          57
+        ],
+        [
+          "alan-neves",
+          55
+        ],
+        [
+          "oFandangos",
+          22
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev010",
+          "titulo": "fflch/fechaduras",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/fflch-theme",
+      "url": "https://github.com/fflch/fflch-theme",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-07T13:12:44Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          39
+        ],
+        [
+          "st-ricardof",
+          6
+        ],
+        [
+          "v1t4o",
+          5
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod002",
+          "titulo": "fflch/fflch-theme",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        },
+        {
+          "codigo": "mod009",
+          "titulo": "fflch/wp-fflch-theme",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/fflch.github.io",
+      "url": "https://github.com/fflch/fflch.github.io",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-17T01:16:59Z",
+      "commiters": [
+        [
+          "pmarsceill",
+          646
+        ],
+        [
+          "thiagogomesverissimo",
+          198
+        ],
+        [
+          "SgtSilvio",
+          120
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/fixfflch",
+      "url": "https://github.com/fflch/fixfflch",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-15T20:29:12Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/gembib",
+      "url": "https://github.com/fflch/gembib",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-04-02T21:14:48Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          186
+        ],
+        [
+          "gabrielareisg",
+          137
+        ],
+        [
+          "ricardfo",
+          92
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev014",
+          "titulo": "fflch/gembib",
+          "ativa": true,
+          "responsaveis": [
+            "Gilberto Vargas"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/gwdb",
+      "url": "https://github.com/fflch/gwdb",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-26T14:51:32Z",
+      "commiters": [
+        [
+          "xcolacique",
+          12
+        ],
+        [
+          "thiagogomesverissimo",
+          9
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/incidentes",
+      "url": "https://github.com/fflch/incidentes",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-21T19:34:23Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          23
+        ],
+        [
+          "paulapeclat",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/incidentes-swarm",
+      "url": "https://github.com/fflch/incidentes-swarm",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-19T21:39:11Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          9
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/indicadores",
+      "url": "https://github.com/fflch/indicadores",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2025-12-17T18:09:11Z",
+      "commiters": [
+        [
+          "Valim19",
+          31
+        ],
+        [
+          "thiagogomesverissimo",
+          16
+        ],
+        [
+          "xcolacique",
+          1
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "abc001",
+          "titulo": "Indicadores das Bibliotecas USP",
+          "ativa": false,
+          "responsaveis": []
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/intercambio",
+      "url": "https://github.com/fflch/intercambio",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-10-23T12:58:41Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          66
+        ],
+        [
+          "Gcds444",
+          46
+        ],
+        [
+          "ricardfo",
+          43
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev018",
+          "titulo": "fflch/intercambio",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/laravel-comet-theme",
+      "url": "https://github.com/fflch/laravel-comet-theme",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2021-04-08T20:39:47Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          47
+        ],
+        [
+          "Euak",
+          39
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib011",
+          "titulo": "fflch/laravel-comet-theme",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/laravel-fflch-pdf",
+      "url": "https://github.com/fflch/laravel-fflch-pdf",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-07-16T18:43:41Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          13
+        ],
+        [
+          "v1t4o",
+          3
+        ],
+        [
+          "ricardfo",
+          2
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib013",
+          "titulo": "fflch/laravel-fflch-pdf",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/laravel-fflch-stepper",
+      "url": "https://github.com/fflch/laravel-fflch-stepper",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-03-16T13:16:43Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          12
+        ],
+        [
+          "v1t4o",
+          2
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib016",
+          "titulo": "fflch/laravel-fflch-stepper",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/listas",
+      "url": "https://github.com/fflch/listas",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-05T11:48:20Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          100
+        ],
+        [
+          "st-ricardof",
+          17
+        ],
+        [
+          "v1t4o",
+          13
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev021",
+          "titulo": "fflch/listas",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/macc",
+      "url": "https://github.com/fflch/macc",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2023-03-30T18:22:22Z",
+      "commiters": [
+        [
+          "alinespereira",
+          81
+        ],
+        [
+          "thiagogomesverissimo",
+          15
+        ],
+        [
+          "ursulaps",
+          13
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/mailmanAPI",
+      "url": "https://github.com/fflch/mailmanAPI",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-07-17T14:49:10Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          27
+        ],
+        [
+          "splattner",
+          9
+        ],
+        [
+          "v1t4o",
+          9
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib012",
+          "titulo": "fflch/mailmanAPI",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/map",
+      "url": "https://github.com/fflch/map",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2025-03-25T10:49:01Z",
+      "commiters": [
+        [
+          "Lealsi",
+          12
+        ],
+        [
+          "thiagogomesverissimo",
+          7
+        ],
+        [
+          "ricardfo",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/memorianegra",
+      "url": "https://github.com/fflch/memorianegra",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-04T04:10:55Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          2
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev036",
+          "titulo": "fflch/memorianegra",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/minibib",
+      "url": "https://github.com/fflch/minibib",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-17T17:29:00Z",
+      "commiters": [
+        [
+          "ricardfo",
+          46
+        ],
+        [
+          "powdn",
+          46
+        ],
+        [
+          "thiagogomesverissimo",
+          33
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev012",
+          "titulo": "fflch/minibib",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/monitoring",
+      "url": "https://github.com/fflch/monitoring",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-10-16T21:33:03Z",
+      "commiters": [
+        [
+          "gtfrosg",
+          29
+        ],
+        [
+          "thiagogomesverissimo",
+          20
+        ],
+        [
+          "xcolacique",
+          11
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev009",
+          "titulo": "fflch/monitoring",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/moodle-block-externalsync",
+      "url": "https://github.com/fflch/moodle-block-externalsync",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2023-02-13T13:30:14Z",
+      "commiters": [
+        [
+          "Potalej",
+          29
+        ],
+        [
+          "thiagogomesverissimo",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ojs-block_additionalurl",
+      "url": "https://github.com/fflch/ojs-block_additionalurl",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2023-03-10T14:29:26Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          13
+        ],
+        [
+          "PedroCesarAmigo",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ojs-block_getstats",
+      "url": "https://github.com/fflch/ojs-block_getstats",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2023-06-22T01:50:10Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          15
+        ],
+        [
+          "PedroCesarAmigo",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ojs-plugin-contador",
+      "url": "https://github.com/fflch/ojs-plugin-contador",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2024-05-02T13:52:45Z",
+      "commiters": [],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ojs-plugins",
+      "url": "https://github.com/fflch/ojs-plugins",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2023-04-24T17:08:46Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ojs_composer",
+      "url": "https://github.com/fflch/ojs_composer",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-05-14T18:25:10Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/orcamento",
+      "url": "https://github.com/fflch/orcamento",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-19T18:04:11Z",
+      "commiters": [
+        [
+          "acesarfs",
+          139
+        ],
+        [
+          "ricardfo",
+          78
+        ],
+        [
+          "flavialima1007",
+          66
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev011",
+          "titulo": "fflch/orcamento",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/phppimaco",
+      "url": "https://github.com/fflch/phppimaco",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2024-09-27T17:50:45Z",
+      "commiters": [
+        [
+          "dbemfica",
+          65
+        ],
+        [
+          "tobias-rocha",
+          7
+        ],
+        [
+          "mrprompt",
+          3
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib014",
+          "titulo": "fflch/phppimaco",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/plantas",
+      "url": "https://github.com/fflch/plantas",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-09-16T02:28:15Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          6
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/playbooks-proaluno-fflch",
+      "url": "https://github.com/fflch/playbooks-proaluno-fflch",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2025-03-19T13:33:59Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          34
+        ],
+        [
+          "Potalej",
+          12
+        ],
+        [
+          "flavialima1007",
+          10
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro006",
+          "titulo": "fflch/playbooks-proaluno-fflch",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/portarias",
+      "url": "https://github.com/fflch/portarias",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-21T14:18:52Z",
+      "commiters": [
+        [
+          "Gu1lherm3Frias",
+          28
+        ],
+        [
+          "xcolacique",
+          14
+        ],
+        [
+          "thiagogomesverissimo",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/pragmatica-drupal-module",
+      "url": "https://github.com/fflch/pragmatica-drupal-module",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-07-03T14:21:41Z",
+      "commiters": [
+        [
+          "mthsps",
+          89
+        ],
+        [
+          "smllb",
+          47
+        ],
+        [
+          "paramogit",
+          16
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib019",
+          "titulo": "fflch/pragmatica-drupal-module",
+          "ativa": true,
+          "responsaveis": [
+            "Augusto César Freire Santiago"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/provisioner",
+      "url": "https://github.com/fflch/provisioner",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "master",
+      "ultimo_commit": "2026-11-17T18:00:07Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          677
+        ],
+        [
+          "ricardfo",
+          287
+        ],
+        [
+          "acesarfs",
+          185
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro010",
+          "titulo": "Playbooks Ansible",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura",
+            "Augusto César Freire Santiago",
+            "Mônica Colacique",
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/provisioner-dev",
+      "url": "https://github.com/fflch/provisioner-dev",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-09-16T10:34:31Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          123
+        ],
+        [
+          "ricardfo",
+          48
+        ],
+        [
+          "acesarfs",
+          34
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro010",
+          "titulo": "Playbooks Ansible",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura",
+            "Augusto César Freire Santiago",
+            "Mônica Colacique",
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/ranqueamento",
+      "url": "https://github.com/fflch/ranqueamento",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-10-29T21:02:25Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          56
+        ],
+        [
+          "xcolacique",
+          27
+        ],
+        [
+          "ricardfo",
+          9
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev029",
+          "titulo": "fflch/ranqueamento",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/replicado_drupal",
+      "url": "https://github.com/fflch/replicado_drupal",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2021-01-27T21:36:45Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          22
+        ],
+        [
+          "gabrielareisg",
+          8
+        ],
+        [
+          "st-ricardof",
+          6
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/scripts",
+      "url": "https://github.com/fflch/scripts",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-12-17T18:32:21Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          59
+        ],
+        [
+          "acesarfs",
+          50
+        ],
+        [
+          "Valim19",
+          27
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "doc001",
+          "titulo": "Documentação Técnica",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/sites",
+      "url": "https://github.com/fflch/sites",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-18T14:00:01Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          158
+        ],
+        [
+          "acesarfs",
+          53
+        ],
+        [
+          "powdn",
+          10
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev003",
+          "titulo": "fflch/sites",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/stipass",
+      "url": "https://github.com/fflch/stipass",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "master",
+      "ultimo_commit": "2026-11-17T18:12:18Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          509
+        ],
+        [
+          "acesarfs",
+          392
+        ],
+        [
+          "ricardfo",
+          80
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/stou-monitoring",
+      "url": "https://github.com/fflch/stou-monitoring",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-21T20:12:53Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/switches-netmiko",
+      "url": "https://github.com/fflch/switches-netmiko",
+      "situacao": "arquivado",
+      "privado": true,
+      "branch": "master",
+      "ultimo_commit": "2026-06-22T18:49:48Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          96
+        ],
+        [
+          "ricardfo",
+          32
+        ],
+        [
+          "acesarfs",
+          9
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "rat001",
+          "titulo": "fflch/switches-netmiko",
+          "ativa": false,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/template-django",
+      "url": "https://github.com/fflch/template-django",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2023-11-15T18:53:30Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          3
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro007",
+          "titulo": "fflch/ansible-role-django e fflch/template-django",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/trabalhoacademico",
+      "url": "https://github.com/fflch/trabalhoacademico",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-16T11:28:11Z",
+      "commiters": [
+        [
+          "v1t4o",
+          121
+        ],
+        [
+          "thiagogomesverissimo",
+          78
+        ],
+        [
+          "ricardfo",
+          18
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev017",
+          "titulo": "fflch/trabalhoacademico",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/traefik",
+      "url": "https://github.com/fflch/traefik",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "main",
+      "ultimo_commit": "2026-11-21T20:07:09Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          91
+        ],
+        [
+          "ricardfo",
+          31
+        ],
+        [
+          "xcolacique",
+          18
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/urbandatabrasil_userform",
+      "url": "https://github.com/fflch/urbandatabrasil_userform",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-18T02:22:03Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          7
+        ],
+        [
+          "danielmme",
+          2
+        ],
+        [
+          "Euak",
+          2
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod007",
+          "titulo": "Pull Requests – Centro da Metrópole",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/verbalcollocations",
+      "url": "https://github.com/fflch/verbalcollocations",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2024-10-18T11:05:46Z",
+      "commiters": [
+        [
+          "ricardfo",
+          1
+        ],
+        [
+          "thiagogomesverissimo",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/virgilio",
+      "url": "https://github.com/fflch/virgilio",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-06-16T13:19:04Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/webapps",
+      "url": "https://github.com/fflch/webapps",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-17T12:08:39Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          9
+        ],
+        [
+          "ricardfo",
+          7
+        ],
+        [
+          "oFandangos",
+          3
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev032",
+          "titulo": "fflch/webapps",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/webform_ficha_catalografica",
+      "url": "https://github.com/fflch/webform_ficha_catalografica",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2022-11-26T00:38:22Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          13
+        ],
+        [
+          "st-ricardof",
+          5
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod005",
+          "titulo": "fflch/webform_ficha_catalografica",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/wifi",
+      "url": "https://github.com/fflch/wifi",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-08-12T13:00:19Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          14
+        ],
+        [
+          "Gvargas1968",
+          2
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev034",
+          "titulo": "fflch/wifi",
+          "ativa": true,
+          "responsaveis": [
+            "Gilberto Vargas"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/wordpress",
+      "url": "https://github.com/fflch/wordpress",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-12T17:26:46Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          6
+        ],
+        [
+          "andisandis-lima",
+          1
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "cor002",
+          "titulo": "fflch/wordpress",
+          "ativa": true,
+          "responsaveis": [
+            "Augusto César Freire Santiago"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/wp-fflch-theme",
+      "url": "https://github.com/fflch/wp-fflch-theme",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-10-14T17:17:45Z",
+      "commiters": [
+        [
+          "andisandis-lima",
+          3
+        ],
+        [
+          "xcolacique",
+          2
+        ],
+        [
+          "thiagogomesverissimo",
+          2
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod009",
+          "titulo": "fflch/wp-fflch-theme",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "fflch",
+      "nome": "fflch/x",
+      "url": "https://github.com/fflch/x",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-09-24T10:49:10Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          52
+        ],
+        [
+          "acesarfs",
+          44
+        ],
+        [
+          "ricardfo",
+          22
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "doc001",
+          "titulo": "Documentação Técnica",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/acesso",
+      "url": "https://github.com/uspdev/acesso",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2023-07-16T16:39:19Z",
+      "commiters": [
+        [
+          "alecostaweb",
+          56
+        ],
+        [
+          "thiagogomesverissimo",
+          14
+        ],
+        [
+          "BranBadures",
+          6
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/ai-services",
+      "url": "https://github.com/uspdev/ai-services",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-10T14:58:26Z",
+      "commiters": [
+        [
+          "masakik",
+          60
+        ],
+        [
+          "Lucalopezz",
+          17
+        ],
+        [
+          "kawanks",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/ansible-role-sssd-ad",
+      "url": "https://github.com/uspdev/ansible-role-sssd-ad",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2024-08-28T19:54:43Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          4
+        ],
+        [
+          "sybgroff",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/ansible-role-sssd-ldap",
+      "url": "https://github.com/uspdev/ansible-role-sssd-ldap",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2024-08-30T18:12:24Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          7
+        ],
+        [
+          "sybgroff",
+          3
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro004",
+          "titulo": "uspdev/ansible-role-sssd-ldap",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/api-keys",
+      "url": "https://github.com/uspdev/api-keys",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-27T18:32:11Z",
+      "commiters": [
+        [
+          "Lucalopezz",
+          37
+        ],
+        [
+          "masakik",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/asedocker",
+      "url": "https://github.com/uspdev/asedocker",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2020-10-27T17:57:44Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          9
+        ],
+        [
+          "wgnann",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/assinatura",
+      "url": "https://github.com/uspdev/assinatura",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2024-10-02T17:11:13Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          5
+        ],
+        [
+          "pcalvesUSP",
+          3
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib007",
+          "titulo": "uspdev/assinatura",
+          "ativa": false,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/boleto",
+      "url": "https://github.com/uspdev/boleto",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2024-12-15T16:54:07Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          52
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib005",
+          "titulo": "uspdev/boleto",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/cache",
+      "url": "https://github.com/uspdev/cache",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-10T18:15:00Z",
+      "commiters": [
+        [
+          "masakik",
+          46
+        ],
+        [
+          "thiagogomesverissimo",
+          4
+        ],
+        [
+          "Lucalopezz",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/cadastros-auxiliares",
+      "url": "https://github.com/uspdev/cadastros-auxiliares",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-31T17:57:46Z",
+      "commiters": [
+        [
+          "alecostaweb",
+          45
+        ],
+        [
+          "thiagogomesverissimo",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/cadastros-auxiliares-client",
+      "url": "https://github.com/uspdev/cadastros-auxiliares-client",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-31T18:26:45Z",
+      "commiters": [
+        [
+          "alecostaweb",
+          7
+        ],
+        [
+          "thiagogomesverissimo",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/ccg",
+      "url": "https://github.com/uspdev/ccg",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2020-05-15T14:33:52Z",
+      "commiters": [
+        [
+          "alecostaweb",
+          241
+        ],
+        [
+          "leandroramos",
+          39
+        ],
+        [
+          "thiagogomesverissimo",
+          17
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/cepe",
+      "url": "https://github.com/uspdev/cepe",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-13T21:33:09Z",
+      "commiters": [
+        [
+          "fernandotmoraes",
+          43
+        ],
+        [
+          "thiagogomesverissimo",
+          12
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/chamados",
+      "url": "https://github.com/uspdev/chamados",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-10-19T19:16:26Z",
+      "commiters": [
+        [
+          "masakik",
+          652
+        ],
+        [
+          "fgmusp",
+          105
+        ],
+        [
+          "thiagogomesverissimo",
+          84
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev027",
+          "titulo": "uspdev/chamados",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/chaveiro",
+      "url": "https://github.com/uspdev/chaveiro",
+      "situacao": "arquivado",
+      "privado": true,
+      "branch": "master",
+      "ultimo_commit": "2020-10-26T12:57:02Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          14
+        ],
+        [
+          "masakik",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/ci",
+      "url": "https://github.com/uspdev/ci",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2025-09-04T17:19:11Z",
+      "commiters": [
+        [
+          "antonioacampos",
+          79
+        ],
+        [
+          "masakik",
+          27
+        ],
+        [
+          "kawanks",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/colocal",
+      "url": "https://github.com/uspdev/colocal",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "main",
+      "ultimo_commit": "2025-03-18T20:04:29Z",
+      "commiters": [
+        [
+          "ezanon",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/cookbook-treinamento-laravel",
+      "url": "https://github.com/uspdev/cookbook-treinamento-laravel",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2018-08-10T15:51:33Z",
+      "commiters": [
+        [
+          "leandroramos",
+          16
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/copaco",
+      "url": "https://github.com/uspdev/copaco",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-21T19:53:20Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          278
+        ],
+        [
+          "girol",
+          91
+        ],
+        [
+          "ricardfo",
+          51
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev001",
+          "titulo": "uspdev/copaco",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/curso-laravel",
+      "url": "https://github.com/uspdev/curso-laravel",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2021-05-28T22:35:53Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          167
+        ],
+        [
+          "lfloro",
+          19
+        ],
+        [
+          "alecostaweb",
+          17
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/curso-laravel-2024",
+      "url": "https://github.com/uspdev/curso-laravel-2024",
+      "situacao": "arquivado",
+      "privado": true,
+      "branch": "main",
+      "ultimo_commit": "2024-11-07T21:03:44Z",
+      "commiters": [
+        [
+          "masakik",
+          30
+        ],
+        [
+          "antonioacampos",
+          10
+        ],
+        [
+          "kawanks",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/cutter",
+      "url": "https://github.com/uspdev/cutter",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2019-08-26T17:54:40Z",
+      "commiters": [
+        [
+          "masakik",
+          17
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/data-analysis",
+      "url": "https://github.com/uspdev/data-analysis",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-06-17T02:30:28Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/datagrad",
+      "url": "https://github.com/uspdev/datagrad",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-12T13:58:25Z",
+      "commiters": [
+        [
+          "masakik",
+          223
+        ],
+        [
+          "ViniRafaelVale",
+          25
+        ],
+        [
+          "alecostaweb",
+          10
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/defesas",
+      "url": "https://github.com/uspdev/defesas",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-20T13:16:46Z",
+      "commiters": [
+        [
+          "v1t4o",
+          109
+        ],
+        [
+          "ricardfo",
+          105
+        ],
+        [
+          "thiagogomesverissimo",
+          97
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev028",
+          "titulo": "uspdev/defesas",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/django-oauth-usp",
+      "url": "https://github.com/uspdev/django-oauth-usp",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-10-06T22:46:01Z",
+      "commiters": [
+        [
+          "marcelosf",
+          59
+        ],
+        [
+          "thiagogomesverissimo",
+          4
+        ],
+        [
+          "AndredeQueirozPatrinicola",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/dockerfiles",
+      "url": "https://github.com/uspdev/dockerfiles",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-21T19:15:38Z",
+      "commiters": [
+        [
+          "leandroramos",
+          21
+        ],
+        [
+          "thiagogomesverissimo",
+          9
+        ],
+        [
+          "ricardfo",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/empresta",
+      "url": "https://github.com/uspdev/empresta",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-10-23T19:02:56Z",
+      "commiters": [
+        [
+          "kawanks",
+          92
+        ],
+        [
+          "thiagogomesverissimo",
+          31
+        ],
+        [
+          "alecostaweb",
+          27
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev006",
+          "titulo": "uspdev/empresta",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/empresta_symfony",
+      "url": "https://github.com/uspdev/empresta_symfony",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2021-12-22T13:40:59Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          89
+        ],
+        [
+          "alecostaweb",
+          29
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/equivalencia",
+      "url": "https://github.com/uspdev/equivalencia",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-07-13T17:07:54Z",
+      "commiters": [
+        [
+          "Lucalopezz",
+          153
+        ],
+        [
+          "ViniReiwz",
+          65
+        ],
+        [
+          "masakik",
+          55
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/estagios",
+      "url": "https://github.com/uspdev/estagios",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-08-28T14:46:02Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          332
+        ],
+        [
+          "GabrielTruzzi",
+          181
+        ],
+        [
+          "ricardfo",
+          94
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev020",
+          "titulo": "uspdev/estagios",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/evasao",
+      "url": "https://github.com/uspdev/evasao",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2025-05-19T12:18:16Z",
+      "commiters": [
+        [
+          "masakik",
+          26
+        ],
+        [
+          "jpvolante",
+          6
+        ],
+        [
+          "antonioacampos",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/evasao-ws",
+      "url": "https://github.com/uspdev/evasao-ws",
+      "situacao": "arquivado",
+      "privado": true,
+      "branch": "master",
+      "ultimo_commit": "2021-02-15T20:35:10Z",
+      "commiters": [
+        [
+          "masakik",
+          65
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/firewall",
+      "url": "https://github.com/uspdev/firewall",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2024-11-28T19:22:32Z",
+      "commiters": [
+        [
+          "masakik",
+          53
+        ],
+        [
+          "antonioacampos",
+          29
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/forms",
+      "url": "https://github.com/uspdev/forms",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-19T19:16:35Z",
+      "commiters": [
+        [
+          "antonioacampos",
+          66
+        ],
+        [
+          "masakik",
+          52
+        ],
+        [
+          "DudsFerraz",
+          39
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/ganimedes",
+      "url": "https://github.com/uspdev/ganimedes",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2021-03-05T00:24:31Z",
+      "commiters": [
+        [
+          "marcelomodesto",
+          30
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/gerenciador-nfe",
+      "url": "https://github.com/uspdev/gerenciador-nfe",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "master",
+      "ultimo_commit": "2026-11-05T10:41:16Z",
+      "commiters": [
+        [
+          "masakik",
+          94
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/gestao-projetos",
+      "url": "https://github.com/uspdev/gestao-projetos",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-17T19:25:38Z",
+      "commiters": [
+        [
+          "DudsFerraz",
+          357
+        ],
+        [
+          "Lucalopezz",
+          297
+        ],
+        [
+          "masakik",
+          208
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/grafica",
+      "url": "https://github.com/uspdev/grafica",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2024-09-20T11:27:17Z",
+      "commiters": [
+        [
+          "v1t4o",
+          85
+        ],
+        [
+          "thiagogomesverissimo",
+          35
+        ],
+        [
+          "ricardfo",
+          5
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev005",
+          "titulo": "uspdev/grafica",
+          "ativa": true,
+          "responsaveis": [
+            "Pedro Luis Borges de Souza Filho"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/grupo_trabalho_prpg",
+      "url": "https://github.com/uspdev/grupo_trabalho_prpg",
+      "situacao": "arquivado",
+      "privado": true,
+      "branch": "master",
+      "ultimo_commit": "2018-12-07T17:10:07Z",
+      "commiters": [
+        [
+          "girol",
+          17
+        ],
+        [
+          "masakik",
+          4
+        ],
+        [
+          "thiagogomesverissimo",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/housekeep",
+      "url": "https://github.com/uspdev/housekeep",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "main",
+      "ultimo_commit": "2024-02-16T19:18:46Z",
+      "commiters": [
+        [
+          "masakik",
+          21
+        ],
+        [
+          "thiagogomesverissimo",
+          3
+        ],
+        [
+          "alecostaweb",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/idmail",
+      "url": "https://github.com/uspdev/idmail",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-03-20T21:22:55Z",
+      "commiters": [
+        [
+          "wgnann",
+          40
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/impressoras",
+      "url": "https://github.com/uspdev/impressoras",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-09-03T21:10:11Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          193
+        ],
+        [
+          "wgnann",
+          69
+        ],
+        [
+          "sa0tome",
+          47
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev007",
+          "titulo": "uspdev/impressoras",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/inscricoes",
+      "url": "https://github.com/uspdev/inscricoes",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2019-09-04T18:55:55Z",
+      "commiters": [
+        [
+          "alecostaweb",
+          92
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/ip-control",
+      "url": "https://github.com/uspdev/ip-control",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2020-03-30T12:42:20Z",
+      "commiters": [
+        [
+          "masakik",
+          13
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/laravel-fullcalendar",
+      "url": "https://github.com/uspdev/laravel-fullcalendar",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2020-11-24T22:33:07Z",
+      "commiters": [
+        [
+          "maddhatter",
+          31
+        ],
+        [
+          "thiagogomesverissimo",
+          6
+        ],
+        [
+          "nezaboravi",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/laravel-printing",
+      "url": "https://github.com/uspdev/laravel-printing",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "v1",
+      "ultimo_commit": "2026-01-28T14:37:30Z",
+      "commiters": [
+        [
+          "rawilk",
+          71
+        ],
+        [
+          "thiagogomesverissimo",
+          6
+        ],
+        [
+          "wgnann",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/laravel-replicado",
+      "url": "https://github.com/uspdev/laravel-replicado",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-03-24T10:51:44Z",
+      "commiters": [
+        [
+          "masakik",
+          14
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/laravel-tools",
+      "url": "https://github.com/uspdev/laravel-tools",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-10-21T11:31:25Z",
+      "commiters": [
+        [
+          "masakik",
+          37
+        ],
+        [
+          "antonioacampos",
+          18
+        ],
+        [
+          "DudsFerraz",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/laravel-usp-faker",
+      "url": "https://github.com/uspdev/laravel-usp-faker",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2023-06-26T12:37:38Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          12
+        ],
+        [
+          "ricardfo",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/laravel-usp-theme",
+      "url": "https://github.com/uspdev/laravel-usp-theme",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-13T14:45:40Z",
+      "commiters": [
+        [
+          "masakik",
+          132
+        ],
+        [
+          "thiagogomesverissimo",
+          71
+        ],
+        [
+          "alecostaweb",
+          35
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib002",
+          "titulo": "uspdev/laravel-usp-theme",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/laravel-usp-validators",
+      "url": "https://github.com/uspdev/laravel-usp-validators",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2024-10-10T17:27:26Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          15
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib006",
+          "titulo": "uspdev/laravel-usp-validators",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/laravel_basico",
+      "url": "https://github.com/uspdev/laravel_basico",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2018-04-29T22:43:12Z",
+      "commiters": [
+        [
+          "leandroramos",
+          18
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/moodle-block_extensao",
+      "url": "https://github.com/uspdev/moodle-block_extensao",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-20T11:45:40Z",
+      "commiters": [
+        [
+          "Potalej",
+          96
+        ],
+        [
+          "thiagogomesverissimo",
+          48
+        ],
+        [
+          "TalitaVentura16",
+          40
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/nfe-app",
+      "url": "https://github.com/uspdev/nfe-app",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-13T19:42:41Z",
+      "commiters": [
+        [
+          "masakik",
+          13
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/nfe-ws",
+      "url": "https://github.com/uspdev/nfe-ws",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-16T10:24:55Z",
+      "commiters": [
+        [
+          "masakik",
+          87
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/nfe-ws-consumer",
+      "url": "https://github.com/uspdev/nfe-ws-consumer",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-13T19:14:02Z",
+      "commiters": [
+        [
+          "masakik",
+          12
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/npm-auth",
+      "url": "https://github.com/uspdev/npm-auth",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "main",
+      "ultimo_commit": "2026-10-28T16:56:51Z",
+      "commiters": [
+        [
+          "Lucalopezz",
+          126
+        ],
+        [
+          "masakik",
+          47
+        ],
+        [
+          "kawanks",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/oportunidades",
+      "url": "https://github.com/uspdev/oportunidades",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2021-04-12T02:27:44Z",
+      "commiters": [
+        [
+          "marcelomodesto",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/patrimonio",
+      "url": "https://github.com/uspdev/patrimonio",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2018-07-04T14:39:01Z",
+      "commiters": [
+        [
+          "masakik",
+          19
+        ],
+        [
+          "thiagogomesverissimo",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/patrimonio-complementar",
+      "url": "https://github.com/uspdev/patrimonio-complementar",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-03-25T18:37:54Z",
+      "commiters": [
+        [
+          "masakik",
+          143
+        ],
+        [
+          "antonioacampos",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/pdfgen",
+      "url": "https://github.com/uspdev/pdfgen",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2019-08-19T14:55:38Z",
+      "commiters": [
+        [
+          "masakik",
+          24
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/percepcao",
+      "url": "https://github.com/uspdev/percepcao",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2021-12-07T13:39:21Z",
+      "commiters": [
+        [
+          "masakik",
+          6
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/percepcao-institucional",
+      "url": "https://github.com/uspdev/percepcao-institucional",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2023-05-12T19:24:45Z",
+      "commiters": [
+        [
+          "gustavome-983",
+          180
+        ],
+        [
+          "masakik",
+          92
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/pessoas",
+      "url": "https://github.com/uspdev/pessoas",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-21T20:18:12Z",
+      "commiters": [
+        [
+          "masakik",
+          84
+        ],
+        [
+          "thiagogomesverissimo",
+          68
+        ],
+        [
+          "alecostaweb",
+          37
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev008",
+          "titulo": "uspdev/pessoas",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/pfsense-config",
+      "url": "https://github.com/uspdev/pfsense-config",
+      "situacao": "arquivado",
+      "privado": true,
+      "branch": "master",
+      "ultimo_commit": "2020-12-01T18:15:15Z",
+      "commiters": [
+        [
+          "masakik",
+          25
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/playbooks-sandbox-proaluno",
+      "url": "https://github.com/uspdev/playbooks-sandbox-proaluno",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2025-09-25T00:00:08Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          12
+        ],
+        [
+          "Potalej",
+          5
+        ],
+        [
+          "wgnann",
+          4
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "pro006",
+          "titulo": "fflch/playbooks-proaluno-fflch",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/ponto",
+      "url": "https://github.com/uspdev/ponto",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-12-16T15:20:11Z",
+      "commiters": [
+        [
+          "alecostaweb",
+          110
+        ],
+        [
+          "flavialima1007",
+          28
+        ],
+        [
+          "thiagogomesverissimo",
+          23
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/portal-sistemas",
+      "url": "https://github.com/uspdev/portal-sistemas",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-03-17T11:04:22Z",
+      "commiters": [
+        [
+          "masakik",
+          75
+        ],
+        [
+          "alecostaweb",
+          5
+        ],
+        [
+          "kawanks",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/pre-reserva",
+      "url": "https://github.com/uspdev/pre-reserva",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-10-07T15:38:53Z",
+      "commiters": [
+        [
+          "masakik",
+          26
+        ],
+        [
+          "antonioacampos",
+          24
+        ],
+        [
+          "kawanks",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/producao",
+      "url": "https://github.com/uspdev/producao",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "main",
+      "ultimo_commit": "2025-08-19T13:55:39Z",
+      "commiters": [
+        [
+          "masakik",
+          38
+        ],
+        [
+          "thiagogomesverissimo",
+          3
+        ],
+        [
+          "alecostaweb",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/pywspix",
+      "url": "https://github.com/uspdev/pywspix",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2025-09-10T13:56:37Z",
+      "commiters": [
+        [
+          "marcelosf",
+          44
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/rede",
+      "url": "https://github.com/uspdev/rede",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-10-27T12:31:55Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          62
+        ],
+        [
+          "ricardfo",
+          31
+        ],
+        [
+          "alan-neves",
+          27
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev024",
+          "titulo": "uspdev/rede",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/replicado",
+      "url": "https://github.com/uspdev/replicado",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-06T12:19:27Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          420
+        ],
+        [
+          "masakik",
+          259
+        ],
+        [
+          "gabrielareisg",
+          129
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib001",
+          "titulo": "uspdev/replicado",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/replicado-ws",
+      "url": "https://github.com/uspdev/replicado-ws",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-10T19:51:20Z",
+      "commiters": [
+        [
+          "masakik",
+          44
+        ],
+        [
+          "Lucalopezz",
+          16
+        ],
+        [
+          "ezanon",
+          9
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/replicado2mongodb",
+      "url": "https://github.com/uspdev/replicado2mongodb",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-20T14:23:00Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          7
+        ],
+        [
+          "xcolacique",
+          2
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib017",
+          "titulo": "uspdev/replicado2mongodb",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/repositorio-nfe",
+      "url": "https://github.com/uspdev/repositorio-nfe",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-13T19:42:43Z",
+      "commiters": [
+        [
+          "masakik",
+          54
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/rhconsultas",
+      "url": "https://github.com/uspdev/rhconsultas",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2018-09-21T15:22:29Z",
+      "commiters": [
+        [
+          "biamunhoz",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/salas",
+      "url": "https://github.com/uspdev/salas",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-05T19:01:15Z",
+      "commiters": [
+        [
+          "kawanks",
+          173
+        ],
+        [
+          "thiagogomesverissimo",
+          100
+        ],
+        [
+          "sa0tome",
+          62
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev019",
+          "titulo": "uspdev/salas",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/selecoes",
+      "url": "https://github.com/uspdev/selecoes",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-12T18:55:03Z",
+      "commiters": [
+        [
+          "Marcelo-k-USP",
+          270
+        ],
+        [
+          "joao31toledo",
+          40
+        ],
+        [
+          "dependabot[bot]",
+          12
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunica",
+      "url": "https://github.com/uspdev/senhaunica",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-05-28T19:23:04Z",
+      "commiters": [
+        [
+          "masakik",
+          32
+        ],
+        [
+          "thiagogomesverissimo",
+          7
+        ],
+        [
+          "fgmusp",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunica-ci4",
+      "url": "https://github.com/uspdev/senhaunica-ci4",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2024-10-29T18:55:30Z",
+      "commiters": [
+        [
+          "masakik",
+          32
+        ],
+        [
+          "dpicon83",
+          3
+        ],
+        [
+          "thiagogomesverissimo",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunica-faker",
+      "url": "https://github.com/uspdev/senhaunica-faker",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-06-02T00:08:20Z",
+      "commiters": [
+        [
+          "wgnann",
+          26
+        ],
+        [
+          "thiagogomesverissimo",
+          16
+        ],
+        [
+          "masakik",
+          12
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunica-faker-drop",
+      "url": "https://github.com/uspdev/senhaunica-faker-drop",
+      "situacao": "arquivado",
+      "privado": true,
+      "branch": "master",
+      "ultimo_commit": "2020-09-09T14:09:57Z",
+      "commiters": [
+        [
+          "masakik",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunica-hwi",
+      "url": "https://github.com/uspdev/senhaunica-hwi",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2021-01-24T03:18:35Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          16
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunica-rails",
+      "url": "https://github.com/uspdev/senhaunica-rails",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2018-09-28T15:19:28Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          4
+        ],
+        [
+          "biamunhoz",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunica-ruby",
+      "url": "https://github.com/uspdev/senhaunica-ruby",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2018-09-20T14:17:08Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunica-shield",
+      "url": "https://github.com/uspdev/senhaunica-shield",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-01-28T13:14:46Z",
+      "commiters": [
+        [
+          "dpicon83",
+          58
+        ],
+        [
+          "masakik",
+          32
+        ],
+        [
+          "thiagogomesverissimo",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunica-socialite",
+      "url": "https://github.com/uspdev/senhaunica-socialite",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-19T13:06:23Z",
+      "commiters": [
+        [
+          "masakik",
+          125
+        ],
+        [
+          "thiagogomesverissimo",
+          125
+        ],
+        [
+          "wgnann",
+          10
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib003",
+          "titulo": "uspdev/senhaunica-socialite",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunica-wordpress",
+      "url": "https://github.com/uspdev/senhaunica-wordpress",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2023-05-09T15:03:48Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          10
+        ],
+        [
+          "masakik",
+          5
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunicapixelfed",
+      "url": "https://github.com/uspdev/senhaunicapixelfed",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-07-20T18:33:53Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          15
+        ],
+        [
+          "Gu1lherm3Frias",
+          9
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "fed001",
+          "titulo": "uspdev/senhaunicapixelfed",
+          "ativa": false,
+          "responsaveis": [
+            "Mônica Colacique",
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/senhaunicausp-drupal",
+      "url": "https://github.com/uspdev/senhaunicausp-drupal",
+      "situacao": "arquivado",
+      "privado": false,
+      "branch": "8.x-1.x",
+      "ultimo_commit": "2023-03-31T03:57:19Z",
+      "commiters": [
+        [
+          "alecostaweb",
+          12
+        ],
+        [
+          "thiagogomesverissimo",
+          12
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/seta-graduacao",
+      "url": "https://github.com/uspdev/seta-graduacao",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2018-11-22T18:12:39Z",
+      "commiters": [
+        [
+          "fabiojm",
+          79
+        ],
+        [
+          "thiagogomesverissimo",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/simple-crud-generator",
+      "url": "https://github.com/uspdev/simple-crud-generator",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-14T20:56:04Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          12
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib009",
+          "titulo": "uspdev/simple-crud-generator",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/slides",
+      "url": "https://github.com/uspdev/slides",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2019-05-24T18:22:37Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          63
+        ],
+        [
+          "girol",
+          24
+        ],
+        [
+          "leandroramos",
+          5
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "doc001",
+          "titulo": "Documentação Técnica",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/solicitacoes-documentos",
+      "url": "https://github.com/uspdev/solicitacoes-documentos",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-09-16T11:12:56Z",
+      "commiters": [
+        [
+          "Marcelo-k-USP",
+          13
+        ],
+        [
+          "dependabot[bot]",
+          1
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/starter",
+      "url": "https://github.com/uspdev/starter",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-10-21T12:53:13Z",
+      "commiters": [
+        [
+          "masakik",
+          30
+        ],
+        [
+          "kawanks",
+          5
+        ],
+        [
+          "alecostaweb",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/starter-ng",
+      "url": "https://github.com/uspdev/starter-ng",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-03T00:16:51Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          26
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib018",
+          "titulo": "uspdev/starter-ng",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/the_force",
+      "url": "https://github.com/uspdev/the_force",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2018-09-06T00:58:23Z",
+      "commiters": [
+        [
+          "girol",
+          3
+        ],
+        [
+          "thiagogomesverissimo",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/toolkit",
+      "url": "https://github.com/uspdev/toolkit",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-09-04T18:14:50Z",
+      "commiters": [
+        [
+          "masakik",
+          99
+        ],
+        [
+          "Lucalopezz",
+          20
+        ],
+        [
+          "thiagogomesverissimo",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/tv-tools",
+      "url": "https://github.com/uspdev/tv-tools",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2019-10-17T10:40:06Z",
+      "commiters": [
+        [
+          "Henrique1792",
+          18
+        ],
+        [
+          "girol",
+          16
+        ],
+        [
+          "masakik",
+          16
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/uspdev-site",
+      "url": "https://github.com/uspdev/uspdev-site",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "main",
+      "ultimo_commit": "2021-06-30T01:59:12Z",
+      "commiters": [
+        [
+          "masakik",
+          11
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/uspdev.github.io",
+      "url": "https://github.com/uspdev/uspdev.github.io",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-20T18:31:06Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          156
+        ],
+        [
+          "girol",
+          18
+        ],
+        [
+          "masakik",
+          9
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/utils",
+      "url": "https://github.com/uspdev/utils",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-06-03T14:00:44Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          37
+        ],
+        [
+          "masakik",
+          2
+        ],
+        [
+          "alecostaweb",
+          1
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib004",
+          "titulo": "uspdev/utils",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/vacinacao",
+      "url": "https://github.com/uspdev/vacinacao",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "main",
+      "ultimo_commit": "2021-10-08T17:12:25Z",
+      "commiters": [
+        [
+          "masakik",
+          6
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/vitrine-usp",
+      "url": "https://github.com/uspdev/vitrine-usp",
+      "situacao": "privado",
+      "privado": true,
+      "branch": "main",
+      "ultimo_commit": "2026-11-21T18:48:38Z",
+      "commiters": [
+        [
+          "masakik",
+          9
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/votacao-rapida",
+      "url": "https://github.com/uspdev/votacao-rapida",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-10-27T13:23:03Z",
+      "commiters": [
+        [
+          "masakik",
+          340
+        ],
+        [
+          "thiagogomesverissimo",
+          4
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/web-ldap-admin",
+      "url": "https://github.com/uspdev/web-ldap-admin",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-21T20:20:07Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          176
+        ],
+        [
+          "alecostaweb",
+          92
+        ],
+        [
+          "masakik",
+          77
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "dev026",
+          "titulo": "uspdev/web-ldap-admin",
+          "ativa": true,
+          "responsaveis": [
+            "Ricardo Fontoura"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/webform_boleto_usp",
+      "url": "https://github.com/uspdev/webform_boleto_usp",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-04-06T13:27:11Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          49
+        ],
+        [
+          "acesarfs",
+          6
+        ],
+        [
+          "xcolacique",
+          3
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/webform_pagamentos",
+      "url": "https://github.com/uspdev/webform_pagamentos",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-09-16T18:36:49Z",
+      "commiters": [
+        [
+          "Marc117-Isaac",
+          4
+        ],
+        [
+          "thiagogomesverissimo",
+          4
+        ],
+        [
+          "xcolacique",
+          2
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod006",
+          "titulo": "uspdev/webform_pagamentos",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/webform_replicado",
+      "url": "https://github.com/uspdev/webform_replicado",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-08-26T19:14:47Z",
+      "commiters": [
+        [
+          "camilaXP",
+          13
+        ],
+        [
+          "thiagogomesverissimo",
+          5
+        ],
+        [
+          "xcolacique",
+          3
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod008",
+          "titulo": "uspdev/webform_replicado",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/webform_senhaunica",
+      "url": "https://github.com/uspdev/webform_senhaunica",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-09-02T18:12:56Z",
+      "commiters": [
+        [
+          "andisandis-lima",
+          16
+        ],
+        [
+          "thiagogomesverissimo",
+          9
+        ],
+        [
+          "Valim19",
+          3
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "mod001",
+          "titulo": "uspdev/webform_senhaunica",
+          "ativa": true,
+          "responsaveis": [
+            "Mônica Colacique"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/webservice",
+      "url": "https://github.com/uspdev/webservice",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-10-23T20:48:23Z",
+      "commiters": [
+        [
+          "masakik",
+          45
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/workflow",
+      "url": "https://github.com/uspdev/workflow",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2026-11-18T20:06:42Z",
+      "commiters": [
+        [
+          "ViniReiwz",
+          226
+        ],
+        [
+          "antonioacampos",
+          32
+        ],
+        [
+          "masakik",
+          22
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/wsfoto",
+      "url": "https://github.com/uspdev/wsfoto",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "master",
+      "ultimo_commit": "2025-10-30T22:34:38Z",
+      "commiters": [
+        [
+          "thiagogomesverissimo",
+          17
+        ],
+        [
+          "masakik",
+          4
+        ]
+      ],
+      "tarefas": [
+        {
+          "codigo": "bib010",
+          "titulo": "uspdev/wsfoto",
+          "ativa": true,
+          "responsaveis": [
+            "Thiago Gomes Veríssimo"
+          ]
+        }
+      ]
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/wspix",
+      "url": "https://github.com/uspdev/wspix",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2026-11-13T17:12:07Z",
+      "commiters": [
+        [
+          "Marcelo-k-USP",
+          2
+        ]
+      ],
+      "tarefas": []
+    },
+    {
+      "org": "uspdev",
+      "nome": "uspdev/xml-lattes",
+      "url": "https://github.com/uspdev/xml-lattes",
+      "situacao": "publico",
+      "privado": false,
+      "branch": "main",
+      "ultimo_commit": "2023-12-06T20:35:15Z",
+      "commiters": [
+        [
+          "tadeumesquita",
+          1
+        ]
+      ],
+      "tarefas": []
+    }
+  ]
+}
