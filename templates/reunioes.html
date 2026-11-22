@@ -201,7 +201,8 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
         <label><input type="checkbox" id="f-email" checked> Disparar e-mail de convocação aos participantes</label>
         <div class="small text-muted">O e-mail é enviado (ou não) ao aplicar o arquivo no terminal, que confirma antes de enviar.</div>
         <div class="previa mt-2">
-            <div class="previa-cab"><span class="text-muted">Para:</span> <span id="pv-para"></span><br>
+            <div class="previa-cab"><span class="text-muted">De:</span> <span id="pv-de"></span><br>
+                <span class="text-muted">Para:</span> <span id="pv-para"></span><br>
                 <span class="text-muted">Assunto:</span> <strong id="pv-assunto"></strong></div>
             <pre id="pv-corpo"></pre>
         </div>
@@ -380,6 +381,7 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
                + "Reuniões: " + D.site + "reunioes.html#r-" + data + "-" + (slug(titulo) || "reuniao") + "\n\n--\nThiago\nTI-FFLCH";
         var semEmail = part.filter(function (n) { return !D.emails[n]; });
         $("pv-para").textContent = part.length ? part.join(", ") + (semEmail.length ? "  (sem e-mail: " + semEmail.join(", ") + ")" : "") : "—";
+        $("pv-de").textContent = D.remetente;
         $("pv-assunto").textContent = titulo + (dataBr ? " - " + dataBr : "") + (hor ? " às " + hor : "");
         $("pv-corpo").textContent = corpo;
         $("pv-corpo").parentNode.style.opacity = $("f-email").checked ? "1" : ".5";

@@ -30,6 +30,12 @@ MSMTP_ACCOUNT = "sti"
 EMAIL_REMETENTE = "fflchsti@usp.br"
 NOME_REMETENTE = "TI FFLCH"
 
+# E-mails de reunião (convocação e cancelamento) saem em nome de quem organiza as reuniões.
+# Enviados pela mesma conta do msmtp; para usar uma conta própria, troque MSMTP_ACCOUNT_REUNIAO
+# por uma conta do ~/.msmtprc cujo "from" seja este endereço.
+REMETENTE_REUNIAO = ("Thiago Gomes Veríssimo", "thiago.verissimo@usp.br")
+MSMTP_ACCOUNT_REUNIAO = MSMTP_ACCOUNT
+
 CLAUDE_MODEL = "claude-opus-5-5"
 
 
@@ -198,11 +204,12 @@ def oferecer_email_reuniao(caminho, padrao=True, cancelamento=False):
         print("⚠ Nenhum participante com e-mail — nada a enviar.")
         return False
     assunto, corpo = (email_cancelamento if cancelamento else email_reuniao)(dados, caminho)
-    print("\n--- E-mail " + "-" * 52 + f"\nAssunto: {assunto}\n\n{corpo}" + "-" * 63)
+    de = f"{REMETENTE_REUNIAO[0]} <{REMETENTE_REUNIAO[1]}>"
+    print("\n--- E-mail " + "-" * 52 + f"\nDe: {de}\nAssunto: {assunto}\n\n{corpo}" + "-" * 63)
     if not perguntar_sim_nao(f"Disparar o e-mail para os {len(destinatarios) - len(sem_email)} participante(s)?", padrao):
         print("E-mail não enviado.")
         return False
-    if enviar_email(destinatarios, assunto, corpo):
+    if enviar_email(destinatarios, assunto, corpo, remetente=REMETENTE_REUNIAO, conta=MSMTP_ACCOUNT_REUNIAO):
         dados["email_cancelamento_em" if cancelamento else "email_enviado_em"] = datetime.now().strftime("%d/%m/%Y %H:%M")
         gravar_reuniao(caminho, dados)
         return True
@@ -350,8 +357,13 @@ def ler_texto_multilinha(msg):
 # ----------------------------------------------------------------------
 # E-mail (msmtp)
 # ----------------------------------------------------------------------
-def enviar_email(destinatarios, assunto, corpo):
-    """Envia um e-mail texto puro via `msmtp -a sti`. destinatarios: lista de (nome, email)."""
+def enviar_email(destinatarios, assunto, corpo, remetente=None, conta=None):
+    """
+    Envia um e-mail texto puro via msmtp. destinatarios: lista de (nome, email).
+    remetente: (nome, email) do cabeçalho From (padrão: TI FFLCH <fflchsti@usp.br>);
+    conta: conta do ~/.msmtprc (padrão: MSMTP_ACCOUNT).
+    """
+    nome_rem, email_rem = remetente or (NOME_REMETENTE, EMAIL_REMETENTE)
     destinatarios = [(n, e) for n, e in destinatarios if e]
     if not destinatarios:
         print("⚠ Nenhum destinatário com e-mail cadastrado em pessoas.csv.")
@@ -362,7 +374,8 @@ def enviar_email(destinatarios, assunto, corpo):
 
     para = ", ".join(formataddr((str(Header(n, "utf-8")), e)) for n, e in destinatarios)
     mensagem = (
-        f"From: {formataddr((NOME_REMETENTE, EMAIL_REMETENTE))}\n"
+        f"From: {formataddr((str(Header(nome_rem, 'utf-8')), email_rem))}\n"
+        + (f"Reply-To: {email_rem}\n" if remetente else "") +
         f"To: {para}\n"
         f"Subject: {Header(assunto, 'utf-8').encode()}\n"
         f"Date: {formatdate(localtime=True)}\n"
@@ -374,7 +387,7 @@ def enviar_email(destinatarios, assunto, corpo):
         f"{corpo}\n"
     )
     proc = subprocess.run(
-        ["msmtp", "-a", MSMTP_ACCOUNT, "-t"],
+        ["msmtp", "-a", conta or MSMTP_ACCOUNT, "-t"],
         input=mensagem.encode("utf-8"),
         capture_output=True,
     )

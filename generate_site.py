@@ -15,6 +15,7 @@ from fflch_common import (
     load_pessoas,
     id_reuniao,
     SITE_URL,
+    REMETENTE_REUNIAO,
     responsaveis_da_tarefa,
     estagiarios_da_tarefa,
 )
@@ -535,6 +536,7 @@ def dados_form_reuniao(all_issues):
               for i in all_issues if i["aberta"] and i["task_ativa"]]
     emails = {p["nome"]: True for p in load_pessoas().values() if p.get("email")}
     return {"hoje": datetime.now().date().isoformat(), "site": SITE_URL,
+            "remetente": "{} <{}>".format(*REMETENTE_REUNIAO),
             "pessoas": pessoas, "issues": issues, "emails": emails}
 
 
