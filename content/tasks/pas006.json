@@ -1,13 +1,16 @@
 {
-  "peso": 8,
-  "titulo": "Acompanhamento de Instalações de Cabeamento Estruturado",
+  "peso": 13,
+  "titulo": "Camada 1",
   "estagiarios": [],
-  "descricao": "O acompanhamento de novas instalações de cabeamento estruturado envolve a supervisão técnica de serviços realizados por equipes internas ou terceirizadas, garantindo conformidade com normas técnicas e padrões ABNT. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Verificação da conformidade das instalações com normas técnicas; \\item Inspeção da qualidade de conectores, patch panels e terminações; \\item Acompanhamento da certificação dos pontos de rede com equipamento apropriado; \\item Avaliação da organização física e identificação dos cabos e tomadas instaladas; \\item Atualização da documentação técnica no sistema rede.fflch.usp.br; \\end{itemize}",
+  "descricao": "Esta tarefa compreende a camada 1 (infraestrutura física) da rede: organização e manutenção das salas de rack e acompanhamento de novas instalações de cabeamento estruturado, realizadas por equipes internas ou terceirizadas, garantindo conformidade com normas técnicas e padrões ABNT. Trata-se de atividade preventiva e contínua. As atividades constantes relacionadas a esta responsabilidade são: \\bigskip\\begin{itemize} \\item Organização e identificação de cabos de rede e patch cords; \\item Mapeamento das portas do patch panels no sistema rede.fflch.usp.br; \\item Monitoramento do funcionamento dos nobreaks; \\item Acompanhamento das condições de climatização e funcionamento do ar condicionado, acionando o serviço gerais quando necessário; \\item Acionar o setor de limpeza e acompanhá-lo; \\item Verificação da conformidade das instalações de cabeamento estruturado com normas técnicas; \\item Inspeção da qualidade de conectores, patch panels e terminações; \\item Acompanhamento da certificação dos pontos de rede com equipamento apropriado; \\item Avaliação da organização física e identificação dos cabos e tomadas instaladas; \\item Atualização da documentação técnica no sistema rede.fflch.usp.br; \\end{itemize}",
   "responsaveis": [
     "Néli Maximino",
     "Paulo Henrique de Araújo",
     "Celio Aparecido da Silva",
-    "José Roberto Varconti de Souza"
+    "José Roberto Varconti de Souza",
+    "Felipe dos Santos Ribeiro",
+    "Wellington da Silva Moura",
+    "Normando Peres Silva Moura"
   ],
   "status": true
 }

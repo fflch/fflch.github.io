@@ -1,0 +1,28 @@
+{
+  "titulo": "TI",
+  "data": "2026-08-12",
+  "horario": "10h às 11h",
+  "participantes": [
+    "Augusto César Freire Santiago",
+    "José Roberto Varconti de Souza",
+    "Mônica Colacique",
+    "Néli Maximino",
+    "Felipe dos Santos Ribeiro",
+    "Ricardo Fontoura",
+    "Thiago Gomes Veríssimo",
+    "Celio Aparecido da Silva",
+    "Normando Peres Silva Moura",
+    "Paulo Henrique de Araújo",
+    "Wellington da Silva Moura",
+    "Gilberto Vargas",
+    "Marco Antonio Rocha"
+  ],
+  "issues": [
+    "pro010-2",
+    "pro010-3",
+    "pro010-4",
+    "vms001-1",
+    "hos001-1"
+  ],
+  "texto": ""
+}

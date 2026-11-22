@@ -1,0 +1,102 @@
+/* Diagrama de DIOs (assets/dio/dio.js) */
+.dio-app {
+    --dio-bg: #ffffff; --dio-bg2: #f6f6f4; --dio-borda: #dcdbd5; --dio-texto: #1d1d1b;
+    --dio-texto2: #5c5b56; --dio-livre: #ecebe6; --dio-predio-bg: rgba(246, 246, 244, .92);
+    color: var(--dio-texto); font-size: 14px; position: relative; margin: 16px 0 24px;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .dio-app {
+        --dio-bg: #1a1a19; --dio-bg2: #242423; --dio-borda: #3d3d3a; --dio-texto: #f0efec;
+        --dio-texto2: #b5b4ab; --dio-livre: #2d2d2b; --dio-predio-bg: rgba(36, 36, 35, .92);
+    }
+}
+:root[data-theme="dark"] .dio-app {
+    --dio-bg: #1a1a19; --dio-bg2: #242423; --dio-borda: #3d3d3a; --dio-texto: #f0efec;
+    --dio-texto2: #b5b4ab; --dio-livre: #2d2d2b; --dio-predio-bg: rgba(36, 36, 35, .92);
+}
+
+.dio-barra { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 10px; }
+.dio-barra select { margin-left: 6px; padding: 3px 8px; border-radius: 6px; border: 1px solid var(--dio-borda);
+    background: var(--dio-bg); color: var(--dio-texto); }
+.dio-dica { color: var(--dio-texto2); font-size: 12.5px; flex-basis: 100%; }
+.dio-barra input[type=search] { padding: 3px 8px; border-radius: 6px; border: 1px solid var(--dio-borda);
+    background: var(--dio-bg); color: var(--dio-texto); min-width: 220px; flex: 1 1 220px; max-width: 360px; }
+.dio-zoom { display: inline-flex; align-items: center; gap: 4px; }
+.dio-zoom button { border: 1px solid var(--dio-borda); background: var(--dio-bg); color: var(--dio-texto);
+    border-radius: 6px; padding: 1px 9px; line-height: 1.5; }
+.dio-zoom span { min-width: 42px; text-align: center; font-variant-numeric: tabular-nums; color: var(--dio-texto2); font-size: 12.5px; }
+
+.dio-canvas { position: relative; padding: 12px 0 8px; overflow-x: auto; overflow-y: hidden; }
+.dio-sizer { position: relative; margin: 0 auto; }
+.dio-stage { position: absolute; left: 0; top: 0; width: max-content; transform-origin: 0 0; }
+.dio-svg { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; z-index: 0; }
+.dio-foco .dio-svg { z-index: 3; }  /* ligação em destaque passa por cima de tudo */
+.dio-predios { display: flex; flex-wrap: nowrap; gap: 40px; align-items: flex-start; justify-content: safe center; position: relative; z-index: 1; width: max-content; min-width: 100%; }
+.dio-predios { gap: 28px; justify-content: flex-start; min-width: 0; }
+
+/* prédio */
+.dio-predio { background: var(--dio-predio-bg); border: 1px solid var(--dio-borda); border-radius: 14px;
+    padding: 10px 12px 12px; min-width: 190px; max-width: 680px; flex: none; box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+    transition: opacity .15s; }
+.dio-predio header { cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.dio-predio .dio-nome { font-weight: 700; font-size: 15px; }
+.dio-predio .dio-cont { color: var(--dio-texto2); font-size: 12px; white-space: nowrap; }
+.dio-predio.externo { border-style: dashed; min-width: 0; max-width: 190px; }
+.dio-predio.externo header { flex-direction: column; gap: 0; }
+.dio-predio.apagado { opacity: .25; }
+
+.dio-tr { border-left: 3px solid var(--dio-borda); padding: 2px 0 2px 10px; margin-top: 6px; }
+.dio-racks { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+.dio-rack { border: 1px solid var(--dio-borda); border-radius: 8px; padding: 6px 8px; margin-top: 6px; background: var(--dio-bg); max-width: 320px; }
+.dio-rot { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--dio-texto2); font-weight: 600; }
+
+/* DIO: retângulo com os pares em sequência */
+.dio-dio { margin-top: 6px; border: 2px solid #4a4a46; border-radius: 6px; background: #2b2b29; color: #f3f2ee; padding: 4px 6px 6px; }
+.dio-dio-cab { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.dio-dio-cab small { font-weight: 400; color: #c9c8c0; }
+.dio-portas { display: flex; flex-wrap: wrap; gap: 4px; }
+.dio-par { width: 26px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;
+    font-weight: 700; border-radius: 4px; background: #3d3d3a; color: #9a998f; border: 1.5px dashed #5d5d58;
+    font-variant-numeric: tabular-nums; cursor: default; transition: transform .1s, box-shadow .1s; }
+.dio-par.usado { background: var(--cor); color: #fff; border: 1.5px solid rgba(255, 255, 255, .5); cursor: pointer; }
+.dio-par.ativa { transform: scale(1.18); box-shadow: 0 0 0 3px rgba(255, 255, 255, .9), 0 0 0 5px var(--cor); }
+
+.dio-externo { display: inline-block; padding: 6px 10px; border-radius: 999px; border: 1.5px dashed var(--dio-texto2);
+    color: var(--dio-texto2); font-size: 12px; cursor: pointer; }
+.dio-externo.ativa { border-style: solid; color: var(--dio-texto); }
+
+/* linhas */
+.dio-lig .linha { fill: none; stroke-width: 2.2; opacity: .75; transition: opacity .15s, stroke-width .15s; }
+.dio-lig .hit { fill: none; stroke: transparent; stroke-width: 14; pointer-events: stroke; cursor: pointer; }
+.dio-lig circle { transition: opacity .15s; }
+.dio-lig.oculta { display: none; }
+.dio-foco .dio-lig:not(.ativa) .linha, .dio-foco .dio-lig:not(.ativa) circle { opacity: .1; }
+.dio-lig.ativa .linha { stroke-width: 4; opacity: 1; }
+.dio-foco .dio-par.usado:not(.ativa) { opacity: .45; }
+.dio-par.fora { opacity: .25; }
+
+/* dica */
+.dio-tip { min-height: 28px; margin-top: 6px; padding: 6px 10px; border-radius: 8px; background: var(--dio-bg2);
+    border: 1px solid var(--dio-borda); font-size: 13px; opacity: 0; transition: opacity .15s; }
+.dio-tip.visivel { opacity: 1; }
+.dio-tip small { color: var(--dio-texto2); }
+.dio-bola { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
+
+/* tabela */
+.dio-tabela { margin-top: 14px; }
+.dio-tabela summary { cursor: pointer; color: var(--dio-texto2); font-weight: 600; }
+.dio-tabela table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 13px; }
+.dio-tabela th, .dio-tabela td { padding: 5px 8px; border-bottom: 1px solid var(--dio-borda); text-align: left; }
+.dio-tabela tr[data-lig] { cursor: pointer; }
+.dio-tabela tr.ativa td { background: var(--dio-bg2); font-weight: 600; }
+
+@media (max-width: 700px) {
+    .dio-predios { gap: 28px; flex-direction: column; align-items: stretch; width: auto; }
+    .dio-predio { max-width: none; }
+}
+.dio-foco .dio-lig:not(.ativa) .hit { pointer-events: none; }  /* evita que outras linhas "roubem" o destaque */
+.dio-tronco .linha { opacity: .8; stroke-linecap: round; }
+.dio-tronco:hover .linha { opacity: 1; filter: brightness(1.1); }
+.dio-rot-tronco text { fill: #fff; font-size: 10px; font-weight: 700; font-family: system-ui, sans-serif; pointer-events: none; }
+.dio-rot-tronco rect { pointer-events: all; cursor: pointer; }
+.dio-limpar { border: 1px solid var(--dio-borda); background: var(--dio-bg); color: var(--dio-texto); border-radius: 6px; padding: 0 8px; font-size: 12px; margin-left: 6px; }

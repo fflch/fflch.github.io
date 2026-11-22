@@ -1,0 +1,13 @@
+{
+  "titulo": "Camada 1",
+  "data": "2026-08-13",
+  "horario": "10h às 11h30",
+  "participantes": [
+    "José Roberto Varconti de Souza",
+    "Néli Maximino",
+    "Celio Aparecido da Silva",
+    "Paulo Henrique de Araújo"
+  ],
+  "issues": [],
+  "texto": "- Como gerar e onde colocar os diagramas\n- desativação do netmiko e switches.fflch.usp.br\n- Onde estão as configurações L2\n- Cadastro de switches no rede.fflch.usp.br\n- Patrimônios dos switches"
+}

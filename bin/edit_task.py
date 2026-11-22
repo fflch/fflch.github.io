@@ -38,12 +38,25 @@ def escolher_indice(n, msg):
 
 
 def escolher_task():
-    tasks = sorted(f for f in os.listdir(TASKS_DIR) if f.endswith(".json"))
+    """Lista as tarefas ativas pelo título; filtro opcional por texto."""
+    tasks = []
+    for f in os.listdir(TASKS_DIR):
+        if f.endswith(".json"):
+            t = carregar(os.path.join(TASKS_DIR, f))
+            if t.get("status") is True:
+                tasks.append((t.get("titulo", ""), f[:-5]))
+    tasks.sort(key=lambda x: x[0].lower())
     while True:
-        cod = input("\nCódigo da tarefa (ex: dev005): ").strip().replace(".json", "")
-        if f"{cod}.json" in tasks:
-            return cod
-        print("Tarefa não encontrada.")
+        filtro = input("\nFiltrar tarefas por texto (Enter = todas): ").strip().lower()
+        vis = [t for t in tasks if filtro in t[0].lower()]
+        if not vis:
+            print("Nada encontrado.")
+            continue
+        for i, (titulo, _) in enumerate(vis, 1):
+            print(f"  {i:03d} - {titulo}")
+        idx = escolher_indice(len(vis), "\nNúmero da tarefa (Enter = filtrar de novo): ")
+        if idx is not None:
+            return vis[idx][1]
 
 
 def normalizar_estagiarios(task):
@@ -58,7 +71,7 @@ def normalizar_estagiarios(task):
 
 
 def mostrar(task, codigo):
-    print(f"\n{codigo} | {task.get('titulo', '')}")
+    print(f"\n{task.get('titulo', '')}")
     print("Responsáveis:")
     for i, r in enumerate(task["responsaveis"], 1):
         print(f"  {i} - {r}")

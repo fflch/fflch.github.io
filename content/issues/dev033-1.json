@@ -1,4 +1,5 @@
 {
+  "numero": 48,
   "status": true,
   "descricao": "criar CRUD para ‘obras’ e fazer a importação das obras - marcar com o professor",
   "data": "20/07/2026",

@@ -1,0 +1,21 @@
+{
+  "tipo": "mudancas-acompanhamento",
+  "versao": 1,
+  "gerado_em": "2026-11-22T11:00:39.521Z",
+  "mudancas": [
+    {
+      "issue": "adm001-5",
+      "antes": {
+        "responsavel": "Thiago Gomes Veríssimo",
+        "descricao": "Cadastrar no sistema os repositórios: incidentes, fixfflch, incidentes-swarm, cis, webapps, wp-fflch-theme, controleportarias, dashboard-computadores, plantas, compras, stou-monitoring, portarias, wordpress, memorianegra e pragmatica-drupal-module.",
+        "tarefa": "adm001"
+      },
+      "depois": {
+        "comentarios": [
+          "Usar novo recurso que pega e classifica repositórios no Github"
+        ]
+      },
+      "em": "2026-11-21"
+    }
+  ]
+}

@@ -22,7 +22,7 @@ from datetime import datetime
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
-from fflch_common import chamar_claude, editar_no_editor, perguntar_sim_nao  # noqa: E402
+from fflch_common import chamar_claude, editar_no_editor, perguntar_sim_nao, rotulo_issue  # noqa: E402
 
 ISSUES_DIR = os.path.join(BASE_DIR, "content", "issues")
 TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
@@ -54,7 +54,7 @@ def contexto_da_task(codigo_task, task):
     desc = str(task.get("descricao", ""))
     if desc.endswith(".tex"):
         desc = ""
-    return f"{codigo_task} - {task.get('titulo', '')}\n{desc}".strip()
+    return f"{task.get('titulo', '')}\n{desc}".strip()
 
 
 def issues_abertas(prefixo=""):
@@ -81,7 +81,7 @@ def melhorar(codigo):
 def mostrar(codigo, issue, task, pos, total):
     task_cod = codigo.rsplit("-", 1)[0]
     print("\n" + "=" * 70)
-    print(f"[{pos}/{total}] {codigo}  ({task_cod} - {task.get('titulo', '')})")
+    print(f"[{pos}/{total}] Issue {rotulo_issue(issue)}  ({task.get('titulo', '')})")
     print(f"Responsável: {issue.get('responsavel') or 'sem responsável'}")
     print(f"Aberta em:   {issue.get('data', '?')}")
     print(f"Descrição:   {issue.get('descricao', '')}")
@@ -128,7 +128,7 @@ def manter(codigo, caminho, issue, futuro):
         return
     issue["descricao"] = nova
     salvar(caminho, issue)
-    print(f"✔ {codigo} atualizada: {nova}")
+    print(f"✔ Issue {rotulo_issue(issue)} atualizada: {nova}")
 
 
 def fechar(codigo, caminho, issue):
@@ -139,7 +139,7 @@ def fechar(codigo, caminho, issue):
     issue["status"] = False
     issue["data_fechamento"] = hoje
     salvar(caminho, issue)
-    print(f"✔ {codigo} fechada.")
+    print(f"✔ Issue {rotulo_issue(issue)} fechada.")
 
 
 def main():

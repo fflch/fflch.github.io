@@ -90,6 +90,7 @@ main { padding: 28px 32px; max-width: 1200px; }
 .card-issue.fechada .desc { text-decoration: line-through; }
 .card-issue .topo { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
 .card-issue .cod { font-weight: 700; }
+.card-issue .num-issue { color: var(--text-muted); font-variant-numeric: tabular-nums; margin-right: 2px; }
 .card-issue .tarefa { font-size: .82rem; color: var(--text-secondary); }
 .card-issue .desc { font-size: .93rem; line-height: 1.4; }
 .card-issue .antes { color: var(--text-muted); text-decoration: line-through; font-size: .82rem; }
@@ -276,26 +277,6 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
     }
 
     // ---------------- estado efetivo ----------------
-    // Códigos que as issues novas/movidas vão receber: próximo número livre da tarefa
-    // (maior número já usado + 1). Mesma ordem do bin/aplicar_mudancas.py:
-    // primeiro as movidas, depois as novas, cada grupo na ordem do arquivo baixado.
-    var PREVISTOS = {};
-    function codigosPrevistos() {
-        var usados = {}, out = {};
-        Object.keys(D.ultimo || {}).forEach(function (t) { usados[t] = D.ultimo[t]; });
-        function reservar(t) { usados[t] = (usados[t] || 0) + 1; return t + "-" + usados[t]; }
-        var chaves = Object.keys(mudancas).sort();
-        chaves.forEach(function (k) {
-            var m = mudancas[k];
-            if (!m.nova && issuesBase[k] && m.depois.tarefa) out[k] = reservar(m.depois.tarefa);
-        });
-        chaves.forEach(function (k) {
-            var m = mudancas[k];
-            if (m.nova && tarefas[m.depois.tarefa]) out[k] = reservar(m.depois.tarefa);
-        });
-        return out;
-    }
-
     function efetiva(cod) {
         var m = mudancas[cod] || {}, d = m.depois || {};
         if (m.nova) {
@@ -306,7 +287,7 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
         }
         var b = issuesBase[cod];
         return {
-            codigo: cod, base: b,
+            codigo: cod, numero: b.numero, base: b,
             responsavel: d.responsavel !== undefined ? d.responsavel : b.responsavel,
             descricao: d.descricao !== undefined ? d.descricao : b.descricao,
             tarefa: d.tarefa || b.tarefa,
@@ -379,14 +360,10 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
         var cls = ["card-issue", "f-" + faixa(i.idade), i.alterada ? "alterada" : "", i.fechar ? "fechada" : ""].join(" ");
         var h = '<div class="' + cls + '" draggable="true" data-card="' + esc(i.codigo) + '">';
 
-        var prev = PREVISTOS[i.codigo];
-        var codHtml = i.nova
-            ? esc(prev || "nova") + ' <small class="zero">(nova)</small>'
-            : (prev ? '<span class="antes">' + esc(i.codigo) + "</span> → " + esc(prev) : esc(i.codigo));
-        h += '<div class="topo"><div><span class="cod" title="' + (prev ? "Código previsto; confirmado ao aplicar no terminal" : "") + '">'
-            + codHtml + "</span></div>" + pillIdade(i) + "</div>";
-        h += '<div class="tarefa">' + (d.tarefa ? '<span class="antes">' + esc(b.tarefa) + "</span> → " : "")
-            + '<a href="index.html#' + esc(i.tarefa) + '">' + esc(i.tarefa) + "</a> · " + esc(tituloTarefa(i.tarefa)) + "</div>";
+        // o título da tarefa identifica o card (os códigos ficam só internos)
+        h += '<div class="topo"><div class="cod"><span class="num-issue">' + (i.nova ? "nova" : "#" + esc(i.numero)) + "</span> "
+            + (d.tarefa ? '<span class="antes">' + esc(tituloTarefa(b.tarefa)) + "</span> → " : "")
+            + '<a href="index.html#' + esc(i.tarefa) + '">' + esc(tituloTarefa(i.tarefa)) + "</a></div>" + pillIdade(i) + "</div>";
         h += '<div class="desc">' + esc(i.descricao) + "</div>";
         if (d.descricao !== undefined) h += '<div class="antes">' + esc(b.descricao) + "</div>";
         if (mostrarResp) h += '<div class="tarefa">👤 ' + esc(i.responsavel || "sem responsável") + "</div>";
@@ -422,22 +399,41 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
         return h + "</div>";
     }
 
-    // ---------------- autocomplete (datalist nativo) ----------------
+    // ---------------- seleção (select nativo + filtro opcional) ----------------
+    // O datalist não funciona bem no celular; usamos um <select> com todas as opções
+    // e um campo de texto opcional que filtra a lista enquanto se digita.
+    var opcoesCampo = {};
+    function campoSelect(id, valor, opcoes, rotulo, phFiltro) {
+        opcoesCampo[id] = opcoes;
+        return '<label class="small" for="' + id + '">' + rotulo + "</label>"
+            + '<input type="search" class="form-control form-control-sm mb-1" id="' + id + '-filtro" data-filtro="' + id
+            + '" autocomplete="off" placeholder="' + esc(phFiltro) + '">'
+            + '<select class="form-select form-select-sm" id="' + id + '">' + opcoesHtml(opcoes, valor) + "</select>";
+    }
+    function opcoesHtml(opcoes, valor) {
+        return opcoes.map(function (o) {
+            return '<option value="' + esc(o[0]) + '"' + (o[0] === valor ? " selected" : "") + ">" + esc(o[1]) + "</option>";
+        }).join("");
+    }
+    function filtrarSelect(inp) {
+        var sel = document.getElementById(inp.dataset.filtro), todas = opcoesCampo[sel.id] || [];
+        var q = inp.value.trim().toLowerCase(), atual = sel.value;
+        var vis = !q ? todas : todas.filter(function (o) { return o[0] && o[1].toLowerCase().indexOf(q) >= 0; });
+        if (!vis.length) vis = [["", "— nada encontrado —"]];
+        var manter = vis.some(function (o) { return o[0] === atual; });
+        sel.innerHTML = opcoesHtml(vis, manter ? atual : vis[0][0]);
+    }
     function campoTarefa(id, valor, preferidas, rotulo) {
         var pref = (preferidas || []).filter(function (c) { return tarefas[c]; });
         var ordem = pref.concat(D.tarefas.map(function (t) { return t.codigo; }).filter(function (c) { return pref.indexOf(c) < 0; }));
-        return '<label class="small" for="' + id + '">' + rotulo + "</label>"
-            + '<input class="form-control form-control-sm" id="' + id + '" list="' + id + '-dl" autocomplete="off" value="' + esc(valor || "")
-            + '" placeholder="digite o código ou parte do título (ex: dev005, grafica)">'
-            + '<datalist id="' + id + '-dl">' + ordem.map(function (c) { return '<option value="' + esc(c + " - " + tituloTarefa(c)) + '">'; }).join("") + "</datalist>";
+        var opcoes = [["", "— escolha a tarefa —"]].concat(ordem.map(function (c) { return [c, tituloTarefa(c)]; }));
+        return campoSelect(id, valor || "", opcoes, rotulo, "filtrar (ex: gráfica)");
     }
     function campoPessoa(id, valor, tarefa, rotulo) {
         var sug = (tarefas[tarefa] || { pessoas: [] }).pessoas;
         var ordem = sug.concat(nomesPessoas.filter(function (n) { return sug.indexOf(n) < 0; }));
-        return '<label class="small" for="' + id + '">' + rotulo + "</label>"
-            + '<input class="form-control form-control-sm" id="' + id + '" list="' + id + '-dl" autocomplete="off" value="' + esc(valor || "")
-            + '" placeholder="digite parte do nome (vazio = sem responsável)">'
-            + '<datalist id="' + id + '-dl">' + ordem.map(function (n) { return '<option value="' + esc(n) + '">'; }).join("") + "</datalist>";
+        var opcoes = [["", "(sem responsável)"]].concat(ordem.map(function (n) { return [n, n]; }));
+        return campoSelect(id, valor || "", opcoes, rotulo, "filtrar por nome");
     }
     // devolve o código da tarefa a partir do texto digitado, ou null
     function resolverTarefa(txt) {
@@ -481,13 +477,13 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
         if (editor.acao === "comentar") return editorComentarios(i);
         var h = '<div class="editor">';
         if (editor.acao === "atribuir") {
-            h += campoPessoa("ed-valor", "", i.tarefa, "Atribuir a" + (i.responsavel ? " (hoje: " + esc(i.responsavel) + ")" : ""));
+            h += campoPessoa("ed-valor", i.responsavel || "", i.tarefa, "Atribuir a" + (i.responsavel ? " (hoje: " + esc(i.responsavel) + ")" : ""));
         } else if (editor.acao === "editar") {
             h += '<label class="small">Descrição</label><textarea class="form-control form-control-sm" id="ed-valor" rows="4">' + esc(i.descricao) + "</textarea>";
         } else if (editor.acao === "mover") {
             var pref = [];
             D.pessoas.forEach(function (p) { if (p.nome === i.responsavel) pref = p.atividades.map(function (a) { return a.codigo; }); });
-            h += campoTarefa("ed-valor", "", pref.filter(function (c) { return c !== i.tarefa; }), "Mudar para a tarefa (hoje: " + esc(i.tarefa) + ")");
+            h += campoTarefa("ed-valor", "", pref.filter(function (c) { return c !== i.tarefa; }), "Mudar para a tarefa (hoje: " + esc(tituloTarefa(i.tarefa)) + ")");
         }
         return h + '<div class="mt-2 d-flex gap-2"><button type="button" class="btn btn-sm btn-primary" data-ed="ok">Confirmar</button>'
             + '<button type="button" class="btn btn-sm btn-outline-secondary" data-ed="cancelar">Cancelar</button></div></div>';
@@ -588,13 +584,13 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
 
         h += '<details class="bloco mt-4"><summary>Tarefas (' + p.atividades.length + ")</summary>"
             + '<table class="t mt-2"><tbody>' + p.atividades.map(function (a) {
-                return '<tr><td><a href="index.html#' + esc(a.codigo) + '">' + esc(a.codigo) + "</a></td><td>" + esc(a.titulo)
+                return '<tr><td><a href="index.html#' + esc(a.codigo) + '">' + esc(a.titulo) + "</a>"
                     + (a.unico ? ' <span class="pill p-warning">único resp.</span>' : "") + '</td><td class="zero">' + esc(a.papel)
                     + '</td><td class="num">peso ' + a.peso + "</td></tr>";
             }).join("") + "</tbody></table></details>";
         h += '<details class="bloco"><summary>Resolvidas nos últimos 90 dias (' + p.resolvidas90.length + ")</summary>"
             + (p.resolvidas90.length ? '<ul class="mt-2">' + p.resolvidas90.map(function (i) {
-                return "<li><strong>" + esc(i.codigo) + "</strong> — " + esc(i.descricao) + ' <small class="zero">(' + esc(i.data_fechamento) + ")</small></li>";
+                return "<li><strong>#" + esc(i.numero) + "</strong> " + esc(i.descricao) + ' <small class="zero">(' + esc(i.data_fechamento) + ")</small></li>";
             }).join("") + "</ul>" : '<p class="sub mt-2">Nenhuma.</p>') + "</details>";
         return h;
     }
@@ -636,7 +632,6 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
     }
 
     function render(manterScroll) {
-        PREVISTOS = codigosPrevistos();
         var y = window.scrollY, v = vistaAtual(), html;
         if (v === "triagem") html = vistaTriagem();
         else if (v === "mudancas") html = vistaMudancas();
@@ -645,17 +640,20 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
         document.getElementById("main").innerHTML = html;
         renderLateral();
         window.scrollTo(0, manterScroll ? y : 0);
+        // no celular, não foca o filtro para não abrir o teclado sem necessidade
+        var tela = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
         var foco = document.getElementById("ed-valor") || document.getElementById("nova-tarefa");
+        if (foco && foco.tagName === "SELECT") foco = tela ? document.getElementById(foco.id + "-filtro") : null;
         if (foco) foco.focus();
     }
 
     // ---------------- ações ----------------
-    function fechar(cod) { registrar(cod, "fechar", true); editor = null; toast("✓ " + (cod.indexOf("nova-") === 0 ? "Nova issue descartada" : cod + " será fechada")); }
+    function fechar(cod) { registrar(cod, "fechar", true); editor = null; toast("✓ " + (cod.indexOf("nova-") === 0 ? "Nova issue descartada" : "Issue será fechada")); }
     function atribuir(cod, nome) {
         var i = efetiva(cod);
         if (i.responsavel === nome) return;
         registrar(cod, "responsavel", i.nova ? nome : (nome === issuesBase[cod].responsavel ? undefined : nome));
-        toast((i.nova ? "Nova issue" : cod) + " → " + (nome || "sem responsável"));
+        toast((i.nova ? "Nova issue" : "Issue") + " → " + (nome || "sem responsável"));
     }
 
     var main = document.getElementById("main");
@@ -712,7 +710,7 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
                 valor = resolverTarefa(valor);
                 if (!valor) { toast("Tarefa não encontrada ou ambígua — escolha na lista"); return; }
                 registrar(c, "tarefa", !i.nova && valor === issuesBase[c].tarefa ? undefined : valor);
-                toast("Movida para " + valor);
+                toast("Movida para " + tituloTarefa(valor));
             }
             editor = null; render(true);
             return;
@@ -720,11 +718,18 @@ details.bloco > summary { cursor: pointer; color: var(--text-secondary); }
         if (t.dataset.ir && e.target.tagName !== "A") location.hash = t.dataset.ir;
     });
 
-    // Enter num campo de autocomplete confirma o editor aberto
+    // digitar no filtro restringe as opções do select correspondente
+    main.addEventListener("input", function (e) {
+        if (e.target.dataset && e.target.dataset.filtro) filtrarSelect(e.target);
+    });
+
+    // Enter num campo de filtro confirma o editor aberto
     main.addEventListener("keydown", function (e) {
         if (e.key !== "Enter" || e.target.tagName !== "INPUT") return;
         var b = main.querySelector('[data-ed="ok"], [data-ed="criar"]');
-        if (b && e.target.id !== "nova-tarefa") { e.preventDefault(); b.click(); }
+        if (!b) return;
+        e.preventDefault();
+        if (e.target.id !== "nova-tarefa-filtro") b.click();
     });
 
     // ---------------- arrastar e soltar ----------------

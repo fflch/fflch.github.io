@@ -1,4 +1,5 @@
 {
+  "numero": 77,
   "status": true,
   "descricao": "Aprimorar a forma de escrita das definições de rotas nos arquivos de rotas gerados pela biblioteca uspdev/simple-crud-generator.",
   "data": "16/11/2026",

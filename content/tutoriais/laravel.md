@@ -24,8 +24,8 @@ docker run --rm -it \
 
 Baixando ambos:
 ```bash
-curl -L https://fflch.github.io/assets/laravel/Dockerfile -o Dockerfile
-curl -L https://fflch.github.io/assets/laravel/docker-compose.yml -o docker-compose.yml
+curl -L https://tiplanejamento.fflch.usp.br/assets/laravel/Dockerfile -o Dockerfile
+curl -L https://tiplanejamento.fflch.usp.br/assets/laravel/docker-compose.yml -o docker-compose.yml
 ```
 
 Criando a imagem e subindo ambiente:
@@ -1127,7 +1127,7 @@ docker exec -it cursolaravel php artisan migrate
 Importando csv com os livros:
 ```bash
 mkdir -p app/Console/Commands
-curl -L https://fflch.github.io/assets/laravel/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
+curl -L https://tiplanejamento.fflch.usp.br/assets/laravel/ImportaLivros.php -o app/Console/Commands/ImportaLivros.php
 
 docker exec -it cursolaravel composer require league/csv
 docker exec -it cursolaravel php artisan app:importa-livros
@@ -1334,7 +1334,7 @@ Para construção da imagem baseada na tag (versão) criar o arquivo `.github/wo
 
 ```bash
 mkdir -p .github/workflows
-curl -L https://fflch.github.io/assets/laravel/docker.yml -o .github/workflows/docker.yml
+curl -L https://tiplanejamento.fflch.usp.br/assets/laravel/docker.yml -o .github/workflows/docker.yml
 ```
 
 **2 - testes no dusk**
@@ -1343,7 +1343,7 @@ Para rodar os testes no dusk baseado na configuração do docker-compose.yml, cr
 [Arquivo modelo dusk.yml](/assets/laravel/dusk.yml)
 
 ```bash
-curl -L https://fflch.github.io/assets/laravel/dusk.yml -o .github/workflows/dusk.yml
+curl -L https://tiplanejamento.fflch.usp.br/assets/laravel/dusk.yml -o .github/workflows/dusk.yml
 ```
 
 É necessário alterar a variável `SERVICE_NAME` no `dusk.yml` colocando o nome do sistema, que no caso do curso é `cursolaravel`. 
@@ -1356,5 +1356,5 @@ Além disso o `.env.example` do sistema deve estar preparado para rodar os teste
 [[include:laravel/env.example]]
 
 ```bash
-curl -L https://fflch.github.io/assets/laravel/env.example >> .env.example
+curl -L https://tiplanejamento.fflch.usp.br/assets/laravel/env.example >> .env.example
 ```

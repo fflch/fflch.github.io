@@ -1,4 +1,5 @@
 {
+  "numero": 2,
   "status": false,
   "descricao": "Remover o recurso de usuário local e usar usuário local da biblioteca senhaunica-socialite",
   "data": "19/02/2026",

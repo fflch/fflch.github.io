@@ -1,22 +1,63 @@
 {% extends "base.html" %}
 
-{% block title %}Reuniões técnicas - TI FFLCH{% endblock %}
+{% block title %}Reuniões - TI FFLCH{% endblock %}
 
-{% macro lista_pauta(pautas) -%}
-<ul class="pauta">
-{% for item in pautas %}
-    {% if item.tipo == "issue" %}
-    <li class="{{ 'resolvida' if item.resolvida else '' }}">
-        <a href="index.html#{{ item.task_codigo }}"><strong>{{ item.codigo }}</strong></a>
-        <span class="text-muted">· {{ item.titulo_task }}</span><br>
-        {{ item.descricao }} <span class="resp">({{ item.responsavel }})</span>
-        {% if item.resolvida %}<span class="badge text-bg-success">✓ resolvida</span>{% endif %}
-    </li>
-    {% else %}
-    <li>{{ item.texto }}</li>
+{% macro corpo(r) -%}
+    {% if r.cancelada_em and r.motivo_cancelamento %}
+    <div class="small motivo">Motivo do cancelamento: {{ r.motivo_cancelamento|e }}</div>
     {% endif %}
-{% endfor %}
-</ul>
+
+    <div>
+        <div class="rot">Participantes ({{ r.participantes|length }})</div>
+        <div class="chips">{% for p in r.participantes %}<span class="etq" title="{{ p.nome|e }}">{{ p.curto|e }}</span>{% else %}<span class="text-muted small">—</span>{% endfor %}</div>
+    </div>
+
+    <div>
+        <div class="rot">Pautas ({{ r.pautas|length }} issue{{ 's' if r.pautas|length != 1 else '' }})</div>
+        {% if r.pautas %}
+        <ul class="pauta">
+        {% for i in r.pautas %}
+            <li class="{{ 'resolvida' if i.resolvida else '' }}">
+                {% if i.numero %}<strong>#{{ i.numero }}</strong>{% endif %}
+                {% if i.titulo_task %}<a href="index.html#{{ i.task_codigo }}">{{ i.titulo_task|e }}</a>{% endif %}<br>
+                {{ i.descricao|e }} <span class="resp">({{ i.responsavel|e }})</span>
+                {% if i.resolvida %}<span class="badge text-bg-success" title="Fechada em {{ i.data_fechamento }}">✓ resolvida</span>{% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+        {% else %}<p class="text-muted small mb-0">Nenhuma issue na pauta.</p>{% endif %}
+    </div>
+
+    {% if r.texto %}
+    <div><div class="rot">Observações</div><div class="texto">{{ r.texto|e }}</div></div>
+    {% endif %}
+{%- endmacro %}
+
+{% macro card(r) -%}
+<article class="rcard {{ 'cancelada' if r.cancelada_em else '' }} {{ 'hoje' if r.futura and r.dias_ate == 0 and not r.cancelada_em else '' }}" id="{{ r.id }}">
+    <div class="topo">
+        <div>
+            <h3>{{ r.titulo|e }}</h3>
+            <div class="quando">{{ r.data_br }}{% if r.horario %} · {{ r.horario|e }}{% endif %}
+                {% if r.futura and not r.cancelada_em %}
+                <span class="text-muted">· {% if r.dias_ate == 0 %}hoje{% elif r.dias_ate == 1 %}amanhã{% else %}em {{ r.dias_ate }} dias{% endif %}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="etqs">
+            {% if r.cancelada_em %}<span class="etq cancel" title="Cancelada em {{ r.cancelada_em }}">✕ cancelada</span>{% endif %}
+            {% if r.email_enviado_em %}<span class="etq ok" title="Convocação enviada em {{ r.email_enviado_em }}">✉ convocação enviada</span>{% endif %}
+        </div>
+    </div>
+
+    {{ corpo(r) }}
+
+    {% if r.futura and not r.cancelada_em %}
+    <div class="no-print">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-cancelar="{{ r.arquivo }}" data-titulo="{{ r.titulo|e }} ({{ r.data_br }})">Cancelar reunião</button>
+    </div>
+    {% endif %}
+</article>
 {%- endmacro %}
 
 {% block extra_head %}
@@ -25,18 +66,21 @@
     --surface: #ffffff; --surface-2: #f6f6f4; --border: #e0dfda;
     --text-primary: #111; --text-secondary: #52514e; --text-muted: #7a7974;
     --accent: #2a78d6; --accent-bg: #e8f0fb; --good-bg: #e6f4ea; --good-fg: #146c2e;
+    --bad-bg: #fde3e3; --bad-fg: #a11b1b; --change-bg: #fff8e1;
 }
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
         --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
         --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f;
         --accent: #3987e5; --accent-bg: #182c47; --good-bg: #173a22; --good-fg: #8fd6a2;
+        --bad-bg: #4a1a1a; --bad-fg: #f29b9b; --change-bg: #352c10;
     }
 }
 :root[data-theme="dark"] {
     --surface: #1a1a19; --surface-2: #242423; --border: #3a3a38;
     --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f;
     --accent: #3987e5; --accent-bg: #182c47; --good-bg: #173a22; --good-fg: #8fd6a2;
+    --bad-bg: #4a1a1a; --bad-fg: #f29b9b; --change-bg: #352c10;
 }
 body { background: var(--surface); color: var(--text-primary); padding: 28px 16px; }
 a { color: var(--accent); }
@@ -44,143 +88,387 @@ a { color: var(--accent); }
 .sub { color: var(--text-secondary); }
 .text-muted { color: var(--text-muted) !important; }
 h2 { font-size: 1.25rem; margin: 32px 0 12px; }
+.form-control, .form-select { background-color: var(--surface); color: var(--text-primary); border-color: var(--border); }
 
-details.como { border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; margin: 12px 0 0; }
-details.como > summary { cursor: pointer; color: var(--text-secondary); }
 
-/* próximas */
-.proximas { display: flex; flex-direction: column; gap: 8px; }
-.prox { display: grid; grid-template-columns: 120px 120px 1fr auto; gap: 12px; align-items: center;
-        border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; text-decoration: none; color: inherit; }
-.prox:hover { border-color: var(--accent); background: var(--surface-2); }
-.prox .data { font-weight: 700; font-variant-numeric: tabular-nums; }
-.prox .quando { font-size: .82rem; color: var(--text-muted); }
-.prox .nome { font-weight: 600; }
-.prox.hoje { border-color: var(--accent); background: var(--accent-bg); }
-.etq { display: inline-block; font-size: .78rem; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); white-space: nowrap; }
-.etq.ok { background: var(--good-bg); color: var(--good-fg); }
-
-/* semana */
-.semana { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-.dia { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 8px; min-height: 110px; }
-.dia.hoje { border-color: var(--accent); }
-.dia .nome-dia { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); margin-bottom: 6px; }
-.bloco { display: block; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent);
-         border-radius: 6px; padding: 6px 8px; margin-bottom: 6px; font-size: .85rem; text-decoration: none; color: inherit; }
-.bloco:hover { border-color: var(--accent); }
-.bloco .h { color: var(--text-muted); font-size: .78rem; }
-
-/* cards */
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
 .rcard { border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; scroll-margin-top: 16px; }
 .rcard:target { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+.rcard.hoje { border-color: var(--accent); background: var(--accent-bg); }
+.rcard.cancelada { opacity: .65; }
+.rcard.cancelada h3 { text-decoration: line-through; }
+.rcard .topo { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
 .rcard h3 { font-size: 1.15rem; margin: 0; }
 .rcard .quando { color: var(--text-secondary); font-size: .9rem; }
 .rcard .rot { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); margin-bottom: 2px; }
+.rcard .texto { white-space: pre-line; font-size: .9rem; }
+.rcard .motivo { color: var(--bad-fg); }
+.etqs { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+.etq { display: inline-block; font-size: .78rem; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); white-space: nowrap; }
+.etq.ok { background: var(--good-bg); color: var(--good-fg); }
+.etq.cancel { background: var(--bad-bg); color: var(--bad-fg); }
 .chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .chips .etq { font-size: .8rem; }
 .pauta { padding-left: 18px; margin: 0; font-size: .9rem; }
 .pauta li { margin-bottom: 6px; }
 .pauta li.resolvida { color: var(--text-muted); }
 .pauta .resp { color: var(--text-muted); }
-details.hist > summary { cursor: pointer; color: var(--text-secondary); font-size: .9rem; }
-details.hist .data-hist { font-weight: 600; font-size: .85rem; margin-top: 8px; }
 
-@media (max-width: 760px) {
-    .semana { grid-template-columns: 1fr; }
-    .dia { min-height: 0; }
-    .prox { grid-template-columns: 1fr; gap: 2px; }
-}
+/* formulário */
+.painel { border: 1px solid var(--border); border-radius: 12px; padding: 16px; background: var(--change-bg); margin-top: 12px; }
+.painel h3 { font-size: 1.1rem; }
+.painel fieldset { margin-top: 14px; }
+.painel legend { font-size: .95rem; font-weight: 600; margin-bottom: 4px; }
+.lista-check { max-height: 320px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 4px 10px; }
+.lista-check label { display: flex; gap: 8px; align-items: flex-start; padding: 5px 0; border-bottom: 1px dashed var(--border); cursor: pointer; font-size: .9rem; }
+.lista-check label:last-child { border-bottom: 0; }
+.lista-check input { margin-top: 4px; flex: none; }
+.lista-check .grupo { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); padding: 8px 0 2px; }
+.pessoas-check { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); column-gap: 14px; }
+.atalhos { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.previa { border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.previa-cab { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: .85rem; }
+.previa pre { margin: 0; padding: 12px; white-space: pre-wrap; word-break: break-word; font-family: inherit; font-size: .88rem; max-height: 420px; overflow-y: auto; }
+.lista-check .auto { font-size: .75rem; color: var(--text-muted); }
+.selecionadas { font-size: .85rem; color: var(--text-secondary); margin-top: 4px; }
+#toast { position: fixed; bottom: 20px; right: 20px; background: var(--text-primary); color: var(--surface); padding: 8px 14px; border-radius: 8px; display: none; z-index: 20; }
+dialog#cancelar { width: min(480px, calc(100vw - 32px)); border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text-primary); }
+dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
+.realizadas { border: 1px solid var(--border); border-radius: 10px; }
+.realizada { border-bottom: 1px solid var(--border); scroll-margin-top: 16px; }
+.realizada:last-child { border-bottom: 0; }
+.realizada > summary { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; padding: 10px 14px; cursor: pointer; }
+.realizada > summary:hover { background: var(--surface-2); }
+.realizada[open] > summary { background: var(--surface-2); }
+.realizada .r-data { font-variant-numeric: tabular-nums; color: var(--text-secondary); min-width: 110px; }
+.realizada .r-titulo { font-weight: 600; }
+.realizada .r-info { color: var(--text-muted); font-size: .85rem; margin-left: auto; }
+.realizada.cancelada .r-titulo { text-decoration: line-through; color: var(--text-muted); }
+.realizada .cancel-txt { color: var(--bad-fg); }
+.realizada .r-corpo { padding: 4px 14px 14px 28px; display: flex; flex-direction: column; gap: 10px; }
+.realizada .rot { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); margin-bottom: 2px; }
+.realizada .texto { white-space: pre-line; font-size: .9rem; }
+.realizada .motivo { color: var(--bad-fg); }
+@media print { .no-print { display: none !important; } }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="wrap">
 <p><a href="index.html">← Planejamento</a></p>
-<h1>Reuniões técnicas</h1>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h1 class="mb-0">Reuniões</h1>
+    <button type="button" class="btn btn-success no-print" id="btn-nova">+ Nova reunião</button>
+</div>
 <p class="sub mb-0">Atualizado em {{ data_hoje }}.</p>
-<details class="como">
-    <summary>Como funcionam as reuniões</summary>
-    <p class="mt-2 mb-1">As reuniões técnicas têm três momentos:</p>
-    <ol class="mb-1">
-        <li><strong>Formação (15 a 30 min):</strong> um membro da equipe apresenta um tutorial ou faz uma demonstração prática (lab), em rodízio.</li>
-        <li><strong>Problemas:</strong> discussão do que precisa ser resolvido (a pauta).</li>
-        <li><strong>Encaminhamentos:</strong> definição e distribuição das tarefas.</li>
-    </ol>
-    <p class="text-muted small mb-1">Para montar a pauta: <code>python3 bin/create_meeting.py</code> · para convocar por e-mail: <code>python3 bin/prepare_email_meeting.py</code></p>
+
+<div id="form-nova" class="painel no-print" hidden>
+    <h3>Nova reunião</h3>
+    <div class="row g-2">
+        <div class="col-12 col-md-5"><label class="form-label small mb-0" for="f-titulo">Título</label>
+            <input class="form-control" id="f-titulo" value="Reunião Planejamento TI FFLCH"></div>
+        <div class="col-6 col-md-3"><label class="form-label small mb-0" for="f-data">Data</label>
+            <input class="form-control" type="date" id="f-data"></div>
+        <div class="col-6 col-md-4"><label class="form-label small mb-0" for="f-horario">Horário</label>
+            <input class="form-control" id="f-horario" placeholder="ex: 10h às 11h"></div>
+    </div>
+
+    <fieldset>
+        <legend>1. Pendências (issues abertas) <small class="text-muted fw-normal" id="cont-issues"></small></legend>
+        <input type="search" class="form-control form-control-sm mb-2" style="max-width:360px" id="f-filtro" placeholder="filtrar (#número, tarefa, descrição, pessoa)">
+        <div class="lista-check" id="lista-issues"></div>
+        <div class="selecionadas" id="sel-issues"></div>
+    </fieldset>
+
+    <fieldset>
+        <legend>2. Participantes <small class="text-muted fw-normal" id="cont-part"></small></legend>
+        <div class="small text-muted mb-1">Os responsáveis das issues marcadas entram automaticamente (🔗); marque outras pessoas se quiser.</div>
+        <div class="atalhos">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-marcar="servidor">+ Todos os servidores</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-marcar="estagiario">+ Todos os estagiários</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-marcar="nenhum">Limpar</button>
+        </div>
+        <div class="lista-check"><div class="pessoas-check" id="lista-pessoas"></div></div>
+    </fieldset>
+
+    <fieldset>
+        <legend>3. Texto adicional</legend>
+        <textarea class="form-control" id="f-texto" rows="4" placeholder="Outras pautas, avisos, link da sala…"></textarea>
+    </fieldset>
+
+    <fieldset>
+        <legend>4. E-mail</legend>
+        <label><input type="checkbox" id="f-email" checked> Disparar e-mail de convocação aos participantes</label>
+        <div class="small text-muted">O e-mail é enviado (ou não) ao aplicar o arquivo no terminal, que confirma antes de enviar.</div>
+        <div class="previa mt-2">
+            <div class="previa-cab"><span class="text-muted">Para:</span> <span id="pv-para"></span><br>
+                <span class="text-muted">Assunto:</span> <strong id="pv-assunto"></strong></div>
+            <pre id="pv-corpo"></pre>
+        </div>
+    </fieldset>
+
+    <div class="d-flex gap-2 mt-3">
+        <button type="button" class="btn btn-primary" id="btn-baixar">⬇ Baixar reunião</button>
+        <button type="button" class="btn btn-outline-secondary" id="btn-fechar">Cancelar</button>
+    </div>
+</div>
+
+<h2>Próximas</h2>
+{% if proximas %}
+<div class="cards">{% for r in proximas %}{{ card(r) }}{% endfor %}</div>
+{% else %}
+<p class="text-muted">Nenhuma reunião agendada.</p>
+{% endif %}
+
+<h2>Realizadas ({{ realizadas|length }})</h2>
+{% if realizadas %}
+<div class="realizadas">
+{% for r in realizadas %}
+<details class="realizada {{ 'cancelada' if r.cancelada_em else '' }}" id="{{ r.id }}">
+    <summary>
+        <span class="r-data">{{ r.data_br }}</span>
+        <span class="r-titulo">{{ r.titulo|e }}</span>
+        <span class="r-info">{{ r.participantes|length }} participante{{ 's' if r.participantes|length != 1 else '' }}
+            · {{ r.pautas|length }} issue{{ 's' if r.pautas|length != 1 else '' }}{% if r.cancelada_em %} · <span class="cancel-txt">cancelada</span>{% endif %}</span>
+    </summary>
+    <div class="r-corpo">
+        {% if r.horario %}<div class="quando small">{{ r.horario|e }}{% if r.email_enviado_em %} · ✉ convocação enviada em {{ r.email_enviado_em }}{% endif %}</div>{% endif %}
+        {{ corpo(r) }}
+    </div>
 </details>
-
-<h2>Próximas reuniões</h2>
-<div class="proximas">
-{% for r in reunioes if r.proxima %}
-    <a class="prox {{ 'hoje' if r.dias_ate == 0 else '' }}" href="#{{ r.id }}">
-        <div><div class="data">{{ r.proxima_curta }}</div>
-             <div class="quando">{% if r.dias_ate == 0 %}hoje{% elif r.dias_ate == 1 %}amanhã{% else %}em {{ r.dias_ate }} dias{% endif %}</div></div>
-        <div>{{ r.horario }}</div>
-        <div><span class="nome">{{ r.titulo }}</span>{% if r.alternada and not r.agendada %} <span class="text-muted small">(semanas alternadas — confirmar)</span>{% endif %}</div>
-        <div>
-            {% if r.agendada %}
-            <span class="etq ok">pauta: {{ r.pautas|length }} item(ns)</span>
-            {% else %}
-            <span class="etq" title="Calculada pelo dia da semana; ainda sem pauta registrada">prevista · sem pauta</span>
-            {% endif %}
-        </div>
-    </a>
 {% endfor %}
 </div>
+{% else %}
+<p class="text-muted">Nenhuma reunião registrada ainda.</p>
+{% endif %}
+</div>
 
-<h2>Semana típica</h2>
-<div class="semana">
-{% for d in semana %}
-    <div class="dia {{ 'hoje' if d.hoje else '' }}">
-        <div class="nome-dia">{{ d.nome }}{% if d.hoje %} · hoje{% endif %}</div>
-        {% for r in d.reunioes %}
-        <a class="bloco" href="#{{ r.id }}"><strong>{{ r.titulo }}</strong><div class="h">{{ r.horario }}{% if r.alternada %} · alternada{% endif %}</div></a>
-        {% endfor %}
+<dialog id="cancelar">
+    <h5 class="mb-2">Cancelar reunião</h5>
+    <p class="small mb-2" id="c-titulo"></p>
+    <label class="form-label small mb-0" for="c-motivo">Motivo (opcional)</label>
+    <input class="form-control mb-2" id="c-motivo">
+    <label class="small"><input type="checkbox" id="c-email" checked> Avisar os participantes por e-mail</label>
+    <div class="small text-muted mt-1">Baixa um arquivo para aplicar com <code>python3 bin/aplicar_mudancas.py</code>.</div>
+    <div class="d-flex gap-2 mt-3 justify-content-end">
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-c="fechar">Voltar</button>
+        <button type="button" class="btn btn-sm btn-danger" data-c="baixar">⬇ Baixar cancelamento</button>
     </div>
-{% endfor %}
-</div>
+</dialog>
+<div id="toast"></div>
+<script type="application/json" id="dados">{{ dados_json }}</script>
+{% endblock %}
 
-<h2>Reuniões</h2>
-<div class="cards">
-{% for r in reunioes %}
-    <div class="rcard" id="{{ r.id }}">
-        <div>
-            <h3>{{ r.titulo }}</h3>
-            <div class="quando">{{ r.dia }} · {{ r.horario }}</div>
-        </div>
+{% block extra_scripts %}
+<script>
+(function () {
+    var D = JSON.parse(document.getElementById("dados").textContent);
+    var $ = function (id) { return document.getElementById(id); };
+    var escolhidas = [];   // códigos das issues, na ordem em que foram marcadas
 
-        <div>
-            <div class="rot">Participantes ({{ r.participantes|length }})</div>
-            <div class="chips">{% for p in r.participantes %}<span class="etq" title="{{ p.nome }}">{{ p.curto }}</span>{% endfor %}</div>
-        </div>
+    function esc(s) {
+        return String(s === null || s === undefined ? "" : s).replace(/[&<>"']/g, function (c) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+    }
+    function toast(msg) {
+        var t = $("toast");
+        t.textContent = msg; t.style.display = "block";
+        clearTimeout(t._h); t._h = setTimeout(function () { t.style.display = "none"; }, 3000);
+    }
+    function baixar(nome, obj) {
+        var blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = nome;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    }
+    function carimbo() {
+        var d = new Date();
+        return String(d.getHours()).padStart(2, "0") + String(d.getMinutes()).padStart(2, "0") + String(d.getSeconds()).padStart(2, "0");
+    }
 
-        {% if r.handson %}
-        <div><div class="rot">Hands-on</div><div class="small">{{ r.handson }}</div></div>
-        {% endif %}
+    // ---------------- participantes ----------------
+    // participantes = responsáveis das issues marcadas (auto) + extras − removidos
+    var extras = {}, removidos = {};
+    var nomesPessoas = D.pessoas.map(function (p) { return p.nome; });
+    function autos() {
+        var out = {};
+        escolhidas.forEach(function (c) {
+            var i = D.issues.filter(function (x) { return x.codigo === c; })[0];
+            if (i && i.responsavel) out[i.responsavel] = true;
+        });
+        return out;
+    }
+    function participantes() {
+        var a = autos();
+        return listaPessoas().filter(function (n) { return (a[n] && !removidos[n]) || extras[n]; });
+    }
+    function listaPessoas() {   // pessoas.csv + responsáveis que não estejam lá
+        var extrasResp = Object.keys(autos()).filter(function (n) { return nomesPessoas.indexOf(n) < 0; });
+        return nomesPessoas.concat(extrasResp);
+    }
+    function renderPessoas() {
+        var a = autos(), h = "", grupo = null;
+        var lista = D.pessoas.concat(listaPessoas().slice(nomesPessoas.length).map(function (n) { return { nome: n, vinculo: "" }; }));
+        lista.forEach(function (p) {
+            var g = p.vinculo === "servidor" ? "Servidores" : (p.vinculo === "estagiario" ? "Estagiários" : "Outros");
+            if (g !== grupo) { h += '<div class="grupo" style="grid-column:1/-1">' + g + "</div>"; grupo = g; }
+            var marcado = (a[p.nome] && !removidos[p.nome]) || extras[p.nome];
+            h += '<label><input type="checkbox" value="' + esc(p.nome) + '" data-vinculo="' + esc(p.vinculo) + '"'
+               + (marcado ? " checked" : "") + "><span>" + esc(p.nome)
+               + (a[p.nome] ? ' <span class="auto" title="Responsável por issue da pauta">🔗</span>' : "") + "</span></label>";
+        });
+        $("lista-pessoas").innerHTML = h;
+        $("cont-part").textContent = "(" + participantes().length + " selecionado(s))";
+    }
 
-        <div>
-            <div class="rot">Próxima reunião{% if r.proxima_br %} · {{ r.proxima_br }}{% endif %}</div>
-            {% if r.agendada and r.pautas %}
-                {{ lista_pauta(r.pautas) }}
-            {% elif r.agendada %}
-                <p class="text-muted small mb-0">Agendada, sem pauta.</p>
-            {% else %}
-                <p class="text-muted small mb-0">Ainda sem pauta registrada.</p>
-            {% endif %}
-        </div>
+    // ---------------- issues ----------------
+    function renderIssues() {
+        var q = $("f-filtro").value.trim().toLowerCase();
+        var vis = D.issues.filter(function (i) {
+            return !q || escolhidas.indexOf(i.codigo) >= 0
+                || ("#" + i.numero + " " + i.titulo_task + " " + i.descricao + " " + i.responsavel).toLowerCase().indexOf(q) >= 0;
+        }).sort(function (a, b) {
+            return (a.responsavel || "~").localeCompare(b.responsavel || "~") || a.codigo.localeCompare(b.codigo);
+        });
+        var h = "", resp = null;
+        vis.forEach(function (i) {
+            if (i.responsavel !== resp) { resp = i.responsavel; h += '<div class="grupo">👤 ' + esc(resp || "sem responsável") + "</div>"; }
+            h += '<label><input type="checkbox" value="' + esc(i.codigo) + '"' + (escolhidas.indexOf(i.codigo) >= 0 ? " checked" : "") + ">"
+               + "<span><strong>#" + esc(i.numero) + '</strong> <span class="text-muted">· ' + esc(i.titulo_task) + "</span><br>"
+               + esc(i.descricao) + "</span></label>";
+        });
+        $("lista-issues").innerHTML = h || '<p class="text-muted small my-2">Nenhuma issue com esse filtro.</p>';
+        $("cont-issues").textContent = "(" + escolhidas.length + " de " + D.issues.length + " na pauta)";
+        $("sel-issues").textContent = "";
+    }
 
-        {% if r.anteriores %}
-        <details class="hist">
-            <summary>Reuniões anteriores ({{ r.anteriores|length }})</summary>
-            {% for a in r.anteriores %}
-                <div class="data-hist">{{ a.data_br }}</div>
-                {% if a.pautas %}{{ lista_pauta(a.pautas) }}{% else %}<p class="text-muted small">Sem pauta.</p>{% endif %}
-            {% endfor %}
-        </details>
-        {% endif %}
-    </div>
-{% endfor %}
-</div>
-</div>
+    // ---------------- prévia do e-mail (mesmo texto de fflch_common.email_reuniao) ----------------
+    var DIAS = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+    function slug(t) {
+        return String(t).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    }
+    function primeiro(n) { return n ? n.split(" ")[0] : ""; }
+    function renderPrevia() {
+        var titulo = $("f-titulo").value.trim() || "(sem título)", data = $("f-data").value, hor = $("f-horario").value.trim();
+        var part = participantes(), texto = $("f-texto").value.trim();
+        var nomes = part.map(primeiro);
+        var saud = nomes.length > 1 ? nomes.slice(0, -1).join(", ") + " e " + nomes[nomes.length - 1] : (nomes[0] || "Olá");
+        var dataBr = "", quando = "(sem data)";
+        if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+            var p = data.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
+            dataBr = p[2] + "/" + p[1] + "/" + p[0];
+            quando = DIAS[d.getDay()] + ", " + dataBr;
+        }
+        if (hor) quando += ", " + hor;
+        var corpo = saud + ",\n\nEstou agendando uma reunião " + quando + " para tratarmos dos assuntos abaixo.\n";
+        if (texto) corpo += "\n" + texto + "\n";
+        var grupos = {}, ordem = [];   // issues agrupadas por responsável, na ordem escolhida
+        escolhidas.forEach(function (c) {
+            var i = D.issues.filter(function (x) { return x.codigo === c; })[0] || {};
+            var r = i.responsavel || "Outros assuntos";
+            if (!grupos[r]) { grupos[r] = []; ordem.push(r); }
+            grupos[r].push("- " + i.descricao);
+        });
+        // "Outros assuntos" (issues sem responsável) sempre por último
+        ordem.sort(function (a, b) { return (a === "Outros assuntos") - (b === "Outros assuntos"); });
+        ordem.forEach(function (r) { corpo += "\n" + r + ":\n" + grupos[r].join("\n") + "\n"; });
+        corpo += "\nSe tiverem algo para adicionar, alterar ou remover, respondam este e-mail.\n\n"
+               + "Reuniões: " + D.site + "reunioes.html#r-" + data + "-" + (slug(titulo) || "reuniao") + "\n\n--\nThiago\nTI-FFLCH";
+        var semEmail = part.filter(function (n) { return !D.emails[n]; });
+        $("pv-para").textContent = part.length ? part.join(", ") + (semEmail.length ? "  (sem e-mail: " + semEmail.join(", ") + ")" : "") : "—";
+        $("pv-assunto").textContent = titulo + (dataBr ? " - " + dataBr : "") + (hor ? " às " + hor : "");
+        $("pv-corpo").textContent = corpo;
+        $("pv-corpo").parentNode.style.opacity = $("f-email").checked ? "1" : ".5";
+    }
+
+    function renderTudo() { renderIssues(); renderPessoas(); renderPrevia(); }
+
+    $("lista-issues").addEventListener("change", function (e) {
+        var c = e.target.value, k = escolhidas.indexOf(c);
+        if (e.target.checked && k < 0) escolhidas.push(c);
+        if (!e.target.checked && k >= 0) escolhidas.splice(k, 1);
+        renderTudo();
+    });
+    $("lista-pessoas").addEventListener("change", function (e) {
+        var n = e.target.value, a = autos();
+        if (e.target.checked) { extras[n] = true; delete removidos[n]; }
+        else { delete extras[n]; if (a[n]) removidos[n] = true; }
+        renderPessoas(); renderPrevia();
+    });
+    $("f-filtro").addEventListener("input", renderIssues);
+    ["f-titulo", "f-data", "f-horario", "f-texto"].forEach(function (id) { $(id).addEventListener("input", renderPrevia); });
+    $("f-email").addEventListener("change", renderPrevia);
+    document.querySelector(".atalhos").addEventListener("click", function (e) {
+        var v = e.target.dataset && e.target.dataset.marcar;
+        if (!v) return;
+        if (v === "nenhum") {
+            extras = {}; removidos = {};
+            Object.keys(autos()).forEach(function (n) { removidos[n] = true; });
+        } else {
+            D.pessoas.forEach(function (p) { if (p.vinculo === v) { extras[p.nome] = true; delete removidos[p.nome]; } });
+        }
+        renderPessoas(); renderPrevia();
+    });
+
+    // ---------------- abrir / baixar ----------------
+    $("btn-nova").addEventListener("click", function () {
+        var f = $("form-nova");
+        if (!f.hidden) { f.scrollIntoView({ behavior: "smooth" }); return; }
+        f.hidden = false;
+        if (!$("f-data").value) $("f-data").value = D.hoje;
+        renderTudo();
+        f.scrollIntoView({ behavior: "smooth" });
+    });
+    $("btn-fechar").addEventListener("click", function () { $("form-nova").hidden = true; });
+
+    $("btn-baixar").addEventListener("click", function () {
+        var titulo = $("f-titulo").value.trim(), data = $("f-data").value, part = participantes();
+        if (!titulo) { toast("Informe o título"); $("f-titulo").focus(); return; }
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) { toast("Informe a data"); $("f-data").focus(); return; }
+        if (!part.length) { toast("Escolha ao menos um participante"); return; }
+        var obj = {
+            tipo: "reuniao-nova", versao: 1, gerado_em: new Date().toISOString(),
+            enviar_email: $("f-email").checked,
+            reuniao: { titulo: titulo, data: data, horario: $("f-horario").value.trim(),
+                       participantes: part, issues: escolhidas.slice(), texto: $("f-texto").value.trim() }
+        };
+        baixar("mudancas-reuniao-" + data + "-" + carimbo() + ".json", obj);
+        toast("Arquivo baixado. Rode python3 bin/aplicar_mudancas.py para gravar" + (obj.enviar_email ? " e enviar o e-mail." : "."));
+    });
+
+    function abrirAlvo() {
+        var el = location.hash && document.getElementById(location.hash.slice(1));
+        if (el && el.tagName === "DETAILS") { el.open = true; el.scrollIntoView(); }
+    }
+    window.addEventListener("hashchange", abrirAlvo);
+    abrirAlvo();
+
+    // ---------------- cancelar ----------------
+    var dlg = $("cancelar"), alvo = null;
+    document.addEventListener("click", function (e) {
+        var b = e.target.closest && e.target.closest("[data-cancelar]");
+        if (!b) return;
+        alvo = b.dataset.cancelar;
+        $("c-titulo").textContent = b.dataset.titulo;
+        $("c-motivo").value = "";
+        $("c-email").checked = true;
+        if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
+    });
+    dlg.addEventListener("click", function (e) {
+        var c = e.target.dataset && e.target.dataset.c;
+        if (e.target === dlg || c === "fechar") { dlg.close(); return; }
+        if (c !== "baixar" || !alvo) return;
+        baixar("mudancas-reuniao-cancelar-" + alvo.replace(/\.json$/, "") + "-" + carimbo() + ".json", {
+            tipo: "reuniao-cancelar", versao: 1, gerado_em: new Date().toISOString(),
+            arquivo: alvo, motivo: $("c-motivo").value.trim(), enviar_email: $("c-email").checked
+        });
+        dlg.close();
+        toast("Arquivo baixado. Rode python3 bin/aplicar_mudancas.py para cancelar" + ($("c-email").checked ? " e avisar por e-mail." : "."));
+    });
+})();
+</script>
 {% endblock %}

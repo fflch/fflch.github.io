@@ -185,7 +185,7 @@ tr.sep .g-n { color: var(--text-muted); font-size: .8rem; margin-left: 6px; }
     </td>
     <td>
     {% for t in r.tarefas %}
-        <div class="task{{ '' if t.ativa else ' inativa' }}"><a class="cod" href="index.html#{{ t.codigo }}" target="_blank">{{ t.codigo }}</a><span class="tit">{{ t.titulo }}{% if not t.ativa %} (inativa){% endif %}</span></div>
+        <div class="task{{ '' if t.ativa else ' inativa' }}"><a class="tit" href="index.html#{{ t.codigo }}" target="_blank">{{ t.titulo }}</a>{% if not t.ativa %} <span class="tit">(inativa)</span>{% endif %}</div>
     {% else %}
         <span class="tag semtarefa">{{ r.sem_tarefa_msg }}</span>
     {% endfor %}

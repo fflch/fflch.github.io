@@ -1,0 +1,19 @@
+{
+  "tipo": "mudancas-acompanhamento",
+  "versao": 1,
+  "gerado_em": "2026-11-22T11:48:19.817Z",
+  "mudancas": [
+    {
+      "issue": "adm001-4",
+      "antes": {
+        "responsavel": "Thiago Gomes Veríssimo",
+        "descricao": "Coletar os logs dos switches e enviá-los para o sistema de alertas, ou, alternativamente, ler as mensagens via rsyslog.",
+        "tarefa": "adm001"
+      },
+      "depois": {
+        "descricao": "No sistema de planejamento:\nAo criar uma issue, mostrar a lista de tarefa relacionado.\n\nNo sistema de incidentes: mandar email para gestor quando houver comentário em qualquer alerta"
+      },
+      "em": "2026-11-21"
+    }
+  ]
+}

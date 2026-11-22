@@ -1,4 +1,5 @@
 {
+  "numero": 73,
   "status": true,
   "descricao": "Criação do playbook do wazuh no dev. Depois subir para produção gerar agente e passar aos técnicos.",
   "data": "19/10/2026",

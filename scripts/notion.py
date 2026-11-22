@@ -79,7 +79,7 @@ def build_description_rich_text(data, task_id):
 
   # Adiciona o link como hiperlink clicável do Notion
   if task_id:
-    url = f"https://fflch.github.io/#{task_id}"
+    url = f"https://tiplanejamento.fflch.usp.br/#{task_id}"
     prefix = "\n\nLink: " if text_content else "Link: "
 
     rich_text.append({"type": "text", "text": {"content": prefix}})

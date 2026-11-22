@@ -1,0 +1,36 @@
+predio1,tr1,rack1,dio1,par1,predio2,tr2,rack2,dio2,par2
+# Linhas começando com # são ignoradas (use para anotações e ligações incompletas).
+# "par" = Bloco do DIO. Um lado sem tr/rack/dio/par = ponto externo (ex: Link STI).
+#
+# --- ADM ↔ FCS (DIO Local do ADM: "FCS 7500", "FCS", "FCS") — CONFERIR a correspondência 1↔1, 2↔2, 3↔3
+ADM,ER-A-ADM,Rack Local,Local,1,FCS,ER-A-FCS,Rack A,Ligação Prédios,1
+ADM,ER-A-ADM,Rack Local,Local,2,FCS,ER-A-FCS,Rack A,Ligação Prédios,2
+ADM,ER-A-ADM,Rack Local,Local,3,FCS,ER-A-FCS,Rack A,Ligação Prédios,3
+# --- ADM ↔ Letras
+ADM,ER-A-ADM,Rack Servidores,Ligação Prédios,1,Letras,TR-B-LETRAS,Rack B,2 Switches,1
+ADM,ER-A-ADM,Rack Servidores,Ligação Prédios,2,Letras,TR-B-LETRAS,Rack B,2 Switches,2
+# --- ADM ↔ GH
+ADM,ER-A-ADM,Rack Servidores,Ligação Prédios,3,GH,TR-A-GH,Rack A,Rack A,7
+ADM,ER-A-ADM,Rack Servidores,Ligação Prédios,4,GH,TR-A-GH,Rack A,Rack A,8
+# --- ADM ↔ CCJ
+ADM,ER-A-ADM,Rack Servidores,Ligação Prédios,5,CCJ,TE-RACK-A-CCJ,Rack A,1,1
+ADM,ER-A-ADM,Rack Servidores,Ligação Prédios,6,CCJ,TE-RACK-A-CCJ,Rack A,1,2
+# --- FCS ↔ Letras / GH / CCJ
+FCS,ER-A-FCS,Rack A,Ligação Prédios,4,Letras,TR-B-LETRAS,Rack B,2 Switches,3
+FCS,ER-A-FCS,Rack A,Ligação Prédios,5,GH,TR-A-GH,Rack A,Rack A,9
+FCS,ER-A-FCS,Rack A,Ligação Prédios,6,CCJ,TE-RACK-A-CCJ,Rack A,1,3
+# --- Letras ↔ Biblioteca ("Link BIB")
+Letras,TR-B-LETRAS,Rack B,1 Switches,4,Biblioteca,TR-A-BIBLIOTECA,Rack A,1,1
+# --- Anel óptico (links externos STI e IPEN), no ADM e na FCS
+ADM,ER-A-ADM,Rack Servidores,Anel Óptico,1,Link STI,,,,
+ADM,ER-A-ADM,Rack Servidores,Anel Óptico,3,Link IPEN,,,,
+FCS,ER-A-FCS,Rack A,Anel Óptico,1,Link STI,,,,
+FCS,ER-A-FCS,Rack A,Anel Óptico,3,Link IPEN,,,,
+#
+# --- PENDENTES: ligações internas ao prédio (falta o DIO e o bloco do outro lado). Complete e tire o #.
+# Letras,TR-B-LETRAS,Rack B,1 Path Panels,1,Letras,TR-B-LETRAS,Rack A,?,?
+# GH,TR-A-GH,Rack A,Rack A,1,GH,TR-A-GH,Rack B,?,?
+# GH,TR-A-GH,Rack A,Rack A,3,GH,TR-A-GH,Rack D,?,?
+# GH,TR-A-GH,Rack A,Rack A,5,GH,TR-A-GH,Rack C,?,?
+# FCS,ER-A-FCS,Rack A,Interno,10,FCS,ER-A-FCS,Rack DE,?,?
+# FCS,ER-A-FCS,Rack A,Interno,13,FCS,ER-A-FCS,Rack BC,?,?

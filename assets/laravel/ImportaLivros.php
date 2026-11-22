@@ -15,7 +15,7 @@ class ImportaLivros extends Command
     public function handle(): int
     {
         Livro::truncate();
-        $conteudo = file_get_contents('https://fflch.github.io/assets/livros.csv');
+        $conteudo = file_get_contents('https://tiplanejamento.fflch.usp.br/assets/livros.csv');
         $csv = Reader::createFromString($conteudo);
         $csv->setHeaderOffset(0);
 

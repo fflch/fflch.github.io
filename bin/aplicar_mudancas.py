@@ -12,11 +12,17 @@ mudancas-*.json em ~/Downloads, o script oferece movê-los para a pasta antes.
 Para cada issue do arquivo, pode haver uma ou mais destas mudanças:
 - responsavel : atribui a outra pessoa ("" = sem responsável)
 - descricao   : edita a descrição
-- tarefa      : muda a issue de tarefa (ganha um novo código, ex: dev022-3 → dev010-5)
+- tarefa      : muda a issue de tarefa (o arquivo interno muda, ex: dev022-3 → dev010-5,
+                mas o número global #N da issue continua o mesmo)
 - fechar      : fecha a issue (status false + data_fechamento = dia em que foi marcada)
 - comentarios : comentários novos (lista de textos), gravados em "comentarios" com a data
 
-Também cria as issues novas ("nova": true) com o próximo código livre da tarefa.
+Também cria as issues novas ("nova": true) com o próximo número global (#N).
+
+Arquivos de reunião (docs/reunioes.html → "+ Nova reunião" → "Baixar reunião", tipo
+"reuniao-nova") gravam content/meetings/AAAA-MM-DD-<titulo>.json e perguntam se disparam
+o e-mail de convocação para os participantes. Arquivos "reuniao-cancelar" (botão "Cancelar
+reunião" da página) marcam a reunião como cancelada e perguntam se avisam por e-mail.
 
 Antes de gravar, mostra o plano e pede confirmação. Se a issue mudou no repositório
 depois que a página foi gerada (conflito), pergunta o que fazer. No fim, oferece avisar
@@ -36,7 +42,15 @@ sys.path.insert(0, BASE_DIR)
 
 from fflch_common import (  # noqa: E402
     load_pessoas, email_de, enviar_email, perguntar_sim_nao, primeiro_nome, SITE_URL, aviso_comentarios,
+    salvar_reuniao, oferecer_email_reuniao, data_reuniao_br, cancelar_reuniao,
+    proximo_numero_issue, com_numero, rotulo_issue,
 )
+
+
+def rot(cod):
+    """'#N' da issue pelo código interno (para mensagens)."""
+    caminho = os.path.join(ISSUES_DIR, f"{cod}.json")
+    return rotulo_issue(carregar(caminho)) if os.path.exists(caminho) else "#?"
 
 ISSUES_DIR = os.path.join(BASE_DIR, "content", "issues")
 TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
@@ -91,14 +105,83 @@ def atualizar_reunioes(antigo, novo):
         caminho = os.path.join(MEETINGS_DIR, f)
         dados = carregar(caminho)
         lista = dados.get("issues", [])
-        if f"{antigo}.json" in lista:
-            dados["issues"] = [f"{novo}.json" if x == f"{antigo}.json" else x for x in lista]
+        if antigo in lista:
+            dados["issues"] = [novo if x == antigo else x for x in lista]
             salvar(caminho, dados)
+
+
+def aplicar_cancelamento(arquivo):
+    """Arquivo "reuniao-cancelar" baixado da página de reuniões."""
+    nome = os.path.basename(arquivo.get("arquivo") or "")
+    caminho = os.path.join(MEETINGS_DIR, nome)
+    if not nome.endswith(".json") or not os.path.exists(caminho):
+        print(f"⚠ Reunião {nome!r} não encontrada em content/meetings/.")
+        return "invalido"
+    r = carregar(caminho)
+    if r.get("cancelada_em"):
+        print(f"ℹ {nome} já estava cancelada ({r['cancelada_em']}).")
+        return "nada"
+    print(f"\nCancelar reunião: {r.get('titulo')} · {data_reuniao_br(r['data'])}"
+          + (f" · {r['horario']}" if r.get("horario") else ""))
+    if arquivo.get("motivo"):
+        print(f"  Motivo: {arquivo['motivo']}")
+    if not perguntar_sim_nao("Confirmar cancelamento?", padrao=True):
+        print("Nada foi alterado.")
+        return "recusado"
+    cancelar_reuniao(caminho, arquivo.get("motivo") or "", padrao_email=bool(arquivo.get("enviar_email")))
+    return "aplicado"
+
+
+def aplicar_reuniao(arquivo):
+    """Arquivo "reuniao-nova" baixado da página de reuniões."""
+    r = arquivo.get("reuniao") or {}
+    try:
+        datetime.strptime(r.get("data", ""), "%Y-%m-%d")
+    except ValueError:
+        print("⚠ Reunião sem data válida.")
+        return "invalido"
+    pessoas = load_pessoas()
+    participantes = [n for n in r.get("participantes", []) if n]
+    issues = []
+    for cod in r.get("issues", []):
+        caminho = os.path.join(ISSUES_DIR, f"{cod}.json")
+        if not os.path.exists(caminho):
+            print("⚠ Uma issue da pauta não existe mais (movida ou apagada?) — fora da pauta.")
+        else:
+            if carregar(caminho).get("status") is not True:
+                print(f"ℹ Issue {rot(cod)} já está fechada (fica na pauta mesmo assim).")
+            issues.append(cod)
+    desconhecidos = [n for n in participantes if n not in pessoas]
+    if desconhecidos:
+        print("ℹ Fora de pessoas.csv (sem e-mail):", ", ".join(desconhecidos))
+
+    dados = {"titulo": (r.get("titulo") or "Reunião").strip(), "data": r["data"],
+             "horario": (r.get("horario") or "").strip(), "participantes": participantes,
+             "issues": issues, "texto": (r.get("texto") or "").strip()}
+    print(f"\nNova reunião: {dados['titulo']} · {data_reuniao_br(dados['data'])}"
+          + (f" · {dados['horario']}" if dados["horario"] else ""))
+    print(f"  Participantes ({len(participantes)}): {', '.join(participantes) or '-'}")
+    for cod in issues:
+        i = carregar(os.path.join(ISSUES_DIR, f"{cod}.json"))
+        print(f"  • {rotulo_issue(i)} ({i.get('responsavel') or 'sem responsável'}) {curto(i.get('descricao', ''), 70)}")
+    if dados["texto"]:
+        print("  Texto: " + curto(dados["texto"], 200))
+    if not perguntar_sim_nao("\nGravar a reunião?", padrao=True):
+        print("Nada foi alterado.")
+        return "recusado"
+    caminho = salvar_reuniao(dados)
+    print(f"✔ {os.path.relpath(caminho, BASE_DIR)}")
+    oferecer_email_reuniao(caminho, padrao=bool(arquivo.get("enviar_email")))
+    return "aplicado"
 
 
 def aplicar_arquivo(caminho_arquivo):
     """Aplica um arquivo de mudanças. Retorna "aplicado", "nada", "recusado" ou "invalido"."""
     arquivo = carregar(caminho_arquivo)
+    if arquivo.get("tipo") == "reuniao-nova":
+        return aplicar_reuniao(arquivo)
+    if arquivo.get("tipo") == "reuniao-cancelar":
+        return aplicar_cancelamento(arquivo)
     if arquivo.get("tipo") != "mudancas-acompanhamento":
         print("⚠ Este arquivo não parece ter sido baixado da página de acompanhamento.")
         return "invalido"
@@ -121,18 +204,18 @@ def aplicar_arquivo(caminho_arquivo):
         if not depois:
             continue
         if not os.path.exists(caminho):
-            print(f"⚠ {cod}: issue não existe mais (já movida ou apagada?) — ignorada.")
+            print(f"⚠ Issue {cod} não existe mais (já movida ou apagada?) — ignorada.")
             continue
         issue = carregar(caminho)
         if issue.get("status") is not True:
-            print(f"ℹ {cod}: já está fechada — ignorada.")
+            print(f"ℹ Issue {rotulo_issue(issue)} já está fechada — ignorada.")
             continue
 
         # conflitos: o campo mudou no repositório depois que a página foi gerada
         for campo in ("responsavel", "descricao"):
             atual = (issue.get(campo) or "").strip()
             if campo in depois and (antes.get(campo) or "").strip() != atual:
-                print(f"\n⚠ Conflito em {cod} ({campo}):")
+                print(f"\n⚠ Conflito na issue {rotulo_issue(issue)} ({campo}):")
                 print(f"   no repositório agora: {curto(atual) or '(vazio)'}")
                 print(f"   na página era:        {curto(antes.get(campo)) or '(vazio)'}")
                 print(f"   você quer:            {curto(depois[campo]) or '(vazio)'}")
@@ -142,10 +225,10 @@ def aplicar_arquivo(caminho_arquivo):
                 del depois[campo]
 
         if depois.get("tarefa") and depois["tarefa"] not in tarefas_existentes:
-            print(f"⚠ {cod}: tarefa {depois['tarefa']} não existe — mudança de tarefa ignorada.")
+            print(f"⚠ Issue {rotulo_issue(issue)}: a tarefa nova não existe — mudança de tarefa ignorada.")
             del depois["tarefa"]
         if depois.get("responsavel") and depois["responsavel"] not in pessoas:
-            print(f"ℹ {cod}: '{depois['responsavel']}' não está em pessoas.csv (será gravado mesmo assim).")
+            print(f"ℹ Issue {rotulo_issue(issue)}: '{depois['responsavel']}' não está em pessoas.csv (será gravado mesmo assim).")
 
         if depois:
             plano.append((cod, caminho, issue, depois, m.get("em")))
@@ -162,16 +245,17 @@ def aplicar_arquivo(caminho_arquivo):
             novo = proximo_codigo(depois["tarefa"], reservados)
             reservados.append(novo)
             novos_codigos[cod] = novo
-    codigos_novas = []
+    codigos_novas, numeros_novas = [], []
     for d, _ in novas:
         novo = proximo_codigo(d["tarefa"], reservados)
         reservados.append(novo)
         codigos_novas.append(novo)
+        numeros_novas.append(proximo_numero_issue(numeros_novas))   # número global (#N)
 
     if novas:
         print(f"\n{len(novas)} issue(s) nova(s):\n")
-        for (d, _), novo in zip(novas, codigos_novas):
-            print(f"  + {novo}  ({titulo_task(d['tarefa'])}) → {d.get('responsavel') or '(sem responsável)'}")
+        for (d, _), num in zip(novas, numeros_novas):
+            print(f"  + #{num}  ({titulo_task(d['tarefa'])}) → {d.get('responsavel') or '(sem responsável)'}")
             print(f"      {curto(d['descricao'])}")
             for t in d.get("comentarios") or []:
                 print(f"      💬 {curto(t)}")
@@ -179,13 +263,13 @@ def aplicar_arquivo(caminho_arquivo):
     if plano:
         print(f"\n{len(plano)} issue(s) com mudanças:\n")
     for cod, _, issue, depois, em in plano:
-        print(f"  {cod}  ({curto(issue.get('descricao', ''), 60)})")
+        print(f"  {rotulo_issue(issue)}  ({curto(issue.get('descricao', ''), 60)})")
         if "responsavel" in depois:
             print(f"      → responsável: {issue.get('responsavel') or '(ninguém)'} → {depois['responsavel'] or '(ninguém)'}")
         if "descricao" in depois:
             print(f"      → descrição:   {curto(depois['descricao'])}")
         if "tarefa" in depois:
-            print(f"      → tarefa:      {cod.split('-')[0]} → {depois['tarefa']}  (novo código {novos_codigos[cod]})")
+            print(f"      → tarefa:      {titulo_task(cod.rsplit('-', 1)[0])} → {titulo_task(depois['tarefa'])}")
         if depois.get("fechar"):
             print(f"      → fechar       (data_fechamento {data_br(em)})")
         for t in depois.get("comentarios") or []:
@@ -195,21 +279,21 @@ def aplicar_arquivo(caminho_arquivo):
         print("Nada foi alterado.")
         return "recusado"
 
-    atribuicoes = defaultdict(list)  # nome -> [(codigo_final, task, descricao, data)]
-    comentados = defaultdict(list)   # nome -> [(codigo, task, titulo, descricao, [textos])]
+    atribuicoes = defaultdict(list)  # nome -> [(rotulo #N, task, descricao, data)]
+    comentados = defaultdict(list)   # nome -> [(rotulo #N, task, titulo, descricao, [textos])]
 
     def novos_comentarios(lista, em):
         return [{"data": data_br(em), "texto": t.strip()} for t in (lista or []) if t and t.strip()]
 
-    for (d, em), novo in zip(novas, codigos_novas):
-        issue = {"status": True, "descricao": d["descricao"].strip(), "data": data_br(em),
-                 "responsavel": d.get("responsavel") or ""}
+    for (d, em), novo, num in zip(novas, codigos_novas, numeros_novas):
+        issue = com_numero({"status": True, "descricao": d["descricao"].strip(), "data": data_br(em),
+                            "responsavel": d.get("responsavel") or ""}, num)
         if novos_comentarios(d.get("comentarios"), em):
             issue["comentarios"] = novos_comentarios(d.get("comentarios"), em)
         salvar(os.path.join(ISSUES_DIR, f"{novo}.json"), issue)
         if issue["responsavel"]:
-            atribuicoes[issue["responsavel"]].append((novo, d["tarefa"], issue["descricao"], issue["data"]))
-        print(f"✔ criada {novo}")
+            atribuicoes[issue["responsavel"]].append((rotulo_issue(issue), d["tarefa"], issue["descricao"], issue["data"]))
+        print(f"✔ criada a issue {rotulo_issue(issue)}")
 
     for cod, caminho, issue, depois, em in plano:
         if "descricao" in depois:
@@ -234,14 +318,14 @@ def aplicar_arquivo(caminho_arquivo):
 
         if depois.get("responsavel") and not depois.get("fechar"):
             atribuicoes[depois["responsavel"]].append(
-                (codigo_final, codigo_final.split("-")[0], issue.get("descricao", ""), issue.get("data", "")))
+                (rotulo_issue(issue), codigo_final.rsplit("-", 1)[0], issue.get("descricao", ""), issue.get("data", "")))
 
         if comentarios and issue.get("responsavel"):
             task = codigo_final.rsplit("-", 1)[0]
             comentados[issue["responsavel"]].append(
-                (codigo_final, task, titulo_task(task), issue.get("descricao", ""), [c["texto"] for c in comentarios]))
+                (rotulo_issue(issue), task, titulo_task(task), issue.get("descricao", ""), [c["texto"] for c in comentarios]))
 
-        print(f"✔ {cod}" + (f" → {codigo_final}" if codigo_final != cod else ""))
+        print(f"✔ issue {rotulo_issue(issue)}")
 
     # avisos por e-mail: um e-mail por pessoa com todas as issues que ela recebeu
     com_email = [n for n in atribuicoes if email_de(n, pessoas)]
@@ -249,7 +333,7 @@ def aplicar_arquivo(caminho_arquivo):
         for nome in com_email:
             itens = atribuicoes[nome]
             linhas = "\n\n".join(
-                f"- {c} ({t} - {titulo_task(t)}), aberta em {d}\n  {desc}\n  {SITE_URL}#{t}"
+                f"- Issue {c} ({titulo_task(t)}), aberta em {d}\n  {desc}\n  {SITE_URL}#{t}"
                 for c, t, desc, d in itens)
             corpo = (
                 f"Olá {primeiro_nome(nome)},\n\n"

@@ -68,7 +68,7 @@ td.data { white-space: nowrap; }
 <table class="table table-sm table-striped res" id="tabela">
 <thead>
 <tr>
-    <th data-sort="text">Issue</th>
+    <th data-sort="num">#</th>
     <th data-sort="text">Atividade</th>
     <th data-sort="text">Responsável</th>
     <th>Descrição</th>
@@ -82,8 +82,8 @@ td.data { white-space: nowrap; }
 <tr data-pessoa="{{ i.responsavel or 'Não atribuído' }}"
     data-fech="{{ i.fechamento.isoformat() if i.fechamento else '' }}"
     data-dias="{{ i.dias if i.dias is not none else '' }}">
-    <td class="data">{{ i.codigo }}</td>
-    <td>{% if i.task_ativa %}<a href="index.html#{{ i.task_codigo }}">{{ i.task_codigo }}</a>{% else %}{{ i.task_codigo }}{% endif %} - {{ i.titulo_task }}</td>
+    <td class="num" data-v="{{ i.numero or 0 }}">#{{ i.numero }}</td>
+    <td>{% if i.task_ativa %}<a href="index.html#{{ i.task_codigo }}">{{ i.titulo_task }}</a>{% else %}{{ i.titulo_task }}{% endif %}</td>
     <td>{{ i.responsavel or "Não atribuído" }}</td>
     <td>{{ i.descricao }}</td>
     <td class="data" data-v="{{ i.abertura.isoformat() if i.abertura else '' }}">{{ i.data }}</td>

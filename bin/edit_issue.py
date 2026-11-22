@@ -1,4 +1,9 @@
-"""Edita uma issue existente: descrição (com ajuda opcional do Claude) e/ou responsável."""
+"""
+Edita uma issue existente: descrição (com ajuda opcional do Claude) e/ou responsável.
+
+    python3 bin/edit_issue.py       # escolhe na lista pelo número (#N)
+    python3 bin/edit_issue.py 12    # edita direto a issue #12
+"""
 import os
 import sys
 import json
@@ -8,7 +13,7 @@ sys.path.insert(0, BASE_DIR)
 
 from fflch_common import (  # noqa: E402
     responsaveis_da_tarefa, estagiarios_da_tarefa, redigir_descricao,
-    oferecer_aviso_email, aviso_issue,
+    oferecer_aviso_email, aviso_issue, escolher_issue_cli, resolver_issue, rotulo_issue,
 )
 
 TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
@@ -26,17 +31,6 @@ def salvar_json(caminho, data):
         f.write("\n")
 
 
-def listar_issues(incluir_fechadas):
-    issues = []
-    for f in sorted(os.listdir(ISSUES_DIR)):
-        if not f.endswith(".json"):
-            continue
-        data = carregar_json(os.path.join(ISSUES_DIR, f))
-        if data.get("status") is True or incluir_fechadas:
-            issues.append((f, data))
-    return issues
-
-
 def escolher(lista, rotulo, msg):
     for i, item in enumerate(lista, 1):
         print(f"{i:03d} - {rotulo(item)}")
@@ -48,26 +42,23 @@ def escolher(lista, rotulo, msg):
 
 
 def main():
-    incluir_fechadas = input("Incluir issues fechadas na lista? [s/N] ").strip().lower() == "s"
-    issues = listar_issues(incluir_fechadas)
-    if not issues:
-        print("Nenhuma issue encontrada.")
-        return
-
-    print()
-    nome_arquivo, issue = escolher(
-        issues,
-        lambda it: f"{it[0]} → {it[1].get('responsavel') or 'N/A'}"
-                   f"{'' if it[1].get('status') else ' [fechada]'} | {it[1].get('descricao', '')[:60]}",
-        "Escolha a issue",
-    )
-    codigo = nome_arquivo.replace(".json", "")
-    task_codigo = codigo.split("-")[0]
+    if len(sys.argv) > 1:
+        codigo = resolver_issue(sys.argv[1])
+        if not codigo:
+            sys.exit(f"Issue {sys.argv[1]} não encontrada.")
+    else:
+        incluir_fechadas = input("Incluir issues fechadas na lista? [s/N] ").strip().lower() == "s"
+        codigo = escolher_issue_cli(incluir_fechadas)
+        if not codigo:
+            return
+    nome_arquivo = f"{codigo}.json"
+    issue = carregar_json(os.path.join(ISSUES_DIR, nome_arquivo))
+    task_codigo = codigo.rsplit("-", 1)[0]
     caminho_task = os.path.join(TASKS_DIR, f"{task_codigo}.json")
     task = carregar_json(caminho_task) if os.path.exists(caminho_task) else {}
     titulo = task.get("titulo", "")
 
-    print(f"\nIssue {codigo} ({task_codigo} - {titulo})")
+    print(f"\nIssue {rotulo_issue(issue)} ({titulo})")
     print(f"  Responsável: {issue.get('responsavel') or 'N/A'}")
     print(f"  Descrição:   {issue.get('descricao', '')}")
 
@@ -75,7 +66,7 @@ def main():
     reatribuido = None
 
     if input("\nAlterar a descrição? [s/N] ").strip().lower() == "s":
-        contexto = f"{task_codigo} - {titulo}\n{task.get('descricao', '') if not str(task.get('descricao', '')).endswith('.tex') else ''}"
+        contexto = f"{titulo}\n{task.get('descricao', '') if not str(task.get('descricao', '')).endswith('.tex') else ''}"
         nova = redigir_descricao(contexto=contexto.strip(), texto_atual=issue.get("descricao", ""))
         if nova and nova != issue.get("descricao"):
             issue["descricao"] = nova
@@ -98,12 +89,12 @@ def main():
         return
 
     salvar_json(os.path.join(ISSUES_DIR, nome_arquivo), issue)
-    print(f"\n✔ Issue atualizada: {nome_arquivo}")
+    print(f"\n✔ Issue {rotulo_issue(issue)} atualizada.")
 
     if reatribuido:
         oferecer_aviso_email(
             [reatribuido],
-            lambda n: aviso_issue(n, task_codigo, titulo, codigo, issue.get("descricao", ""),
+            lambda n: aviso_issue(n, task_codigo, titulo, rotulo_issue(issue), issue.get("descricao", ""),
                                   issue.get("data", ""), reatribuicao=True),
         )
 

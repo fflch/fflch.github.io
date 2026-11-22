@@ -1,6 +1,7 @@
 {
+  "numero": 75,
   "status": true,
-  "descricao": "Coletar os logs dos switches e enviá-los para o sistema de alertas, ou, alternativamente, ler as mensagens via rsyslog.",
+  "descricao": "No sistema de planejamento:\nAo criar uma issue, mostrar a lista de tarefa relacionado.\n\nNo sistema de incidentes: mandar email para gestor quando houver comentário em qualquer alerta",
   "data": "16/11/2026",
   "responsavel": "Thiago Gomes Veríssimo"
 }

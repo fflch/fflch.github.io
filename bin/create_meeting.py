@@ -1,222 +1,178 @@
+"""
+Cria uma reunião: participantes, issues abertas como pauta, texto livre e (opcional) e-mail.
+
+    python3 bin/create_meeting.py
+
+Grava content/meetings/AAAA-MM-DD-<titulo>.json e, se você quiser, dispara o e-mail de
+convocação para os participantes (via msmtp, igual aos avisos de issue).
+A mesma reunião pode ser montada pela página docs/reunioes.html ("+ Nova reunião") e
+aplicada com bin/aplicar_mudancas.py.
+"""
 import os
-import json
-import csv
 import re
+import sys
+import json
 from datetime import datetime
 
-# Configuração de Caminhos Base
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FILES_DIR = os.path.join(BASE_DIR, "content")
-TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
-ISSUES_DIR = os.path.join(BASE_DIR, "content", "issues")
-MEETINGS_DIR = os.path.join(BASE_DIR, "content", "meetings")
-SIGLAS_PATH = os.path.join(FILES_DIR, "siglas.csv")
+sys.path.insert(0, BASE_DIR)
+
+from fflch_common import (  # noqa: E402
+    load_pessoas, perguntar_sim_nao, ler_texto_multilinha, editar_no_editor,
+    salvar_reuniao, oferecer_email_reuniao, data_reuniao_br,
+    ISSUES_DIR, TASKS_DIR,
+)
 
 
-# ----------------------------------------
-# Detecta os tipos de reuniões disponíveis na pasta files/
-# ----------------------------------------
-def listar_tipos_reuniao():
-    tipos = []
-    if os.path.exists(FILES_DIR):
-        for f in os.listdir(FILES_DIR):
-            # Procura por padrões 'meeting-XXX.json'
-            if f.startswith("meeting-") and f.endswith(".json"):
-                # Extrai apenas o termo correspondente (ex: 'laravel', 'drupal')
-                tipo = f.replace("meeting-", "").replace(".json", "")
-                tipos.append(tipo)
-    tipos.sort()
-    return tipos
+def carregar(caminho):
+    with open(caminho, encoding="utf-8") as f:
+        return json.load(f)
 
 
-# ----------------------------------------
-# Busca o título da Task mãe (ex: tasks/bib001.json)
-# ----------------------------------------
-def obter_titulo_task_mae(nome_issue_arquivo):
-    # Encontra o padrão do código da task (ex: de 'cci002-1.json' extrai 'cci002')
-    match = re.match(r"^([a-zA-Z]+[0-9]+)", nome_issue_arquivo)
-    if match:
-        codigo_task = match.group(1)
-        caminho_task = os.path.join(TASKS_DIR, f"{codigo_task}.json")
-        
-        if os.path.exists(caminho_task):
-            try:
-                with open(caminho_task, encoding="utf-8") as f:
-                    data = json.load(f)
-                    return data.get("titulo", "Sem título na Task")
-            except:
-                return "Erro ao ler título da Task"
-                
-    return "Task não encontrada"
+def ler_indices(texto, total):
+    """'1,3,5-7' → {0, 2, 4, 5, 6}; None se inválido."""
+    out = set()
+    for parte in texto.replace(" ", "").split(","):
+        if not parte:
+            continue
+        m = re.fullmatch(r"(\d+)(?:-(\d+))?", parte)
+        if not m:
+            return None
+        a, b = int(m.group(1)), int(m.group(2) or m.group(1))
+        if not (1 <= a <= b <= total):
+            return None
+        out.update(range(a - 1, b))
+    return out
 
 
-# ----------------------------------------
-# Carrega dicionário de siglas do CSV
-# ----------------------------------------
-def carregar_siglas():
-    siglas = {}
-    if os.path.exists(SIGLAS_PATH):
-        with open(SIGLAS_PATH, mode='r', encoding='utf-8') as f:
-            reader = csv.reader(f)
-            next(reader, None)  # Pula cabeçalho
-            for row in reader:
-                if len(row) >= 2:
-                    siglas[row[0].strip().lower()] = row[1].strip()
-    return siglas
-
-
-# ----------------------------------------
-# Lista apenas as issues abertas (status == True)
-# ----------------------------------------
-def listar_issues_abertas():
-    issues_abertas = []
-    if not os.path.exists(ISSUES_DIR):
-        return []
-
-    for f in os.listdir(ISSUES_DIR):
+def issues_abertas():
+    tarefas = {}
+    for f in os.listdir(TASKS_DIR):
         if f.endswith(".json"):
-            caminho = os.path.join(ISSUES_DIR, f)
-            try:
-                with open(caminho, encoding="utf-8") as file:
-                    data = json.load(file)
-                    if data.get("status") is True:
-                        issues_abertas.append({
-                            "arquivo": f,
-                            "descricao": data.get("descricao", "Sem descrição"),
-                            "data": data.get("data", ""),
-                            "responsavel": data.get("responsavel", "")
-                        })
-            except:
-                pass
-    
-    issues_abertas.sort(key=lambda x: x["arquivo"])
-    return issues_abertas
+            tarefas[f[:-5]] = carregar(os.path.join(TASKS_DIR, f))
+    out = []
+    for f in sorted(os.listdir(ISSUES_DIR)):
+        if not f.endswith(".json"):
+            continue
+        i = carregar(os.path.join(ISSUES_DIR, f))
+        cod = f[:-5]
+        task = tarefas.get(cod.rsplit("-", 1)[0], {})
+        if i.get("status") is True and task.get("status") is True:
+            out.append({"codigo": cod, "numero": i.get("numero"), "descricao": i.get("descricao", ""),
+                        "responsavel": (i.get("responsavel") or "").strip(),
+                        "titulo_task": task.get("titulo", "")})
+    return out
 
 
-# ----------------------------------------
-# Menu Interativo para Vincular Múltiplas Issues
-# ----------------------------------------
-def selecionar_issues(issues, dicionario_siglas):
-    if not issues:
-        print("\nℹ Nenhuma issue aberta encontrada no momento.")
+def escolher_issues():
+    todas = sorted(issues_abertas(), key=lambda i: (i["responsavel"] or "~", i["codigo"]))
+    if not todas:
+        print("\nℹ Nenhuma issue aberta.")
         return []
-
-    print("\nIssues abertas encontradas:\n")
-    
-    for i, issue in enumerate(issues, 1):
-        nome_arquivo = issue["arquivo"]
-        
-        # Pega as letras iniciais para a sigla (ex: cci002-1.json -> cci)
-        match_sigla = re.match(r"^([a-zA-Z]+)", nome_arquivo)
-        sigla = match_sigla.group(1).lower() if match_sigla else ""
-        significado_sigla = dicionario_siglas.get(sigla, "Desconhecido")
-        
-        # Busca o título diretamente de dentro do arquivo da Task mãe
-        titulo_task = obter_titulo_task_mae(nome_arquivo)
-
-        print(f"[{i:02d}] {nome_arquivo} → Task: {titulo_task} ({sigla.upper()} - {significado_sigla})")
-        print(f"     Descrição: {issue['descricao']}")
-        print("-" * 70)
-
-    print("\nDigite os números das issues que deseja vincular separados por vírgula (Ex: 1,3).")
-    print("Pressione Enter para pular sem vincular nenhuma.")
-    
+    selecionadas = []
     while True:
-        escolha = input("\nIssues selecionadas: ").strip()
-        if not escolha:
-            return []
+        filtro = input(f"\nIssues abertas ({len(todas)}). Filtrar por texto (tarefa, descrição, pessoa; Enter = todas): ").strip().lower()
+        vis = [i for i in todas if not filtro or filtro in
+               f"#{i['numero']} {i['titulo_task']} {i['descricao']} {i['responsavel']}".lower()]
+        if not vis:
+            print("Nada encontrado.")
+            continue
+        resp_atual = None
+        for n, i in enumerate(vis, 1):
+            if i["responsavel"] != resp_atual:
+                resp_atual = i["responsavel"]
+                print(f"\n  👤 {resp_atual or 'sem responsável'}")
+            marca = "✓" if i["codigo"] in selecionadas else " "
+            print(f"  {marca}{'#' + str(i['numero']):>5} · {i['titulo_task']}")
+            print(f"        {i['descricao'][:150]}")
+        r = input("\nNúmeros (#) das issues para a pauta (ex: 12,40; número já marcado desmarca; Enter = nenhuma): ").strip()
+        if r:
+            por_num = {i["numero"]: i["codigo"] for i in vis}
+            nums = [x.strip().lstrip("#") for x in r.split(",") if x.strip()]
+            if not all(x.isdigit() and int(x) in por_num for x in nums):
+                print("Entrada inválida: use os números (#) mostrados na lista.")
+                continue
+            for x in nums:
+                c = por_num[int(x)]
+                selecionadas.remove(c) if c in selecionadas else selecionadas.append(c)
+        num_de = {i["codigo"]: i["numero"] for i in todas}
+        print("Pauta: " + (", ".join(f"#{num_de[c]}" for c in selecionadas) or "(nenhuma issue)"))
+        if not perguntar_sim_nao("Adicionar mais issues (outro filtro)?"):
+            return selecionadas, {i["codigo"]: i for i in todas}
 
-        try:
-            indices = [int(x.strip()) - 1 for x in escolha.split(",") if x.strip().isdigit()]
-            if all(0 <= idx < len(issues) for idx in indices):
-                return [issues[idx]["arquivo"] for idx in indices]
-        except:
-            pass
 
-        print("Entrada inválida. Tente novamente.")
-
-
-# ----------------------------------------
-# Entrada Interativa para Pautas Extras
-# ----------------------------------------
-def cadastrar_pautas_extras():
-    extras = []
-    print("\n--- Pautas Extras / Assuntos Gerais ---")
-    print("Deseja adicionar pautas extras que não estão registradas como issues?")
-    print("Digite um assunto por vez e pressione Enter. Deixe em branco e pressione Enter para finalizar.\n")
-
-    contador = 1
+def escolher_participantes(sugeridos):
+    pessoas = [p["nome"] for p in sorted((p for p in load_pessoas().values() if p["ativo"]),
+                                         key=lambda p: (p.get("vinculo") != "servidor", p["nome"]))]
+    pessoas += [n for n in sugeridos if n not in pessoas]
+    vinculo = {p["nome"]: p.get("vinculo") for p in load_pessoas().values()}
+    marcados = [n for n in pessoas if n in sugeridos]
     while True:
-        pauta = input(f"Pauta extra #{contador} (Enter para finalizar): ").strip()
-        if not pauta:
-            break
-        extras.append(pauta)
-        contador += 1
+        print("\nParticipantes (✓ = marcado; 🔗 = responsável por issue da pauta):\n")
+        for n, nome in enumerate(pessoas, 1):
+            print(f"  {'✓' if nome in marcados else ' '}[{n:02d}] {nome}  ({vinculo.get(nome) or '-'})"
+                  + ("  🔗" if nome in sugeridos else ""))
+        print("\nNúmeros/faixas marcam ou desmarcam (ex: 3,5-8). Atalhos: s = + servidores · e = + estagiários · l = limpar")
+        r = input("Enter confirma a seleção: ").strip().lower()
+        if not r:
+            if marcados:
+                return marcados
+            print("Escolha ao menos um participante.")
+            continue
+        if r in ("s", "e"):
+            v = "servidor" if r == "s" else "estagiario"
+            marcados += [n for n in pessoas if vinculo.get(n) == v and n not in marcados]
+        elif r == "l":
+            marcados = []
+        else:
+            idx = ler_indices(r, len(pessoas))
+            if idx is None:
+                print("Entrada inválida.")
+                continue
+            for k in sorted(idx):
+                nome = pessoas[k]
+                marcados.remove(nome) if nome in marcados else marcados.append(nome)
+        marcados = [n for n in pessoas if n in marcados]
 
-    return extras
 
-
-# ----------------------------------------
-# MAIN
-# ----------------------------------------
 def main():
-    print("\n--- Criação de Reunião Técnica ---")
-    
-    # 1. Seleção Dinâmica do Tipo de Reunião baseado na pasta files/
-    tipos_disponiveis = listar_tipos_reuniao()
-    if not tipos_disponiveis:
-        print("⚠ Nenhuma configuração de reunião encontrada em files/ (padrão: meeting-*.json).")
-        return
-        
-    print("\nSelecione o tipo de reunião:")
-    for idx, tipo in enumerate(tipos_disponiveis, 1):
-        print(f"{idx} - {tipo.capitalize()}")
-        
+    print("\n--- Nova reunião ---")
+    titulo = input("Título [Reunião Planejamento TI FFLCH]: ").strip() or "Reunião Planejamento TI FFLCH"
+    hoje = datetime.now().strftime("%Y-%m-%d")
     while True:
-        escolha_tipo = input("\nEscolha o número correspondente: ").strip()
-        if escolha_tipo.isdigit():
-            opt_idx = int(escolha_tipo) - 1
-            if 0 <= opt_idx < len(tipos_disponiveis):
-                tipo_reuniao = tipos_disponiveis[opt_idx]
-                break
-        print("Opção inválida.")
+        data = input(f"Data (AAAA-MM-DD) [{hoje}]: ").strip() or hoje
+        try:
+            datetime.strptime(data, "%Y-%m-%d")
+            break
+        except ValueError:
+            print("Data inválida.")
+    horario = input("Horário (ex: 10h às 11h; opcional): ").strip()
 
-    # 2. Entrada de Data da Reunião
-    data_padrao = datetime.now().strftime("%Y-%m-%d")
-    data_input = input(f"\nData da reunião (AAAA-MM-DD) [{data_padrao}]: ").strip()
-    data_reuniao = data_input if data_input else data_padrao
+    issues, por_codigo = escolher_issues() or ([], {})
+    sugeridos = list(dict.fromkeys(por_codigo[c]["responsavel"] for c in issues if por_codigo[c]["responsavel"]))
+    participantes = escolher_participantes(sugeridos)
 
-    try:
-        datetime.strptime(data_reuniao, "%Y-%m-%d")
-    except ValueError:
-        print("⚠ Formato de data inválido. Use AAAA-MM-DD.")
+    if perguntar_sim_nao("\nEscrever o texto adicional no editor?"):
+        texto = editar_no_editor("")
+    else:
+        texto = ler_texto_multilinha("\nTexto adicional (outras pautas, avisos, link da sala…)")
+
+    print("\n" + "=" * 63)
+    print(f"{titulo} · {data_reuniao_br(data)}" + (f" · {horario}" if horario else ""))
+    print(f"Participantes ({len(participantes)}): " + ", ".join(participantes))
+    print(f"Issues ({len(issues)}): " + (", ".join(f"#{por_codigo[c]['numero']}" for c in issues) or "nenhuma"))
+    if texto:
+        print("Texto:\n  " + texto.replace("\n", "\n  "))
+    print("=" * 63)
+    if not perguntar_sim_nao("Salvar reunião?", padrao=True):
+        print("Nada foi gravado.")
         return
 
-    # 3. Carrega Siglas, procura Tasks correspondentes e vincula as Issues
-    siglas = carregar_siglas()
-    issues_abertas = listar_issues_abertas()
-    issues_vinculadas = selecionar_issues(issues_abertas, siglas)
-
-    # 4. Cadastra pautas extras (não registradas em arquivo)
-    pautas_extras = cadastrar_pautas_extras()
-
-    # 5. Formatação dos Dados do JSON de Saída
-    reuniao_dados = {
-        "tipo": tipo_reuniao,
-        "data": data_reuniao,
-        "issues": issues_vinculadas,
-        "extra": pautas_extras
-    }
-
-    # 6. Salva o arquivo final
-    os.makedirs(MEETINGS_DIR, exist_ok=True)
-    nome_arquivo_reuniao = f"{tipo_reuniao}-{data_reuniao}.json"
-    caminho_final = os.path.join(MEETINGS_DIR, nome_arquivo_reuniao)
-
-    with open(caminho_final, "w", encoding="utf-8") as f:
-        json.dump(reuniao_dados, f, indent=2, ensure_ascii=False)
-
-    print(f"\n✔ Arquivo de reunião criado com sucesso em: {caminho_final}")
+    caminho = salvar_reuniao({"titulo": titulo, "data": data, "horario": horario,
+                              "participantes": participantes, "issues": issues, "texto": texto})
+    print(f"✔ {os.path.relpath(caminho, BASE_DIR)}")
+    oferecer_email_reuniao(caminho, padrao=False)
+    print("\nRegenere o site (python3 generate_site.py) e faça commit/push.")
 
 
 if __name__ == "__main__":

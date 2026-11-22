@@ -9,7 +9,7 @@ sys.path.insert(0, BASE_DIR)
 
 from fflch_common import (  # noqa: E402
     responsaveis_da_tarefa, estagiarios_da_tarefa, redigir_descricao,
-    oferecer_aviso_email, aviso_issue,
+    oferecer_aviso_email, aviso_issue, proximo_numero_issue, com_numero, rotulo_issue,
 )
 
 TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
@@ -50,10 +50,10 @@ def escolher_task(tasks):
         except Exception:
             titulo = "Erro ao ler"
 
-        print(f"{i:03d} - {t} → {titulo}")
+        print(f"{i:03d} - {titulo}")
 
     while True:
-        escolha = input("\nDigite número ou nome da task: ").strip()
+        escolha = input("\nNúmero da tarefa: ").strip()
 
         if escolha.isdigit():
             idx = int(escolha) - 1
@@ -99,7 +99,7 @@ def escolher_responsavel(lista):
         print("Entrada inválida.")
 
 
-def proximo_numero_issue(prefixo):
+def proximo_arquivo_issue(prefixo):
     pattern = re.compile(rf"^{prefixo}-(\d+)\.json$")
     numeros = []
 
@@ -117,7 +117,7 @@ def contexto_da_task(prefixo, task_data):
     descricao = task_data.get("descricao", "")
     if descricao.endswith(".tex"):
         descricao = ""
-    return f"{prefixo} - {task_data.get('titulo', '')}\n{descricao}".strip()
+    return f"{task_data.get('titulo', '')}\n{descricao}".strip()
 
 
 def main():
@@ -135,7 +135,7 @@ def main():
         print("⚠ Task não possui responsáveis ou estagiários ativos.")
         return
 
-    print(f"\nTask selecionada: {prefixo} → {titulo}")
+    print(f"\nTarefa selecionada: {titulo}")
 
     responsavel = escolher_responsavel(responsaveis)
 
@@ -144,27 +144,26 @@ def main():
         print("\nIssue não criada.")
         return
 
-    numero = proximo_numero_issue(prefixo)
-    codigo = f"{prefixo}-{numero}"
+    codigo = f"{prefixo}-{proximo_arquivo_issue(prefixo)}"   # nome interno do arquivo
     path = os.path.join(ISSUES_DIR, f"{codigo}.json")
     data_hoje = datetime.now().strftime("%d/%m/%Y")
 
-    issue = {
+    issue = com_numero({
         "status": True,
         "descricao": descricao,
         "data": data_hoje,
         "responsavel": responsavel
-    }
+    }, proximo_numero_issue())
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(issue, f, indent=2, ensure_ascii=False)
         f.write("\n")
 
-    print(f"\n✔ Issue criada: {path}")
+    print(f"\n✔ Issue {rotulo_issue(issue)} criada.")
 
     oferecer_aviso_email(
         [responsavel],
-        lambda n: aviso_issue(n, prefixo, titulo, codigo, descricao, data_hoje),
+        lambda n: aviso_issue(n, prefixo, titulo, rotulo_issue(issue), descricao, data_hoje),
     )
 
 

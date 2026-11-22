@@ -13,7 +13,8 @@ from jinja2 import Environment, FileSystemLoader
 
 from fflch_common import (
     load_pessoas,
-    participantes_reuniao,
+    id_reuniao,
+    SITE_URL,
     responsaveis_da_tarefa,
     estagiarios_da_tarefa,
 )
@@ -374,8 +375,14 @@ def converter_md_para_html(codigo_task):
             extensions=['extra', 'codehilite', 'fenced_code', 'nl2br', 'tables', 'toc']
         )
 
+        caminho_task = os.path.join(TASKS_DIR, f"{codigo_task}.json")
+        titulo_task = codigo_task
+        if os.path.exists(caminho_task):
+            with open(caminho_task, encoding="utf-8") as f:
+                titulo_task = json.load(f).get("titulo") or codigo_task
         html_completo = template.render(
             codigo_task=codigo_task,
+            titulo_task=titulo_task,
             html_corpo=html_corpo
         )
 
@@ -456,52 +463,9 @@ def count_open_issues(task_codigo, issues):
 
 
 # ----------------------------------------------------------------------
-# Reuniões técnicas (página docs/reunioes.html)
+# Reuniões (página docs/reunioes.html) — content/meetings/AAAA-MM-DD-<titulo>.json
 # ----------------------------------------------------------------------
-DIAS_SEMANA = ["segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo"]
 DIAS_CURTOS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"]
-
-
-def _dia_semana(texto):
-    """'Quartas-feiras' → 2 (segunda = 0); None se não reconhecer."""
-    t = (texto or "").lower()
-    for i, d in enumerate(DIAS_SEMANA):
-        if d in t or d.replace("ç", "c") in t:
-            return i
-    return None
-
-
-def _hora_inicio(texto):
-    """'10h às 11h30' → (10, 0); '14h00 às 16h00' → (14, 0)."""
-    m = re.search(r"(\d{1,2})\s*h\s*(\d{2})?", texto or "")
-    return (int(m.group(1)), int(m.group(2) or 0)) if m else (0, 0)
-
-
-def _carregar_pauta(caminho, tasks_por_codigo):
-    with open(caminho, encoding="utf-8") as f:
-        dados = json.load(f)
-    pautas = []
-    for arq in dados.get("issues", []):
-        codigo = arq.replace(".json", "")
-        task_codigo = codigo.split("-")[0]
-        issue = {}
-        caminho_issue = os.path.join(ISSUES_DIR, arq)
-        if os.path.exists(caminho_issue):
-            with open(caminho_issue, encoding="utf-8") as f:
-                issue = json.load(f)
-        task = tasks_por_codigo.get(task_codigo, {})
-        pautas.append({
-            "tipo": "issue",
-            "codigo": codigo,
-            "task_codigo": task_codigo,
-            "titulo_task": task.get("titulo", ""),
-            "descricao": issue.get("descricao", ""),
-            "responsavel": issue.get("responsavel") or "sem responsável",
-            "resolvida": issue.get("status") is False,
-        })
-    for extra in dados.get("extra", []):
-        pautas.append({"tipo": "extra", "texto": extra})
-    return pautas
 
 
 def nome_curto(nome):
@@ -514,77 +478,72 @@ def nome_curto(nome):
     return f"{partes[0]} {partes[-1]}"
 
 
-def preparar_reunioes(all_tasks):
+def preparar_reunioes(all_issues):
     hoje = datetime.now().date()
-    tasks_por_codigo = all_tasks
+    por_codigo = {i["codigo"]: i for i in all_issues}
     reunioes = []
-
-    for arquivo in sorted(os.listdir("content")):
-        if not (arquivo.startswith("meeting-") and arquivo.endswith(".json")):
-            continue
-        tipo = arquivo[len("meeting-"):-len(".json")]
-        with open(os.path.join("content", arquivo), encoding="utf-8") as f:
-            cfg = json.load(f)
-
-        dia_txt, horario = cfg.get("Dia da semana", ""), cfg.get("horário", "")
-        dia_idx = _dia_semana(dia_txt)
-        hora = _hora_inicio(horario)
-
-        # reuniões registradas (content/meetings/<tipo>-AAAA-MM-DD.json)
-        registradas = []
-        if os.path.isdir(MEETINGS_DIR):
-            for f in os.listdir(MEETINGS_DIR):
-                m = re.match(rf"^{re.escape(tipo)}-(\d{{4}}-\d{{2}}-\d{{2}})\.json$", f)
-                if m:
-                    data = datetime.strptime(m.group(1), "%Y-%m-%d").date()
-                    registradas.append((data, _carregar_pauta(os.path.join(MEETINGS_DIR, f), tasks_por_codigo)))
-        registradas.sort(key=lambda x: x[0])
-        futuras = [r for r in registradas if r[0] >= hoje]
-        anteriores = [r for r in registradas if r[0] < hoje][::-1]
-
-        if futuras:
-            proxima, pautas, agendada = futuras[0][0], futuras[0][1], True
-        elif dia_idx is not None:
-            proxima = hoje + timedelta(days=(dia_idx - hoje.weekday()) % 7)
-            pautas, agendada = [], False
-        else:
-            proxima, pautas, agendada = None, [], False
-
-        participantes = [{"nome": nome, "curto": nome_curto(nome)} for nome, _ in participantes_reuniao(tipo)]
-        reunioes.append({
-            "tipo": tipo,
-            "id": f"r-{slug(tipo)}",
-            "titulo": cfg.get("título", tipo),
-            "dia": dia_txt,
-            "dia_idx": dia_idx,
-            "alternada": "altern" in dia_txt.lower(),
-            "horario": horario,
-            "hora": hora,
-            "participantes": participantes,
-            "handson": cfg.get("handons"),
-            "proxima": proxima,
-            "proxima_br": proxima.strftime("%d/%m/%Y") if proxima else "",
-            "proxima_curta": f"{DIAS_CURTOS[proxima.weekday()]} {proxima.strftime('%d/%m')}" if proxima else "",
-            "dias_ate": (proxima - hoje).days if proxima else None,
-            "agendada": agendada,
-            "pautas": pautas,
-            "anteriores": [{"data_br": d.strftime("%d/%m/%Y"), "pautas": p} for d, p in anteriores],
-        })
-
-    reunioes.sort(key=lambda r: (r["proxima"] is None, r["proxima"] or hoje, r["hora"]))
-
-    # grade da semana (segunda a sexta)
-    semana = []
-    for i in range(5):
-        do_dia = sorted([r for r in reunioes if r["dia_idx"] == i], key=lambda r: r["hora"])
-        semana.append({"nome": DIAS_SEMANA[i].capitalize(), "reunioes": do_dia, "hoje": hoje.weekday() == i})
-    return reunioes, semana
+    if os.path.isdir(MEETINGS_DIR):
+        for arquivo in sorted(os.listdir(MEETINGS_DIR)):
+            if not arquivo.endswith(".json"):
+                continue
+            with open(os.path.join(MEETINGS_DIR, arquivo), encoding="utf-8") as f:
+                r = json.load(f)
+            try:
+                data = datetime.strptime(r.get("data", ""), "%Y-%m-%d").date()
+            except ValueError:
+                print(f"⚠ {arquivo}: data inválida — ignorada.")
+                continue
+            pautas = []
+            for cod in r.get("issues", []):
+                i = por_codigo.get(cod)
+                pautas.append({
+                    "codigo": cod, "numero": i["numero"] if i else None,
+                    "task_codigo": cod.rsplit("-", 1)[0], "existe": bool(i),
+                    "titulo_task": i["titulo_task"] if i else "",
+                    "descricao": i["descricao"] if i else "(issue não encontrada)",
+                    "responsavel": (i["responsavel"] if i else "") or "sem responsável",
+                    "resolvida": bool(i) and not i["aberta"],
+                    "data_fechamento": i["data_fechamento"] if i else "",
+                })
+            reunioes.append({
+                "arquivo": arquivo, "id": id_reuniao(arquivo),
+                "titulo": r.get("titulo", ""), "data": data,
+                "data_br": f"{DIAS_CURTOS[data.weekday()]} {data.strftime('%d/%m/%Y')}",
+                "horario": r.get("horario", ""),
+                "participantes": [{"nome": n, "curto": nome_curto(n)} for n in r.get("participantes", [])],
+                "pautas": pautas,
+                "texto": r.get("texto", ""),
+                "email_enviado_em": r.get("email_enviado_em", ""),
+                "cancelada_em": r.get("cancelada_em", ""),
+                "motivo_cancelamento": r.get("motivo_cancelamento", ""),
+                "futura": data >= hoje,
+                "dias_ate": (data - hoje).days,
+            })
+    proximas = sorted([r for r in reunioes if r["futura"]], key=lambda r: (r["data"], r["horario"]))
+    realizadas = sorted([r for r in reunioes if not r["futura"]], key=lambda r: (r["data"], r["horario"]), reverse=True)
+    return proximas, realizadas
 
 
-def gerar_pagina_reunioes(all_tasks):
-    reunioes, semana = preparar_reunioes(all_tasks)
+def dados_form_reuniao(all_issues):
+    """Pessoas ativas e issues abertas para o formulário "+ Nova reunião" (renderizado no navegador)."""
+    pessoas = [{"nome": p["nome"], "vinculo": p.get("vinculo", "")}
+               for p in load_pessoas().values() if p["ativo"]]
+    pessoas.sort(key=lambda p: (p["vinculo"] != "servidor", p["nome"]))
+    issues = [{"codigo": i["codigo"], "numero": i["numero"], "tarefa": i["task_codigo"], "titulo_task": i["titulo_task"],
+               "descricao": i["descricao"],
+               "responsavel": "" if i["responsavel"] in NAO_PESSOAS else i["responsavel"]}
+              for i in all_issues if i["aberta"] and i["task_ativa"]]
+    emails = {p["nome"]: True for p in load_pessoas().values() if p.get("email")}
+    return {"hoje": datetime.now().date().isoformat(), "site": SITE_URL,
+            "pessoas": pessoas, "issues": issues, "emails": emails}
+
+
+def gerar_pagina_reunioes(all_issues):
+    proximas, realizadas = preparar_reunioes(all_issues)
+    dados_json = json.dumps(dados_form_reuniao(all_issues), ensure_ascii=False).replace("</", "<\\/")
     html = jinja_env.get_template("reunioes.html").render(
-        reunioes=reunioes, semana=semana, data_hoje=datetime.now().strftime("%d/%m/%Y"))
+        proximas=proximas, realizadas=realizadas, dados_json=dados_json,
+        data_hoje=datetime.now().strftime("%d/%m/%Y"))
     with open(os.path.join(OUTPUT_DIR, "reunioes.html"), "w", encoding="utf-8") as f:
         f.write(html)
 
@@ -686,11 +645,12 @@ def preparar_grupos_tarefas(tasks, issues):
             pendencias_formatadas = [
                 {
                     "codigo": issue.get("codigo"),
+                    "numero": issue.get("numero"),
                     "descricao_html": latex_to_html(issue.get("descricao", "")),
                     "responsavel": issue.get("responsavel") or "",
                     "comentarios": issue.get("comentarios", []),
                 }
-                for issue in related
+                for issue in sorted(related, key=lambda i: i.get("numero") or 0)
             ]
 
             responsaveis_str = "; ".join(responsaveis_da_tarefa(task))
@@ -765,6 +725,7 @@ def load_all_issues(all_tasks):
         dias = (fechamento - abertura).days if abertura and fechamento else None
         issues.append({
             "codigo": codigo,
+            "numero": data.get("numero"),
             "task_codigo": task_codigo,
             "task_ativa": task.get("status") is True,
             "titulo_task": task.get("titulo", "N/A"),
@@ -1003,7 +964,7 @@ def preparar_acompanhamento(tasks, all_issues):
             "unicas": sum(1 for a in ativs if a["unico"]),
             "resolvidas_total": sum(1 for i in resolvidas if i["responsavel"] == nome),
             "atividades": ativs,
-            "resolvidas90": [{"codigo": i["codigo"], "descricao": i["descricao"],
+            "resolvidas90": [{"codigo": i["codigo"], "numero": i["numero"], "descricao": i["descricao"],
                               "data_fechamento": i["data_fechamento"], "dias": i["dias"]} for i in res90],
         })
     lista_pessoas.sort(key=lambda x: x["nome"])
@@ -1027,7 +988,7 @@ def preparar_acompanhamento(tasks, all_issues):
                      "pessoas": [n for n in responsaveis_da_tarefa(t) + estagiarios_da_tarefa(t)
                                  if n not in NAO_PESSOAS]}
                     for t in sorted(tasks, key=lambda t: t["codigo"])],
-        "issues": [{"codigo": i["codigo"], "tarefa": i["task_codigo"], "descricao": i["descricao"],
+        "issues": [{"codigo": i["codigo"], "numero": i["numero"], "tarefa": i["task_codigo"], "descricao": i["descricao"],
                     "responsavel": "" if i["responsavel"] in NAO_PESSOAS else i["responsavel"],
                     "data": i["data"], "idade": i["idade"], "comentarios": i["comentarios"]}
                    for i in sorted(abertas, key=lambda i: i["codigo"])],
@@ -1240,8 +1201,8 @@ def generate_html(tasks, issues, tutoriais, relatorios, acomp):
 def gerar_figuras():
     """
     Figuras e tabelas derivadas dos dados (antes ficavam em passos separados do deploy):
-    - scripts/dio.py       → docs/files/dio.png
-    - scripts/topologia.py → docs/topologia.png e docs/vlans.html (incluído na documentação rat002)
+    - scripts/dio.py       → docs/dio.html (diagrama interativo de DIOs a partir de content/dio.csv, incluído na documentação pas007)
+    - scripts/topologia.py → docs/topologia.png e docs/vlans.html (incluído na documentação rat003)
     """
     for nome in ("dio", "topologia"):
         _modulo_script(nome).main()
@@ -1261,7 +1222,7 @@ def main():
 
     all_tasks = load_all_tasks()
     all_issues = load_all_issues(all_tasks)
-    gerar_pagina_reunioes(all_tasks)
+    gerar_pagina_reunioes(all_issues)
     gerar_paginas_dashboard(tasks, all_issues)
     acomp = gerar_pagina_acompanhamento(tasks, all_issues)
     gerar_pagina_github()

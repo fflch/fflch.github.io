@@ -1,5 +1,5 @@
 {% for grupo in grupos_tarefas %}
-<h2 class="prefix-title" id="{{ grupo.prefix }}">{{ grupo.prefix }}{% if grupo.significado %} <small class="text-muted fs-5">- {{ grupo.significado }}</small>{% endif %} <a href="#top" class="top-link">(voltar ao topo)</a></h2>
+<h2 class="prefix-title" id="{{ grupo.prefix }}">{{ grupo.significado or grupo.prefix }} <a href="#top" class="top-link">(voltar ao topo)</a></h2>
 
 <div class="mb-2">
     <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle-group="{{ grupo.prefix }}" data-open="1">Expandir todas</button>
@@ -9,7 +9,7 @@
 {% for task in grupo.tasks %}
 <details class="card shadow-sm task-card" id="{{ task.codigo }}" data-group="{{ grupo.prefix }}">
 <summary class="card-header task-summary">
-    <span class="fw-bold">{{ task.codigo }}</span> | {{ task.titulo }}
+    <span class="fw-bold">{{ task.titulo }}</span>
     {% if task.badge %} <span class="badge bg-danger">{{ task.badge }}</span>{% endif %}
     <span class="task-meta text-muted">{{ task.responsaveis_str }}{% if task.estagiarios_str %} · {{ task.estagiarios_str }}{% endif %}</span>
 </summary>
@@ -32,7 +32,7 @@
 <hr><strong>Pendências:</strong>
 {% for issue in task.pendencias %}
 <div class="issue-item">
-<strong>{{ issue.codigo }}</strong>{% if issue.responsavel %} <span class="text-muted">· {{ issue.responsavel }}</span>{% endif %}<br>
+<strong>#{{ issue.numero }}</strong>{% if issue.responsavel %} <span class="text-muted">· 👤 {{ issue.responsavel }}</span>{% endif %}<br>
 {{ issue.descricao_html | safe }}
 {% if issue.comentarios %}
 <ul class="comentarios">

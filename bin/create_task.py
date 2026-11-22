@@ -25,10 +25,10 @@ def load_siglas():
 def escolher_sigla(siglas):
     print("\nSiglas disponíveis:\n")
     for i, (sigla, significado) in enumerate(siglas.items(), 1):
-        print(f"{i:02d} - {sigla} → {significado}")
+        print(f"{i:02d} - {significado}")
 
     while True:
-        escolha = input("\nDigite a sigla ou número: ").strip()
+        escolha = input("\nNúmero da área: ").strip()
 
         if escolha.isdigit():
             idx = int(escolha) - 1
@@ -80,13 +80,13 @@ def main():
     sigla = escolher_sigla(siglas)
     significado = siglas[sigla]
 
-    print(f"\nSelecionado: {sigla} → {significado}")
+    print(f"\nÁrea: {significado}")
 
     numero = proximo_numero(sigla)
     codigo = f"{sigla}{numero:03d}"
     path = os.path.join(TASKS_DIR, f"{codigo}.json")
 
-    print(f"Arquivo será: {codigo}.json\n")
+    print()
 
     peso = input("Peso (default 1): ").strip() or "1"
     titulo = input("Título: ").strip()
@@ -107,7 +107,7 @@ def main():
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write("\n")
 
-    print(f"\n✔ Arquivo criado: {path}")
+    print(f"\n✔ Tarefa criada: {titulo}")
 
     papel = {n: "responsável" for n in responsaveis}
     papel.update({n: "estagiário(a)" for n in estagiarios if n not in papel})

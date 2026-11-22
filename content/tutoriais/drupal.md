@@ -31,8 +31,8 @@ docker run --rm -it \
 
 Baixando ambos:
 ```bash
-curl -L https://fflch.github.io/assets/drupal/Dockerfile -o Dockerfile
-curl -L https://fflch.github.io/assets/drupal/docker-compose.yml -o docker-compose.yml
+curl -L https://tiplanejamento.fflch.usp.br/assets/drupal/Dockerfile -o Dockerfile
+curl -L https://tiplanejamento.fflch.usp.br/assets/drupal/docker-compose.yml -o docker-compose.yml
 ```
 
 Agora executamos o build da imagem e iniciamos o site.

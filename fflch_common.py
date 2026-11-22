@@ -2,7 +2,7 @@
 Funções compartilhadas entre generate_site.py e os scripts de bin/:
 
 - cadastro de pessoas (content/pessoas.csv)
-- participantes das reuniões
+- reuniões (gravar e e-mail de convocação)
 - estagiários de uma tarefa (com a chave "ativo")
 - envio de e-mail de atribuição via msmtp (conta fflchsti@usp.br)
 - ajuda do Claude para redigir a descrição de uma issue
@@ -10,6 +10,9 @@ Funções compartilhadas entre generate_site.py e os scripts de bin/:
 import csv
 import json
 import os
+import re
+import unicodedata
+from datetime import datetime
 import shutil
 import subprocess
 import tempfile
@@ -20,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONTENT_DIR = os.path.join(BASE_DIR, "content")
 PESSOAS_CSV = os.path.join(CONTENT_DIR, "pessoas.csv")
 
-SITE_URL = "https://fflch.github.io/"
+SITE_URL = "https://tiplanejamento.fflch.usp.br/"
 
 # Conta do ~/.msmtprc usada para os avisos (from = fflchsti@usp.br)
 MSMTP_ACCOUNT = "sti"
@@ -61,26 +64,215 @@ def email_de(nome, pessoas=None):
 
 
 # ----------------------------------------------------------------------
-# Reuniões
+# Reuniões (content/meetings/AAAA-MM-DD-<titulo>.json)
 # ----------------------------------------------------------------------
-def participantes_reuniao(tipo):
+MEETINGS_DIR = os.path.join(CONTENT_DIR, "meetings")
+ISSUES_DIR = os.path.join(CONTENT_DIR, "issues")
+TASKS_DIR = os.path.join(CONTENT_DIR, "tasks")
+DIAS_SEMANA = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
+
+
+def slug(texto):
+    sem_acento = unicodedata.normalize("NFKD", str(texto)).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", "-", sem_acento.lower()).strip("-")
+
+
+def id_reuniao(caminho_ou_nome):
+    """'content/meetings/2026-11-25-reuniao-ti.json' → 'r-2026-11-25-reuniao-ti' (âncora na página)."""
+    return "r-" + os.path.basename(caminho_ou_nome)[:-len(".json")]
+
+
+def salvar_reuniao(dados):
     """
-    Lista de (nome, email) dos participantes de uma reunião.
-    - Se existir content/meeting-<tipo>.csv (nome,email), usa o CSV.
-    - A reunião "ti" não tem CSV: participam todos os servidores ativos de pessoas.csv.
+    Grava uma reunião nova e devolve o caminho.
+    dados: {titulo, data (AAAA-MM-DD), horario, participantes [nomes], issues [códigos], texto}
     """
-    caminho = os.path.join(CONTENT_DIR, f"meeting-{tipo}.csv")
-    if os.path.exists(caminho):
-        out = []
-        with open(caminho, newline="", encoding="utf-8") as f:
-            for row in csv.reader(f):
-                if row and row[0].strip():
-                    email = row[1].strip() if len(row) > 1 else ""
-                    out.append((row[0].strip(), email))
-        return out
-    if tipo == "ti":
-        return [(p["nome"], p["email"]) for p in pessoas_por_vinculo("servidor")]
-    return []
+    os.makedirs(MEETINGS_DIR, exist_ok=True)
+    base = f"{dados['data']}-{slug(dados['titulo']) or 'reuniao'}"
+    caminho, n = os.path.join(MEETINGS_DIR, f"{base}.json"), 2
+    while os.path.exists(caminho):
+        caminho, n = os.path.join(MEETINGS_DIR, f"{base}-{n}.json"), n + 1
+    gravar_reuniao(caminho, dados)
+    return caminho
+
+
+def gravar_reuniao(caminho, dados):
+    ordem = ["titulo", "data", "horario", "participantes", "issues", "texto", "email_enviado_em",
+             "cancelada_em", "motivo_cancelamento", "email_cancelamento_em"]
+    saida = {k: dados[k] for k in ordem if k in dados}
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(saida, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
+
+def _ler_json(caminho):
+    try:
+        with open(caminho, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def data_reuniao_br(iso):
+    d = datetime.strptime(iso, "%Y-%m-%d").date()
+    return f"{DIAS_SEMANA[d.weekday()]}, {d.strftime('%d/%m/%Y')}"
+
+
+def assunto_reuniao(dados):
+    """'Reunião Planejamento TI FFLCH - 25/11/2026 às 10h' (sem horário, só a data)."""
+    data = datetime.strptime(dados["data"], "%Y-%m-%d").strftime("%d/%m/%Y")
+    return f"{dados['titulo']} - {data}" + (f" às {dados['horario']}" if dados.get("horario") else "")
+
+
+def email_reuniao(dados, caminho):
+    """Assunto e corpo do e-mail de convocação."""
+    nomes = [primeiro_nome(n) for n in dados.get("participantes", [])]
+    saudacao = (", ".join(nomes[:-1]) + " e " + nomes[-1]) if len(nomes) > 1 else (nomes[0] if nomes else "Olá")
+    quando = data_reuniao_br(dados["data"]) + (f", {dados['horario']}" if dados.get("horario") else "")
+
+    # issues agrupadas por responsável, na ordem em que foram escolhidas
+    grupos = {}
+    for cod in dados.get("issues", []):
+        issue = _ler_json(os.path.join(ISSUES_DIR, f"{cod}.json"))
+        resp = (issue.get("responsavel") or "").strip() or "Outros assuntos"
+        grupos.setdefault(resp, []).append(f"- {issue.get('descricao', f'{cod} (issue não encontrada)')}")
+
+    corpo = f"{saudacao},\n\nEstou agendando uma reunião {quando} para tratarmos dos assuntos abaixo.\n"
+    if (dados.get("texto") or "").strip():
+        corpo += f"\n{dados['texto'].strip()}\n"
+    # "Outros assuntos" (issues sem responsável) sempre por último
+    for resp, itens in sorted(grupos.items(), key=lambda g: g[0] == "Outros assuntos"):
+        corpo += f"\n{resp}:\n" + "\n".join(itens) + "\n"
+    corpo += ("\nSe tiverem algo para adicionar, alterar ou remover, respondam este e-mail.\n\n"
+              f"Reuniões: {SITE_URL}reunioes.html#{id_reuniao(caminho)}\n\n--\nThiago\nTI-FFLCH\n")
+    assunto = assunto_reuniao(dados)
+    return assunto, corpo
+
+
+def email_cancelamento(dados, caminho):
+    nomes = [primeiro_nome(n) for n in dados.get("participantes", [])]
+    saudacao = (", ".join(nomes[:-1]) + " e " + nomes[-1]) if len(nomes) > 1 else (nomes[0] if nomes else "Olá")
+    quando = data_reuniao_br(dados["data"]) + (f", {dados['horario']}" if dados.get("horario") else "")
+    corpo = f"{saudacao},\n\nA reunião \"{dados['titulo']}\" de {quando} foi CANCELADA.\n"
+    if (dados.get("motivo_cancelamento") or "").strip():
+        corpo += f"\nMotivo: {dados['motivo_cancelamento'].strip()}\n"
+    corpo += f"\nReuniões: {SITE_URL}reunioes.html#{id_reuniao(caminho)}\n\n--\nThiago\nTI-FFLCH\n"
+    assunto = "CANCELADA: " + assunto_reuniao(dados)
+    return assunto, corpo
+
+
+def reunioes_agendadas():
+    """[(caminho, dados)] das reuniões de hoje em diante que não foram canceladas, por data."""
+    hoje = datetime.now().strftime("%Y-%m-%d")
+    out = []
+    if os.path.isdir(MEETINGS_DIR):
+        for f in sorted(os.listdir(MEETINGS_DIR)):
+            if f.endswith(".json"):
+                d = _ler_json(os.path.join(MEETINGS_DIR, f))
+                if d.get("data", "") >= hoje and not d.get("cancelada_em"):
+                    out.append((os.path.join(MEETINGS_DIR, f), d))
+    return sorted(out, key=lambda x: (x[1]["data"], x[1].get("horario", "")))
+
+
+def cancelar_reuniao(caminho, motivo="", padrao_email=True):
+    """Marca a reunião como cancelada e pergunta se avisa os participantes por e-mail."""
+    dados = _ler_json(caminho)
+    dados["cancelada_em"] = datetime.now().strftime("%d/%m/%Y %H:%M")
+    if motivo.strip():
+        dados["motivo_cancelamento"] = motivo.strip()
+    gravar_reuniao(caminho, dados)
+    print(f"✔ Reunião cancelada: {os.path.basename(caminho)}")
+    oferecer_email_reuniao(caminho, padrao=padrao_email, cancelamento=True)
+
+
+def oferecer_email_reuniao(caminho, padrao=True, cancelamento=False):
+    """Mostra o e-mail, pergunta se envia aos participantes e registra o envio no JSON."""
+    dados = _ler_json(caminho)
+    pessoas = load_pessoas()
+    participantes = dados.get("participantes", [])
+    destinatarios = [(n, email_de(n, pessoas)) for n in participantes]
+    sem_email = [n for n, e in destinatarios if not e]
+    if sem_email:
+        print("ℹ Sem e-mail em pessoas.csv:", ", ".join(sem_email))
+    if not any(e for _, e in destinatarios):
+        print("⚠ Nenhum participante com e-mail — nada a enviar.")
+        return False
+    assunto, corpo = (email_cancelamento if cancelamento else email_reuniao)(dados, caminho)
+    print("\n--- E-mail " + "-" * 52 + f"\nAssunto: {assunto}\n\n{corpo}" + "-" * 63)
+    if not perguntar_sim_nao(f"Disparar o e-mail para os {len(destinatarios) - len(sem_email)} participante(s)?", padrao):
+        print("E-mail não enviado.")
+        return False
+    if enviar_email(destinatarios, assunto, corpo):
+        dados["email_cancelamento_em" if cancelamento else "email_enviado_em"] = datetime.now().strftime("%d/%m/%Y %H:%M")
+        gravar_reuniao(caminho, dados)
+        return True
+    return False
+
+
+# ----------------------------------------------------------------------
+# Issues: número global sequencial ("numero": 1, 2, 3…) exibido como "#N".
+# O arquivo continua <tarefa>-<n>.json, usado só internamente para as relações.
+# ----------------------------------------------------------------------
+def carregar_issues():
+    """[(codigo, dados)] de todas as issues, em ordem de número."""
+    out = []
+    if os.path.isdir(ISSUES_DIR):
+        for f in os.listdir(ISSUES_DIR):
+            if f.endswith(".json"):
+                out.append((f[:-5], _ler_json(os.path.join(ISSUES_DIR, f))))
+    return sorted(out, key=lambda x: (x[1].get("numero") or 10**9, x[0]))
+
+
+def proximo_numero_issue(reservados=()):
+    usados = [d.get("numero") or 0 for _, d in carregar_issues()] + list(reservados)
+    return max(usados, default=0) + 1
+
+
+def rotulo_issue(dados_ou_numero):
+    n = dados_ou_numero.get("numero") if isinstance(dados_ou_numero, dict) else dados_ou_numero
+    return f"#{n}" if n else "#?"
+
+
+def resolver_issue(ref):
+    """'12', '#12' ou o código interno (dev005-3) → código interno; None se não existir."""
+    ref = str(ref).strip().lstrip("#").replace(".json", "")
+    for cod, d in carregar_issues():
+        if (ref.isdigit() and d.get("numero") == int(ref)) or cod == ref:
+            return cod
+    return None
+
+
+def com_numero(issue, numero):
+    """Devolve a issue com "numero" como primeiro campo."""
+    return {"numero": numero, **{k: v for k, v in issue.items() if k != "numero"}}
+
+
+def escolher_issue_cli(incluir_fechadas=False, msg="Número da issue (#)"):
+    """Lista as issues como '#N · tarefa → responsável | descrição' e devolve o código interno escolhido."""
+    titulos = {}
+    issues = [(c, d) for c, d in carregar_issues() if d.get("status") is True or incluir_fechadas]
+    if not issues:
+        print("Nenhuma issue encontrada.")
+        return None
+    print()
+    for cod, d in issues:
+        task = cod.rsplit("-", 1)[0]
+        if task not in titulos:
+            titulos[task] = titulo_tarefa(task)
+        n = len(d.get("comentarios", []))
+        extra = (" [fechada]" if d.get("status") is not True else "") + (f" 💬{n}" if n else "")
+        print(f"{rotulo_issue(d):>5} · {titulos[task]} → {d.get('responsavel') or 'sem responsável'}{extra}")
+        print(f"        {(d.get('descricao') or '')[:110]}")
+    validos = {c for c, _ in issues}
+    while True:
+        cod = resolver_issue(input(f"\n{msg}: "))
+        if cod in validos:
+            return cod
+        print("Issue não encontrada nesta lista.")
+
+
+def titulo_tarefa(codigo_task):
+    return _ler_json(os.path.join(TASKS_DIR, f"{codigo_task}.json")).get("titulo", "")
 
 
 # ----------------------------------------------------------------------
@@ -350,14 +542,15 @@ def _assinatura():
     return f"Planejamento da TI-FFLCH: {SITE_URL}\n\n--\nTI FFLCH\n"
 
 
-def aviso_issue(nome, task_codigo, task_titulo, issue_codigo, descricao, data, reatribuicao=False):
-    assunto = f"[TI-FFLCH] Issue {issue_codigo} atribuída a você"
+def aviso_issue(nome, task_codigo, task_titulo, issue_rotulo, descricao, data, reatribuicao=False):
+    """issue_rotulo: '#N' (número global da issue)."""
+    assunto = f"[TI-FFLCH] Issue {issue_rotulo} atribuída a você"
     acao = "foi reatribuída a você" if reatribuicao else "foi atribuída a você"
     corpo = (
         f"Olá {primeiro_nome(nome)},\n\n"
-        f"A issue {issue_codigo} {acao}.\n\n"
-        f"Atividade: {task_codigo} - {task_titulo}\n"
-        f"Issue: {issue_codigo}\n"
+        f"A issue {issue_rotulo} {acao}.\n\n"
+        f"Atividade: {task_titulo}\n"
+        f"Issue: {issue_rotulo}\n"
         f"Data: {data}\n\n"
         f"Descrição:\n{descricao}\n\n"
         f"Detalhes da atividade: {SITE_URL}#{task_codigo}\n"
@@ -367,10 +560,10 @@ def aviso_issue(nome, task_codigo, task_titulo, issue_codigo, descricao, data, r
 
 
 def aviso_tarefa(nome, task_codigo, task_titulo, papel):
-    assunto = f"[TI-FFLCH] Atividade {task_codigo} atribuída a você"
+    assunto = f"[TI-FFLCH] Atividade {task_titulo} atribuída a você"
     corpo = (
         f"Olá {primeiro_nome(nome)},\n\n"
-        f"Você foi incluído(a) como {papel} da atividade {task_codigo} - {task_titulo}.\n\n"
+        f"Você foi incluído(a) como {papel} da atividade {task_titulo}.\n\n"
         f"Detalhes da atividade: {SITE_URL}#{task_codigo}\n"
         f"{_assinatura()}"
     )
@@ -380,7 +573,7 @@ def aviso_tarefa(nome, task_codigo, task_titulo, papel):
 def aviso_comentarios(nome, itens):
     """
     E-mail com comentários novos em issues de uma pessoa.
-    itens: lista de (issue_codigo, task_codigo, task_titulo, descricao_issue, [textos])
+    itens: lista de (issue_rotulo '#N', task_codigo, task_titulo, descricao_issue, [textos])
     """
     total = sum(len(i[4]) for i in itens)
     if len(itens) == 1:
@@ -392,7 +585,7 @@ def aviso_comentarios(nome, itens):
     for issue, task, titulo, descricao, textos in itens:
         coment = "\n".join(f"  > {t}".replace("\n", "\n  > ") for t in textos)
         blocos.append(
-            f"Issue {issue} ({task} - {titulo})\n"
+            f"Issue {issue} ({titulo})\n"
             f"  {descricao}\n\n"
             f"Comentário{'s' if len(textos) > 1 else ''}:\n{coment}\n\n"
             f"  {SITE_URL}#{task}"

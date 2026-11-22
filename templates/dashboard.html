@@ -192,7 +192,6 @@ table.dash tr:hover td { background: var(--surface-2); }
 <table class="dash sortable">
 <thead>
 <tr>
-    <th data-sort="text">Sigla</th>
     <th data-sort="text">Área</th>
     <th data-sort="num" class="num">Atividades ativas</th>
     <th data-sort="num" class="num">Abertas</th>
@@ -203,14 +202,13 @@ table.dash tr:hover td { background: var(--surface-2); }
 <tbody>
 {% for a in por_area %}
 <tr>
-    <td><a href="index.html#{{ a.prefixo }}">{{ a.prefixo }}</a></td>
-    <td>{{ a.significado }}</td>
+    <td><a href="index.html#{{ a.prefixo }}">{{ a.significado or a.prefixo }}</a></td>
     <td class="num">{{ a.atividades }}</td>
     <td class="num">{{ a.abertas }}</td>
     <td class="num">{{ a.resolvidas }}</td>
     <td>
         {% if a.abertas or a.resolvidas %}
-        <div class="hbar tip-target" data-tip="{{ a.prefixo }} - {{ a.significado }}&#10;Abertas: {{ a.abertas }}&#10;Resolvidas: {{ a.resolvidas }}">
+        <div class="hbar tip-target" data-tip="{{ a.significado or a.prefixo }}&#10;Abertas: {{ a.abertas }}&#10;Resolvidas: {{ a.resolvidas }}">
             {% if a.abertas %}<span class="c1" style="width: {{ a.pct_abertas }}%"></span>{% endif %}
             {% if a.resolvidas %}<span class="c2" style="width: {{ a.pct_resolvidas }}%"></span>{% endif %}
         </div>

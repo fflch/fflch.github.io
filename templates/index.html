@@ -31,9 +31,9 @@
 <div class="mb-5">
 <p>
 A organização das demandas da TI-FFLCH está estruturada de forma hierárquica.
-As atividades são agrupadas por áreas, como por exemplo <strong>Desenvolvimento (dev)</strong>.
-Dentro de cada área existem atividades específicas, identificadas por códigos como <strong>dev010</strong>,
-que representam uma unidade de trabalho, no caso, desenvolvimento do sistema de fechadura eletrônica. Por fim, cada atividade pode ter associada uma ou mais <strong>issues</strong>, que são tarefas menores ou pendências relacionadas àquela atividade, como por exemplo a implementação de um novo recurso no sistema de fechadura eletrônica, que teria código <strong>dev010-01</strong>.
+As atividades são agrupadas por áreas, como por exemplo <strong>Desenvolvimento</strong>.
+Dentro de cada área existem atividades específicas, como <strong>fflch/fechaduras</strong>,
+que representam uma unidade de trabalho, no caso, desenvolvimento do sistema de fechadura eletrônica. Por fim, cada atividade pode ter associada uma ou mais <strong>issues</strong>, que são tarefas menores ou pendências relacionadas àquela atividade, como por exemplo a implementação de um novo recurso no sistema de fechadura eletrônica.
 <br><br>
 Cada atividade pode possuir múltiplos responsáveis, enquanto as <strong>issues</strong> representam tarefas menores
 ou pendências associadas a uma atividade e são atribuídas a apenas uma pessoa.
@@ -60,21 +60,19 @@ A estrutura geral segue o modelo:
     <table class="table table-bordered table-sm mt-2">
     <thead>
     <tr>
-    <th style="width:120px;">Código</th>
-    <th>Título</th>
+    <th>Tarefa</th>
     <th style="width:80px;">Peso</th>
     </tr>
     </thead>
     <tbody>
     {% for t in resp.tarefas %}
         <tr>
-        <td><a href="#{{ t.codigo }}">{{ t.codigo }}</a></td>
-        <td>{{ t.titulo }}</td>
+        <td><a href="#{{ t.codigo }}">{{ t.titulo }}</a></td>
         <td>{{ t.peso }}</td>
         </tr>
     {% endfor %}
     <tr class="table-secondary fw-bold">
-    <td colspan="2">Soma</td>
+    <td>Soma</td>
     <td>{{ resp.total_peso }}</td>
     </tr>
     </tbody>
@@ -90,21 +88,19 @@ A estrutura geral segue o modelo:
     <table class="table table-bordered table-sm mt-2">
     <thead>
     <tr>
-    <th style="width:120px;">Código</th>
-    <th>Título</th>
+    <th>Tarefa</th>
     <th style="width:80px;">Peso</th>
     </tr>
     </thead>
     <tbody>
     {% for t in est.tarefas %}
         <tr>
-        <td><a href="#{{ t.codigo }}">{{ t.codigo }}</a></td>
-        <td>{{ t.titulo }}</td>
+        <td><a href="#{{ t.codigo }}">{{ t.titulo }}</a></td>
         <td>{{ t.peso }}</td>
         </tr>
     {% endfor %}
     <tr class="table-secondary fw-bold">
-    <td colspan="2">Soma</td>
+    <td>Soma</td>
     <td>{{ est.total_peso }}</td>
     </tr>
     </tbody>
@@ -207,15 +203,13 @@ A estrutura geral segue o modelo:
             var t = d3.select(this), x = d.data;
             t.selectAll("*").remove();
             if (x.tipo === "raiz") t.append("tspan").attr("class", "cod").text(x.nome);
-            else if (x.tipo === "area") t.append("tspan").attr("class", "cod").text(x.nome + (x.codigo ? " (" + x.codigo + ")" : ""));
+            else if (x.tipo === "area") t.append("tspan").attr("class", "cod").text(x.nome);
             else if (x.tipo === "sigla") {
-                t.append("tspan").attr("class", "cod").text(x.nome);
-                t.append("tspan").text(" · " + corta(x.titulo, 30));
+                t.append("tspan").attr("class", "cod").text(corta(x.titulo || x.nome, 34));
                 t.append("tspan").attr("class", "seta").text(" " + (d.children ? "▾" : "▸ " + (d._children || []).length));
             } else {
-                t.append("tspan").attr("class", "cod").text(x.nome);
+                t.append("tspan").text(corta(x.titulo, 48));
                 if (x.documentacao) t.append("tspan").attr("class", "doc").text(" 📘");
-                t.append("tspan").text("  " + corta(x.titulo, 40));
                 if (x.pendencias) t.append("tspan").attr("class", "pend").text("  ● " + x.pendencias);
             }
         });
@@ -224,14 +218,14 @@ A estrutura geral segue o modelo:
     function mostrarTip(ev, d) {
         var x = d.data, h;
         if (x.tipo === "tarefa") {
-            h = '<div class="t">' + esc(x.nome + " · " + x.titulo) + "</div>"
+            h = '<div class="t">' + esc(x.titulo) + "</div>"
               + '<div class="m">' + esc((x.responsaveis.join(", ") || "sem responsável")
               + (x.estagiarios.length ? " · estagiário(s): " + x.estagiarios.join(", ") : "")
               + " · peso " + x.peso + (x.pendencias ? " · " + x.pendencias + " pendência(s)" : "")) + "</div>"
               + '<div class="d">' + esc(x.descricao || "Sem descrição.") + "</div>"
               + (x.documentacao ? '<div class="m mt-2 mb-0">📘 Tem documentação extra (link no card da tarefa)</div>' : "");
         } else if (x.tipo === "sigla") {
-            h = '<div class="t">' + esc(x.nome + " · " + x.titulo) + "</div>"
+            h = '<div class="t">' + esc(x.titulo || x.nome) + "</div>"
               + '<div class="m">' + (d.children || d._children || []).length + " tarefa(s)"
               + (x.pendencias ? " · " + x.pendencias + " pendência(s)" : "") + " · clique para "
               + (d.children ? "recolher" : "ver as tarefas") + "</div>";
