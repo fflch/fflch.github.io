@@ -1,6 +1,6 @@
 {
-  "peso": 13,
-  "titulo": "Módulos Drupal",
+  "peso": 21,
+  "titulo": "Drupal",
   "estagiarios": [
     {
       "nome": "Anderson Lima dos Santos",
@@ -13,11 +13,15 @@
     {
       "nome": "Isaac Retiro Libera Martins",
       "ativo": true
+    },
+    {
+      "nome": "João Victor Melo de Lima",
+      "ativo": true
     }
   ],
-  "descricao": "mod011.html",
+  "descricao": "dru001.html",
   "responsaveis": [
-    "Mônica Colacique"
+    "Augusto César Freire Santiago"
   ],
   "status": true
 }

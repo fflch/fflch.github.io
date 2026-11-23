@@ -1,0 +1,11 @@
+{
+  "peso": 2,
+  "titulo": "Datacenter",
+  "estagiarios": [],
+  "descricao": "hos003.html",
+  "responsaveis": [
+    "José Roberto Varconti de Souza",
+    "Ricardo Fontoura"
+  ],
+  "status": true
+}

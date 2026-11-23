@@ -1,0 +1,23 @@
+{
+  "peso": 13,
+  "titulo": "Módulos Drupal",
+  "estagiarios": [
+    {
+      "nome": "Anderson Lima dos Santos",
+      "ativo": true
+    },
+    {
+      "nome": "Camila Moraes de Lima",
+      "ativo": true
+    },
+    {
+      "nome": "Isaac Retiro Libera Martins",
+      "ativo": true
+    }
+  ],
+  "descricao": "dru002.html",
+  "responsaveis": [
+    "Mônica Colacique"
+  ],
+  "status": true
+}

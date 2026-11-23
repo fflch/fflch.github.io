@@ -73,8 +73,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "pro009",
-          "titulo": "fflch/ansible-cups",
+          "codigo": "pro010",
+          "titulo": "Ansible",
           "ativa": true,
           "responsaveis": [
             "Thiago Gomes Veríssimo"
@@ -110,7 +110,7 @@
       "org": "fflch",
       "nome": "fflch/ansible-role-deploy-laravel",
       "url": "https://github.com/fflch/ansible-role-deploy-laravel",
-      "situacao": "publico",
+      "situacao": "arquivado",
       "privado": false,
       "branch": "master",
       "ultimo_commit": "2023-03-28T13:22:14Z",
@@ -128,7 +128,7 @@
         {
           "codigo": "pro002",
           "titulo": "fflch/ansible-role-deploy-laravel",
-          "ativa": true,
+          "ativa": false,
           "responsaveis": [
             "Ricardo Fontoura"
           ]
@@ -157,7 +157,7 @@
         {
           "codigo": "pro007",
           "titulo": "fflch/ansible-role-django e fflch/template-django",
-          "ativa": true,
+          "ativa": false,
           "responsaveis": [
             "Mônica Colacique"
           ]
@@ -212,8 +212,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "pro008",
-          "titulo": "fflch/ansible-role-fsecure",
+          "codigo": "pro010",
+          "titulo": "Ansible",
           "ativa": true,
           "responsaveis": [
             "Augusto César Freire Santiago"
@@ -261,8 +261,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "pro005",
-          "titulo": "fflch/ansible-role-proaluno",
+          "codigo": "pro010",
+          "titulo": "Ansible",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -290,8 +290,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "pro001",
-          "titulo": "fflch/ansible-role-sambadc",
+          "codigo": "pro010",
+          "titulo": "Ansible",
           "ativa": true,
           "responsaveis": [
             "Augusto César Freire Santiago"
@@ -303,7 +303,7 @@
       "org": "fflch",
       "nome": "fflch/ansible-role-sap-ase",
       "url": "https://github.com/fflch/ansible-role-sap-ase",
-      "situacao": "publico",
+      "situacao": "arquivado",
       "privado": false,
       "branch": "master",
       "ultimo_commit": "2025-09-01T14:08:31Z",
@@ -325,7 +325,7 @@
         {
           "codigo": "pro003",
           "titulo": "fflch/ansible-role-sap-ase",
-          "ativa": true,
+          "ativa": false,
           "responsaveis": [
             "Mônica Colacique"
           ]
@@ -357,7 +357,7 @@
       "tarefas": [
         {
           "codigo": "pro010",
-          "titulo": "Playbooks Ansible",
+          "titulo": "Ansible",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura",
@@ -465,7 +465,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod011",
+          "codigo": "dru002",
           "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
@@ -498,8 +498,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev015",
-          "titulo": "fflch/cdd",
+          "codigo": "dev039",
+          "titulo": "Sistema Laravel Gilberto",
           "ativa": true,
           "responsaveis": [
             "Gilberto Vargas"
@@ -531,7 +531,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod007",
+          "codigo": "dru004",
           "titulo": "Pull Requests – Centro da Metrópole",
           "ativa": true,
           "responsaveis": [
@@ -556,7 +556,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod007",
+          "codigo": "dru004",
           "titulo": "Pull Requests – Centro da Metrópole",
           "ativa": true,
           "responsaveis": [
@@ -612,7 +612,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod011",
+          "codigo": "dru002",
           "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
@@ -1107,7 +1107,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod009",
+          "codigo": "wpr002",
           "titulo": "fflch/wp-fflch-theme",
           "ativa": true,
           "responsaveis": [
@@ -1115,7 +1115,7 @@
           ]
         },
         {
-          "codigo": "mod011",
+          "codigo": "dru002",
           "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
@@ -1188,8 +1188,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev014",
-          "titulo": "fflch/gembib",
+          "codigo": "dev039",
+          "titulo": "Sistema Laravel Gilberto",
           "ativa": true,
           "responsaveis": [
             "Gilberto Vargas"
@@ -1337,8 +1337,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib011",
-          "titulo": "fflch/laravel-comet-theme",
+          "codigo": "bib021",
+          "titulo": "Bibliotecas PHP/Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -1370,8 +1370,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib013",
-          "titulo": "fflch/laravel-fflch-pdf",
+          "codigo": "bib022",
+          "titulo": "Bibliotecas PHP/Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -1399,8 +1399,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib016",
-          "titulo": "fflch/laravel-fflch-stepper",
+          "codigo": "bib022",
+          "titulo": "Bibliotecas PHP/Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -1773,8 +1773,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib014",
-          "titulo": "fflch/phppimaco",
+          "codigo": "bib022",
+          "titulo": "Bibliotecas PHP/Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -1822,8 +1822,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "pro006",
-          "titulo": "fflch/playbooks-proaluno-fflch",
+          "codigo": "pro010",
+          "titulo": "Ansible",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -1913,7 +1913,7 @@
       "tarefas": [
         {
           "codigo": "pro010",
-          "titulo": "Playbooks Ansible",
+          "titulo": "Ansible",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura",
@@ -1949,7 +1949,7 @@
       "tarefas": [
         {
           "codigo": "pro010",
-          "titulo": "Playbooks Ansible",
+          "titulo": "Ansible",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura",
@@ -2262,7 +2262,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod007",
+          "codigo": "dru004",
           "titulo": "Pull Requests – Centro da Metrópole",
           "ativa": true,
           "responsaveis": [
@@ -2360,7 +2360,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod011",
+          "codigo": "dru002",
           "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
@@ -2389,8 +2389,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev034",
-          "titulo": "fflch/wifi",
+          "codigo": "dev039",
+          "titulo": "Sistema Laravel Gilberto",
           "ativa": true,
           "responsaveis": [
             "Gilberto Vargas"
@@ -2418,7 +2418,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "cor002",
+          "codigo": "wpr001",
           "titulo": "fflch/wordpress",
           "ativa": true,
           "responsaveis": [
@@ -2451,7 +2451,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod009",
+          "codigo": "wpr002",
           "titulo": "fflch/wp-fflch-theme",
           "ativa": true,
           "responsaveis": [
@@ -2581,8 +2581,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "pro004",
-          "titulo": "uspdev/ansible-role-sssd-ldap",
+          "codigo": "pro010",
+          "titulo": "Ansible",
           "ativa": true,
           "responsaveis": [
             "Thiago Gomes Veríssimo"
@@ -2675,8 +2675,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib005",
-          "titulo": "uspdev/boleto",
+          "codigo": "bib021",
+          "titulo": "Bibliotecas PHP/Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -3393,8 +3393,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev005",
-          "titulo": "uspdev/grafica",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Pedro Luis Borges de Souza Filho"
@@ -3663,8 +3663,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib002",
-          "titulo": "uspdev/laravel-usp-theme",
+          "codigo": "bib022",
+          "titulo": "Bibliotecas PHP/Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -3990,8 +3990,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "pro006",
-          "titulo": "fflch/playbooks-proaluno-fflch",
+          "codigo": "pro010",
+          "titulo": "Ansible",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -4168,8 +4168,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib001",
-          "titulo": "uspdev/replicado",
+          "codigo": "bib021",
+          "titulo": "Bibliotecas PHP/Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -4507,8 +4507,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib003",
-          "titulo": "uspdev/senhaunica-socialite",
+          "codigo": "bib022",
+          "titulo": "Bibliotecas PHP/Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -5007,7 +5007,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod011",
+          "codigo": "dru002",
           "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
@@ -5040,7 +5040,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod011",
+          "codigo": "dru002",
           "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
@@ -5073,7 +5073,7 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod011",
+          "codigo": "dru002",
           "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [

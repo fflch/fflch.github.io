@@ -1,0 +1,38 @@
+<p>Provisionamento da infraestrutura da Faculdade com Ansible: os repositórios de playbooks e tasks, as roles próprias e as máquinas virtuais de produção correspondentes.</p>
+
+<h6>Provisionamento</h6>
+<p>Em cada um destes repositórios há um diretório com o nome do responsável, que cuida dos seus playbooks e tasks.</p>
+<div class="tabela-repos table-responsive">
+<table class="table table-sm table-hover align-middle">
+  <thead><tr><th>Repositório</th><th>Descrição</th><th>Responsável</th><th>Estagiário(a)</th></tr></thead>
+  <tbody>
+    <tr><td><span class="org org-fflch">fflch</span><a class="repo" href="https://github.com/fflch/ansible-role-tasks" target="_blank" rel="noopener">fflch/ansible-role-tasks</a></td><td>Tasks Ansible reutilizáveis do provisionamento</td><td class="responsavel">Todos (cada um no seu diretório)</td><td class="estagiario"></td></tr>
+    <tr><td><span class="org org-fflch">fflch</span><a class="repo" href="https://github.com/fflch/provisioner" target="_blank" rel="noopener">fflch/provisioner</a></td><td>Playbooks de produção</td><td class="responsavel">Todos (cada um no seu diretório)</td><td class="estagiario"></td></tr>
+    <tr><td><span class="org org-fflch">fflch</span><a class="repo" href="https://github.com/fflch/provisioner-dev" target="_blank" rel="noopener">fflch/provisioner-dev</a></td><td>Ambiente de testes, fiel ao de produção</td><td class="responsavel">Todos (cada um no seu diretório)</td><td class="estagiario"></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h6>Roles e playbooks</h6>
+<div class="tabela-repos table-responsive">
+<table class="table table-sm table-hover align-middle">
+  <thead><tr><th>Role / playbook</th><th>Descrição</th><th>Responsável</th><th>Estagiário(a)</th></tr></thead>
+  <tbody>
+    <tr><td><span class="org org-fflch">fflch</span><a class="repo" href="https://github.com/fflch/ansible-cups" target="_blank" rel="noopener">fflch/ansible-cups</a></td><td>Deploy do servidor de impressão CUPS</td><td class="responsavel">Thiago Gomes Veríssimo</td><td class="estagiario"></td></tr>
+    <tr><td><span class="org org-fflch">fflch</span><a class="repo" href="https://github.com/fflch/ansible-role-fsecure" target="_blank" rel="noopener">fflch/ansible-role-fsecure</a></td><td>Deploy do antivírus corporativo da USP (WithSecure)</td><td class="responsavel">Augusto César Freire Santiago</td><td class="estagiario"></td></tr>
+    <tr><td><span class="org org-fflch">fflch</span><a class="repo" href="https://github.com/fflch/ansible-role-proaluno" target="_blank" rel="noopener">fflch/ansible-role-proaluno</a></td><td>Configuração das máquinas das salas pró-aluno</td><td class="responsavel">Mônica Colacique</td><td class="estagiario"></td></tr>
+    <tr><td><span class="org org-fflch">fflch</span><a class="repo" href="https://github.com/fflch/ansible-role-sambadc" target="_blank" rel="noopener">fflch/ansible-role-sambadc</a></td><td>Samba como Domain Controller</td><td class="responsavel">Augusto César Freire Santiago</td><td class="estagiario"></td></tr>
+    <tr><td><span class="org org-fflch">fflch</span><a class="repo" href="https://github.com/fflch/playbooks-proaluno-fflch" target="_blank" rel="noopener">fflch/playbooks-proaluno-fflch</a></td><td>Aplicação das configurações nas salas pró-aluno (testes em uspdev/playbooks-sandbox-proaluno)</td><td class="responsavel">Mônica Colacique</td><td class="estagiario">Pedro Luis Borges de Souza Filho</td></tr>
+    <tr><td><span class="org org-uspdev">uspdev</span><a class="repo" href="https://github.com/uspdev/ansible-role-sssd-ldap" target="_blank" rel="noopener">uspdev/ansible-role-sssd-ldap</a></td><td>Cliente LDAP com autenticação via SSSD</td><td class="responsavel">Thiago Gomes Veríssimo</td><td class="estagiario"></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h6>Atividades constantes</h6>
+<ul>
+  <li>Manter os playbooks, tasks e roles atualizados com as versões mais recentes do Ansible e do Debian;</li>
+  <li>Manter o ambiente de testes (provisioner-dev) fiel ao repositório de produção e garantir que as roles funcionem nele;</li>
+  <li>Quando houver nova versão do Debian, criar a nova VM e migrar o serviço;</li>
+  <li>fsecure: garantir que a role funcione com a versão mais recente do WithSecure;</li>
+  <li>Salas pró-aluno: instalação de programas solicitados por docentes e alunos, inserção das máquinas reais no inventário do Ansible e aplicação dos playbooks nelas.</li>
+</ul>

@@ -1,7 +1,7 @@
 {
   "status": true,
   "peso": 1,
-  "titulo": "fflch/wordpress",
+  "titulo": "Wordpress",
   "responsaveis": [
     "Augusto César Freire Santiago"
   ],
@@ -11,5 +11,5 @@
       "ativo": true
     }
   ],
-  "descricao": "Instância Wordpress similar ao Drupal na FFLCH"
+  "descricao": "Instância Wordpress fflch/wordpress similar ao Drupal na FFLCH"
 }

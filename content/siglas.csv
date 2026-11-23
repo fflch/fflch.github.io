@@ -8,8 +8,8 @@ cht,Chamado Técnico,SU
 pas,Camada 1,RE
 rat,Camada 2,RE
 rsf,Rede Sem fio,RE
-cor,Drupal Core,SI
-mod,Módulos,SI
+dru,Drupal,SI
+wpr,Wordpress,SI
 imp,Impressoras,AS
 per,Permissões,AS
 iot,Internet das Coisas,AS
@@ -18,7 +18,6 @@ adm,Administração,GE
 sti,Superintendência de Tecnologia da Informação,GE
 com,Compras,GE
 cci,Infraestrutura para Pesquisa,CC
-ccd,Acompanhamento de Desenvolvimento,CC
 coi,Centro Observatório das Instituições Brasileiras,PU
 abc,Agência de Bibliotecas e Coleções Digitais,PU
 prc,Pró-Reitoria de Cultura e Extensão Universitária,PU

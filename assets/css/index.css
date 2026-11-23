@@ -80,3 +80,4 @@ body {
 .tabela-repos .estagiario { font-size: .85rem; color: #555; }
 .descricao-tarefa h6 { margin-top: 14px; font-weight: 600; }
 @media (max-width: 640px) { .tabela-repos td:first-child { white-space: normal; } }
+.tabela-repos .responsavel { font-size: .85rem; }
