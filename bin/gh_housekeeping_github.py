@@ -7,7 +7,8 @@ e grava content/github.json, que o generate_site.py usa para montar docs/github.
 Precisa do `gh` logado com acesso às organizações (os privados só aparecem assim). Por isso
 o JSON é gerado nesta máquina e VERSIONADO: no deploy (GitHub Actions) só a página é montada.
 
-Uma tarefa "cobre" um repositório quando o título ou a descrição dela cita "org/repo"
+Uma tarefa "cobre" um repositório quando o título ou a descrição dela (inclusive a guardada
+em content/tasks/<codigo>.html) cita "org/repo"
 (ex: "uspdev/grafica", "https://github.com/fflch/ansible-role-tasks"), sem diferenciar
 maiúsculas e tratando "-" e "_" como iguais.
 
@@ -27,7 +28,7 @@ from datetime import datetime, timezone
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
-from fflch_common import responsaveis_da_tarefa  # noqa: E402
+from fflch_common import descricao_da_tarefa, responsaveis_da_tarefa  # noqa: E402
 
 TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
 SAIDA = os.path.join(BASE_DIR, "content", "github.json")
@@ -102,10 +103,9 @@ def repos_das_tarefas(tasks):
     """{"org/repo" (minúsculo): [(codigo, origem, ativa)]}, origem = "titulo" ou "descricao"."""
     citados = {}
     for codigo, t in tasks.items():
-        descricao = t.get("descricao", "") or ""
-        if descricao.endswith(".tex"):
-            caminho_tex = os.path.join(TASKS_DIR, f"{codigo}.tex")
-            descricao = open(caminho_tex, encoding="utf-8").read() if os.path.exists(caminho_tex) else ""
+        # a descrição pode estar em content/tasks/<codigo>.html (ex: tarefas que agrupam vários
+        # repositórios numa tabela); o "org/repo" é procurado no texto, inclusive nos links
+        descricao = descricao_da_tarefa(codigo, t)
         vistos = set()
         for origem, texto in (("titulo", t.get("titulo", "")), ("descricao", descricao)):
             for org, repo in PADRAO_REPO.findall(texto):

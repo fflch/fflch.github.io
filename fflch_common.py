@@ -330,6 +330,27 @@ def titulo_tarefa(codigo_task):
 # ----------------------------------------------------------------------
 # Tarefas
 # ----------------------------------------------------------------------
+# Extensões aceitas para a descrição de uma tarefa guardada em arquivo próprio
+# (content/tasks/<codigo>.html, ao lado do <codigo>.json, com "descricao": "<codigo>.html").
+EXTENSOES_DESCRICAO = (".html", ".tex")
+
+
+def descricao_da_tarefa(codigo, task):
+    """
+    Texto da descrição da tarefa. Se "descricao" apontar para um arquivo (<codigo>.html ou o
+    antigo <codigo>.tex), devolve o conteúdo desse arquivo ("" se não existir).
+    """
+    descricao = str(task.get("descricao", "") or "")
+    ext = os.path.splitext(descricao)[1].lower()
+    if ext in EXTENSOES_DESCRICAO and " " not in descricao:
+        caminho = os.path.join(TASKS_DIR, f"{codigo}{ext}")
+        if not os.path.exists(caminho):
+            return ""
+        with open(caminho, encoding="utf-8") as f:
+            return f.read()
+    return descricao
+
+
 def responsaveis_da_tarefa(task):
     resp = task.get("responsaveis")
     if not resp:

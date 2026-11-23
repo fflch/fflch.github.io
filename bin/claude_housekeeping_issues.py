@@ -14,6 +14,7 @@ Para cada issue:
 O Claude já vai trabalhando nas próximas issues em segundo plano, para não ter espera.
 """
 import os
+import re
 import sys
 import json
 from concurrent.futures import ThreadPoolExecutor
@@ -22,7 +23,7 @@ from datetime import datetime
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
-from fflch_common import chamar_claude, editar_no_editor, perguntar_sim_nao, rotulo_issue  # noqa: E402
+from fflch_common import descricao_da_tarefa, chamar_claude, editar_no_editor, perguntar_sim_nao, rotulo_issue  # noqa: E402
 
 ISSUES_DIR = os.path.join(BASE_DIR, "content", "issues")
 TASKS_DIR = os.path.join(BASE_DIR, "content", "tasks")
@@ -51,9 +52,8 @@ def carregar_task(codigo_task):
 
 
 def contexto_da_task(codigo_task, task):
-    desc = str(task.get("descricao", ""))
-    if desc.endswith(".tex"):
-        desc = ""
+    desc = descricao_da_tarefa(codigo_task, task)
+    desc = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", desc)).strip()  # descrição em HTML → texto
     return f"{task.get('titulo', '')}\n{desc}".strip()
 
 

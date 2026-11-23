@@ -18,6 +18,7 @@ from fflch_common import (
     REMETENTE_REUNIAO,
     responsaveis_da_tarefa,
     estagiarios_da_tarefa,
+    descricao_da_tarefa,
 )
 
 OUTPUT_DIR = "docs"
@@ -642,11 +643,7 @@ def preparar_grupos_tarefas(tasks, issues):
         tasks_formatadas = []
 
         for task in tasks_ordenadas:
-            descricao = task.get("descricao", "")
-            if descricao.endswith(".tex"):
-                path_tex = os.path.join(TASKS_DIR, f"{task['codigo']}.tex")
-                if os.path.exists(path_tex):
-                    descricao = Path(path_tex).read_text(encoding="utf-8")
+            descricao = descricao_da_tarefa(task["codigo"], task)
 
             related = [
                 i for i in issues
@@ -1084,10 +1081,7 @@ def preparar_organograma(tasks, issues):
         area, significado = siglas_area.get(prefix, ("", ""))
         tarefas = []
         for t in sort_tasks(groups[prefix]):
-            descricao = t.get("descricao", "")
-            if descricao.endswith(".tex"):
-                path_tex = os.path.join(TASKS_DIR, f"{t['codigo']}.tex")
-                descricao = Path(path_tex).read_text(encoding="utf-8") if os.path.exists(path_tex) else ""
+            descricao = descricao_da_tarefa(t["codigo"], t)
             tarefas.append({
                 "tipo": "tarefa",
                 "nome": t["codigo"],

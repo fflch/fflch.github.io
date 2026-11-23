@@ -1,0 +1,27 @@
+{
+  "peso": 11,
+  "titulo": "Sistema Laravel Ricardo",
+  "estagiarios": [
+    {
+      "nome": "Alan Neves Ribeiro",
+      "ativo": true
+    },
+    {
+      "nome": "Lucas Martihis de Araujo",
+      "ativo": true
+    },
+    {
+      "nome": "Pedro Luis Borges de Souza Filho",
+      "ativo": true
+    },
+    {
+      "nome": "Welke Cristhian Carneiro Lima",
+      "ativo": true
+    }
+  ],
+  "descricao": "dev038.html",
+  "responsaveis": [
+    "Ricardo Fontoura"
+  ],
+  "status": true
+}

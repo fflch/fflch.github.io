@@ -1,0 +1,43 @@
+{
+  "peso": 16,
+  "titulo": "Sistema Laravel Mônica",
+  "estagiarios": [
+    {
+      "nome": "Alan Neves Ribeiro",
+      "ativo": true
+    },
+    {
+      "nome": "Guilherme Frias de Oliveira Tavares",
+      "ativo": true
+    },
+    {
+      "nome": "Leonardo",
+      "ativo": false
+    },
+    {
+      "nome": "Letycia",
+      "ativo": false
+    },
+    {
+      "nome": "Lucas Martihis de Araujo",
+      "ativo": true
+    },
+    {
+      "nome": "Pedro Luis Borges de Souza Filho",
+      "ativo": true
+    },
+    {
+      "nome": "Rafael",
+      "ativo": false
+    },
+    {
+      "nome": "Welke Cristhian Carneiro Lima",
+      "ativo": true
+    }
+  ],
+  "descricao": "dev037.html",
+  "responsaveis": [
+    "Mônica Colacique"
+  ],
+  "status": true
+}

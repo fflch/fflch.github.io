@@ -64,3 +64,19 @@ body {
 /* Comentários nas pendências */
 .issue-item .comentarios { list-style: none; padding-left: 12px; margin: 4px 0 8px; border-left: 2px solid #e0dfda; }
 .issue-item .comentarios li { margin: 2px 0; white-space: pre-line; }
+
+/* Tabela de repositórios nas tarefas que agrupam várias bibliotecas/sistemas/módulos
+   (descrição em content/tasks/<codigo>.html) */
+.tabela-repos { margin: 12px 0 16px; border: 1px solid #e3e1da; border-radius: 8px; overflow: hidden; }
+.tabela-repos table { margin: 0; }
+.tabela-repos thead th { background: #f4f3ef; font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; color: #6b6a64; border-bottom: 1px solid #e3e1da; }
+.tabela-repos td { vertical-align: middle; }
+.tabela-repos td:first-child { white-space: nowrap; }
+.tabela-repos a.repo { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem; text-decoration: none; }
+.tabela-repos a.repo:hover { text-decoration: underline; }
+.tabela-repos .org { display: inline-block; min-width: 52px; padding: 1px 6px; margin-right: 6px; border-radius: 4px; font-size: .7rem; text-align: center; font-family: system-ui, sans-serif; }
+.tabela-repos .org-uspdev { background: #e6effa; color: #1f4e8c; }
+.tabela-repos .org-fflch { background: #fbeae6; color: #8c2f1f; }
+.tabela-repos .estagiario { font-size: .85rem; color: #555; }
+.descricao-tarefa h6 { margin-top: 14px; font-weight: 600; }
+@media (max-width: 640px) { .tabela-repos td:first-child { white-space: normal; } }

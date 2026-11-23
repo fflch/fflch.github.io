@@ -436,8 +436,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev016",
-          "titulo": "fflch/bibfiles",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -465,8 +465,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod003",
-          "titulo": "fflch/boletim",
+          "codigo": "mod011",
+          "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -612,8 +612,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod010",
-          "titulo": "fflch/compras",
+          "codigo": "mod011",
+          "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -669,8 +669,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev035",
-          "titulo": "fflch/controleportarias",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -702,8 +702,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev013",
-          "titulo": "fflch/cortec",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -792,8 +792,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev022",
-          "titulo": "fflch/dados",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -841,8 +841,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev033",
-          "titulo": "fflch/delpo",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -986,8 +986,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev002",
-          "titulo": "fflch/etiquetas",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -1074,8 +1074,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev010",
-          "titulo": "fflch/fechaduras",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -1107,16 +1107,16 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod002",
-          "titulo": "fflch/fflch-theme",
+          "codigo": "mod009",
+          "titulo": "fflch/wp-fflch-theme",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
           ]
         },
         {
-          "codigo": "mod009",
-          "titulo": "fflch/wp-fflch-theme",
+          "codigo": "mod011",
+          "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -1308,8 +1308,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev018",
-          "titulo": "fflch/intercambio",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -1432,8 +1432,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev021",
-          "titulo": "fflch/listas",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -1489,8 +1489,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib012",
-          "titulo": "fflch/mailmanAPI",
+          "codigo": "bib020",
+          "titulo": "Bibliotecas PHP/Laravel Thiago",
           "ativa": true,
           "responsaveis": [
             "Thiago Gomes Veríssimo"
@@ -1571,8 +1571,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev012",
-          "titulo": "fflch/minibib",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -1604,8 +1604,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev009",
-          "titulo": "fflch/monitoring",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -1740,8 +1740,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev011",
-          "titulo": "fflch/orcamento",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -1984,8 +1984,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev029",
-          "titulo": "fflch/ranqueamento",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -2074,8 +2074,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev003",
-          "titulo": "fflch/sites",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -2205,8 +2205,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev017",
-          "titulo": "fflch/trabalhoacademico",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -2331,8 +2331,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev032",
-          "titulo": "fflch/webapps",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -2360,8 +2360,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod005",
-          "titulo": "fflch/webform_ficha_catalografica",
+          "codigo": "mod011",
+          "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -2816,8 +2816,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev027",
-          "titulo": "uspdev/chamados",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -2925,8 +2925,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev001",
-          "titulo": "uspdev/copaco",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -3062,8 +3062,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev028",
-          "titulo": "uspdev/defesas",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -3143,8 +3143,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev006",
-          "titulo": "uspdev/empresta",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -3220,8 +3220,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev020",
-          "titulo": "uspdev/estagios",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -3490,8 +3490,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev007",
-          "titulo": "uspdev/impressoras",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -3688,8 +3688,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib006",
-          "titulo": "uspdev/laravel-usp-validators",
+          "codigo": "bib020",
+          "titulo": "Bibliotecas PHP/Laravel Thiago",
           "ativa": true,
           "responsaveis": [
             "Thiago Gomes Veríssimo"
@@ -3941,8 +3941,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev008",
-          "titulo": "uspdev/pessoas",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -4135,8 +4135,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev024",
-          "titulo": "uspdev/rede",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -4286,8 +4286,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev019",
-          "titulo": "uspdev/salas",
+          "codigo": "dev037",
+          "titulo": "Sistema Laravel Mônica",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -4622,8 +4622,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib009",
-          "titulo": "uspdev/simple-crud-generator",
+          "codigo": "bib020",
+          "titulo": "Bibliotecas PHP/Laravel Thiago",
           "ativa": true,
           "responsaveis": [
             "Thiago Gomes Veríssimo"
@@ -4724,8 +4724,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib018",
-          "titulo": "uspdev/starter-ng",
+          "codigo": "bib020",
+          "titulo": "Bibliotecas PHP/Laravel Thiago",
           "ativa": true,
           "responsaveis": [
             "Thiago Gomes Veríssimo"
@@ -4865,8 +4865,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib004",
-          "titulo": "uspdev/utils",
+          "codigo": "bib020",
+          "titulo": "Bibliotecas PHP/Laravel Thiago",
           "ativa": true,
           "responsaveis": [
             "Thiago Gomes Veríssimo"
@@ -4950,8 +4950,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "dev026",
-          "titulo": "uspdev/web-ldap-admin",
+          "codigo": "dev038",
+          "titulo": "Sistema Laravel Ricardo",
           "ativa": true,
           "responsaveis": [
             "Ricardo Fontoura"
@@ -5007,8 +5007,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod006",
-          "titulo": "uspdev/webform_pagamentos",
+          "codigo": "mod011",
+          "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -5040,8 +5040,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod008",
-          "titulo": "uspdev/webform_replicado",
+          "codigo": "mod011",
+          "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -5073,8 +5073,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "mod001",
-          "titulo": "uspdev/webform_senhaunica",
+          "codigo": "mod011",
+          "titulo": "Módulos Drupal",
           "ativa": true,
           "responsaveis": [
             "Mônica Colacique"
@@ -5142,8 +5142,8 @@
       ],
       "tarefas": [
         {
-          "codigo": "bib010",
-          "titulo": "uspdev/wsfoto",
+          "codigo": "bib020",
+          "titulo": "Bibliotecas PHP/Laravel Thiago",
           "ativa": true,
           "responsaveis": [
             "Thiago Gomes Veríssimo"
