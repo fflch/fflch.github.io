@@ -23,6 +23,8 @@ Arquivos de reunião (docs/reunioes.html → "+ Nova reunião" → "Baixar reuni
 "reuniao-nova") gravam content/meetings/AAAA-MM-DD-<titulo>.json e perguntam se disparam
 o e-mail de convocação para os participantes. Arquivos "reuniao-cancelar" (botão "Cancelar
 reunião" da página) marcam a reunião como cancelada e perguntam se avisam por e-mail.
+Arquivos "reuniao-editar" (botão "Editar") alteram título, data, horário, participantes,
+issues ou texto e perguntam se enviam o e-mail de reunião atualizada.
 
 Antes de gravar, mostra o plano e pede confirmação. Se a issue mudou no repositório
 depois que a página foi gerada (conflito), pergunta o que fazer. No fim, oferece avisar
@@ -43,7 +45,7 @@ sys.path.insert(0, BASE_DIR)
 from fflch_common import (  # noqa: E402
     load_pessoas, email_de, enviar_email, perguntar_sim_nao, primeiro_nome, SITE_URL, aviso_comentarios,
     salvar_reuniao, oferecer_email_reuniao, data_reuniao_br, cancelar_reuniao,
-    proximo_numero_issue, com_numero, rotulo_issue,
+    proximo_numero_issue, com_numero, rotulo_issue, diferencas_reuniao, atualizar_reuniao, CAMPOS_EDITAVEIS,
 )
 
 
@@ -108,6 +110,48 @@ def atualizar_reunioes(antigo, novo):
         if antigo in lista:
             dados["issues"] = [novo if x == antigo else x for x in lista]
             salvar(caminho, dados)
+
+
+def aplicar_edicao(arquivo):
+    """Arquivo "reuniao-editar" (botão "Editar" da página de reuniões)."""
+    nome = os.path.basename(arquivo.get("arquivo") or "")
+    caminho = os.path.join(MEETINGS_DIR, nome)
+    if not nome.endswith(".json") or not os.path.exists(caminho):
+        print(f"⚠ Reunião {nome!r} não encontrada em content/meetings/.")
+        return "invalido"
+    antes = carregar(caminho)
+    if antes.get("cancelada_em"):
+        print(f"ℹ {nome} está cancelada — edição ignorada.")
+        return "nada"
+    r = arquivo.get("reuniao") or {}
+    try:
+        datetime.strptime(r.get("data", ""), "%Y-%m-%d")
+    except ValueError:
+        print("⚠ Data inválida na edição.")
+        return "invalido"
+    novo = {k: antes.get(k) for k in CAMPOS_EDITAVEIS}
+    novo.update({"titulo": (r.get("titulo") or antes.get("titulo") or "Reunião").strip(), "data": r["data"],
+                 "horario": (r.get("horario") or "").strip(), "texto": (r.get("texto") or "").strip(),
+                 "participantes": [n for n in r.get("participantes", []) if n]})
+    novo["issues"] = []
+    for cod in r.get("issues", []):
+        if os.path.exists(os.path.join(ISSUES_DIR, f"{cod}.json")):
+            novo["issues"].append(cod)
+        else:
+            print("⚠ Uma issue da pauta não existe mais (movida ou apagada?) — fora da pauta.")
+    if antes.get("atualizada_em") and arquivo.get("versao_base") and arquivo["versao_base"] != antes["atualizada_em"]:
+        print(f"⚠ A reunião foi alterada no repositório ({antes['atualizada_em']}) depois que a página foi gerada.")
+    mudancas = diferencas_reuniao(antes, novo)
+    print(f"\nEditar reunião: {antes.get('titulo')} · {data_reuniao_br(antes['data'])}")
+    if not mudancas:
+        print("  Nenhuma alteração.")
+        return "nada"
+    print("  " + "\n  ".join(mudancas))
+    if not perguntar_sim_nao("Gravar as alterações?", padrao=True):
+        print("Nada foi alterado.")
+        return "recusado"
+    atualizar_reuniao(caminho, novo, padrao_email=bool(arquivo.get("enviar_email")))
+    return "aplicado"
 
 
 def aplicar_cancelamento(arquivo):
@@ -182,6 +226,8 @@ def aplicar_arquivo(caminho_arquivo):
         return aplicar_reuniao(arquivo)
     if arquivo.get("tipo") == "reuniao-cancelar":
         return aplicar_cancelamento(arquivo)
+    if arquivo.get("tipo") == "reuniao-editar":
+        return aplicar_edicao(arquivo)
     if arquivo.get("tipo") != "mudancas-acompanhamento":
         print("⚠ Este arquivo não parece ter sido baixado da página de acompanhamento.")
         return "invalido"

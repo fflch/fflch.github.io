@@ -516,6 +516,7 @@ def preparar_reunioes(all_issues):
                 "texto": r.get("texto", ""),
                 "email_enviado_em": r.get("email_enviado_em", ""),
                 "cancelada_em": r.get("cancelada_em", ""),
+                "atualizada_em": r.get("atualizada_em", ""),
                 "motivo_cancelamento": r.get("motivo_cancelamento", ""),
                 "futura": data >= hoje,
                 "dias_ate": (data - hoje).days,
@@ -525,7 +526,7 @@ def preparar_reunioes(all_issues):
     return proximas, realizadas
 
 
-def dados_form_reuniao(all_issues):
+def dados_form_reuniao(all_issues, proximas=()):
     """Pessoas ativas e issues abertas para o formulário "+ Nova reunião" (renderizado no navegador)."""
     pessoas = [{"nome": p["nome"], "vinculo": p.get("vinculo", "")}
                for p in load_pessoas().values() if p["ativo"]]
@@ -537,12 +538,24 @@ def dados_form_reuniao(all_issues):
     emails = {p["nome"]: True for p in load_pessoas().values() if p.get("email")}
     return {"hoje": datetime.now().date().isoformat(), "site": SITE_URL,
             "remetente": "{} <{}>".format(*REMETENTE_REUNIAO),
-            "pessoas": pessoas, "issues": issues, "emails": emails}
+            "pessoas": pessoas, "issues": issues, "emails": emails,
+            # reuniões que podem ser editadas (formulário pré-preenchido) e as issues da pauta
+            # que já não estão abertas (para não sumirem da pauta ao editar)
+            "agendadas": {r["arquivo"]: {"titulo": r["titulo"], "data": r["data"].isoformat(), "horario": r["horario"],
+                                         "participantes": [p["nome"] for p in r["participantes"]],
+                                         "issues": [i["codigo"] for i in r["pautas"] if i["existe"]],
+                                         "texto": r["texto"], "atualizada_em": r["atualizada_em"]}
+                          for r in proximas if not r["cancelada_em"]},
+            "fora_da_lista": {i["codigo"]: {"codigo": i["codigo"], "numero": i["numero"], "tarefa": i["task_codigo"],
+                                            "titulo_task": i["titulo_task"], "descricao": i["descricao"],
+                                            "responsavel": "" if i["responsavel"] in NAO_PESSOAS else i["responsavel"],
+                                            "fechada": True}
+                              for i in all_issues if not (i["aberta"] and i["task_ativa"])}}
 
 
 def gerar_pagina_reunioes(all_issues):
     proximas, realizadas = preparar_reunioes(all_issues)
-    dados_json = json.dumps(dados_form_reuniao(all_issues), ensure_ascii=False).replace("</", "<\\/")
+    dados_json = json.dumps(dados_form_reuniao(all_issues, proximas), ensure_ascii=False).replace("</", "<\\/")
     html = jinja_env.get_template("reunioes.html").render(
         proximas=proximas, realizadas=realizadas, dados_json=dados_json,
         data_hoje=datetime.now().strftime("%d/%m/%Y"))

@@ -19,7 +19,7 @@ sys.path.insert(0, BASE_DIR)
 
 from fflch_common import (  # noqa: E402
     load_pessoas, perguntar_sim_nao, ler_texto_multilinha, editar_no_editor,
-    salvar_reuniao, oferecer_email_reuniao, data_reuniao_br,
+    salvar_reuniao, oferecer_email_reuniao, data_reuniao_br, rotulo_issue,
     ISSUES_DIR, TASKS_DIR,
 )
 
@@ -64,12 +64,13 @@ def issues_abertas():
     return out
 
 
-def escolher_issues():
+def escolher_issues(iniciais=()):
+    """Escolhe as issues da pauta. iniciais: códigos já na pauta (ao editar uma reunião)."""
     todas = sorted(issues_abertas(), key=lambda i: (i["responsavel"] or "~", i["codigo"]))
-    if not todas:
+    if not todas and not iniciais:
         print("\nℹ Nenhuma issue aberta.")
-        return []
-    selecionadas = []
+        return [], {}
+    selecionadas = list(iniciais)
     while True:
         filtro = input(f"\nIssues abertas ({len(todas)}). Filtrar por texto (tarefa, descrição, pessoa; Enter = todas): ").strip().lower()
         vis = [i for i in todas if not filtro or filtro in
@@ -95,18 +96,23 @@ def escolher_issues():
             for x in nums:
                 c = por_num[int(x)]
                 selecionadas.remove(c) if c in selecionadas else selecionadas.append(c)
-        num_de = {i["codigo"]: i["numero"] for i in todas}
-        print("Pauta: " + (", ".join(f"#{num_de[c]}" for c in selecionadas) or "(nenhuma issue)"))
+        print("Pauta: " + (", ".join(rotulo_issue(resolver_dados(c)) for c in selecionadas) or "(nenhuma issue)"))
         if not perguntar_sim_nao("Adicionar mais issues (outro filtro)?"):
             return selecionadas, {i["codigo"]: i for i in todas}
 
 
-def escolher_participantes(sugeridos):
+def resolver_dados(cod):
+    caminho = os.path.join(ISSUES_DIR, f"{cod}.json")
+    return carregar(caminho) if os.path.exists(caminho) else {}
+
+
+def escolher_participantes(sugeridos, iniciais=None):
+    """iniciais: participantes já marcados (ao editar); sem isso, marca os sugeridos."""
     pessoas = [p["nome"] for p in sorted((p for p in load_pessoas().values() if p["ativo"]),
                                          key=lambda p: (p.get("vinculo") != "servidor", p["nome"]))]
-    pessoas += [n for n in sugeridos if n not in pessoas]
+    pessoas += [n for n in list(sugeridos) + list(iniciais or []) if n not in pessoas]
     vinculo = {p["nome"]: p.get("vinculo") for p in load_pessoas().values()}
-    marcados = [n for n in pessoas if n in sugeridos]
+    marcados = [n for n in pessoas if n in (iniciais if iniciais is not None else sugeridos)]
     while True:
         print("\nParticipantes (✓ = marcado; 🔗 = responsável por issue da pauta):\n")
         for n, nome in enumerate(pessoas, 1):
@@ -135,6 +141,10 @@ def escolher_participantes(sugeridos):
         marcados = [n for n in pessoas if n in marcados]
 
 
+def responsaveis(codigos):
+    return list(dict.fromkeys(r for r in ((resolver_dados(c).get("responsavel") or "").strip() for c in codigos) if r))
+
+
 def main():
     print("\n--- Nova reunião ---")
     titulo = input("Título [Reunião Planejamento TI FFLCH]: ").strip() or "Reunião Planejamento TI FFLCH"
@@ -148,8 +158,8 @@ def main():
             print("Data inválida.")
     horario = input("Horário (ex: 10h às 11h; opcional): ").strip()
 
-    issues, por_codigo = escolher_issues() or ([], {})
-    sugeridos = list(dict.fromkeys(por_codigo[c]["responsavel"] for c in issues if por_codigo[c]["responsavel"]))
+    issues, por_codigo = escolher_issues()
+    sugeridos = responsaveis(issues)
     participantes = escolher_participantes(sugeridos)
 
     if perguntar_sim_nao("\nEscrever o texto adicional no editor?"):
@@ -160,7 +170,7 @@ def main():
     print("\n" + "=" * 63)
     print(f"{titulo} · {data_reuniao_br(data)}" + (f" · {horario}" if horario else ""))
     print(f"Participantes ({len(participantes)}): " + ", ".join(participantes))
-    print(f"Issues ({len(issues)}): " + (", ".join(f"#{por_codigo[c]['numero']}" for c in issues) or "nenhuma"))
+    print(f"Issues ({len(issues)}): " + (", ".join(rotulo_issue(resolver_dados(c)) for c in issues) or "nenhuma"))
     if texto:
         print("Texto:\n  " + texto.replace("\n", "\n  "))
     print("=" * 63)

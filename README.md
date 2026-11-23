@@ -20,6 +20,7 @@ Gestão de tarefas e issues (`bin/`):
     python3 bin/claude_housekeeping_github.py     # repos de fflch/uspdev (gh) → content/github.json (versionar!) → docs/github.html
     python3 bin/aplicar_mudancas.py        # aplica os "Baixar mudanças" pendentes de content/mudancas/ (controle em aplicadas.json)
     python3 bin/create_meeting.py          # nova reunião: participantes, issues abertas, texto; pergunta se dispara o e-mail
+    python3 bin/edit_meeting.py            # edita uma reunião agendada (título, data, horário, issues, participantes, texto)
     python3 bin/cancel_meeting.py          # cancela uma reunião agendada; pergunta se avisa por e-mail
 
 Ao atribuir tarefa ou issue, os scripts perguntam se devem avisar a pessoa por
@@ -28,7 +29,7 @@ e-mail (via `msmtp -a sti`, remetente fflchsti@usp.br).
 - `content/pessoas.csv`: cadastro de servidores e estagiários (nome completo, e-mail, vínculo).
 - Reuniões: `content/meetings/AAAA-MM-DD-<titulo>.json` com `titulo`, `data`, `horario`, `participantes`,
   `issues` (códigos), `texto` e, quando houver, `email_enviado_em`, `cancelada_em`, `motivo_cancelamento`.
-  Também podem ser criadas/canceladas em `docs/reunioes.html`: a página baixa um `mudancas-reuniao-*.json`
+  Também podem ser criadas/editadas/canceladas em `docs/reunioes.html`: a página baixa um `mudancas-reuniao-*.json`
   que é aplicado pelo `aplicar_mudancas.py` (que pergunta se dispara o e-mail).
 - Issues têm um número global sequencial (`"numero"` no JSON), exibido como **#N** no site, nos scripts e
   nos e-mails. O nome do arquivo (`<tarefa>-<n>.json`) é só interno; ao mudar de tarefa o arquivo muda, o #N não.

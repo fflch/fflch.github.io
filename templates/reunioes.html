@@ -47,6 +47,7 @@
         <div class="etqs">
             {% if r.cancelada_em %}<span class="etq cancel" title="Cancelada em {{ r.cancelada_em }}">✕ cancelada</span>{% endif %}
             {% if r.email_enviado_em %}<span class="etq ok" title="Convocação enviada em {{ r.email_enviado_em }}">✉ convocação enviada</span>{% endif %}
+            {% if r.atualizada_em %}<span class="etq" title="Atualizada em {{ r.atualizada_em }}">✎ atualizada</span>{% endif %}
         </div>
     </div>
 
@@ -54,6 +55,7 @@
 
     {% if r.futura and not r.cancelada_em %}
     <div class="no-print">
+        <button type="button" class="btn btn-sm btn-outline-primary" data-editar="{{ r.arquivo }}">✎ Editar</button>
         <button type="button" class="btn btn-sm btn-outline-danger" data-cancelar="{{ r.arquivo }}" data-titulo="{{ r.titulo|e }} ({{ r.data_br }})">Cancelar reunião</button>
     </div>
     {% endif %}
@@ -163,7 +165,7 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
 <p class="sub mb-0">Atualizado em {{ data_hoje }}.</p>
 
 <div id="form-nova" class="painel no-print" hidden>
-    <h3>Nova reunião</h3>
+    <h3 id="form-titulo">Nova reunião</h3>
     <div class="row g-2">
         <div class="col-12 col-md-5"><label class="form-label small mb-0" for="f-titulo">Título</label>
             <input class="form-control" id="f-titulo" value="Reunião Planejamento TI FFLCH"></div>
@@ -198,7 +200,7 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
 
     <fieldset>
         <legend>4. E-mail</legend>
-        <label><input type="checkbox" id="f-email" checked> Disparar e-mail de convocação aos participantes</label>
+        <label><input type="checkbox" id="f-email" checked> <span id="f-email-rot">Disparar e-mail de convocação aos participantes</span></label>
         <div class="small text-muted">O e-mail é enviado (ou não) ao aplicar o arquivo no terminal, que confirma antes de enviar.</div>
         <div class="previa mt-2">
             <div class="previa-cab"><span class="text-muted">De:</span> <span id="pv-de"></span><br>
@@ -293,12 +295,15 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
 
     // ---------------- participantes ----------------
     // participantes = responsáveis das issues marcadas (auto) + extras − removidos
-    var extras = {}, removidos = {};
+    var extras = {}, removidos = {}, editando = null;   // editando: arquivo da reunião em edição
+    function issuePorCodigo(c) {
+        return D.issues.filter(function (x) { return x.codigo === c; })[0] || (D.fora_da_lista || {})[c] || null;
+    }
     var nomesPessoas = D.pessoas.map(function (p) { return p.nome; });
     function autos() {
         var out = {};
         escolhidas.forEach(function (c) {
-            var i = D.issues.filter(function (x) { return x.codigo === c; })[0];
+            var i = issuePorCodigo(c);
             if (i && i.responsavel) out[i.responsavel] = true;
         });
         return out;
@@ -308,8 +313,10 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
         return listaPessoas().filter(function (n) { return (a[n] && !removidos[n]) || extras[n]; });
     }
     function listaPessoas() {   // pessoas.csv + responsáveis que não estejam lá
-        var extrasResp = Object.keys(autos()).filter(function (n) { return nomesPessoas.indexOf(n) < 0; });
-        return nomesPessoas.concat(extrasResp);
+        var fora = Object.keys(autos()).concat(Object.keys(extras)).filter(function (n, k, arr) {
+            return nomesPessoas.indexOf(n) < 0 && arr.indexOf(n) === k;
+        });
+        return nomesPessoas.concat(fora);
     }
     function renderPessoas() {
         var a = autos(), h = "", grupo = null;
@@ -329,7 +336,9 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
     // ---------------- issues ----------------
     function renderIssues() {
         var q = $("f-filtro").value.trim().toLowerCase();
-        var vis = D.issues.filter(function (i) {
+        var extrasPauta = escolhidas.filter(function (c) { return !D.issues.some(function (x) { return x.codigo === c; }); })
+            .map(issuePorCodigo).filter(Boolean);
+        var vis = D.issues.concat(extrasPauta).filter(function (i) {
             return !q || escolhidas.indexOf(i.codigo) >= 0
                 || ("#" + i.numero + " " + i.titulo_task + " " + i.descricao + " " + i.responsavel).toLowerCase().indexOf(q) >= 0;
         }).sort(function (a, b) {
@@ -339,7 +348,8 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
         vis.forEach(function (i) {
             if (i.responsavel !== resp) { resp = i.responsavel; h += '<div class="grupo">👤 ' + esc(resp || "sem responsável") + "</div>"; }
             h += '<label><input type="checkbox" value="' + esc(i.codigo) + '"' + (escolhidas.indexOf(i.codigo) >= 0 ? " checked" : "") + ">"
-               + "<span><strong>#" + esc(i.numero) + '</strong> <span class="text-muted">· ' + esc(i.titulo_task) + "</span><br>"
+               + "<span><strong>#" + esc(i.numero) + '</strong> <span class="text-muted">· ' + esc(i.titulo_task) + "</span>"
+               + (i.fechada ? ' <span class="badge text-bg-success">fechada</span>' : "") + "<br>"
                + esc(i.descricao) + "</span></label>";
         });
         $("lista-issues").innerHTML = h || '<p class="text-muted small my-2">Nenhuma issue com esse filtro.</p>';
@@ -365,11 +375,13 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
             quando = DIAS[d.getDay()] + ", " + dataBr;
         }
         if (hor) quando += ", " + hor;
-        var corpo = saud + ",\n\nEstou agendando uma reunião " + quando + " para tratarmos dos assuntos abaixo.\n";
+        var corpo = saud + (editando
+            ? ",\n\nA reunião foi atualizada: " + quando + ", para tratarmos dos assuntos abaixo.\n"
+            : ",\n\nEstou agendando uma reunião " + quando + " para tratarmos dos assuntos abaixo.\n");
         if (texto) corpo += "\n" + texto + "\n";
         var grupos = {}, ordem = [];   // issues agrupadas por responsável, na ordem escolhida
         escolhidas.forEach(function (c) {
-            var i = D.issues.filter(function (x) { return x.codigo === c; })[0] || {};
+            var i = issuePorCodigo(c) || {};
             var r = i.responsavel || "Outros assuntos";
             if (!grupos[r]) { grupos[r] = []; ordem.push(r); }
             grupos[r].push("- " + i.descricao);
@@ -377,12 +389,12 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
         // "Outros assuntos" (issues sem responsável) sempre por último
         ordem.sort(function (a, b) { return (a === "Outros assuntos") - (b === "Outros assuntos"); });
         ordem.forEach(function (r) { corpo += "\n" + r + ":\n" + grupos[r].join("\n") + "\n"; });
-        corpo += "\nSe tiverem algo para adicionar, alterar ou remover, respondam este e-mail.\n\n"
-               + "Reuniões: " + D.site + "reunioes.html#r-" + data + "-" + (slug(titulo) || "reuniao") + "\n\n--\nThiago\nTI-FFLCH";
+        corpo += "\nA pauta está aberta: se quiserem incluir algum assunto, alterar ou retirar algum item, é só responder este e-mail antes da reunião, que eu farei a inclusão.\n\n"
+               + "Reuniões: " + D.site + "reunioes.html#r-" + (editando ? editando.replace(/\.json$/, "") : data + "-" + (slug(titulo) || "reuniao")) + "\n\n--\nThiago\nTI-FFLCH";
         var semEmail = part.filter(function (n) { return !D.emails[n]; });
         $("pv-para").textContent = part.length ? part.join(", ") + (semEmail.length ? "  (sem e-mail: " + semEmail.join(", ") + ")" : "") : "—";
         $("pv-de").textContent = D.remetente;
-        $("pv-assunto").textContent = titulo + (dataBr ? " - " + dataBr : "") + (hor ? " às " + hor : "");
+        $("pv-assunto").textContent = (editando ? "ATUALIZADA: " : "") + titulo + (dataBr ? " - " + dataBr : "") + (hor ? " às " + hor : "");
         $("pv-corpo").textContent = corpo;
         $("pv-corpo").parentNode.style.opacity = $("f-email").checked ? "1" : ".5";
     }
@@ -417,13 +429,35 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
     });
 
     // ---------------- abrir / baixar ----------------
-    $("btn-nova").addEventListener("click", function () {
-        var f = $("form-nova");
-        if (!f.hidden) { f.scrollIntoView({ behavior: "smooth" }); return; }
+    function abrirForm(arquivo) {
+        var f = $("form-nova"), r = arquivo ? D.agendadas[arquivo] : null;
+        if (arquivo && !r) { toast("Reunião não encontrada nos dados da página"); return; }
+        if (!f.hidden && editando === (arquivo || null)) { f.scrollIntoView({ behavior: "smooth" }); return; }
+        editando = arquivo || null;
+        $("form-titulo").textContent = r ? "Editar reunião" : "Nova reunião";
+        $("btn-baixar").textContent = r ? "⬇ Baixar alterações" : "⬇ Baixar reunião";
+        $("f-email-rot").textContent = r ? "Enviar e-mail aos participantes avisando da alteração"
+                                         : "Disparar e-mail de convocação aos participantes";
+        $("f-email").checked = !r;
+        $("f-titulo").value = r ? r.titulo : "Reunião Planejamento TI FFLCH";
+        $("f-data").value = r ? r.data : D.hoje;
+        $("f-horario").value = r ? r.horario : "";
+        $("f-texto").value = r ? r.texto : "";
+        $("f-filtro").value = "";
+        escolhidas = r ? r.issues.slice() : [];
+        extras = {}; removidos = {};
+        if (r) {
+            r.participantes.forEach(function (n) { extras[n] = true; });
+            Object.keys(autos()).forEach(function (n) { if (r.participantes.indexOf(n) < 0) removidos[n] = true; });
+        }
         f.hidden = false;
-        if (!$("f-data").value) $("f-data").value = D.hoje;
         renderTudo();
         f.scrollIntoView({ behavior: "smooth" });
+    }
+    $("btn-nova").addEventListener("click", function () { abrirForm(null); });
+    document.addEventListener("click", function (e) {
+        var b = e.target.closest && e.target.closest("[data-editar]");
+        if (b) abrirForm(b.dataset.editar);
     });
     $("btn-fechar").addEventListener("click", function () { $("form-nova").hidden = true; });
 
@@ -433,12 +467,18 @@ dialog#cancelar::backdrop { background: rgba(0, 0, 0, .45); }
         if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) { toast("Informe a data"); $("f-data").focus(); return; }
         if (!part.length) { toast("Escolha ao menos um participante"); return; }
         var obj = {
-            tipo: "reuniao-nova", versao: 1, gerado_em: new Date().toISOString(),
+            tipo: editando ? "reuniao-editar" : "reuniao-nova", versao: 1, gerado_em: new Date().toISOString(),
             enviar_email: $("f-email").checked,
             reuniao: { titulo: titulo, data: data, horario: $("f-horario").value.trim(),
                        participantes: part, issues: escolhidas.slice(), texto: $("f-texto").value.trim() }
         };
-        baixar("mudancas-reuniao-" + data + "-" + carimbo() + ".json", obj);
+        if (editando) {
+            obj.arquivo = editando;
+            obj.versao_base = D.agendadas[editando].atualizada_em || "";
+            baixar("mudancas-reuniao-editar-" + editando.replace(/\.json$/, "") + "-" + carimbo() + ".json", obj);
+        } else {
+            baixar("mudancas-reuniao-" + data + "-" + carimbo() + ".json", obj);
+        }
         toast("Arquivo baixado. Rode python3 bin/aplicar_mudancas.py para gravar" + (obj.enviar_email ? " e enviar o e-mail." : "."));
     });
 

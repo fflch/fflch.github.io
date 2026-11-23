@@ -104,6 +104,7 @@ def salvar_reuniao(dados):
 
 def gravar_reuniao(caminho, dados):
     ordem = ["titulo", "data", "horario", "participantes", "issues", "texto", "email_enviado_em",
+             "atualizada_em", "email_atualizacao_em",
              "cancelada_em", "motivo_cancelamento", "email_cancelamento_em"]
     saida = {k: dados[k] for k in ordem if k in dados}
     with open(caminho, "w", encoding="utf-8") as f:
@@ -130,8 +131,8 @@ def assunto_reuniao(dados):
     return f"{dados['titulo']} - {data}" + (f" às {dados['horario']}" if dados.get("horario") else "")
 
 
-def email_reuniao(dados, caminho):
-    """Assunto e corpo do e-mail de convocação."""
+def email_reuniao(dados, caminho, atualizacao=False):
+    """Assunto e corpo do e-mail de convocação (ou de reunião atualizada)."""
     nomes = [primeiro_nome(n) for n in dados.get("participantes", [])]
     saudacao = (", ".join(nomes[:-1]) + " e " + nomes[-1]) if len(nomes) > 1 else (nomes[0] if nomes else "Olá")
     quando = data_reuniao_br(dados["data"]) + (f", {dados['horario']}" if dados.get("horario") else "")
@@ -143,15 +144,18 @@ def email_reuniao(dados, caminho):
         resp = (issue.get("responsavel") or "").strip() or "Outros assuntos"
         grupos.setdefault(resp, []).append(f"- {issue.get('descricao', f'{cod} (issue não encontrada)')}")
 
-    corpo = f"{saudacao},\n\nEstou agendando uma reunião {quando} para tratarmos dos assuntos abaixo.\n"
+    if atualizacao:
+        corpo = f"{saudacao},\n\nA reunião foi atualizada: {quando}, para tratarmos dos assuntos abaixo.\n"
+    else:
+        corpo = f"{saudacao},\n\nEstou agendando uma reunião {quando} para tratarmos dos assuntos abaixo.\n"
     if (dados.get("texto") or "").strip():
         corpo += f"\n{dados['texto'].strip()}\n"
     # "Outros assuntos" (issues sem responsável) sempre por último
     for resp, itens in sorted(grupos.items(), key=lambda g: g[0] == "Outros assuntos"):
         corpo += f"\n{resp}:\n" + "\n".join(itens) + "\n"
-    corpo += ("\nSe tiverem algo para adicionar, alterar ou remover, respondam este e-mail.\n\n"
+    corpo += ("\nA pauta está aberta: se quiserem incluir algum assunto, alterar ou retirar algum item, é só responder este e-mail antes da reunião, que eu farei a inclusão.\n\n"
               f"Reuniões: {SITE_URL}reunioes.html#{id_reuniao(caminho)}\n\n--\nThiago\nTI-FFLCH\n")
-    assunto = assunto_reuniao(dados)
+    assunto = ("ATUALIZADA: " if atualizacao else "") + assunto_reuniao(dados)
     return assunto, corpo
 
 
@@ -180,6 +184,43 @@ def reunioes_agendadas():
     return sorted(out, key=lambda x: (x[1]["data"], x[1].get("horario", "")))
 
 
+CAMPOS_EDITAVEIS = ["titulo", "data", "horario", "participantes", "issues", "texto"]
+
+
+def diferencas_reuniao(antes, depois):
+    """Linhas legíveis com o que muda entre duas versões da reunião (para confirmar antes de gravar)."""
+    def num(cod):
+        return rotulo_issue(_ler_json(os.path.join(ISSUES_DIR, f"{cod}.json")))
+    out = []
+    for campo, rot in (("titulo", "Título"), ("data", "Data"), ("horario", "Horário"), ("texto", "Texto")):
+        a, b = (antes.get(campo) or "").strip(), (depois.get(campo) or "").strip()
+        if a != b:
+            if campo == "data":
+                a, b = data_reuniao_br(a), data_reuniao_br(b)
+            if campo == "texto":
+                out.append("Texto alterado:\n    " + (b.replace("\n", "\n    ") or "(vazio)"))
+            else:
+                out.append(f"{rot}: {a or '(vazio)'} → {b or '(vazio)'}")
+    for campo, rot, fmt in (("participantes", "Participantes", str), ("issues", "Issues", num)):
+        a, b = antes.get(campo, []), depois.get(campo, [])
+        mais, menos = [x for x in b if x not in a], [x for x in a if x not in b]
+        if mais:
+            out.append(f"{rot} + " + ", ".join(fmt(x) for x in mais))
+        if menos:
+            out.append(f"{rot} − " + ", ".join(fmt(x) for x in menos))
+    return out
+
+
+def atualizar_reuniao(caminho, novos, padrao_email=False):
+    """Grava os campos editados (mantém o arquivo, o link e o histórico de envios) e oferece o e-mail."""
+    dados = _ler_json(caminho)
+    dados.update({k: novos[k] for k in CAMPOS_EDITAVEIS if k in novos})
+    dados["atualizada_em"] = datetime.now().strftime("%d/%m/%Y %H:%M")
+    gravar_reuniao(caminho, dados)
+    print(f"✔ Reunião atualizada: {os.path.basename(caminho)}")
+    oferecer_email_reuniao(caminho, padrao=padrao_email, atualizacao=True)
+
+
 def cancelar_reuniao(caminho, motivo="", padrao_email=True):
     """Marca a reunião como cancelada e pergunta se avisa os participantes por e-mail."""
     dados = _ler_json(caminho)
@@ -191,7 +232,7 @@ def cancelar_reuniao(caminho, motivo="", padrao_email=True):
     oferecer_email_reuniao(caminho, padrao=padrao_email, cancelamento=True)
 
 
-def oferecer_email_reuniao(caminho, padrao=True, cancelamento=False):
+def oferecer_email_reuniao(caminho, padrao=True, cancelamento=False, atualizacao=False):
     """Mostra o e-mail, pergunta se envia aos participantes e registra o envio no JSON."""
     dados = _ler_json(caminho)
     pessoas = load_pessoas()
@@ -203,14 +244,18 @@ def oferecer_email_reuniao(caminho, padrao=True, cancelamento=False):
     if not any(e for _, e in destinatarios):
         print("⚠ Nenhum participante com e-mail — nada a enviar.")
         return False
-    assunto, corpo = (email_cancelamento if cancelamento else email_reuniao)(dados, caminho)
+    if cancelamento:
+        assunto, corpo = email_cancelamento(dados, caminho)
+    else:
+        assunto, corpo = email_reuniao(dados, caminho, atualizacao=atualizacao)
     de = f"{REMETENTE_REUNIAO[0]} <{REMETENTE_REUNIAO[1]}>"
     print("\n--- E-mail " + "-" * 52 + f"\nDe: {de}\nAssunto: {assunto}\n\n{corpo}" + "-" * 63)
     if not perguntar_sim_nao(f"Disparar o e-mail para os {len(destinatarios) - len(sem_email)} participante(s)?", padrao):
         print("E-mail não enviado.")
         return False
     if enviar_email(destinatarios, assunto, corpo, remetente=REMETENTE_REUNIAO, conta=MSMTP_ACCOUNT_REUNIAO):
-        dados["email_cancelamento_em" if cancelamento else "email_enviado_em"] = datetime.now().strftime("%d/%m/%Y %H:%M")
+        campo = "email_cancelamento_em" if cancelamento else ("email_atualizacao_em" if atualizacao else "email_enviado_em")
+        dados[campo] = datetime.now().strftime("%d/%m/%Y %H:%M")
         gravar_reuniao(caminho, dados)
         return True
     return False
