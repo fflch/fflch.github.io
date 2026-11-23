@@ -11,17 +11,19 @@ Cada linha do CSV é um par de fibra ligado ponto a ponto entre dois DIOs:
 - Linhas começando com "#" são ignoradas (comentários, ligações ainda incompletas).
 
 Gera docs/dio.html: um fragmento (dados JSON + scripts) incluído na documentação da tarefa
-"Diagramas" via [[include_html:../docs/dio.html]]. O desenho é feito no navegador por
+"Camada 1" (pas006) via [[include_html:../docs/dio.html]]. O desenho é feito no navegador por
 assets/dio/dio.js (interativo: destacar ligação, filtrar por prédio, tabela).
 """
 import csv
 import json
 import os
+import shutil
 import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CSV_PATH = os.path.join(BASE_DIR, "content", "dio.csv")
 SAIDA = os.path.join(BASE_DIR, "docs", "dio.html")
+CSV_PUBLICO = os.path.join(BASE_DIR, "docs", "files", "dio.csv")
 COLUNAS = ["predio1", "tr1", "rack1", "dio1", "par1", "predio2", "tr2", "rack2", "dio2", "par2"]
 
 
@@ -113,6 +115,9 @@ def main():
     )
     with open(SAIDA, "w", encoding="utf-8") as f:
         f.write(html)
+    # cópia do CSV para download na página (docs/files/dio.csv)
+    os.makedirs(os.path.dirname(CSV_PUBLICO), exist_ok=True)
+    shutil.copyfile(CSV_PATH, CSV_PUBLICO)
     print(f"Diagrama de DIOs: {len(dados['ligacoes'])} ligação(ões), {len(dados['predios'])} prédio(s) → {SAIDA}")
 
 

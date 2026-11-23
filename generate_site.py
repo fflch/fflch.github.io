@@ -1216,7 +1216,7 @@ def generate_html(tasks, issues, tutoriais, relatorios, acomp):
 def gerar_figuras():
     """
     Figuras e tabelas derivadas dos dados (antes ficavam em passos separados do deploy):
-    - scripts/dio.py       → docs/dio.html (diagrama interativo de DIOs a partir de content/dio.csv, incluído na documentação pas007)
+    - scripts/dio.py       → docs/dio.html (diagrama interativo de DIOs a partir de content/dio.csv, incluído na documentação da tarefa Camada 1, pas006)
     - scripts/topologia.py → docs/topologia.png e docs/vlans.html (incluído na documentação rat003)
     """
     for nome in ("dio", "topologia"):
