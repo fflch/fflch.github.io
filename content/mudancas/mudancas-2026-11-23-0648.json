@@ -1,0 +1,17 @@
+{
+  "tipo": "mudancas-acompanhamento",
+  "versao": 1,
+  "gerado_em": "2026-11-23T09:48:01.881Z",
+  "mudancas": [
+    {
+      "issue": null,
+      "nova": true,
+      "depois": {
+        "tarefa": "pas006",
+        "descricao": "Terminar de cadastrar os switches no sistema de rede. Colocar os pontos de rede no sistema rede no prédio da administração.",
+        "responsavel": "Paulo Henrique de Araújo"
+      },
+      "em": "2026-11-23"
+    }
+  ]
+}

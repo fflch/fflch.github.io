@@ -1,0 +1,23 @@
+{
+  "tipo": "reuniao-nova",
+  "versao": 1,
+  "gerado_em": "2026-11-24T01:42:19.758Z",
+  "enviar_email": true,
+  "reuniao": {
+    "titulo": "Reunião Planejamento TI FFLCH",
+    "data": "2026-11-25",
+    "horario": "10h",
+    "participantes": [
+      "Augusto César Freire Santiago",
+      "Celio Aparecido da Silva",
+      "José Roberto Varconti de Souza",
+      "Mônica Colacique",
+      "Néli Maximino",
+      "Paulo Henrique de Araújo",
+      "Ricardo Fontoura",
+      "Wellington da Silva Moura"
+    ],
+    "issues": [],
+    "texto": "- Dinâmica de organização (Felipe/Normando/Gilberto)\n- Gestão: Sistema de chamados, incidentes e tiplanejamento"
+  }
+}

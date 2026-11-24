@@ -3,11 +3,16 @@
   "data": "2026-11-25",
   "horario": "10h",
   "participantes": [
-    "Augusto César Freire Santiago"
+    "Augusto César Freire Santiago",
+    "Celio Aparecido da Silva",
+    "José Roberto Varconti de Souza",
+    "Mônica Colacique",
+    "Néli Maximino",
+    "Paulo Henrique de Araújo",
+    "Ricardo Fontoura",
+    "Wellington da Silva Moura"
   ],
-  "issues": [
-    "rat003-2",
-    "pro010-2"
-  ],
-  "texto": ""
+  "issues": [],
+  "texto": "- Dinâmica de organização (Felipe/Normando/Gilberto)\n- Gestão: Sistema de chamados, incidentes e tiplanejamento",
+  "email_enviado_em": "23/11/2026 22:45"
 }
